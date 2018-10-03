@@ -158,6 +158,11 @@ set(all_prebuilt_libs
     Box2D
     luajit
     spidermonkey
+	spriterengine
+	asmjit
+	cereal
+	udis86
+	rapidjson
     )
 
 

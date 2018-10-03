@@ -2001,6 +2001,48 @@
     <ClCompile Include="..\base\CCEventController.cpp" />
     <ClCompile Include="..\base\CCEventListenerController.cpp" />
     <ClCompile Include="..\precheader.cpp" />
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\CCAnimationNode.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\CCBoneInstanceInfo.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\CCBoxInstanceInfo.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\CCFileFactory.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="CCFont.cpp">
+      <Filter>2d</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\CCImageFile.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\CCObjectFactory.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\CCPointInstanceInfo.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\CCSoundFile.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\CCSoundObjectInfoReference.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\CCTriggerObjectInfo.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\TinyXmlSpriterFileAttributeWrapper.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\TinyXmlSpriterFileDocumentWrapper.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\extensions\SpriterPlusPlus\TinyXmlSpriterFileElementWrapper.cpp">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\physics\CCPhysicsBody.h">
@@ -3913,6 +3955,48 @@
     <ClInclude Include="..\base\CCEventController.h" />
     <ClInclude Include="..\base\CCEventListenerController.h" />
     <ClInclude Include="..\precheader.h" />
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\CCAnimationNode.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\CCBoneInstanceInfo.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\CCBoxInstanceInfo.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\CCFileFactory.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\CCImageFile.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\CCLabelTextFormatter.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\CCObjectFactory.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\CCPointInstanceInfo.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\CCSoundFile.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\CCSoundObjectInfoReference.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\CCTriggerObjectInfo.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\TinyXmlSpriterFileAttributeWrapper.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\TinyXmlSpriterFileDocumentWrapper.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\extensions\SpriterPlusPlus\TinyXmlSpriterFileElementWrapper.h">
+      <Filter>extension\SpriterPlusPlus</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\math\Mat4.inl">

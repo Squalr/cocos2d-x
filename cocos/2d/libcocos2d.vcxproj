@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -15,6 +15,7 @@
     <ProjectGuid>{98A51BA8-FC3A-415B-AC8F-8C7BD464E93E}</ProjectGuid>
     <RootNamespace>cocos2d-x.win32</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -35,7 +36,7 @@
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v140_xp</PlatformToolset>
     <PlatformToolset Condition="'$(VisualStudioVersion)' == '15.0'">v141</PlatformToolset>
-    <PlatformToolset Condition="'$(VisualStudioVersion)' == '15.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v141_xp</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '15.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -126,6 +127,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\openssl\prebuilt\win32\*.*" "$(OutDir)"
       <TargetMachine>MachineX86</TargetMachine>
       <ModuleDefinitionFile>cocos2d.def</ModuleDefinitionFile>
       <AdditionalDependencies>sqlite3.lib;libcurl.lib;websockets.lib;libcrypto.lib;libssl.lib;libmpg123.lib;libogg.lib;libvorbis.lib;libvorbisfile.lib;OpenAL32.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <NoEntryPoint>false</NoEntryPoint>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -729,6 +731,8 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\openssl\prebuilt\win32\*.*" "$(OutDir)"
     <ClCompile Include="CCDrawNode.cpp" />
     <ClCompile Include="CCFastTMXLayer.cpp" />
     <ClCompile Include="CCFastTMXTiledMap.cpp" />
+    <ClCompile Include="CCFileFactory.cpp" />
+    <ClCompile Include="CCFont.cpp" />
     <ClCompile Include="CCFontAtlas.cpp" />
     <ClCompile Include="CCFontAtlasCache.cpp" />
     <ClCompile Include="CCFontCharMap.cpp" />
@@ -737,6 +741,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\openssl\prebuilt\win32\*.*" "$(OutDir)"
     <ClCompile Include="CCGLBufferedNode.cpp" />
     <ClCompile Include="CCGrabber.cpp" />
     <ClCompile Include="CCGrid.cpp" />
+    <ClCompile Include="CCImageFile.cpp" />
     <ClCompile Include="CCLabel.cpp" />
     <ClCompile Include="CCLabelAtlas.cpp" />
     <ClCompile Include="CCLabelBMFont.cpp" />
@@ -749,15 +754,19 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\openssl\prebuilt\win32\*.*" "$(OutDir)"
     <ClCompile Include="CCMotionStreak.cpp" />
     <ClCompile Include="CCNode.cpp" />
     <ClCompile Include="CCNodeGrid.cpp" />
+    <ClCompile Include="CCObjectFactory.cpp" />
     <ClCompile Include="CCParallaxNode.cpp" />
     <ClCompile Include="CCParticleBatchNode.cpp" />
     <ClCompile Include="CCParticleExamples.cpp" />
     <ClCompile Include="CCParticleSystem.cpp" />
     <ClCompile Include="CCParticleSystemQuad.cpp" />
+    <ClCompile Include="CCPointInstanceInfo.cpp" />
     <ClCompile Include="CCProgressTimer.cpp" />
     <ClCompile Include="CCProtectedNode.cpp" />
     <ClCompile Include="CCRenderTexture.cpp" />
     <ClCompile Include="CCScene.cpp" />
+    <ClCompile Include="CCSoundFile.cpp" />
+    <ClCompile Include="CCSoundObjectInfoReference.cpp" />
     <ClCompile Include="CCSprite.cpp" />
     <ClCompile Include="CCSpriteBatchNode.cpp" />
     <ClCompile Include="CCSpriteFrame.cpp" />
@@ -771,7 +780,11 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\openssl\prebuilt\win32\*.*" "$(OutDir)"
     <ClCompile Include="CCTransition.cpp" />
     <ClCompile Include="CCTransitionPageTurn.cpp" />
     <ClCompile Include="CCTransitionProgress.cpp" />
+    <ClCompile Include="CCTriggerObjectInfo.cpp" />
     <ClCompile Include="CCTweenFunction.cpp" />
+    <ClCompile Include="TinyXmlSpriterFileAttributeWrapper.cpp" />
+    <ClCompile Include="TinyXmlSpriterFileDocumentWrapper.cpp" />
+    <ClCompile Include="TinyXmlSpriterFileElementWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\extensions\assets-manager\AssetsManager.h" />
@@ -1360,8 +1373,11 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\openssl\prebuilt\win32\*.*" "$(OutDir)"
     <ClInclude Include="CCActionTween.h" />
     <ClInclude Include="CCAnimation.h" />
     <ClInclude Include="CCAnimationCache.h" />
+    <ClInclude Include="CCAnimationNode.h" />
     <ClInclude Include="CCAtlasNode.h" />
     <ClInclude Include="CCAutoPolygon.h" />
+    <ClInclude Include="CCBoneInstanceInfo.h" />
+    <ClInclude Include="CCBoxInstanceInfo.h" />
     <ClInclude Include="CCCamera.h" />
     <ClInclude Include="CCCameraBackgroundBrush.h" />
     <ClInclude Include="CCClippingNode.h" />
@@ -1372,6 +1388,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\openssl\prebuilt\win32\*.*" "$(OutDir)"
     <ClInclude Include="CCDrawNode.h" />
     <ClInclude Include="CCFastTMXLayer.h" />
     <ClInclude Include="CCFastTMXTiledMap.h" />
+    <ClInclude Include="CCFileFactory.h" />
     <ClInclude Include="CCFont.h" />
     <ClInclude Include="CCFontAtlas.h" />
     <ClInclude Include="CCFontAtlasCache.h" />
@@ -1381,9 +1398,11 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\openssl\prebuilt\win32\*.*" "$(OutDir)"
     <ClInclude Include="CCGLBufferedNode.h" />
     <ClInclude Include="CCGrabber.h" />
     <ClInclude Include="CCGrid.h" />
+    <ClInclude Include="CCImageFile.h" />
     <ClInclude Include="CCLabel.h" />
     <ClInclude Include="CCLabelAtlas.h" />
     <ClInclude Include="CCLabelBMFont.h" />
+    <ClInclude Include="CCLabelTextFormatter.h" />
     <ClInclude Include="CCLabelTTF.h" />
     <ClInclude Include="CCLayer.h" />
     <ClInclude Include="CCLight.h" />
@@ -1392,15 +1411,19 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\openssl\prebuilt\win32\*.*" "$(OutDir)"
     <ClInclude Include="CCMotionStreak.h" />
     <ClInclude Include="CCNode.h" />
     <ClInclude Include="CCNodeGrid.h" />
+    <ClInclude Include="CCObjectFactory.h" />
     <ClInclude Include="CCParallaxNode.h" />
     <ClInclude Include="CCParticleBatchNode.h" />
     <ClInclude Include="CCParticleExamples.h" />
     <ClInclude Include="CCParticleSystem.h" />
     <ClInclude Include="CCParticleSystemQuad.h" />
+    <ClInclude Include="CCPointInstanceInfo.h" />
     <ClInclude Include="CCProgressTimer.h" />
     <ClInclude Include="CCProtectedNode.h" />
     <ClInclude Include="CCRenderTexture.h" />
     <ClInclude Include="CCScene.h" />
+    <ClInclude Include="CCSoundFile.h" />
+    <ClInclude Include="CCSoundObjectInfoReference.h" />
     <ClInclude Include="CCSprite.h" />
     <ClInclude Include="CCSpriteBatchNode.h" />
     <ClInclude Include="CCSpriteFrame.h" />
@@ -1414,7 +1437,11 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\openssl\prebuilt\win32\*.*" "$(OutDir)"
     <ClInclude Include="CCTransition.h" />
     <ClInclude Include="CCTransitionPageTurn.h" />
     <ClInclude Include="CCTransitionProgress.h" />
+    <ClInclude Include="CCTriggerObjectInfo.h" />
     <ClInclude Include="CCTweenFunction.h" />
+    <ClInclude Include="TinyXmlSpriterFileAttributeWrapper.h" />
+    <ClInclude Include="TinyXmlSpriterFileDocumentWrapper.h" />
+    <ClInclude Include="TinyXmlSpriterFileElementWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\3d\CCAnimationCurve.inl" />
@@ -1430,6 +1457,9 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\openssl\prebuilt\win32\*.*" "$(OutDir)"
   <ItemGroup>
     <ProjectReference Include="..\..\external\recast\proj.win32\librecast.vcxproj">
       <Project>{41e34993-647e-4282-8384-4ab1ae31a452}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\external\SpriterPlusPlus\SpriterPlusPlus.vcxproj">
+      <Project>{ec902f13-1e54-4dd0-a887-0a3a5bc1cc29}</Project>
     </ProjectReference>
     <ProjectReference Include="..\editor-support\spine\proj.win32\libSpine.vcxproj">
       <Project>{b7c2a162-dec9-4418-972e-240ab3cbfcae}</Project>
