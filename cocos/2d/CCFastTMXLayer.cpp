@@ -48,7 +48,7 @@ THE SOFTWARE.
 #include "base/ccUTF8.h"
 
 NS_CC_BEGIN
-namespace experimental {
+namespace cocos_experimental {
 
 const int TMXLayer::FAST_TMX_ORIENTATION_ORTHO = 0;
 const int TMXLayer::FAST_TMX_ORIENTATION_HEX = 1;
@@ -77,6 +77,7 @@ bool TMXLayer::initWithTilesetInfo(TMXTilesetInfo *tilesetInfo, TMXLayerInfo *la
     }
 
     // layerInfo
+    layerIndex = layerInfo->_layerIndex;
     _layerName = layerInfo->_name;
     _layerSize = layerInfo->_layerSize;
     _tiles = layerInfo->_tiles;
@@ -152,6 +153,13 @@ void TMXLayer::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)
     if( flags != 0 || _dirty || _quadsDirty || isViewProjectionUpdated)
     {
         Size s = Director::getInstance()->getVisibleSize();
+
+        // Zac: Fix engine tile rendering to account for camera distance for tile draw culling
+        float frustumHeight = Camera::getVisitingCamera()->getPositionZ() * 1.154700538379252f; // (2 * tanf(M_PI/6))
+        float frustumWidth = (s.width * frustumHeight) / s.height;
+        s.width = frustumWidth;
+        s.height = frustumHeight;
+
         auto rect = Rect(Camera::getVisitingCamera()->getPositionX() - s.width * 0.5f,
                      Camera::getVisitingCamera()->getPositionY() - s.height * 0.5f,
                      s.width,
@@ -894,6 +902,6 @@ std::string TMXLayer::getDescription() const
     return StringUtils::format("<FastTMXLayer | tag = %d, size = %d,%d>", _tag, (int)_mapTileSize.width, (int)_mapTileSize.height);
 }
 
-} //end of namespace experimental
+} //end of namespace cocos_experimental
 
 NS_CC_END

@@ -48,7 +48,7 @@ struct CC_DLL VREye
     };
 
     EyeType type;
-    experimental::Viewport viewport;
+	cocos_experimental::Viewport viewport;
 };
 
 class CC_DLL VRGenericRenderer : public VRIRenderer
@@ -67,7 +67,7 @@ protected:
     void renderDistortionMesh(DistortionMesh *mesh, Texture2D* texture);
     DistortionMesh* createDistortionMesh(VREye::EyeType eyeType);
 
-    experimental::FrameBuffer* _fb;
+	cocos_experimental::FrameBuffer* _fb;
     Size _texSize;
     VREye _leftEye;
     VREye _rightEye;

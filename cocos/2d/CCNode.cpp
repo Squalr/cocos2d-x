@@ -96,6 +96,7 @@ Node::Node()
 , _userObject(nullptr)
 , _glProgramState(nullptr)
 , _running(false)
+, _paused(false)
 , _visible(true)
 , _ignoreAnchorPointForPosition(false)
 , _reorderChildDirty(false)
@@ -109,7 +110,7 @@ Node::Node()
 , _displayedColor(Color3B::WHITE)
 , _realColor(Color3B::WHITE)
 , _cascadeColorEnabled(false)
-, _cascadeOpacityEnabled(false)
+, _cascadeOpacityEnabled(true)
 , _cameraMask(1)
 #if CC_USE_PHYSICS
 , _physicsBody(nullptr)
@@ -1414,7 +1415,8 @@ void Node::onExit()
         _componentContainer->onExit();
     }
     
-    this->pause();
+    // Zac: Disabled this. Why pause on exit? Just dispose it. This causes dumb bugs.
+    // this->pause();
     
     _running = false;
     
@@ -1626,8 +1628,14 @@ void Node::unscheduleAllCallbacks()
     _scheduler->unscheduleAllForTarget(this);
 }
 
+bool Node::isPaused()
+{
+    return _paused;
+}
+
 void Node::resume()
 {
+    _paused = false;
     _scheduler->resumeTarget(this);
     _actionManager->resumeTarget(this);
     _eventDispatcher->resumeEventListenersForTarget(this);
@@ -1635,6 +1643,7 @@ void Node::resume()
 
 void Node::pause()
 {
+    _paused = true;
     _scheduler->pauseTarget(this);
     _actionManager->pauseTarget(this);
     _eventDispatcher->pauseEventListenersForTarget(this);

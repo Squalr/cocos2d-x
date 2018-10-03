@@ -757,7 +757,7 @@ void AssetsManagerEx::updateSucceed()
     {
         // Merging all files in temp storage path to storage path
         std::vector<std::string> files;
-        _fileUtils->listFilesRecursively(_tempStoragePath, &files);
+        _fileUtils->listFilesRecursively(_tempStoragePath);
         int baseOffset = (int)_tempStoragePath.length();
         std::string relativePath, dstPath;
         for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it)

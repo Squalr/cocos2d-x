@@ -36,7 +36,7 @@ NS_CC_BEGIN
 class GLView;
 class EventListenerCustom;
 
-namespace experimental {
+namespace cocos_experimental {
 
 /**
  Viewport is a normalized to FrameBufferObject
@@ -210,7 +210,7 @@ private:
     EventListenerCustom* _dirtyFBOListener;
 #endif
 };
-} // end of namespace experimental
+} // end of namespace cocos_experimental
 
 NS_CC_END
 

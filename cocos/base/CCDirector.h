@@ -63,7 +63,7 @@ class Renderer;
 class Camera;
 
 class Console;
-namespace experimental
+namespace cocos_experimental
 {
     class FrameBuffer;
 }
@@ -320,7 +320,7 @@ public:
      If level is 1, it will pop all scenes until it reaches to root scene.
      If level is <= than the current stack level, it won't do anything.
      */
- 	void popToSceneStackLevel(int level);
+     void popToSceneStackLevel(int level);
 
     /** Replaces the running scene with a new one. The running scene is terminated.
      * ONLY call it if there is a running scene.
@@ -375,7 +375,7 @@ public:
      */
     void purgeCachedData();
 
-	/** Sets the default values based on the Configuration info. */
+    /** Sets the default values based on the Configuration info. */
     void setDefaultValues();
 
     // OpenGL Helper
@@ -461,7 +461,7 @@ public:
     Console* getConsole() const { return _console; }
 
     /* Gets delta time since last tick to main loop. */
-	float getDeltaTime() const;
+    float getDeltaTime() const;
     
     /**
      *  Gets Frame Rate.
@@ -639,7 +639,7 @@ protected:
     EventCustom *_eventProjectionChanged, *_eventBeforeDraw, *_eventAfterDraw, *_eventAfterVisit, *_eventBeforeUpdate, *_eventAfterUpdate, *_eventResetDirector, *_beforeSetNextScene, *_afterSetNextScene;
         
     /* delta time since last tick to main loop */
-	float _deltaTime;
+    float _deltaTime;
     bool _deltaTimePassedByCaller;
     
     /* The _openGLView, where everything is rendered, GLView is a abstract class,cocos2d-x provide GLViewImpl
@@ -706,7 +706,7 @@ protected:
     Renderer *_renderer;
     
     /* Default FrameBufferObject*/
-    experimental::FrameBuffer* _defaultFBO;
+    cocos_experimental::FrameBuffer* _defaultFBO;
 
     /* Console for the director */
     Console *_console;

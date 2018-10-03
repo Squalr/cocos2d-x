@@ -37,7 +37,7 @@ class TMXLayerInfo;
 class TMXTilesetInfo;
 class TMXMapInfo;
 
-namespace experimental {
+namespace cocos_experimental {
     
 class TMXLayer;
 /**
@@ -248,7 +248,7 @@ private:
 // end of tilemap_parallax_nodes group
 /** @} */
     
-} //end of namespace experimental
+} //end of namespace cocos_experimental
 
 NS_CC_END
 

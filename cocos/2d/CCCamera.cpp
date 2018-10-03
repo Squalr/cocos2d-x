@@ -40,7 +40,7 @@
 NS_CC_BEGIN
 
 Camera* Camera::_visitingCamera = nullptr;
-experimental::Viewport Camera::_defaultViewport;
+cocos_experimental::Viewport Camera::_defaultViewport;
 
 // start static methods
 
@@ -91,11 +91,11 @@ Camera* Camera::getDefaultCamera()
     return nullptr;
 }
 
-const experimental::Viewport& Camera::getDefaultViewport()
+const cocos_experimental::Viewport& Camera::getDefaultViewport()
 {
     return _defaultViewport;
 }
-void Camera::setDefaultViewport(const experimental::Viewport& vp)
+void Camera::setDefaultViewport(const cocos_experimental::Viewport& vp)
 {
     _defaultViewport = vp;
 }
@@ -214,8 +214,11 @@ bool Camera::initDefault()
         }
         case Director::Projection::_3D:
         {
+			// Zac: Unfortunately this engine does not make this easy to update the draw depth after initialization, so it's best just to set it here.
+			// This game has no reason to do far culling, so it's easiest that we set this to a large value and forget about it.
+			const float farPlaneDepth = 65535.0f;
             float zeye = Director::getInstance()->getZEye();
-            initPerspective(60, (GLfloat)size.width / size.height, 10, zeye + size.height / 2.0f);
+            initPerspective(60, (GLfloat)size.width / size.height, 10, farPlaneDepth /*zeye + size.height / 2.0f*/);
             Vec3 eye(size.width/2, size.height/2.0f, zeye), center(size.width/2, size.height/2, 0.0f), up(0.0f, 1.0f, 0.0f);
             setPosition3D(eye);
             lookAt(center, up);
@@ -432,7 +435,7 @@ void Camera::clearBackground()
     }
 }
 
-void Camera::setFrameBufferObject(experimental::FrameBuffer *fbo)
+void Camera::setFrameBufferObject(cocos_experimental::FrameBuffer *fbo)
 {
     CC_SAFE_RETAIN(fbo);
     CC_SAFE_RELEASE_NULL(_fbo);
@@ -456,7 +459,7 @@ void Camera::applyFrameBufferObject()
     {
         // inherit from context if it doesn't have a FBO
         // don't call apply the default one
-//        experimental::FrameBuffer::applyDefaultFBO();
+//        cocos_experimental::FrameBuffer::applyDefaultFBO();
     }
     else
     {
@@ -479,7 +482,7 @@ void Camera::applyViewport()
     }
 }
 
-void Camera::setViewport(const experimental::Viewport& vp)
+void Camera::setViewport(const cocos_experimental::Viewport& vp)
 {
     _viewport = vp;
 }
@@ -496,7 +499,7 @@ void Camera::restoreFrameBufferObject()
     {
         // it was inherited from context if it doesn't have a FBO
         // don't call restore the default one... just keep using the previous one
-//        experimental::FrameBuffer::applyDefaultFBO();
+//        cocos_experimental::FrameBuffer::applyDefaultFBO();
     }
     else
     {

@@ -42,7 +42,7 @@
  */
 
 NS_CC_BEGIN
-namespace experimental{
+namespace cocos_experimental {
     namespace ui{
         
 class WebViewImpl;
@@ -263,7 +263,7 @@ private:
 };
         
       } // namespace ui
-   } // namespace experimental
+   } // namespace cocos_experimental
 }//namespace cocos2d
 
 #endif

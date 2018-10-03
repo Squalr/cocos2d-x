@@ -26,11 +26,21 @@
 #ifndef __cocos2d_libs__CCValue__
 #define __cocos2d_libs__CCValue__
 
+#include "cereal/cereal.hpp"
+#include "cereal/access.hpp"
+#include "cereal/types/common.hpp"
+#include "cereal/types/string.hpp"
+#include "cereal/types/map.hpp"
+#include "cereal/types/vector.hpp"
+#include "cereal/types/memory.hpp"
+#include "cereal/archives/binary.hpp"
 #include "platform/CCPlatformMacros.h"
 #include "base/ccMacros.h"
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <map>
+#include <iomanip> // setprecision
+#include <sstream> // stringstream
 
 /**
  * @addtogroup base
@@ -42,8 +52,8 @@ NS_CC_BEGIN
 class Value;
 
 typedef std::vector<Value> ValueVector;
-typedef std::unordered_map<std::string, Value> ValueMap;
-typedef std::unordered_map<int, Value> ValueMapIntKey;
+typedef std::map<std::string, Value> ValueMap;
+typedef std::map<int, Value> ValueMapIntKey;
 
 CC_DLL extern const ValueVector ValueVectorNull;
 CC_DLL extern const ValueMap ValueMapNull;
@@ -60,6 +70,114 @@ public:
 
     /** Default constructor. */
     Value();
+
+    /*
+     * Used when serializing strings to scramble the string on disk so it is not human readable.
+     * Mathematically this is a self-inverse function, so xorCipher(xorCipher("swag")) returns "swag". 
+     */
+    std::string xorCipher(std::string str) const
+    {
+        // Using multiple different chars to xor the string to make it harder to figure out what is going on
+        char key[7] = {'S', 'q', 'u', 'a', 'l', 'l', 'y'};
+
+        std::string output = str;
+    
+        for (unsigned int index = 0; index < str.size(); index++)
+        {
+            output[index] = str[index] ^ key[index % (sizeof(key) / sizeof(char))];
+        }
+
+        return output;
+    }
+
+	template <class Archive>
+	void save(Archive & ar) const
+	{
+		switch (_type)
+		{
+		case Type::BYTE:
+			ar(_type, _field.byteVal);
+			break;
+		case Type::INTEGER:
+			ar(_type, _field.intVal);
+			break;
+		case Type::UNSIGNED:
+			ar(_type, _field.unsignedVal);
+			break;
+		case Type::FLOAT:
+			ar(_type, _field.floatVal);
+			break;
+		case Type::DOUBLE:
+			ar(_type, _field.doubleVal);
+			break;
+		case Type::BOOLEAN:
+			ar(_type, _field.boolVal);
+			break;
+		case Type::STRING:
+			ar(_type, xorCipher(*(_field.strVal)));
+			break;
+		case Type::VECTOR:
+			ar(_type, *(_field.vectorVal));
+			break;
+		case Type::MAP:
+			ar(_type, *(_field.mapVal));
+			break;
+		case Type::INT_KEY_MAP:
+			ar(_type, *(_field.intKeyMapVal));
+			break;
+		case Type::NONE:
+		default:
+			break;
+		}
+	}
+
+	template <class Archive>
+	void load(Archive & ar)
+	{
+		ar(_type);
+
+		switch (_type)
+		{
+		case Type::BYTE:
+			ar(_field.byteVal);
+			break;
+		case Type::INTEGER:
+			ar(_field.intVal);
+			break;
+		case Type::UNSIGNED:
+			ar(_field.unsignedVal);
+			break;
+		case Type::FLOAT:
+			ar(_field.floatVal);
+			break;
+		case Type::DOUBLE:
+			ar(_field.doubleVal);
+			break;
+		case Type::BOOLEAN:
+			ar(_field.boolVal);
+			break;
+		case Type::STRING:
+            _field.strVal = new std::string();
+			ar(*(_field.strVal));
+            *(_field.strVal) = xorCipher(*(_field.strVal));
+			break;
+		case Type::VECTOR:
+            _field.vectorVal = new std::vector<Value>();
+			ar(*(_field.vectorVal));
+			break;
+		case Type::MAP:
+            _field.mapVal = new std::map<std::string, Value>();
+			ar(*(_field.mapVal));
+			break;
+		case Type::INT_KEY_MAP:
+            _field.intKeyMapVal = new std::map<int, Value>();
+			ar(*(_field.intKeyMapVal));
+			break;
+		case Type::NONE:
+		default:
+			break;
+		}
+	}
     
     /** Create a Value by an unsigned char value. */
     explicit Value(unsigned char v);

@@ -44,7 +44,7 @@
  */
 
 NS_CC_BEGIN
-namespace experimental {
+namespace cocos_experimental {
 
 /**
  * @class AudioProfile
@@ -369,7 +369,7 @@ protected:
     friend class AudioEngineImpl;
 };
 
-} // namespace experimental {
+} // namespace cocos_experimental {
 NS_CC_END
 
 // end group

@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include "base/ccUTF8.h"
 
 NS_CC_BEGIN
-namespace experimental {
+namespace cocos_experimental {
 
 // implementation FastTMXTiledMap
 
@@ -122,6 +122,10 @@ TMXTilesetInfo * TMXTiledMap::tilesetForLayer(TMXLayerInfo *layerInfo, TMXMapInf
     for (auto iter = tilesets.crbegin(), iterCrend = tilesets.crend(); iter != iterCrend; ++iter)
     {
         TMXTilesetInfo* tilesetInfo = *iter;
+
+        // Zac : Whoever wrote this function is doing WAY more than they need to -- just return the first tileset in the set
+        return tilesetInfo;
+
         if (tilesetInfo)
         {
             for( int y=0; y < size.height; y++ )
@@ -256,7 +260,7 @@ std::string TMXTiledMap::getDescription() const
     return StringUtils::format("<FastTMXTiledMap | Tag = %d, Layers = %d", _tag, static_cast<int>(_children.size()));
 }
 
-} //end of namespace experimental
+} //end of namespace cocos_experimental
 
 NS_CC_END
 

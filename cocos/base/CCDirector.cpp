@@ -303,7 +303,7 @@ void Director::drawScene()
     }
 
     _renderer->clear();
-    experimental::FrameBuffer::clearAllFBOs();
+    cocos_experimental::FrameBuffer::clearAllFBOs();
     
     _eventDispatcher->dispatchEvent(_eventBeforeDraw);
     
@@ -437,7 +437,7 @@ void Director::setOpenGLView(GLView *openGLView)
             _eventDispatcher->setEnabled(true);
         }
         
-        _defaultFBO = experimental::FrameBuffer::getOrCreateDefaultFBO(_openGLView);
+        _defaultFBO = cocos_experimental::FrameBuffer::getOrCreateDefaultFBO(_openGLView);
         _defaultFBO->retain();
     }
 }
@@ -770,7 +770,7 @@ void Director::setDepthTest(bool on)
 void Director::setClearColor(const Color4F& clearColor)
 {
     _renderer->setClearColor(clearColor);
-    auto defaultFBO = experimental::FrameBuffer::getOrCreateDefaultFBO(_openGLView);
+    auto defaultFBO = cocos_experimental::FrameBuffer::getOrCreateDefaultFBO(_openGLView);
     
     if(defaultFBO) defaultFBO->setClearColor(clearColor);
 }
@@ -817,17 +817,17 @@ Vec2 Director::convertToUI(const Vec2& glPoint)
     Vec4 glCoord(glPoint.x, glPoint.y, 0.0, 1);
     transform.transformVector(glCoord, &clipCoord);
 
-	/*
-	BUG-FIX #5506
+    /*
+    BUG-FIX #5506
 
-	a = (Vx, Vy, Vz, 1)
-	b = (a×M)T
-	Out = 1 ⁄ bw(bx, by, bz)
-	*/
-	
-	clipCoord.x = clipCoord.x / clipCoord.w;
-	clipCoord.y = clipCoord.y / clipCoord.w;
-	clipCoord.z = clipCoord.z / clipCoord.w;
+    a = (Vx, Vy, Vz, 1)
+    b = (a×M)T
+    Out = 1 ⁄ bw(bx, by, bz)
+    */
+
+    clipCoord.x = clipCoord.x / clipCoord.w;
+    clipCoord.y = clipCoord.y / clipCoord.w;
+    clipCoord.z = clipCoord.z / clipCoord.w;
 
     Size glSize = _openGLView->getDesignResolutionSize();
     float factor = 1.0f / glCoord.w;
@@ -1436,18 +1436,18 @@ void Director::setContentScaleFactor(float scaleFactor)
 
 void Director::setNotificationNode(Node *node)
 {
-	if (_notificationNode != nullptr){
-		_notificationNode->onExitTransitionDidStart();
-		_notificationNode->onExit();
-		_notificationNode->cleanup();
-	}
-	CC_SAFE_RELEASE(_notificationNode);
+    if (_notificationNode != nullptr){
+        _notificationNode->onExitTransitionDidStart();
+        _notificationNode->onExit();
+        _notificationNode->cleanup();
+    }
+    CC_SAFE_RELEASE(_notificationNode);
 
-	_notificationNode = node;
-	if (node == nullptr)
-		return;
-	_notificationNode->onEnter();
-	_notificationNode->onEnterTransitionDidFinish();
+    _notificationNode = node;
+    if (node == nullptr)
+        return;
+    _notificationNode->onEnter();
+    _notificationNode->onEnterTransitionDidFinish();
     CC_SAFE_RETAIN(_notificationNode);
 }
 

@@ -33,9 +33,10 @@ NS_CC_BEGIN
 
 //implementation TMXObjectGroup
 
-TMXObjectGroup::TMXObjectGroup()
+TMXObjectGroup::TMXObjectGroup(int index)
     : _groupName("")
 {
+    this->layerIndex = index;
 }
 
 TMXObjectGroup::~TMXObjectGroup()

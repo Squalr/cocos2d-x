@@ -30,7 +30,16 @@ THE SOFTWARE.
 #include <vector>
 #include <unordered_map>
 #include <type_traits>
+#include <fstream>
 
+#ifdef _WIN32
+    #include <filesystem>
+#endif
+
+#include "cereal/cereal.hpp"
+#include "cereal/access.hpp"
+#include "cereal/archives/binary.hpp"
+#include "cereal/archives/json.hpp"
 #include "platform/CCPlatformMacros.h"
 #include "base/ccTypes.h"
 #include "base/CCValue.h"
@@ -508,6 +517,14 @@ public:
      */
     virtual ValueMap getValueMapFromFile(const std::string& filename);
 
+    /**
+    *  Converts the contents of a file to a ValueMap.
+    *  @param filename The filename of the file to gets content.
+    *  @return ValueMap of the file contents.
+    *  @note This method is used internally.
+    */
+    ValueMap deserializeValueMapFromFile(const std::string& fullPath);
+
 
     /** Converts the contents of a file to a ValueMap.
      *  This method is used internally.
@@ -582,6 +599,15 @@ public:
     *@return bool
     */
     virtual bool writeValueMapToFile(const ValueMap& dict, const std::string& fullPath);
+
+    /**
+    * write ValueMap into a binary file
+    *
+    *@param dict the ValueMap want to save
+    *@param fullPath The full path to the file you want to save a string
+    *@return bool
+    */
+    bool serializeValueMapToFile(const ValueMap& dict, const std::string& fullPath);
 
     /**
     * Write a ValueMap into a file, done async off the main cocos thread.
@@ -828,7 +854,7 @@ public:
      *  @param dirPath The path of the directory, it could be a relative or an absolute path.
      *  @return File paths in a string vector
      */
-    virtual void listFilesRecursively(const std::string& dirPath, std::vector<std::string> *files) const;
+    virtual std::vector<std::string> listFilesRecursively(const std::string& dirPath) const;
 
     /**
     *  List all files recursively in a directory, async off the main cocos thread.

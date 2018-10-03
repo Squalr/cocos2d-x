@@ -172,7 +172,8 @@ bool TextFieldTTF::initWithPlaceHolder(const std::string& placeholder, const std
 
     } while (false);
     
-    setTextColorInternally(_colorSpaceHolder);
+
+    Label::setTextColor(_colorSpaceHolder);
     Label::setString(_placeHolder);
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
@@ -245,11 +246,11 @@ void TextFieldTTF::insertText(const char * text, size_t len)
     std::string insert(text, len);
 
     // insert \n means input end
-    int pos = static_cast<int>(insert.find(StringUtils::AsciiCharacters::NewLine));
+    int pos = static_cast<int>(insert.find((char)StringUtils::AsciiCharacters::NewLine));
     if ((int)insert.npos != pos)
     {
-        len = pos;
-        insert.erase(pos);
+        // len = pos;
+        // insert.erase(pos);
     }
 
     if (len > 0)
@@ -293,7 +294,7 @@ void TextFieldTTF::insertText(const char * text, size_t len)
     }
 
     // if delegate hasn't processed, detach from IME by default
-    detachWithIME();
+    //detachWithIME();
 }
 
 void TextFieldTTF::deleteBackward()
@@ -382,11 +383,9 @@ void TextFieldTTF::setCursorFromPoint(const Vec2 &point, const Camera* camera)
             int latterPosition = 0;
             for (; latterPosition < _lengthOfString; ++latterPosition)
             {
-                if (_lettersInfo[latterPosition].valid && _lettersInfo[latterPosition].atlasIndex >= 0)
+                if (_lettersInfo[latterPosition].valid)
                 {
                     auto sprite = getLetter(latterPosition);
-                    if (sprite)
-                    {
                         rect.size = sprite->getContentSize();
                         if (isScreenPointInRect(point, camera, sprite->getWorldToNodeTransform(), rect, nullptr))
                         {
@@ -395,7 +394,6 @@ void TextFieldTTF::setCursorFromPoint(const Vec2 &point, const Camera* camera)
                         }
                     }
                 }
-            }
             if (latterPosition == _lengthOfString)
             {
                 setCursorPosition(latterPosition);
@@ -422,22 +420,12 @@ void TextFieldTTF::setAttachWithIME(bool isAttachWithIME)
     }
 }
 
-void TextFieldTTF::setTextColorInternally(const Color4B& color)
-{
-    if (_currentLabelType == LabelType::BMFONT) {
-        Label::setColor(Color3B(color));
-        return;
-    }
-    
-    Label::setTextColor(color);
-}
-
 void TextFieldTTF::setTextColor(const Color4B &color)
 {
     _colorText = color;
     if (!_inputText.empty())
     {
-        setTextColorInternally(color);
+        Label::setTextColor(_colorText);
     }
 }
 
@@ -464,9 +452,6 @@ void TextFieldTTF::update(float delta)
 
         if (sprite)
         {
-            if (_currentLabelType == LabelType::BMFONT) {
-                sprite->setColor(getColor());
-            }
             if (_cursorShowingTime >= 0.0f)
             {
                 sprite->setOpacity(255);
@@ -487,7 +472,14 @@ const Color4B& TextFieldTTF::getColorSpaceHolder()
 
 void TextFieldTTF::setColorSpaceHolder(const Color3B& color)
 {
-    setColorSpaceHolder(Color4B(color));
+    _colorSpaceHolder.r = color.r;
+    _colorSpaceHolder.g = color.g;
+    _colorSpaceHolder.b = color.b;
+    _colorSpaceHolder.a = 255;
+    if (_inputText.empty())
+    {
+        Label::setTextColor(_colorSpaceHolder);
+}
 }
 
 void TextFieldTTF::setColorSpaceHolder(const Color4B& color)
@@ -495,7 +487,7 @@ void TextFieldTTF::setColorSpaceHolder(const Color4B& color)
     _colorSpaceHolder = color;
     if (_inputText.empty())
     {
-        setTextColorInternally(_colorSpaceHolder);
+        Label::setTextColor(_colorSpaceHolder);
     }
 }
 
@@ -545,13 +537,14 @@ void TextFieldTTF::setString(const std::string &text)
     // if there is no input text, display placeholder instead
     if (_inputText.empty() && (!_cursorEnabled || !_isAttachWithIME))
     {
-        setTextColorInternally(_colorSpaceHolder);
+        Label::setTextColor(_colorSpaceHolder);
         Label::setString(_placeHolder);
     }
     else
     {
         makeStringSupportCursor(displayText);
-        setTextColorInternally(_colorText);
+
+        Label::setTextColor(_colorText);
         Label::setString(displayText);
     }
     _charCount = charCount;
@@ -571,8 +564,7 @@ void TextFieldTTF::makeStringSupportCursor(std::string& displayText)
         if (displayText.empty())
         {
             // \b - Next char not change x position
-            if (_currentLabelType == LabelType::TTF || _currentLabelType == LabelType::BMFONT)
-                displayText.push_back(StringUtils::AsciiCharacters::NextCharNoChangeX);
+            displayText.push_back((char)StringUtils::AsciiCharacters::NextCharNoChangeX);
             displayText.push_back(_cursorChar);
         }
         else
@@ -587,8 +579,7 @@ void TextFieldTTF::makeStringSupportCursor(std::string& displayText)
             }
             std::string cursorChar;
             // \b - Next char not change x position
-            if (_currentLabelType == LabelType::TTF || _currentLabelType == LabelType::BMFONT)
-                cursorChar.push_back(StringUtils::AsciiCharacters::NextCharNoChangeX);
+            cursorChar.push_back((char)StringUtils::AsciiCharacters::NextCharNoChangeX);
             cursorChar.push_back(_cursorChar);
             stringUTF8.insert(_cursorPosition, cursorChar);
 
@@ -654,6 +645,53 @@ void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
                 updateCursorDisplayText();
             }
             break;
+        case EventKeyboard::KeyCode::KEY_UP_ARROW:
+            if (_cursorPosition)
+            {
+                // Get current row offset
+                std::size_t currentRowSearch = this->getString().rfind('\n', _cursorPosition <= 0 ? 0 : _cursorPosition - 1);
+                int currentRowStart = currentRowSearch != std::string::npos ? currentRowSearch + 1 : 0;
+                int currentRowOffset = _cursorPosition - currentRowStart;
+
+                // Disallow moving cursor up if on the first row
+                if (currentRowStart > 0)
+                {
+                    // Calculate length of previous row
+                    std::size_t previousRowSearch = this->getString().rfind('\n', currentRowSearch <= 0 ? 0 : currentRowSearch - 1);
+                    int previousRowStart = previousRowSearch != std::string::npos ? previousRowSearch + 1 : 0;
+                    int previousRowLength = currentRowStart - previousRowStart;
+
+                    // Determine new cursor offset for previous row
+                    int newOffset = previousRowLength < currentRowOffset ? previousRowLength <= 0 ? 0 : previousRowLength - 1 : currentRowOffset;
+                    int newCursorPos = previousRowStart + newOffset;
+
+                    setCursorPosition(newCursorPos);
+                    updateCursorDisplayText();
+                }
+            }
+            break;
+        case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+            if (_cursorPosition < (std::size_t)_charCount)
+            {
+                // Get current row offset
+                std::size_t currentRowSearch = this->getString().rfind('\n', _cursorPosition <= 0 ? 0 : _cursorPosition - 1);
+                int currentRowStart = currentRowSearch != std::string::npos ? currentRowSearch + 1 : 0;
+                int currentRowOffset = _cursorPosition - currentRowStart;
+
+                // Calculate length of next row
+                std::size_t nextRowSearch = this->getString().find('\n', _cursorPosition <= 0 ? 0 : _cursorPosition);
+                std::size_t nextRowEndSearch = this->getString().find('\n', nextRowSearch + 1);
+                int nextRowStart = nextRowSearch != std::string::npos ? nextRowSearch + 1 : 0;
+                int nextRowLength = nextRowEndSearch != std::string::npos ? nextRowEndSearch - nextRowStart : _charCount - nextRowStart;
+
+                // Determine new cursor offset for next row
+                int newOffset = nextRowLength < currentRowOffset ? nextRowLength <= 0 ? 0 : nextRowLength - 1 : currentRowOffset;
+                int newCursorPos = nextRowStart + newOffset;
+
+                setCursorPosition(newCursorPos);
+                updateCursorDisplayText();
+            }
+            break;
         case EventKeyboard::KeyCode::KEY_ESCAPE:
             detachWithIME();
             break;
@@ -672,9 +710,9 @@ const std::string& TextFieldTTF::getString() const
 void TextFieldTTF::setPlaceHolder(const std::string& text)
 {
     _placeHolder = text;
-    if (_inputText.empty() && !_isAttachWithIME)
+    if (_inputText.empty())
     {
-        setTextColorInternally(_colorSpaceHolder);
+        Label::setTextColor(_colorSpaceHolder);
         Label::setString(_placeHolder);
     }
 }
@@ -686,24 +724,26 @@ const std::string& TextFieldTTF::getPlaceHolder() const
 
 void TextFieldTTF::setCursorEnabled(bool enabled)
 {
-    if (_cursorEnabled == enabled)
+    if (_currentLabelType == LabelType::TTF)
     {
-        return;
-    }
-    
-    _cursorEnabled = enabled;
-    if (_cursorEnabled)
-    {
-        _cursorPosition = _charCount;
-        if (_currentLabelType == LabelType::TTF || _currentLabelType == LabelType::BMFONT) {
-            scheduleUpdate();
+        if (_cursorEnabled != enabled)
+        {
+            _cursorEnabled = enabled;
+            if (_cursorEnabled)
+            {
+                _cursorPosition = _charCount;
+                scheduleUpdate();
+            }
+            else
+            {
+                _cursorPosition = 0;
+                unscheduleUpdate();
+            }
         }
-        return;
     }
-    
-    _cursorPosition = 0;
-    if (_currentLabelType == LabelType::TTF || _currentLabelType == LabelType::BMFONT) {
-        unscheduleUpdate();
+    else
+    {
+        CCLOG("TextFieldTTF cursor worked only LabelType::TTF");
     }
 }
 

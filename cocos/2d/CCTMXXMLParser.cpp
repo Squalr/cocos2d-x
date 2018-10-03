@@ -41,11 +41,12 @@ using namespace std;
 NS_CC_BEGIN
 
 // implementation TMXLayerInfo
-TMXLayerInfo::TMXLayerInfo()
+TMXLayerInfo::TMXLayerInfo(int index)
 : _name("")
 , _tiles(nullptr)
 , _ownTiles(true)
 {
+    this->_layerIndex = index;
 }
 
 TMXLayerInfo::~TMXLayerInfo()
@@ -165,6 +166,7 @@ TMXMapInfo::TMXMapInfo()
 : _orientation(TMXOrientationOrtho)
 , _staggerAxis(TMXStaggerAxis_Y)
 , _staggerIndex(TMXStaggerIndex_Even)
+, _currentLayerIndex(0)
 , _hexSideLength(0)
 , _parentElement(0)
 , _parentGID(0)
@@ -373,7 +375,7 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
     }
     else if (elementName == "layer")
     {
-        TMXLayerInfo *layer = new (std::nothrow) TMXLayerInfo();
+        TMXLayerInfo *layer = new (std::nothrow) TMXLayerInfo(_currentLayerIndex++);
         layer->_name = attributeDict["name"].asString();
 
         Size s;
@@ -399,7 +401,7 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
     } 
     else if (elementName == "objectgroup")
     {
-        TMXObjectGroup *objectGroup = new (std::nothrow) TMXObjectGroup();
+        TMXObjectGroup *objectGroup = new (std::nothrow) TMXObjectGroup(_currentLayerIndex++);
         objectGroup->setGroupName(attributeDict["name"].asString());
         Vec2 positionOffset;
         positionOffset.x = attributeDict["x"].asFloat() * tmxMapInfo->getTileSize().width;
@@ -503,17 +505,17 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
 
         // But X and Y since they need special treatment
         // X
-        int x = attributeDict["x"].asInt();
+        float x = attributeDict["x"].asFloat();
         // Y
-        int y = attributeDict["y"].asInt();
+        float y = attributeDict["y"].asFloat();
         
-        Vec2 p(x + objectGroup->getPositionOffset().x, _mapSize.height * _tileSize.height - y  - objectGroup->getPositionOffset().y - attributeDict["height"].asInt());
+        Vec2 p(x + objectGroup->getPositionOffset().x, _mapSize.height * _tileSize.height - y  - objectGroup->getPositionOffset().y - attributeDict["height"].asFloat());
         p = CC_POINT_PIXELS_TO_POINTS(p);
         dict["x"] = Value(p.x);
         dict["y"] = Value(p.y);
         
-        int width = attributeDict["width"].asInt();
-        int height = attributeDict["height"].asInt();
+        float width = attributeDict["width"].asFloat();
+        float height = attributeDict["height"].asFloat();
         Size s(width, height);
         s = CC_SIZE_PIXELS_TO_POINTS(s);
         dict["width"] = Value(s.width);
@@ -529,6 +531,26 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
     } 
     else if (elementName == "property")
     {
+        if (tmxMapInfo->getParentElement() == TMXPropertyMap ||
+            tmxMapInfo->getParentElement() == TMXPropertyLayer || 
+            tmxMapInfo->getParentElement() == TMXPropertyObjectGroup || 
+            tmxMapInfo->getParentElement() == TMXPropertyObject ||
+            tmxMapInfo->getParentElement() == TMXPropertyTile)
+        {
+            if (attributeDict["type"].asString() == "float")
+            {
+                attributeDict["value"] = attributeDict["value"].asFloat();
+            }
+            else if (attributeDict["type"].asString() == "int")
+            {
+                attributeDict["value"] = attributeDict["value"].asInt();
+            }
+            else if (attributeDict["type"].asString() == "bool")
+            {
+                attributeDict["value"] = attributeDict["value"].asBool();
+            }
+        }
+
         if ( tmxMapInfo->getParentElement() == TMXPropertyNone ) 
         {
             CCLOG( "TMX tile map: Parent element is unsupported. Cannot add property named '%s' with value '%s'",
@@ -602,14 +624,14 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
                 // set x
                 if (std::getline(pointStream, xStr, ','))
                 {
-                    int x = atoi(xStr.c_str()) + (int)objectGroup->getPositionOffset().x;
+                    float x = atof(xStr.c_str()) + objectGroup->getPositionOffset().x;
                     pointDict["x"] = Value(x);
                 }
 
                 // set y
                 if (std::getline(pointStream, yStr, ','))
                 {
-                    int y = atoi(yStr.c_str()) + (int)objectGroup->getPositionOffset().y;
+                    float y = atof(yStr.c_str()) + objectGroup->getPositionOffset().y;
                     pointDict["y"] = Value(y);
                 }
                 

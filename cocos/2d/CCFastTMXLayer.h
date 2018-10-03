@@ -44,7 +44,7 @@ class Texture2D;
 class Sprite;
 struct _ccCArray;
 
-namespace experimental{
+namespace cocos_experimental {
 
 /**
  * @addtogroup _2d
@@ -271,6 +271,8 @@ public:
     virtual void draw(Renderer *renderer, const Mat4& transform, uint32_t flags) override;
     void removeChild(Node* child, bool cleanup = true) override;
 
+    int layerIndex;
+
 protected:
 
     bool initWithTilesetInfo(TMXTilesetInfo *tilesetInfo, TMXLayerInfo *layerInfo, TMXMapInfo *mapInfo);
@@ -362,7 +364,7 @@ public:
 
 // end of tilemap_parallax_nodes group
 /// @}
-} //end of namespace experimental
+} //end of namespace cocos_experimental
 NS_CC_END
 
 #endif //__CCTMX_LAYER2_H__

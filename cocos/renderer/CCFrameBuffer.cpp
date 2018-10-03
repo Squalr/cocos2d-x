@@ -32,7 +32,7 @@
 #include "base/CCEventType.h"
 
 NS_CC_BEGIN
-namespace experimental{
+namespace cocos_experimental {
 FrameBuffer* FrameBuffer::_defaultFBO = nullptr;
 std::set<FrameBuffer*> FrameBuffer::_frameBuffers;
 
@@ -496,5 +496,5 @@ void FrameBuffer::attachDepthStencilTarget(RenderTargetDepthStencil* rt)
     _rtDepthStencil = rt;
     _fboBindingDirty = true;
 }
-} //end of namespace experimental
+} //end of namespace cocos_experimental
 NS_CC_END

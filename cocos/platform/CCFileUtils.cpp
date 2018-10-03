@@ -535,6 +535,26 @@ bool FileUtils::writeToFile(const ValueMap& /*dict*/, const std::string &/*fullP
 
 #endif /* (CC_TARGET_PLATFORM != CC_PLATFORM_IOS) && (CC_TARGET_PLATFORM != CC_PLATFORM_MAC) */
 
+bool FileUtils::serializeValueMapToFile(const ValueMap& dict, const std::string& fullPath)
+{
+    std::ofstream outputStream(fullPath, std::ios::binary);
+    cereal::BinaryOutputArchive archive(outputStream);
+
+    archive(dict);
+
+    return true;
+}
+
+ValueMap FileUtils::deserializeValueMapFromFile(const std::string& fullPath)
+{
+    std::ifstream inputStream(fullPath, std::ios::binary);
+    cereal::BinaryInputArchive iarchive(inputStream);
+    ValueMap valueMap;
+    iarchive(valueMap);
+
+    return valueMap;
+}
+
 // Implement FileUtils
 FileUtils* FileUtils::s_sharedFileUtils = nullptr;
 
@@ -1162,19 +1182,15 @@ void FileUtils::getFileSize(const std::string &filepath, std::function<void(long
 
 void FileUtils::listFilesAsync(const std::string& dirPath, std::function<void(std::vector<std::string>)> callback) const
 {
-    auto fullPath = fullPathForFilename(dirPath);
-    performOperationOffthread([fullPath]() {
-        return FileUtils::getInstance()->listFiles(fullPath);
+    performOperationOffthread([dirPath]() {
+        return FileUtils::getInstance()->listFiles(dirPath);
     }, std::move(callback));
 }
 
 void FileUtils::listFilesRecursivelyAsync(const std::string& dirPath, std::function<void(std::vector<std::string>)> callback) const
 {
-    auto fullPath = fullPathForFilename(dirPath);
-    performOperationOffthread([fullPath]() {
-        std::vector<std::string> retval;
-        FileUtils::getInstance()->listFilesRecursively(fullPath, &retval);
-        return retval;
+    performOperationOffthread([dirPath]() {
+        return FileUtils::getInstance()->listFilesRecursively(dirPath);
     }, std::move(callback));
 }
 
@@ -1234,10 +1250,25 @@ std::vector<std::string> FileUtils::listFiles(const std::string& dirPath) const
     return std::vector<std::string>();
 }
 
-void FileUtils::listFilesRecursively(const std::string& dirPath, std::vector<std::string> *files) const
+std::vector<std::string> FileUtils::listFilesRecursively(const std::string& dirPath) const
 {
-    CCASSERT(false, "FileUtils not support listFilesRecursively");
-    return;
+    std::vector<std::string> retval;
+    for (std::tr2::sys::directory_iterator it(dirPath), end; it != end; ++it)
+        {
+        if (!std::tr2::sys::is_directory(it->path()))
+             {
+            retval.push_back(it->path().generic_string());
+            }
+        else {
+            auto nested = this->listFilesRecursively(it->path().generic_string());
+            for (auto it = nested.begin(); it != nested.end(); it++)
+            {
+                retval.push_back(*it);
+            }
+        }
+    }
+
+    return retval;
 }
 
 #else
@@ -1469,8 +1500,9 @@ std::vector<std::string> FileUtils::listFiles(const std::string& dirPath) const
     return files;
 }
 
-void FileUtils::listFilesRecursively(const std::string& dirPath, std::vector<std::string> *files) const
+std::vector<std::string> FileUtils::listFilesRecursively(const std::string& dirPath) const
 {
+    std::vector<std::string> files;
     std::string fullpath = fullPathForFilename(dirPath);
     if (isDirectoryExist(fullpath))
     {
@@ -1495,12 +1527,12 @@ void FileUtils::listFilesRecursively(const std::string& dirPath, std::vector<std
                     if (file.is_dir)
                     {
                         filepath.append("/");
-                        files->push_back(filepath);
-                        listFilesRecursively(filepath, files);
+                        files.push_back(filepath);
+                        listFilesRecursively(filepath);
                     }
                     else
                     {
-                        files->push_back(filepath);
+                        files.push_back(filepath);
                     }
                 }
 
@@ -1513,6 +1545,8 @@ void FileUtils::listFilesRecursively(const std::string& dirPath, std::vector<std
         }
         tinydir_close(&dir);
     }
+
+    return files;
 }
 
 #endif

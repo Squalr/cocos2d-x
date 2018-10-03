@@ -1498,6 +1498,7 @@ public:
 
     CC_DEPRECATED_ATTRIBUTE void unscheduleAllSelectors() { unscheduleAllCallbacks(); }
 
+	virtual bool isPaused(void);
     /**
      * Resumes all scheduled selectors, actions and event listeners.
      * This method is called internally by onEnter.
@@ -1983,6 +1984,8 @@ protected:
     EventDispatcher* _eventDispatcher;  ///< event dispatcher used to dispatch all kinds of events
 
     bool _running;                  ///< is running
+
+	bool _paused;                  ///< is paused
 
     bool _visible;                  ///< is this node visible
 
