@@ -10,3 +10,7 @@
 [submodule "web"]
         path = web
         url = git://github.com/cocos2d/cocos2d-html5.git
+[submodule "external"]
+	path = external
+	url = git@github.com:zcanann/squally-external.git
+	branch = for-3.17
