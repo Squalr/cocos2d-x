@@ -106,6 +106,11 @@
          string(REGEX REPLACE "/Z[iI7]" "" CMAKE_${lang}_FLAGS_DEBUG "${CMAKE_${lang}_FLAGS_DEBUG}")
          set(CMAKE_${lang}_FLAGS_DEBUG "${CMAKE_${lang}_FLAGS_DEBUG} /Z7")
      endforeach()
+	 
+     foreach(lang C CXX)
+         string(REGEX REPLACE "/Z[iI7]" "" CMAKE_${lang}_FLAGS_RELWITHDEBINFO "${CMAKE_${lang}_FLAGS_RELWITHDEBINFO}")
+         set(CMAKE_${lang}_FLAGS_RELWITHDEBINFO "${CMAKE_${lang}_FLAGS_RELWITHDEBINFO} /Z7")
+     endforeach()
 
  else()
      if(CMAKE_BUILD_TYPE STREQUAL "Debug")
