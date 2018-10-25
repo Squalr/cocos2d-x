@@ -537,22 +537,41 @@ bool FileUtils::writeToFile(const ValueMap& /*dict*/, const std::string &/*fullP
 
 bool FileUtils::serializeValueMapToFile(const ValueMap& dict, const std::string& fullPath)
 {
-    std::ofstream outputStream(fullPath, std::ios::binary);
-    cereal::BinaryOutputArchive archive(outputStream);
+	std::ofstream outputStream(fullPath, std::ios::binary);
+	cereal::BinaryOutputArchive archive(outputStream);
 
-    archive(dict);
+	archive(dict);
 
-    return true;
+	return true;
+}
+
+bool FileUtils::serializeValueMapToStream(const ValueMap& dict, std::ostream& outputStream)
+{
+	cereal::BinaryOutputArchive archive(outputStream);
+
+	archive(dict);
+
+	return true;
 }
 
 ValueMap FileUtils::deserializeValueMapFromFile(const std::string& fullPath)
 {
-    std::ifstream inputStream(fullPath, std::ios::binary);
-    cereal::BinaryInputArchive iarchive(inputStream);
-    ValueMap valueMap;
-    iarchive(valueMap);
+	std::ifstream inputStream(fullPath, std::ios::binary);
+	cereal::BinaryInputArchive iarchive(inputStream);
+	ValueMap valueMap;
+	iarchive(valueMap);
 
-    return valueMap;
+	return valueMap;
+}
+
+ValueMap FileUtils::deserializeValueMapFromData(const char* filedata, int filesize)
+{
+	std::istringstream inputStream(std::string(filedata, filesize));
+	cereal::BinaryInputArchive iarchive(inputStream);
+	ValueMap valueMap;
+	iarchive(valueMap);
+
+	return valueMap;
 }
 
 // Implement FileUtils

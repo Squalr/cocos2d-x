@@ -517,13 +517,19 @@ public:
      */
     virtual ValueMap getValueMapFromFile(const std::string& filename);
 
-    /**
-    *  Converts the contents of a file to a ValueMap.
-    *  @param filename The filename of the file to gets content.
-    *  @return ValueMap of the file contents.
-    *  @note This method is used internally.
-    */
-    ValueMap deserializeValueMapFromFile(const std::string& fullPath);
+	/**
+	*  Converts the contents of a file to a ValueMap.
+	*  @param filename The filename of the file to gets content.
+	*  @return ValueMap of the file contents.
+	*/
+	ValueMap deserializeValueMapFromFile(const std::string& fullPath);
+
+	/**
+	*  Converts the contents of a data array to a ValueMap.
+	*  @param filename The filename of the file to gets content.
+	*  @return ValueMap of the file contents.
+	*/
+	ValueMap deserializeValueMapFromData(const char* filedata, int filesize);
 
 
     /** Converts the contents of a file to a ValueMap.
@@ -600,14 +606,23 @@ public:
     */
     virtual bool writeValueMapToFile(const ValueMap& dict, const std::string& fullPath);
 
-    /**
-    * write ValueMap into a binary file
-    *
-    *@param dict the ValueMap want to save
-    *@param fullPath The full path to the file you want to save a string
-    *@return bool
-    */
-    bool serializeValueMapToFile(const ValueMap& dict, const std::string& fullPath);
+	/**
+	* write ValueMap into a binary file
+	*
+	*@param dict the ValueMap want to save
+	*@param fullPath The full path to the file you want to save a string
+	*@return bool
+	*/
+	bool serializeValueMapToFile(const ValueMap& dict, const std::string& fullPath);
+
+	/**
+	* write ValueMap into a binary stream
+	*
+	*@param dict the ValueMap want to save
+	*@param stream The output stream
+	*@return bool
+	*/
+	bool serializeValueMapToStream(const ValueMap& dict, std::ostream& stream);
 
     /**
     * Write a ValueMap into a file, done async off the main cocos thread.
