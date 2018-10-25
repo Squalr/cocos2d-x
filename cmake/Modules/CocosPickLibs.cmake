@@ -159,6 +159,7 @@ set(all_prebuilt_libs
     luajit
     spidermonkey
 	spriterengine
+	steam
 	asmjit
 	cereal
 	udis86

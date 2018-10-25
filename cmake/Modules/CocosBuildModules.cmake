@@ -203,7 +203,7 @@
      cocos_find_package(xxhash xxhash REQUIRED)
  endif()
 
- # SpriterPlusPlus
+ # SpriterPlusPlus 
  if(USE_EXTERNAL_PREBUILT)
      set(spriter_plus_plus_prefix SPRITER_PLUS_PLUS)
      set(SPRITER_PLUS_PLUS_INCLUDE_DIRS ${COCOS2DX_ROOT_PATH}/external/SpriterPlusPlus)
@@ -266,6 +266,22 @@ if(USE_EXTERNAL_PREBUILT)
     message(STATUS "cereal include dirs: ${CEREAL_INCLUDE_DIRS}")
 else()
     cocos_find_package(cereal cereal REQUIRED)
+endif()
+
+ # Steam
+if(USE_EXTERNAL_PREBUILT)
+    set(steam_prefix STEAM)
+    set(STEAM_INCLUDE_DIRS ${COCOS2DX_ROOT_PATH}/external/steam)
+    include_directories(${STEAM_INCLUDE_DIRS})
+    if(USE_COCOS_PREBUILT)
+        cocos_find_prebuilt_lib_by_name(steam STEAM_LIBRARIES)
+    else()
+        add_subdirectory(${COCOS2DX_ROOT_PATH}/external/steam ${ENGINE_BINARY_PATH}/external/steam)
+        set(STEAM_LIBRARIES steam)
+    endif()
+    message(STATUS "steam include dirs: ${STEAM_INCLUDE_DIRS}")
+else()
+    cocos_find_package(steam steam REQUIRED)
 endif()
 
  # Udis86
