@@ -954,7 +954,7 @@ void Node::addChild(Node* child, int localZOrder, const std::string &name)
     addChildHelper(child, localZOrder, INVALID_TAG, name, false);
 }
 
-void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag)
+void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag, bool callOnEnter)
 {
     auto assertNotSelfChild
         ( [ this, child ]() -> bool
@@ -987,7 +987,7 @@ void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::stri
 
     child->updateOrderOfArrival();
 
-    if( _running )
+    if( _running && callOnEnter)
     {
         child->onEnter();
         // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
@@ -1008,6 +1008,78 @@ void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::stri
     }
 }
 
+void Node::addChildInsert(Node *child, int index, bool callOnEnter)
+{
+	auto assertNotSelfChild
+	([this, child]() -> bool
+	{
+		for (Node* parent(getParent()); parent != nullptr;
+			parent = parent->getParent())
+			if (parent == child)
+				return false;
+
+		return true;
+	});
+	(void)assertNotSelfChild;
+
+	CCASSERT(assertNotSelfChild(),
+		"A node cannot be the child of his own children");
+
+	if (_children.empty())
+	{
+		this->childrenAlloc();
+	}
+
+#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
+	auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
+	if (sEngine)
+	{
+		sEngine->retainScriptObject(this, child);
+	}
+#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
+	_transformUpdated = true;
+	_reorderChildDirty = true;
+	_children.insert(index, child);
+	child->_setLocalZOrder(0);
+
+	child->setName("");
+
+	child->setParent(this);
+
+	for (auto it = this->_children.begin(); it != this->_children.end(); it++)
+	{
+		(*it)->updateOrderOfArrival();
+	}
+
+	if (_running && callOnEnter)
+	{
+		child->onEnter();
+		// prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
+		if (_isTransitionFinished)
+		{
+			child->onEnterTransitionDidFinish();
+		}
+	}
+
+	if (_cascadeColorEnabled)
+	{
+		updateCascadeColor();
+	}
+
+	if (_cascadeOpacityEnabled)
+	{
+		updateCascadeOpacity();
+	}
+}
+
+void Node::addChild(Node *child, bool callOnEnter)
+{
+	CCASSERT(child != nullptr, "Argument must be non-nil");
+	CCASSERT(child->_parent == nullptr, "child already added. It can't be added again");
+
+	addChildHelper(child, child->getLocalZOrder(), INVALID_TAG, child->_name, false, callOnEnter);
+}
+
 void Node::addChild(Node *child, int zOrder)
 {
     CCASSERT( child != nullptr, "Argument must be non-nil");
@@ -1016,8 +1088,8 @@ void Node::addChild(Node *child, int zOrder)
 
 void Node::addChild(Node *child)
 {
-    CCASSERT( child != nullptr, "Argument must be non-nil");
-    this->addChild(child, child->getLocalZOrder(), child->_name);
+	CCASSERT(child != nullptr, "Argument must be non-nil");
+	this->addChild(child, child->getLocalZOrder(), child->_name);
 }
 
 void Node::removeFromParent()
