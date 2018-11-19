@@ -736,21 +736,13 @@ public:
 	 */
 	virtual void addChild(Node * child);
 	/**
-	 * Adds a child to the container with z-order as 0.
-	 *
-	 * If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
-	 *
-	 * @param child A child node.
-	 */
-	virtual void addChild(Node * child, bool callOnEnter);
-	/**
 	 * Adds a child to the container with z-order as the index. Sorts all nodes.
 	 *
 	 * If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
 	 *
 	 * @param child A child node.
 	 */
-	virtual void addChildInsert(Node * child, int index, bool callOnEnter);
+	virtual void addChildInsert(Node * child, int index);
     /**
      * Adds a child to the container with a local z-order.
      *

@@ -1008,7 +1008,7 @@ void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::stri
     }
 }
 
-void Node::addChildInsert(Node *child, int index, bool callOnEnter)
+void Node::addChildInsert(Node *child, int index)
 {
 	auto assertNotSelfChild
 	([this, child]() -> bool
@@ -1039,7 +1039,7 @@ void Node::addChildInsert(Node *child, int index, bool callOnEnter)
 #endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
 	_transformUpdated = true;
 	_reorderChildDirty = true;
-	_children.insert(index, child);
+	_children.insert(std::min(index, (int)_children.size()), child);
 	child->_setLocalZOrder(0);
 
 	child->setName("");
@@ -1051,7 +1051,7 @@ void Node::addChildInsert(Node *child, int index, bool callOnEnter)
 		(*it)->updateOrderOfArrival();
 	}
 
-	if (_running && callOnEnter)
+	if (_running)
 	{
 		child->onEnter();
 		// prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
@@ -1070,14 +1070,6 @@ void Node::addChildInsert(Node *child, int index, bool callOnEnter)
 	{
 		updateCascadeOpacity();
 	}
-}
-
-void Node::addChild(Node *child, bool callOnEnter)
-{
-	CCASSERT(child != nullptr, "Argument must be non-nil");
-	CCASSERT(child->_parent == nullptr, "child already added. It can't be added again");
-
-	addChildHelper(child, child->getLocalZOrder(), INVALID_TAG, child->_name, false, callOnEnter);
 }
 
 void Node::addChild(Node *child, int zOrder)

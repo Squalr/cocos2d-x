@@ -26,7 +26,7 @@ Changes to engine:
 
 - In CCNode.cpp, removed call to pause() in onExit(). This caused crashes when the game was closing.
 
-- Added methods to CCNode for inserting a child addChildInsert() and an overload of addChild() that makes calling onEnter() optional
+- Added method addChildInsert() to CCNode for inserting a child -- the existing method insertChild() does not do what it claims very well, as all nodes tend to have the same zIndex of 0. The existing insertChild() method sets the z-index, causing the Node to always appear on top.
 
 - Made scrollChildren public in UIScrollView.h. This function allows scrolling by specific amounts (ie mousewheel).
 
