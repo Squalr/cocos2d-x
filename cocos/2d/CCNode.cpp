@@ -939,11 +939,11 @@ bool Node::doEnumerate(std::string name, std::function<bool (Node *)> callback) 
 * to override this method
 */
 void Node::addChild(Node *child, int localZOrder, int tag)
-{    
-    CCASSERT( child != nullptr, "Argument must be non-nil");
-    CCASSERT( child->_parent == nullptr, "child already added. It can't be added again");
+{
+	CCASSERT(child != nullptr, "Argument must be non-nil");
+	CCASSERT(child->_parent == nullptr, "child already added. It can't be added again");
 
-    addChildHelper(child, localZOrder, tag, "", true);
+	addChildHelper(child, localZOrder, tag, "", true);
 }
 
 void Node::addChild(Node* child, int localZOrder, const std::string &name)
@@ -954,7 +954,7 @@ void Node::addChild(Node* child, int localZOrder, const std::string &name)
     addChildHelper(child, localZOrder, INVALID_TAG, name, false);
 }
 
-void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag, bool callOnEnter)
+void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag, bool isReentry)
 {
     auto assertNotSelfChild
         ( [ this, child ]() -> bool
@@ -987,14 +987,21 @@ void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::stri
 
     child->updateOrderOfArrival();
 
-    if( _running && callOnEnter)
+    if( _running)
     {
-        child->onEnter();
-        // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
-        if (_isTransitionFinished)
-        {
-            child->onEnterTransitionDidFinish();
-        }
+		if (!isReentry)
+		{
+			child->onEnter();
+			// prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
+			if (_isTransitionFinished)
+			{
+				child->onEnterTransitionDidFinish();
+			}
+		}
+		else
+		{
+			child->onReenter();
+		}
     }
     
     if (_cascadeColorEnabled)
@@ -1008,7 +1015,7 @@ void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::stri
     }
 }
 
-void Node::addChildInsert(Node *child, int index)
+void Node::addChildInsert(Node *child, int index, bool isReentry)
 {
 	auto assertNotSelfChild
 	([this, child]() -> bool
@@ -1053,11 +1060,18 @@ void Node::addChildInsert(Node *child, int index)
 
 	if (_running)
 	{
-		child->onEnter();
-		// prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
-		if (_isTransitionFinished)
+		if (!isReentry)
 		{
-			child->onEnterTransitionDidFinish();
+			child->onEnter();
+			// prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
+			if (_isTransitionFinished)
+			{
+				child->onEnterTransitionDidFinish();
+			}
+		}
+		else
+		{
+			child->onReenter();
 		}
 	}
 
@@ -1082,6 +1096,14 @@ void Node::addChild(Node *child)
 {
 	CCASSERT(child != nullptr, "Argument must be non-nil");
 	this->addChild(child, child->getLocalZOrder(), child->_name);
+}
+
+void Node::addChildAsReentry(Node *child)
+{
+	CCASSERT(child != nullptr, "Argument must be non-nil");
+	CCASSERT(child->_parent == nullptr, "child already added. It can't be added again");
+
+	addChildHelper(child, child->getLocalZOrder(), INVALID_TAG, child->_name, false, true);
 }
 
 void Node::removeFromParent()
@@ -1371,40 +1393,80 @@ Mat4 Node::transform(const Mat4& parentTransform)
 
 void Node::onEnter()
 {
-    if (!_running)
-    {
-        ++__attachedNodeCount;
-    }
+	if (!_running)
+	{
+		++__attachedNodeCount;
+	}
 #if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJS(this, kNodeOnEnter))
-            return;
-    }
+	if (_scriptType == kScriptTypeJavascript)
+	{
+		if (ScriptEngineManager::sendNodeEventToJS(this, kNodeOnEnter))
+			return;
+	}
 #endif
-    
-    if (_onEnterCallback)
-        _onEnterCallback();
 
-    if (_componentContainer && !_componentContainer->isEmpty())
-    {
-        _componentContainer->onEnter();
-    }
-    
-    _isTransitionFinished = false;
-    
-    for( const auto &child: _children)
-        child->onEnter();
-    
-    this->resume();
-    
-    _running = true;
-    
+	if (_onEnterCallback)
+		_onEnterCallback();
+
+	if (_componentContainer && !_componentContainer->isEmpty())
+	{
+		_componentContainer->onEnter();
+	}
+
+	_isTransitionFinished = false;
+
+	for (const auto &child : _children)
+		child->onEnter();
+
+	this->resume();
+
+	_running = true;
+
 #if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeLua)
-    {
-        ScriptEngineManager::sendNodeEventToLua(this, kNodeOnEnter);
-    }
+	if (_scriptType == kScriptTypeLua)
+	{
+		ScriptEngineManager::sendNodeEventToLua(this, kNodeOnEnter);
+	}
+#endif
+}
+
+void Node::onReenter()
+{
+	if (!_running)
+	{
+		++__attachedNodeCount;
+	}
+#if CC_ENABLE_SCRIPT_BINDING
+	if (_scriptType == kScriptTypeJavascript)
+	{
+		if (ScriptEngineManager::sendNodeEventToJS(this, kNodeOnReenter))
+			return;
+	}
+#endif
+
+	// if (_onEnterCallback)
+	// 	_onEnterCallback();
+
+	if (_componentContainer && !_componentContainer->isEmpty())
+	{
+		// _componentContainer->onEnter();
+	}
+
+	// _isTransitionFinished = false;
+	_isTransitionFinished = true;
+
+	for (const auto &child : _children)
+		child->onReenter();
+
+	this->resume();
+
+	_running = true;
+
+#if CC_ENABLE_SCRIPT_BINDING
+	if (_scriptType == kScriptTypeLua)
+	{
+		ScriptEngineManager::sendNodeEventToLua(this, kNodeOnReenter);
+	}
 #endif
 }
 

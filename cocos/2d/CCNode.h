@@ -70,7 +70,8 @@ class PhysicsBody;
  */
 
 enum {
-    kNodeOnEnter,
+	kNodeOnEnter,
+	kNodeOnReenter,
     kNodeOnExit,
     kNodeOnEnterTransitionDidFinish,
     kNodeOnExitTransitionDidStart,
@@ -726,7 +727,7 @@ public:
 
     /// @{
     /// @name Children and Parent
-	
+
 	/**
 	 * Adds a child to the container with z-order as 0.
 	 *
@@ -736,13 +737,21 @@ public:
 	 */
 	virtual void addChild(Node * child);
 	/**
+	 * Adds a child to the container with z-order as 0.
+	 *
+	 * If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
+	 *
+	 * @param child A child node.
+	 */
+	virtual void addChildAsReentry(Node * child);
+	/**
 	 * Adds a child to the container with z-order as the index. Sorts all nodes.
 	 *
 	 * If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
 	 *
 	 * @param child A child node.
 	 */
-	virtual void addChildInsert(Node * child, int index);
+	virtual void addChildInsert(Node * child, int index, bool isReentry = false);
     /**
      * Adds a child to the container with a local z-order.
      *
@@ -1121,14 +1130,23 @@ public:
     /// @{
     /// @name Event Callbacks
 
-    /**
-     * Event callback that is invoked every time when Node enters the 'stage'.
-     * If the Node enters the 'stage' with a transition, this event is called when the transition starts.
-     * During onEnter you can't access a "sister/brother" node.
-     * If you override onEnter, you shall call its parent's one, e.g., Node::onEnter().
-     * @lua NA
-     */
-    virtual void onEnter();
+	/**
+	 * Event callback that is invoked every time when Node enters the 'stage'.
+	 * If the Node enters the 'stage' with a transition, this event is called when the transition starts.
+	 * During onEnter you can't access a "sister/brother" node.
+	 * If you override onEnter, you shall call its parent's one, e.g., Node::onEnter().
+	 * @lua NA
+	 */
+	virtual void onEnter();
+
+	/**
+	 * Event callback that is invoked every time when Node enters the 'stage'.
+	 * If the Node enters the 'stage' with a transition, this event is called when the transition starts.
+	 * During onEnter you can't access a "sister/brother" node.
+	 * If you override onEnter, you shall call its parent's one, e.g., Node::onEnter().
+	 * @lua NA
+	 */
+	virtual void onReenter();
 
     /** Event callback that is invoked when the Node enters in the 'stage'.
      * If the Node enters the 'stage' with a transition, this event is called when the transition finishes.
@@ -1907,7 +1925,7 @@ protected:
     void updateRotation3D();
     
 private:
-    void addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag, bool callOnEnter = true);
+    void addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag, bool isReentry = false);
     
 protected:
 
