@@ -95,21 +95,25 @@ public:
      */
     virtual EventListener* clone() = 0;
 
-    /** Enables or disables the listener.
-     * @note Only listeners with `enabled` state will be able to receive events.
-     *        When an listener was initialized, it's enabled by default.
-     *        An event listener can receive events when it is enabled and is not paused.
-     *        paused state is always false when it is a fixed priority listener.
-     *
-     * @param enabled True if enables the listener.
-     */
-    void setEnabled(bool enabled) { _isEnabled = enabled; }
+	/** Enables or disables the listener.
+	 * @note Only listeners with `enabled` state will be able to receive events.
+	 *        When an listener was initialized, it's enabled by default.
+	 *        An event listener can receive events when it is enabled and is not paused.
+	 *        paused state is always false when it is a fixed priority listener.
+	 *
+	 * @param enabled True if enables the listener.
+	 */
+	void setEnabled(bool enabled) { _isEnabled = enabled; }
 
-    /** Checks whether the listener is enabled.
-     *
-     * @return True if the listener is enabled.
-     */
-    bool isEnabled() const { return _isEnabled; }
+	void setIgnorePause(bool ignorePause) { _ignorePause = ignorePause; }
+
+	bool isIgnorePause() const { return _ignorePause; }
+
+	/** Checks whether the listener is enabled.
+	 *
+	 * @return True if the listener is enabled.
+	 */
+	bool isEnabled() const { return _isEnabled; }
 
 protected:
 
@@ -174,6 +178,7 @@ protected:
     Node* _node;            // scene graph based priority
     bool _paused;           // Whether the listener is paused
     bool _isEnabled;        // Whether the listener is enabled
+	bool _ignorePause;
     friend class EventDispatcher;
 };
 
