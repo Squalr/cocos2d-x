@@ -44,6 +44,7 @@ bool EventListener::init(Type t, const ListenerID& listenerID, const std::functi
     _isRegistered = false;
 	_paused = false;
 	_ignorePause = false;
+	_isGlobal = false;
     _isEnabled = true;
     
     return true;

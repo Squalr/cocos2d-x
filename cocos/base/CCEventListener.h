@@ -109,6 +109,10 @@ public:
 
 	bool isIgnorePause() const { return _ignorePause; }
 
+	void setIsGlobal(bool isGlobal) { _isGlobal = isGlobal; }
+
+	bool isGlobal() const { return _isGlobal; }
+
 	/** Checks whether the listener is enabled.
 	 *
 	 * @return True if the listener is enabled.
@@ -179,6 +183,7 @@ protected:
     bool _paused;           // Whether the listener is paused
     bool _isEnabled;        // Whether the listener is enabled
 	bool _ignorePause;
+	bool _isGlobal;
     friend class EventDispatcher;
 };
 
