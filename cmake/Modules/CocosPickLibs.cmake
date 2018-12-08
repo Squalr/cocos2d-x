@@ -163,7 +163,6 @@ set(all_prebuilt_libs
 	asmjit
 	cereal
 	udis86
-	rapidjson
     )
 
 
