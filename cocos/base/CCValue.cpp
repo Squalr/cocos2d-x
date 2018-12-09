@@ -29,6 +29,15 @@
 #include <iomanip>
 #include "base/ccUtils.h"
 
+#include "cereal/cereal.hpp"
+#include "cereal/access.hpp"
+#include "cereal/types/common.hpp"
+#include "cereal/types/string.hpp"
+#include "cereal/types/map.hpp"
+#include "cereal/types/vector.hpp"
+#include "cereal/types/memory.hpp"
+#include "cereal/archives/binary.hpp"
+
 NS_CC_BEGIN
 
 const ValueVector ValueVectorNull;

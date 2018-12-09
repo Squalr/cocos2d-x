@@ -34,6 +34,16 @@ THE SOFTWARE.
 #include "platform/CCSAXParser.h"
 //#include "base/ccUtils.h"
 
+#include "cereal/cereal.hpp"
+#include "cereal/access.hpp"
+#include "cereal/types/common.hpp"
+#include "cereal/types/string.hpp"
+#include "cereal/types/map.hpp"
+#include "cereal/types/vector.hpp"
+#include "cereal/types/memory.hpp"
+#include "cereal/archives/binary.hpp"
+#include "cereal/archives/json.hpp"
+
 #include "tinyxml2/tinyxml2.h"
 #ifdef MINIZIP_FROM_SYSTEM
 #include <minizip/unzip.h>

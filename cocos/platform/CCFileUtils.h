@@ -36,10 +36,6 @@ THE SOFTWARE.
     #include <filesystem>
 #endif
 
-#include "cereal/cereal.hpp"
-#include "cereal/access.hpp"
-#include "cereal/archives/binary.hpp"
-#include "cereal/archives/json.hpp"
 #include "platform/CCPlatformMacros.h"
 #include "base/ccTypes.h"
 #include "base/CCValue.h"

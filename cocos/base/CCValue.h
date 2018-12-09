@@ -26,14 +26,6 @@
 #ifndef __cocos2d_libs__CCValue__
 #define __cocos2d_libs__CCValue__
 
-#include "cereal/cereal.hpp"
-#include "cereal/access.hpp"
-#include "cereal/types/common.hpp"
-#include "cereal/types/string.hpp"
-#include "cereal/types/map.hpp"
-#include "cereal/types/vector.hpp"
-#include "cereal/types/memory.hpp"
-#include "cereal/archives/binary.hpp"
 #include "platform/CCPlatformMacros.h"
 #include "base/ccMacros.h"
 #include <string>
