@@ -964,8 +964,13 @@ void PhysicsBody::addToPhysicsWorld()
     if (_owner)
     {
         auto scene = _owner->getScene();
-        if (scene)
-            scene->getPhysicsWorld()->addBody(this);
+		if (scene)
+		{
+			if (scene->getPhysicsWorld() != nullptr)
+			{
+				scene->getPhysicsWorld()->addBody(this);
+			}
+		}
     }
 }
 
@@ -974,8 +979,13 @@ void PhysicsBody::removeFromPhysicsWorld()
     if (_owner)
     {
         auto scene = _owner->getScene();
-        if (scene)
-            scene->getPhysicsWorld()->removeBody(this);
+		if (scene)
+		{
+			if (scene->getPhysicsWorld() != nullptr)
+			{
+				scene->getPhysicsWorld()->removeBody(this);
+			}
+		}
     }
 }
 
