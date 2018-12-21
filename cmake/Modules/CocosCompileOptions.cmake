@@ -195,7 +195,8 @@
                          FULL_DOCS "use to save depend dlls of a target"
                          )
      else()
-         message(FATAL_ERROR "please using Windows MSVC compile cocos2d-x project, support other compile tools not yet")
+     	 # Allow trying to Cross compile under other tools - Bucci
+         #message(FATAL_ERROR "please using Windows MSVC compile cocos2d-x project, support other compile tools not yet")
      endif()
  endif()
 
