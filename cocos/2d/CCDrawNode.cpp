@@ -545,6 +545,52 @@ void DrawNode::drawPoly(const Vec2 *poli, unsigned int numberOfPoints, bool clos
     _bufferCountGLLine += vertex_count;
 }
 
+void DrawNode::drawEllipse(const Vec2 &center, float rx, float ry, float angle, int segments, bool drawLineToCenter, const Color4F &color)
+{
+	int additionalSegment = 1;
+
+	if (drawLineToCenter)
+	{
+		additionalSegment++;
+	}
+
+	const float coef = 2.0f * (float)M_PI / segments;
+
+	Vec2 *vertices = new (std::nothrow) Vec2[segments + 2];
+
+	if (!vertices)
+	{
+		return;
+	}
+
+	float rads, distance, a, j, k;
+
+	for (int i = 0; i <= segments; ++i)
+	{
+		rads = i * coef;
+		distance = sqrt(pow(sinf(rads) * rx, 2) + pow(cosf(rads) * ry, 2));
+		a = atan2(sinf(rads) * rx, cosf(rads) * ry);
+		j = distance * sinf(a + angle) + center.x;
+		k = distance * cosf(a + angle) + center.y;
+
+		vertices[i].x = j * CC_CONTENT_SCALE_FACTOR();
+		vertices[i].y = k * CC_CONTENT_SCALE_FACTOR();
+	}
+
+	if (drawLineToCenter)
+	{
+		vertices[segments + 1].x = center.x;
+		vertices[segments + 1].y = center.y;
+		drawPoly(vertices, segments + 2, true, color);
+	}
+	else
+	{
+		drawPoly(vertices, segments + 1, true, color);
+	}
+
+	CC_SAFE_DELETE_ARRAY(vertices);
+}
+
 void DrawNode::drawCircle(const Vec2& center, float radius, float angle, unsigned int segments, bool drawLineToCenter, float scaleX, float scaleY, const Color4F &color)
 {
     const float coef = 2.0f * (float)M_PI/segments;

@@ -116,7 +116,9 @@ public:
      * @param color The polygon color.
      */
     void drawPoly(const Vec2 *poli, unsigned int numberOfPoints, bool closePolygon, const Color4F &color);
-    
+
+	void drawEllipse(const Vec2 &center, float rx, float ry, float angle, int segs, bool drawLineToCenter, const Color4F &color);
+
     /** Draws a circle given the center, radius and number of segments.
      *
      * @param center The circle center point.
