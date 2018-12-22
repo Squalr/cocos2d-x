@@ -132,6 +132,7 @@ macro(cocos2d_depend_libs)
         add_definitions(-DCC_ENABLE_BOX2D_INTEGRATION=0)
     endif(USE_BOX2D)
 
+    set(USE_BULLET 0)
     if(USE_BULLET)
         cocos_find_package(bullet BULLET REQUIRED)
         add_definitions(-DCC_USE_3D_PHYSICS=1)
@@ -147,10 +148,7 @@ macro(cocos2d_depend_libs)
     endif()
 	
 	list(APPEND PREBUILT_SPECIFIC_LIBS SPRITER_ENGINE)
-	list(APPEND PREBUILT_SPECIFIC_LIBS ASMJIT)
 	list(APPEND PREBUILT_SPECIFIC_LIBS CEREAL)
-	list(APPEND PREBUILT_SPECIFIC_LIBS STEAM)
-	list(APPEND PREBUILT_SPECIFIC_LIBS UDIS86)
 	list(APPEND PREBUILT_SPECIFIC_LIBS RAPIDJSON)
 endmacro()
 

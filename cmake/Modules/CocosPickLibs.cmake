@@ -154,15 +154,10 @@ set(all_prebuilt_libs
     webp
     websockets
     openssl
-    bullet
-    Box2D
     luajit
     spidermonkey
 	spriterengine
-	steam
-	asmjit
 	cereal
-	udis86
     )
 
 

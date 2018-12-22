@@ -38,8 +38,8 @@ set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
 include(CocosBuildSet)
 
 # default tests include lua, js test project, so we set those option on to build libs
-set(BUILD_LUA_LIBS ON)
-set(BUILD_JS_LIBS ON)
+set(BUILD_LUA_LIBS OFF)
+set(BUILD_JS_LIBS OFF)
 
 if(NOT USE_COCOS_PREBUILT)
     add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
