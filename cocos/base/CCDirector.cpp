@@ -389,13 +389,14 @@ void Director::calculateDeltaTime()
         _deltaTime = MAX(0, _deltaTime);
     }
 
-#if COCOS2D_DEBUG
+///#if COCOS2D_DEBUG
+	// Zac: Keeping this always enabled for now. We'll need to properly fix this in the future, but pausing for hackermode can cause a huge deltatime buildup
     // If we are debugging our code, prevent big delta time
-    if (_deltaTime > 0.2f)
+    if (_deltaTime > 5.0 / 60.0f) // 0.2f
     {
         _deltaTime = 1 / 60.0f;
     }
-#endif
+///#endif
 }
 
 float Director::getDeltaTime() const
