@@ -76,11 +76,13 @@ enum class LanguageType
     PORTUGUESE_BRAZIL,
     ROMANIAN,
     RUSSIAN,
-    SPANISH,
+	SPANISH,
+	SPANISH_LATIN_AMERICAN,
     SWEDISH,
     THAI,
     TURKISH,
-    UKRAINIAN,
+	UKRAINIAN,
+	VIETNAMESE,
 };
 
 // END of platform group
