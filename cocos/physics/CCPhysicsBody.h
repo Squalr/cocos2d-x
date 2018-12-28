@@ -365,6 +365,9 @@ public:
 
     /** get body position offset. */
     const Vec2& getPositionOffset() const { return _positionOffset; }
+
+	/** Setting the position of a physics body mid-collision events can cause some issues, this is a workaround */
+	void setPositionInterruptPhysics(const Vec2& position);
     
     /** set body rotation offset, it's the rotation witch relative to node */
     void setRotationOffset(float rotation);

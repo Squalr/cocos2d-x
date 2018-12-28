@@ -392,6 +392,14 @@ void PhysicsBody::setPositionOffset(const Vec2& position)
     }
 }
 
+void PhysicsBody::setPositionInterruptPhysics(const Vec2& position)
+{
+	setPosition(position.x, position.y);
+
+	_recordPosX = position.x;
+	_recordPosY = position.y;
+}
+
 float PhysicsBody::getRotation()
 {
     if (_recordedAngle != cpBodyGetAngle(_cpBody)) {
