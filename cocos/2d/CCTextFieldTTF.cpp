@@ -448,7 +448,7 @@ void TextFieldTTF::update(float delta)
             _cursorShowingTime = CURSOR_TIME_SHOW_HIDE;
         }
         // before cursor inserted '\b', need next letter
-        auto sprite = getLetter((int)_cursorPosition + 1);
+        auto sprite = getLetter((int)_cursorPosition + 1, true);
 
         if (sprite)
         {

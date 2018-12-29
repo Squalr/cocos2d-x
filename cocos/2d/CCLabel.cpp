@@ -1735,7 +1735,7 @@ void Label::setSystemFontSize(float fontSize)
 }
 
 ///// PROTOCOL STUFF
-Sprite* Label::getLetter(int letterIndex)
+Sprite* Label::getLetter(int letterIndex, bool applyCursorOffset)
 {
     Sprite* letter = nullptr;
     do
@@ -1783,7 +1783,7 @@ Sprite* Label::getLetter(int letterIndex)
                     letter = LabelLetter::createWithTexture(_fontAtlas->getTexture(textureID), uvRect);
                     letter->setTextureAtlas(_batchNodes.at(textureID)->getTextureAtlas());
                     letter->setAtlasIndex(letterInfo.atlasIndex);
-                    auto px = letterInfo.positionX + uvRect.size.width / 2 + _linesOffsetX[letterInfo.lineIndex];
+                    auto px = letterInfo.positionX + (applyCursorOffset ? 0.0f : uvRect.size.width / 2) + _linesOffsetX[letterInfo.lineIndex];
                     auto py = letterInfo.positionY - uvRect.size.height / 2 + _letterOffsetY;
                     letter->setPosition(px, py);
                     letter->setOpacity(_realOpacity);

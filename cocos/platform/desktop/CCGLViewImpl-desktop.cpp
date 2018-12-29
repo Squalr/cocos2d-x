@@ -768,8 +768,10 @@ void GLViewImpl::onGLFWKeyCallback(GLFWwindow* /*window*/, int key, int /*scanco
         case EventKeyboard::KeyCode::KEY_DELETE:
         case EventKeyboard::KeyCode::KEY_KP_DELETE:
         case EventKeyboard::KeyCode::KEY_END:
-        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+		case EventKeyboard::KeyCode::KEY_UP_ARROW:
+		case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
         case EventKeyboard::KeyCode::KEY_ESCAPE:
             IMEDispatcher::sharedDispatcher()->dispatchControlKey(g_keyCodeMap[key]);
             break;
