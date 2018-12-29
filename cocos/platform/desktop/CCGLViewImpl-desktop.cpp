@@ -462,6 +462,8 @@ void GLViewImpl::setCursorVisible( bool isVisible )
     if( _mainWindow == NULL )
         return;
     
+    glfwFocusWindow(_mainWindow);
+
     if( isVisible )
         glfwSetInputMode(_mainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     else
