@@ -458,13 +458,19 @@ public:
      * @param index A integer index value.
      */
     void removeElement(int index);
-    
-    /**
-     * @brief Remove specific RichElement.
-     *
-     * @param element A RichElement type.
-     */
-    void removeElement(RichElement* element);
+
+	/**
+	 * @brief Remove specific RichElement.
+	 *
+	 * @param element A RichElement type.
+	 */
+	void removeElement(RichElement* element);
+
+	/**
+	 * @brief Clears all RichElements
+	 *
+	 */
+	void clearElements();
     
     /**
      * @brief Set vertical space between each RichElement.

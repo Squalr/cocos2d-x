@@ -987,11 +987,17 @@ void RichText::removeElement(int index)
     _richElements.erase(index);
     _formatTextDirty = true;
 }
-    
+
 void RichText::removeElement(RichElement *element)
 {
-    _richElements.eraseObject(element);
-    _formatTextDirty = true;
+	_richElements.eraseObject(element);
+	_formatTextDirty = true;
+}
+
+void RichText::clearElements()
+{
+	_richElements.clear();
+	_formatTextDirty = true;
 }
 
 RichText::WrapMode RichText::getWrapMode() const
