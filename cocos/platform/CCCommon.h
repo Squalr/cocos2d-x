@@ -54,6 +54,8 @@ Zac: This was updated to reflect steam supported languages: https://partner.stea
 */
 enum class LanguageType
 {
+	NONE,
+
     ARABIC,
     BULGARIAN,
     CHINESE_SIMPLIFIED,
@@ -83,6 +85,9 @@ enum class LanguageType
     TURKISH,
 	UKRAINIAN,
 	VIETNAMESE,
+
+	FIRST_LANGUAGE = ARABIC,
+	LAST_LANGUAGE = VIETNAMESE,
 };
 
 // END of platform group
