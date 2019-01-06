@@ -36,6 +36,10 @@ NS_CC_BEGIN
         */
         void setFlippedY(bool flippedY);
 
+		bool getFlippedX();
+
+		bool getFlippedY();
+
         /**
          * Creates and schedules for maintenance a SpriterPlusPlus animation
          * entity. Once the animation completes once it will be deleted, even if it

@@ -106,11 +106,21 @@ NS_CC_BEGIN
         this->self->updateFlipped(this->isFlippedX, this->isFlippedY);
     }
 
-    void AnimationNode::setFlippedY(bool flippedY)
-    {
-        this->isFlippedY = flippedY;
-        this->self->updateFlipped(this->isFlippedX, this->isFlippedY);
-    }
+	void AnimationNode::setFlippedY(bool flippedY)
+	{
+		this->isFlippedY = flippedY;
+		this->self->updateFlipped(this->isFlippedX, this->isFlippedY);
+	}
+
+	bool AnimationNode::getFlippedX()
+	{
+		return this->isFlippedY;
+	}
+
+	bool AnimationNode::getFlippedY()
+	{
+		return this->isFlippedY;
+	}
 
     SpriterEngine::EntityInstance* AnimationNode::playOnce(const std::string &name)
     {
