@@ -1540,7 +1540,7 @@ public:
      * Gets the index of sprite frame currently displayed.
      * @return int  the index of sprite frame currently displayed.
      */
-    int getCurrentFrameIndex() { return _currFrameIndex; }
+    int getCurrentFrameIndex() { return _nextFrame; }
     //
     // Overrides
     //
@@ -1566,7 +1566,6 @@ protected:
     std::vector<float>* _splitTimes;
     int             _nextFrame;
     SpriteFrame*    _origFrame;
-    int _currFrameIndex;
     unsigned int    _executedLoops;
     Animation*      _animation;
 

@@ -2541,7 +2541,6 @@ Animate::Animate()
 , _executedLoops(0)
 , _animation(nullptr)
 , _frameDisplayedEvent(nullptr)
-, _currFrameIndex(0)
 , incrementCallback(nullptr)
 {
 }
@@ -2618,7 +2617,6 @@ void Animate::startWithTarget(Node *target)
         _origFrame = sprite->getSpriteFrame();
         _origFrame->retain();
     }
-    _nextFrame = 0;
     _executedLoops = 0;
 }
 
@@ -2636,65 +2634,63 @@ void Animate::stop()
 
 void Animate::update(float t)
 {
+	auto& frames = _animation->getFrames();
+	auto numberOfFrames = frames.size();
+
     // if t==1, ignore. Animation should finish with t==1
     if( t < 1.0f )
     {
         t *= _animation->getLoops();
 
-        // new loop?  If so, reset frame counter
-        unsigned int loopNumber = (unsigned int)t;
-        if( loopNumber > _executedLoops )
-        {
-            _nextFrame = 0;
-            _executedLoops++;
-        }
-
         // new t for animations
         t = fmodf(t, 1.0f);
-    }
 
-    auto& frames = _animation->getFrames();
-    auto numberOfFrames = frames.size();
-    SpriteFrame *frameToDisplay = nullptr;
-
-    for( int i=_nextFrame; i < numberOfFrames; i++ )
-    {
-        float splitTime = _splitTimes->at(i);
-
-        if( splitTime <= t )
-        {
-            auto blend = static_cast<Sprite*>(_target)->getBlendFunc();
-            _currFrameIndex = i;
-            AnimationFrame* frame = frames.at(_currFrameIndex);
-            frameToDisplay = frame->getSpriteFrame();
-            static_cast<Sprite*>(_target)->setSpriteFrame(frameToDisplay);
-            static_cast<Sprite*>(_target)->setBlendFunc(blend);
-
-            const ValueMap& dict = frame->getUserInfo();
-            if ( !dict.empty() )
-            {
-                if (_frameDisplayedEvent == nullptr)
-                    _frameDisplayedEvent = new (std::nothrow) EventCustom(AnimationFrameDisplayedNotification);
-                
-                _frameDisplayedEventInfo.target = _target;
-                _frameDisplayedEventInfo.userInfo = &dict;
-                _frameDisplayedEvent->setUserData(&_frameDisplayedEventInfo);
-                Director::getInstance()->getEventDispatcher()->dispatchEvent(_frameDisplayedEvent);
-            }
-			if (this->incrementCallback != nullptr)
-			{
-				_nextFrame = this->incrementCallback(i, numberOfFrames);
-			}
-			else
-			{
-				_nextFrame = i+1;
-			}
+		// Do nothing while waiting for the animation to finish
+		if (t > _splitTimes->back() && _nextFrame == 0)
+		{
+			return;
 		}
-        // Issue 1438. Could be more than one frame per tick, due to low frame rate or frame delta < 1/FPS
-        else {
-            break;
-        }
     }
+
+    float splitTime = _splitTimes->at(_nextFrame);
+	SpriteFrame *frameToDisplay = nullptr;
+
+    if( splitTime <= t )
+    {
+        auto blend = static_cast<Sprite*>(_target)->getBlendFunc();
+
+        AnimationFrame* frame = frames.at(_nextFrame);
+        frameToDisplay = frame->getSpriteFrame();
+        static_cast<Sprite*>(_target)->setSpriteFrame(frameToDisplay);
+        static_cast<Sprite*>(_target)->setBlendFunc(blend);
+
+        const ValueMap& dict = frame->getUserInfo();
+        if ( !dict.empty() )
+        {
+            if (_frameDisplayedEvent == nullptr)
+                _frameDisplayedEvent = new (std::nothrow) EventCustom(AnimationFrameDisplayedNotification);
+            
+            _frameDisplayedEventInfo.target = _target;
+            _frameDisplayedEventInfo.userInfo = &dict;
+            _frameDisplayedEvent->setUserData(&_frameDisplayedEventInfo);
+            Director::getInstance()->getEventDispatcher()->dispatchEvent(_frameDisplayedEvent);
+        }
+
+		if (this->incrementCallback != nullptr)
+		{
+			_nextFrame = this->incrementCallback(_nextFrame, numberOfFrames);
+		}
+		else
+		{
+			_nextFrame++;
+		}
+
+		if (_nextFrame >= numberOfFrames)
+		{
+			_nextFrame = 0;
+			_executedLoops++;
+		}
+	}
 }
 
 Animate* Animate::reverse() const
