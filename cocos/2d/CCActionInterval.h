@@ -1565,6 +1565,8 @@ CC_CONSTRUCTOR_ACCESS:
 protected:
     std::vector<float>* _splitTimes;
     int             _nextFrame;
+	float			_previousT;
+	float			_previousSplitTime;
     SpriteFrame*    _origFrame;
     unsigned int    _executedLoops;
     Animation*      _animation;

@@ -2537,6 +2537,8 @@ Animate* Animate::create(Animation *animation)
 Animate::Animate()
 : _splitTimes(new std::vector<float>)
 , _nextFrame(0)
+, _previousT(0.0f)
+, _previousSplitTime(0.0f)
 , _origFrame(nullptr)
 , _executedLoops(0)
 , _animation(nullptr)
@@ -2652,10 +2654,12 @@ void Animate::update(float t)
 		}
     }
 
-    float splitTime = _splitTimes->at(_nextFrame);
+	float delta = std::abs(t - _previousT);
+	float splitTime = _splitTimes->at(_nextFrame);
+	float splitTimeDelta = std::abs(splitTime - _previousSplitTime);
 	SpriteFrame *frameToDisplay = nullptr;
 
-    if( splitTime <= t )
+    if(delta >= splitTimeDelta)
     {
         auto blend = static_cast<Sprite*>(_target)->getBlendFunc();
 
@@ -2676,6 +2680,9 @@ void Animate::update(float t)
             Director::getInstance()->getEventDispatcher()->dispatchEvent(_frameDisplayedEvent);
         }
 
+		_previousT = t;
+		_previousSplitTime = splitTime;
+
 		if (this->incrementCallback != nullptr)
 		{
 			_nextFrame = this->incrementCallback(_nextFrame, numberOfFrames);
@@ -2689,6 +2696,13 @@ void Animate::update(float t)
 		{
 			_nextFrame = 0;
 			_executedLoops++;
+			_previousSplitTime = 0.0f;
+		}
+		else if (_nextFrame < 0)
+		{
+			_nextFrame = numberOfFrames - 1;
+			_executedLoops++;
+			_previousSplitTime = 1.0f;
 		}
 	}
 }
