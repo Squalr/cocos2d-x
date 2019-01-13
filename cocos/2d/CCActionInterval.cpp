@@ -2542,8 +2542,8 @@ Animate::Animate()
 , _animation(nullptr)
 , _frameDisplayedEvent(nullptr)
 , _currFrameIndex(0)
+, incrementCallback(nullptr)
 {
-
 }
 
 Animate::~Animate()
@@ -2681,8 +2681,15 @@ void Animate::update(float t)
                 _frameDisplayedEvent->setUserData(&_frameDisplayedEventInfo);
                 Director::getInstance()->getEventDispatcher()->dispatchEvent(_frameDisplayedEvent);
             }
-            _nextFrame = i+1;
-        }
+			if (this->incrementCallback != nullptr)
+			{
+				_nextFrame = this->incrementCallback(i, numberOfFrames);
+			}
+			else
+			{
+				_nextFrame = i+1;
+			}
+		}
         // Issue 1438. Could be more than one frame per tick, due to low frame rate or frame delta < 1/FPS
         else {
             break;

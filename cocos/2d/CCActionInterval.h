@@ -1560,6 +1560,8 @@ CC_CONSTRUCTOR_ACCESS:
     /** initializes the action with an Animation and will restore the original frame when the animation is over */
     bool initWithAnimation(Animation *animation);
 
+	std::function<int(int current, int max)> incrementCallback;
+
 protected:
     std::vector<float>* _splitTimes;
     int             _nextFrame;
