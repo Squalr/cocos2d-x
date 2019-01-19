@@ -609,15 +609,6 @@ void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
     {
         switch (keyCode)
         {
-        case EventKeyboard::KeyCode::KEY_HOME:
-        case EventKeyboard::KeyCode::KEY_KP_HOME:
-            setCursorPosition(0);
-            updateCursorDisplayText();
-            break;
-        case EventKeyboard::KeyCode::KEY_END:
-            setCursorPosition(_charCount);
-            updateCursorDisplayText();
-            break;
         case EventKeyboard::KeyCode::KEY_DELETE:
         case EventKeyboard::KeyCode::KEY_KP_DELETE:
             if (_cursorPosition < (std::size_t)_charCount)
@@ -645,6 +636,28 @@ void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
                 updateCursorDisplayText();
             }
             break;
+		case EventKeyboard::KeyCode::KEY_HOME:
+		case EventKeyboard::KeyCode::KEY_KP_HOME:
+		{
+			// Get current row offset
+			std::size_t currentRowSearch = this->getString().rfind('\n', _cursorPosition <= 0 ? 0 : _cursorPosition - 1);
+			int currentRowStart = currentRowSearch != std::string::npos ? currentRowSearch + 1 : 0;
+
+			setCursorPosition(currentRowStart);
+			updateCursorDisplayText();
+		}
+			break;
+		case EventKeyboard::KeyCode::KEY_END:
+			if (_cursorPosition < (std::size_t)_charCount)
+			{
+				// Get current row offset
+				std::size_t nextRowSearch = this->getString().find('\n', _cursorPosition <= 0 ? 0 : _cursorPosition);
+				int rowEnd = nextRowSearch != std::string::npos ? nextRowSearch : _charCount;
+
+				setCursorPosition(rowEnd);
+				updateCursorDisplayText();
+			}
+			break;
         case EventKeyboard::KeyCode::KEY_UP_ARROW:
             if (_cursorPosition)
             {
@@ -664,6 +677,12 @@ void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
                     // Determine new cursor offset for previous row
                     int newOffset = previousRowLength < currentRowOffset ? previousRowLength <= 0 ? 0 : previousRowLength - 1 : currentRowOffset;
                     int newCursorPos = previousRowStart + newOffset;
+
+					// Rare edge case correction
+					if (_cursorPosition == newCursorPos && newCursorPos > 0)
+					{
+						newCursorPos--;
+					}
 
                     setCursorPosition(newCursorPos);
                     updateCursorDisplayText();
@@ -687,6 +706,12 @@ void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
                 // Determine new cursor offset for next row
                 int newOffset = nextRowLength < currentRowOffset ? nextRowLength <= 0 ? 0 : nextRowLength - 1 : currentRowOffset;
                 int newCursorPos = nextRowStart + newOffset;
+
+				// Rare edge case correction
+				if (_cursorPosition == newCursorPos && newCursorPos + 1 < _charCount)
+				{
+					newCursorPos++;
+				}
 
                 setCursorPosition(newCursorPos);
                 updateCursorDisplayText();

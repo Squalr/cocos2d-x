@@ -1793,16 +1793,23 @@ void RichText::formarRenderers()
     {
         float newContentSizeHeight = 0.0f;
         std::vector<float> maxHeights(_elementRenders.size());
-        
+
+		// Zac: God knows what the original author intended for this shitty code to do, but it now supports leading newlines (which previously got discarded)
         float maxHeight = 0.0f;
-        for (size_t i=0, size = _elementRenders.size(); i<size; i++)
+
+		for (size_t i = 0, size = _elementRenders.size(); i < size; i++)
+		{
+			for (auto& iter : _elementRenders[i])
+			{
+				maxHeight = MAX(iter->getContentSize().height, maxHeight);
+			}
+
+			maxHeights[i] = maxHeight;
+		}
+
+        for (size_t i=1, size = _elementRenders.size(); i<size; i++)
         {
-            Vector<Node*>& row = _elementRenders[i];
-            for (auto& iter : row)
-            {
-                maxHeight = MAX(iter->getContentSize().height, maxHeight);
-            }
-            maxHeights[i] = maxHeight;
+			maxHeights[i] = maxHeight;
             newContentSizeHeight += maxHeights[i];
         }
 
