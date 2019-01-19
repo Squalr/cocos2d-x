@@ -588,7 +588,8 @@ public:
 
     virtual void setCameraMask(unsigned short mask, bool applyChildren = true) override;
 
-    virtual void removeAllChildrenWithCleanup(bool cleanup) override;
+	virtual void removeLetters();
+	virtual void removeAllChildrenWithCleanup(bool cleanup) override;
     virtual void removeChild(Node* child, bool cleanup = true) override;
     virtual void setGlobalZOrder(float globalZOrder) override;
 

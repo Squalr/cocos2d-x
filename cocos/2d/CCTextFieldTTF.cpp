@@ -531,7 +531,7 @@ void TextFieldTTF::setString(const std::string &text)
     if (_cursorEnabled)
     {
         // Need for recreate all letters in Label
-        Label::removeAllChildrenWithCleanup(false);
+		Label::removeLetters();
     }
 
     // if there is no input text, display placeholder instead

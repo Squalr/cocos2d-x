@@ -2049,6 +2049,27 @@ void Label::setBlendFunc(const BlendFunc &blendFunc)
     }
 }
 
+void Label::removeLetters()
+{
+	std::vector<Sprite*> toRemove = std::vector<Sprite*>();
+	Vector<Node*> children = this->getChildren();
+
+	for (auto it = this->_letters.begin(); it != this->_letters.end(); it++)
+	{
+		if (children.find(it->second) != children.end())
+		{
+			toRemove.push_back(it->second);
+		}
+	}
+
+	for (auto it = toRemove.begin(); it != toRemove.end(); it++)
+	{
+		this->removeChild(*it);
+	}
+
+	_letters.clear();
+}
+
 void Label::removeAllChildrenWithCleanup(bool cleanup)
 {
     Node::removeAllChildrenWithCleanup(cleanup);
