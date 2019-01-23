@@ -24,6 +24,7 @@
 
 
 #include "2d/CCClippingRectangleNode.h"
+#include "2d/CCCamera.h"
 #include "base/CCDirector.h"
 #include "renderer/CCRenderer.h"
 #include "math/Vec2.h"
@@ -75,7 +76,11 @@ void ClippingRectangleNode::onBeforeVisitScissor()
             parent = parent->getParent();
         }
         
-        const Point pos = convertToWorldSpace(Point(_clippingRegion.origin.x, _clippingRegion.origin.y));
+        Point pos = convertToWorldSpace(Point(_clippingRegion.origin.x, _clippingRegion.origin.y));
+
+		// ZAC: Okay this shit doesnt account for the camera position, and it really really should
+		pos -= (Camera::getDefaultCamera()->getPosition() - Director::getInstance()->getVisibleSize() / 2.0f);
+
         GLView* glView = Director::getInstance()->getOpenGLView();
         glView->setScissorInPoints(pos.x,
                                    pos.y,
