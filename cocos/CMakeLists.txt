@@ -66,7 +66,9 @@ if(BUILD_EXTENSIONS)
     include(../extensions/CMakeLists.txt)
 endif(BUILD_EXTENSIONS)
 
-set(COCOS_HEADER cocos2d.h
+add_library(cocos2d STATIC
+    cocos2d.h
+    cocos2d.cpp
     ${COCOS_2D_HEADER}
     ${COCOS_3D_HEADER}
     ${COCOS_PLATFORM_HEADER}
@@ -84,9 +86,6 @@ set(COCOS_HEADER cocos2d.h
     ${COCOS_EDITOR_SUPPORT_HEADER}
     ${COCOS_EXTENSIONS_HEADER}
     ${COCOS_STORAGE_HEADER}
-)
-
-set(COCOS_SRC cocos2d.cpp
     ${COCOS_2D_SRC}
     ${COCOS_3D_SRC}
     ${COCOS_PLATFORM_SRC}
@@ -106,12 +105,10 @@ set(COCOS_SRC cocos2d.cpp
     ${COCOS_STORAGE_SRC}
 )
 
-add_library(cocos2d STATIC
-    ${COCOS_SRC}
-    ${COCOS_HEADER}
-)
-
+# EVIL HACK MAKE GO AWAY
 target_include_directories(cocos2d PUBLIC
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/extensions
     ${CMAKE_CURRENT_LIST_DIR}
 )
 
@@ -121,19 +118,42 @@ target_include_directories(cocos2d PRIVATE
 )
 
 target_link_libraries(cocos2d PRIVATE
-    Freetype::Freetype
-    tinyxml2:tinyxml2
-    unzip::unzip
-    xxtea::xxtea
-    xxhash::xxhash
-    clipper::clipper
-    WebP::WebP
-    websockets
-    cereal
-
+    # vcpkg optional dependencies
     $<$<BOOL:JPEG_FOUND>:JPEG::JPEG>
     $<$<BOOL:PNG_FOUND>:PNG::PNG>
     $<$<BOOL:TIFF_FOUND>:TIFF::TIFF>
+
+    # vcpkg required dependencies
+    CURL::libcurl
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    Freetype::Freetype
+    tinyxml2::tinyxml2
+    xxhash::xxhash
+    WebP::WebP
+    GLEW::GLEW
+    websockets
+    cereal
+
+    # internal dependencies
+    unzip::unzip
+    xxtea::xxtea
+    clipper::clipper
+    recast::recast
+
+    # system dependencies
+    fontconfig
+    GL
+    openal
+    mpg123
+    vorbisfile
+
+    # fuck me
+    "${PROJECT_SOURCE_DIR}/external/chipmunk/prebuilt/linux/64-bit/libchipmunk.a"
+)
+
+target_link_libraries(cocos2d PUBLIC
+    glfw
 )
 
 target_compile_definitions(cocos2d PRIVATE

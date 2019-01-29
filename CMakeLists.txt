@@ -25,8 +25,6 @@
 # THE SOFTWARE.
 # ****************************************************************************/
 
-# build engine library and all tests
-
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 project(Cocos2d-x VERSION 3.17)
 
@@ -34,20 +32,41 @@ set(COCOS2DX_ROOT_PATH ${PROJECT_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/NewModules)
 include(${PROJECT_SOURCE_DIR}/cmake/Modules/CocosCompileOptions.cmake)
 
+# Options
+option(BUILD_EDITOR_COCOSBUILDER "Build CocosBuilder Editor Support" OFF)
+option(BUILD_EDITOR_COCOSTUDIO   "Build CocosStudio Editor Support"  OFF)
+option(BUILD_EDITOR_SPINE        "Build Spine Editor Support"        OFF)
+option(BUILD_EXTENSIONS          "Build ${PROJECT_NAME} Extensions"  ON)
+option(BUILD_TESTS               "Build ${PROJECT_NAME} Tests"       OFF)
+
+# Required Dependencies
+find_package(glfw3 REQUIRED)
+find_package(GLEW REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(tinyxml2 REQUIRED)
 find_package(cereal REQUIRED)
 find_package(WebP REQUIRED)
 find_package(xxhash REQUIRED)
 find_package(Libwebsockets REQUIRED)
+find_package(OpenSSL REQUIRED)
+find_package(CURL REQUIRED)
 
+# Optional Dependencies
 find_package(JPEG)
 find_package(PNG)
 find_package(TIFF)
 
+# Externals we haven't gotten rid of yet
 add_subdirectory(${PROJECT_SOURCE_DIR}/external/unzip)
 add_subdirectory(${PROJECT_SOURCE_DIR}/external/xxtea)
 add_subdirectory(${PROJECT_SOURCE_DIR}/external/clipper)
+add_subdirectory(${PROJECT_SOURCE_DIR}/external/SpriterPlusPlus)
+add_subdirectory(${PROJECT_SOURCE_DIR}/external/recast)
 
+# Cocos2D main source code
 add_subdirectory(${PROJECT_SOURCE_DIR}/cocos)
-#add_subdirectory(${COCOS2DX_ROOT_PATH}/tests ${ENGINE_BINARY_PATH}/tests)
+
+# Tests
+if (BUILD_TESTS)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/tests)
+endif()

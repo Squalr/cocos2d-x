@@ -6,9 +6,7 @@ if(NOT WEBP_INCLUDE_DIR)
 endif()
 
 if(NOT WEBP_LIBRARY)
-    find_library(WEBP_LIBRARY_RELEASE NAMES webp)
-    find_library(WEBP_LIBRARY_DEBUG NAMES webpd)
-    select_library_configurations(WEBP)
+    find_library(WEBP_LIBRARY NAMES webp)
 endif()
 
 set(WEBP_LIBRARIES ${WEBP_LIBRARY})
