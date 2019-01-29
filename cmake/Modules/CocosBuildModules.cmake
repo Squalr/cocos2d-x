@@ -30,7 +30,6 @@
          cocos_find_package(MPG123 MPG123 REQUIRED)
          cocos_find_package(OpenAL OPENAL REQUIRED)
          cocos_find_package(Fontconfig FONTCONFIG REQUIRED)
-         cocos_find_package(GTK3 GTK3 REQUIRED)
      endif()
 
      if(WINDOWS)
@@ -169,9 +168,7 @@
 
  cocos_find_package(WEBSOCKETS WEBSOCKETS REQUIRED)
  cocos_find_package(CURL CURL REQUIRED)
- if(NOT USE_EXTERNAL_PREBUILT)
-     cocos_find_package(OpenSSL OPENSSL REQUIRED)
- endif()
+ cocos_find_package(OpenSSL OPENSSL REQUIRED)
 
  # flatbuffers
  if(USE_EXTERNAL_PREBUILT)

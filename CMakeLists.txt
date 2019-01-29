@@ -2,6 +2,7 @@
 # Copyright (c) 2013 cocos2d-x.org
 # Copyright (c) 2014 martell malone
 # Copyright (c) 2015-2017 Chukong Technologies Inc.
+# Copyright (c) 2019 Squalr
 #
 # http://www.cocos2d-x.org
 #
@@ -26,23 +27,27 @@
 
 # build engine library and all tests
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+project(Cocos2d-x VERSION 3.17)
 
-project(Cocos2d-x)
+set(COCOS2DX_ROOT_PATH ${PROJECT_SOURCE_DIR})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/NewModules)
+include(${PROJECT_SOURCE_DIR}/cmake/Modules/CocosCompileOptions.cmake)
 
-# cocos2dx root path
-set(COCOS2DX_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
+find_package(Freetype REQUIRED)
+find_package(tinyxml2 REQUIRED)
+find_package(cereal REQUIRED)
+find_package(WebP REQUIRED)
+find_package(xxhash REQUIRED)
+find_package(Libwebsockets REQUIRED)
 
-# works before build libcocos2d
-include(CocosBuildSet)
+find_package(JPEG)
+find_package(PNG)
+find_package(TIFF)
 
-# default tests include lua, js test project, so we set those option on to build libs
-set(BUILD_LUA_LIBS OFF)
-set(BUILD_JS_LIBS OFF)
+add_subdirectory(${PROJECT_SOURCE_DIR}/external/unzip)
+add_subdirectory(${PROJECT_SOURCE_DIR}/external/xxtea)
+add_subdirectory(${PROJECT_SOURCE_DIR}/external/clipper)
 
-if(NOT USE_COCOS_PREBUILT)
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
-endif()
-add_subdirectory(${COCOS2DX_ROOT_PATH}/tests ${ENGINE_BINARY_PATH}/tests)
-
+add_subdirectory(${PROJECT_SOURCE_DIR}/cocos)
+#add_subdirectory(${COCOS2DX_ROOT_PATH}/tests ${ENGINE_BINARY_PATH}/tests)

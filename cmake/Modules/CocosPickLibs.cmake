@@ -42,10 +42,6 @@ set(_Box2D_prefix Box2D)
 set(_glfw3_inc glfw3.h glfw3native.h)
 set(_glfw3_libs glfw3 libglfw3)
 
-set(_curl_inc curl/curl.h)
-# order: curl, ssl, crypto
-set(_curl_libs curl libcurl_imp libcurl ssl libeay32 ssleay32 crypto)
-
 set(_freetype2_prefix FREETYPE)
 set(_freetype2_inc ft2build.h freetype/freetype.h)
 set(_freetype2_inc_paths freetype2)
@@ -90,12 +86,6 @@ set(_webp_libs webp libwebp)
 set(_websockets_inc libwebsockets.h)
 set(_websockets_libs websockets libwebsockets)
 
-set(_openssl_inc openssl/ssl.h)
-set(_openssl_libs ssl crypto)
-if(MSVC)
-    set(_openssl_libs ssl crypto libssl libcrypto)
-endif()
-
 set(_sqlite3_inc sqlite3.h)
 set(_sqlite3_libs sqlite3)
 
@@ -121,15 +111,6 @@ set(_OpenalSoft_inc al.h)
 set(_OpenalSoft_inc_paths AL)
 set(_OpenalSoft_libs OpenAL32)
 
-set(_zlib_inc zlib.h)
-set(_zlib_libs z libzlib libz)
-if(MSVC)
-    set(_zlib_libs libzlib)
-    # zlib's dll is so special, lib name and dll name is different
-    # single special
-    set(_zlib_dll zlib1)
-endif()
-
 set(_luajit_prefix LUAJIT)
 set(_luajit_inc lua.hpp)
 set(_luajit_libs luajit)
@@ -146,14 +127,12 @@ endif()
 
 set(all_prebuilt_libs
     chipmunk
-    curl
     freetype2
     jpeg
     png
     tiff
     webp
     websockets
-    openssl
     luajit
     spidermonkey
 	spriterengine
@@ -162,20 +141,16 @@ set(all_prebuilt_libs
 
 
 if(MACOSX)
-    list(APPEND all_prebuilt_libs glfw3 zlib)
+    list(APPEND all_prebuilt_libs glfw3)
 endif()
 
 # We use MSVC instead of WINDOWS because it can be mingw that can't use our prebuilt libs
 if(MSVC)
-    list(APPEND all_prebuilt_libs glfw3 sqlite3 gles icon MP3Decoder OggDecoder OpenalSoft zlib)
+    list(APPEND all_prebuilt_libs glfw3 sqlite3 gles icon MP3Decoder OggDecoder OpenalSoft)
 endif()
 
 if(LINUX)
     list(APPEND all_prebuilt_libs glfw3 sqlite3 gles MP3Decoder OggDecoder)
-endif()
-
-if(ANDROID)
-    list(APPEND all_prebuilt_libs zlib)
 endif()
 
 # END CONFIG

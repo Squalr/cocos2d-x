@@ -26,13 +26,6 @@
 
 # this CMakeLists is to generate Cocos2d-x Engine Library
 # build libcocos2d
-# build luacocos2d if BUILD_LUA_LIBS=ON
-# build jscocos2d if BUILD_JS_LIBS=ON
-
-# The version number
-set(COCOS2D_X_VERSION 3.17)
-
-set(COCOS_CORE_LIB cocos2d)
 
 if(WINDOWS)
     add_definitions(-DUNICODE -D_UNICODE)
@@ -91,7 +84,7 @@ set(COCOS_HEADER cocos2d.h
     ${COCOS_EDITOR_SUPPORT_HEADER}
     ${COCOS_EXTENSIONS_HEADER}
     ${COCOS_STORAGE_HEADER}
-    )
+)
 
 set(COCOS_SRC cocos2d.cpp
     ${COCOS_2D_SRC}
@@ -111,66 +104,46 @@ set(COCOS_SRC cocos2d.cpp
     ${COCOS_EDITOR_SUPPORT_SRC}
     ${COCOS_EXTENSIONS_SRC}
     ${COCOS_STORAGE_SRC}
-    )
+)
 
-#todo: provide prebuild versions of the xx libs for all platforms
-include_directories(../external/xxtea)
-include_directories(../external/clipper)
+add_library(cocos2d STATIC
+    ${COCOS_SRC}
+    ${COCOS_HEADER}
+)
 
-list(APPEND COCOS_SRC ${COCOS_HEADER})
+target_include_directories(cocos2d PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}
+)
 
-add_library(cocos2d ${COCOS_SRC})
+# EVIL HACK MAKE GO AWAY
+target_include_directories(cocos2d PRIVATE
+    ${PROJECT_SOURCE_DIR}/external/chipmunk/include
+)
 
-# use necessary external libs and system libs
-include(CocosUseLibs)
-target_use_cocos2d_depend_libs(cocos2d)
+target_link_libraries(cocos2d PRIVATE
+    Freetype::Freetype
+    tinyxml2:tinyxml2
+    unzip::unzip
+    xxtea::xxtea
+    xxhash::xxhash
+    clipper::clipper
+    WebP::WebP
+    websockets
+    cereal
 
-set_target_properties(cocos2d
-                      PROPERTIES
-                      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-                      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-                      VERSION "${COCOS2D_X_VERSION}"
-                      FOLDER "Internal"
-                      )
+    $<$<BOOL:JPEG_FOUND>:JPEG::JPEG>
+    $<$<BOOL:PNG_FOUND>:PNG::PNG>
+    $<$<BOOL:TIFF_FOUND>:TIFF::TIFF>
+)
 
-# set custom target: prebuilt, to copy all libs to prebuilt libs folder
-if(GEN_COCOS_PREBUILT)
-    add_custom_target(prebuilt ALL)
-    add_dependencies(prebuilt cocos2d)
-    set_target_properties(prebuilt
-                          PROPERTIES
-                          FOLDER "Internal"
-                          )
-    add_custom_command(TARGET "prebuilt"
-                       POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       "${CMAKE_BINARY_DIR}/lib"
-                       "${COCOS_PREBUILT_PATH}"
-                       COMMENT "copy library directory:${CMAKE_BINARY_DIR}/lib to directory:${COCOS_PREBUILT_PATH}"
-                       )
-    if(BUILD_LUA_LIBS)
-        add_dependencies(prebuilt luacocos2d)
-    endif()
-    if(BUILD_JS_LIBS)
-        add_dependencies(prebuilt jscocos2d)
-    endif()
-    if(BUILD_SIMU_LIB AND (MACOSX OR WINDOWS))
-        add_dependencies(prebuilt simulator)
-    endif()
-endif()
+target_compile_definitions(cocos2d PRIVATE
+    CC_USE_3D_PHYSICS=0
+    CC_ENABLE_BULLET_INTEGRATION=0
 
-## Lua bindings lib
-if(BUILD_LUA_LIBS)
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/scripting/lua-bindings ${ENGINE_BINARY_PATH}/cocos/lua-bindings)
-endif()
-## JS bindings lib
-if(BUILD_JS_LIBS)
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/scripting/js-bindings ${ENGINE_BINARY_PATH}/cocos/js-bindings)
-endif()
-# simulator
-if(BUILD_SIMU_LIB AND (MACOSX OR WINDOWS))
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/tools/simulator/libsimulator ${ENGINE_BINARY_PATH}/cocos/libsimulator)
-endif()
+    $<$<BOOL:JPEG_FOUND>:CC_USE_JPEG=1>
+    $<$<BOOL:PNG_FOUND>:CC_USE_PNG=1>
+    $<$<BOOL:TIFF_FOUND>:CC_USE_TIFF=1>
+)
 
 if(XCODE OR VS)
     cocos_mark_code_files("cocos2d")

@@ -1,6 +1,6 @@
 macro(cocos2d_depend_libs)
     # confim the libs, prepare to link
-    set(PLATFORM_SPECIFIC_LIBS)
+    set(PLATFORM_SPECIFIC_LIBS ${CURL_LIBRARIES} ${OPENSSL_LIBRARIES})
     # confim the prebuilt libs, prepare to use
     set(PREBUILT_SPECIFIC_LIBS)
 
@@ -77,13 +77,9 @@ macro(cocos2d_depend_libs)
         endif()
     endif()
 
-    foreach(_pkg ZLIB MINIZIP TinyXML2 FREETYPE WEBSOCKETS CURL FLATBUFFERS XXHASH)
+    foreach(_pkg MINIZIP TinyXML2 FREETYPE WEBSOCKETS FLATBUFFERS XXHASH)
         list(APPEND PREBUILT_SPECIFIC_LIBS ${_pkg})
     endforeach()
-
-    if(NOT EMSCRIPTEN)
-        list(APPEND PREBUILT_SPECIFIC_LIBS OPENSSL)
-    endif()
 
     if(USE_JPEG)
         add_definitions(-DCC_USE_JPEG=1)
@@ -211,7 +207,7 @@ macro(simulator_depend_libs)
         find_library(APPKIT_LIBRARY AppKit)
         list(APPEND PLATFORM_SPECIFIC_LIBS ${APPKIT_LIBRARY})
     elseif(WINDOWS)
-        list(APPEND PREBUILT_SPECIFIC_LIBS TinyXML2 CURL)
+        list(APPEND PREBUILT_SPECIFIC_LIBS TinyXML2)
     endif()
 
 endmacro()
