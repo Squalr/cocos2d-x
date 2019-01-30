@@ -33,7 +33,7 @@
 #include "cocos2d.h"
 #include <map>
 
-#include "json/document-wrapper.h"
+#include "rapidjson/document.h"
 #include "DeviceEx.h"
 #include "SimulatorExport.h"
 

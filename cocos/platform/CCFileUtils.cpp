@@ -44,7 +44,7 @@ THE SOFTWARE.
 #include "cereal/archives/binary.hpp"
 #include "cereal/archives/json.hpp"
 
-#include "tinyxml2/tinyxml2.h"
+#include <tinyxml2.h>
 #ifdef MINIZIP_FROM_SYSTEM
 #include <minizip/unzip.h>
 #else // from our embedded sources

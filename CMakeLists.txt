@@ -38,32 +38,71 @@ option(BUILD_EDITOR_COCOSTUDIO   "Build CocosStudio Editor Support"  OFF)
 option(BUILD_EDITOR_SPINE        "Build Spine Editor Support"        OFF)
 option(BUILD_EXTENSIONS          "Build ${PROJECT_NAME} Extensions"  ON)
 option(BUILD_TESTS               "Build ${PROJECT_NAME} Tests"       OFF)
+option(BUILD_JPEG_SUPPORT        "Build JPEG Support"                ON)
+option(BUILD_PNG_SUPPORT         "Build PNG Support"                 ON)
+option(BUILD_TIFF_SUPPORT        "Build TIFF Support"                ON)
+option(BUILD_NETWORK_SUPPORT     "Build Network Support"             OFF)
 
-# Required Dependencies
-find_package(glfw3 REQUIRED)
+# Dependencies
+find_package(OpenAL REQUIRED)
+find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(glfw3 REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(tinyxml2 REQUIRED)
 find_package(cereal REQUIRED)
 find_package(WebP REQUIRED)
 find_package(xxhash REQUIRED)
-find_package(Libwebsockets REQUIRED)
-find_package(OpenSSL REQUIRED)
-find_package(CURL REQUIRED)
+find_package(RapidJSON REQUIRED)
+find_package(Vorbis REQUIRED)
+find_package(MPG123 REQUIRED)
 
-# Optional Dependencies
-find_package(JPEG)
-find_package(PNG)
-find_package(TIFF)
+find_package(JPEG QUIET)
+find_package(PNG QUIET)
+find_package(TIFF QUIET)
+find_package(CURL QUIET)
+find_package(OpenSSL QUIET)
+find_package(Libwebsockets QUIET)
 
-# Externals we haven't gotten rid of yet
-add_subdirectory(${PROJECT_SOURCE_DIR}/external/unzip)
-add_subdirectory(${PROJECT_SOURCE_DIR}/external/xxtea)
-add_subdirectory(${PROJECT_SOURCE_DIR}/external/clipper)
-add_subdirectory(${PROJECT_SOURCE_DIR}/external/SpriterPlusPlus)
-add_subdirectory(${PROJECT_SOURCE_DIR}/external/recast)
+find_package(unofficial-fontconfig QUIET)
 
-# Cocos2D main source code
+# wrap openal vars in a target
+add_library(OpenAL::AL UNKNOWN IMPORTED)
+set_target_properties(OpenAL::AL PROPERTIES
+    IMPORTED_LOCATION ${OPENAL_LIBRARY}
+    INTERFACE_INCLUDE_DIRECTORIES ${OPENAL_INCLUDE_DIR}
+)
+
+# wrap rapidjson vars in a target
+add_library(RapidJSON INTERFACE)
+add_library(RapidJSON::RapidJSON ALIAS RapidJSON)
+target_include_directories(RapidJSON INTERFACE ${RAPIDJSON_INCLUDE_DIRS})
+
+# Validate options
+if(BUILD_JPEG_SUPPORT AND NOT JPEG_FOUND)
+    message(ERROR "JPEG support was requested but libjpeg wasn't found.")
+endif()
+
+if(BUILD_PNG_SUPPORT AND NOT PNG_FOUND)
+    message(ERROR "PNG support was requested but libpng wasn't found.")
+endif()
+
+if(BUILD_TIFF_SUPPORT AND NOT TIFF_FOUND)
+    message(ERROR "TIFF support was requested but libtiff wasn't found.")
+endif()
+
+if(BUILD_NETWORK_SUPPORT AND (NOT Libwebsockets_FOUND OR NOT OpenSSL_FOUND OR NOT CURL_FOUND))
+    message(ERROR "Network support was requested but dependencies weren't found.")
+endif()
+
+if(LINUX AND NOT unofficial-fontconfig_FOUND)
+    message(ERROR "Fontconfig is required on Linux, but it wasn't found.")
+endif()
+
+# Bundled Cocos (Source) Dependencies
+add_subdirectory(${PROJECT_SOURCE_DIR}/external)
+
+# Cocos Sources
 add_subdirectory(${PROJECT_SOURCE_DIR}/cocos)
 
 # Tests

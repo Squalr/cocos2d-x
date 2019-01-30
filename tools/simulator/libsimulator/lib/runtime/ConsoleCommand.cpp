@@ -26,9 +26,9 @@ THE SOFTWARE.
 #include "Runtime.h"
 #include "ConfigParser.h"
 #include "ConsoleCommand.h"
-#include "json/document-wrapper.h"
-#include "json/filereadstream.h"
-#include "json/stringbuffer.h"
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/stringbuffer.h"
 
 #include "RuntimeProtocol.h"
 #include "cocos2d.h"

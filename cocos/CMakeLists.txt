@@ -82,7 +82,6 @@ add_library(cocos2d STATIC
     ${COCOS_AUDIO_HEADER}
     ${COCOS_UI_HEADER}
     ${COCOS_DEPRECATED_HEADER}
-    ${COCOS_NETWORK_HEADER}
     ${COCOS_EDITOR_SUPPORT_HEADER}
     ${COCOS_EXTENSIONS_HEADER}
     ${COCOS_STORAGE_HEADER}
@@ -99,70 +98,74 @@ add_library(cocos2d STATIC
     ${COCOS_AUDIO_SRC}
     ${COCOS_UI_SRC}
     ${COCOS_DEPRECATED_SRC}
-    ${COCOS_NETWORK_SRC}
     ${COCOS_EDITOR_SUPPORT_SRC}
     ${COCOS_EXTENSIONS_SRC}
     ${COCOS_STORAGE_SRC}
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:${COCOS_NETWORK_HEADER}>
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:${COCOS_NETWORK_SRC}>
 )
 
-# EVIL HACK MAKE GO AWAY
+add_library(cocos2d::cocos2d ALIAS cocos2d)
+
+# Public Interface
 target_include_directories(cocos2d PUBLIC
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/extensions
     ${CMAKE_CURRENT_LIST_DIR}
 )
 
-# EVIL HACK MAKE GO AWAY
-target_include_directories(cocos2d PRIVATE
-    ${PROJECT_SOURCE_DIR}/external/chipmunk/include
+# Public Dependencies (dependencies which leak into public headers)
+target_link_libraries(cocos2d PUBLIC
+    glfw
 )
 
+# Private Dependencies
 target_link_libraries(cocos2d PRIVATE
-    # vcpkg optional dependencies
-    $<$<BOOL:JPEG_FOUND>:JPEG::JPEG>
-    $<$<BOOL:PNG_FOUND>:PNG::PNG>
-    $<$<BOOL:TIFF_FOUND>:TIFF::TIFF>
+    # optional dependencies
+    $<$<BOOL:${BUILD_JPEG_SUPPORT}>:JPEG::JPEG>
+    $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
+    $<$<BOOL:${BUILD_TIFF_SUPPORT}>:TIFF::TIFF>
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:websockets>
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:CURL::libcurl>
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:OpenSSL::SSL>
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:OpenSSL::Crypto>
 
-    # vcpkg required dependencies
-    CURL::libcurl
-    OpenSSL::SSL
-    OpenSSL::Crypto
+    # required dependencies
+    OpenAL::AL
+    OpenGL::GL
+    GLEW::GLEW
     Freetype::Freetype
     tinyxml2::tinyxml2
+    RapidJSON::RapidJSON
     xxhash::xxhash
-    WebP::WebP
-    GLEW::GLEW
-    websockets
     cereal
+    WebP::WebP
+    MPG123::MPG123
+    Vorbis::File
+    #### FIX FINDER MODULE DEPS ####
+    Vorbis::Codec
+    Ogg::Ogg
+    ################################
+
+    # required platform dependencies
+    $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
 
     # internal dependencies
     unzip::unzip
     xxtea::xxtea
     clipper::clipper
     recast::recast
-
-    # system dependencies
-    fontconfig
-    GL
-    openal
-    mpg123
-    vorbisfile
-
-    # fuck me
-    "${PROJECT_SOURCE_DIR}/external/chipmunk/prebuilt/linux/64-bit/libchipmunk.a"
+    chipmunk::chipmunk
 )
 
-target_link_libraries(cocos2d PUBLIC
-    glfw
-)
-
+# Private Compile Options
 target_compile_definitions(cocos2d PRIVATE
     CC_USE_3D_PHYSICS=0
     CC_ENABLE_BULLET_INTEGRATION=0
-
-    $<$<BOOL:JPEG_FOUND>:CC_USE_JPEG=1>
-    $<$<BOOL:PNG_FOUND>:CC_USE_PNG=1>
-    $<$<BOOL:TIFF_FOUND>:CC_USE_TIFF=1>
+    CC_USE_JPEG=$<BOOL:${BUILD_JPEG_SUPPORT}>
+    CC_USE_PNG=$<BOOL:${BUILD_PNG_SUPPORT}>
+    CC_USE_TIFF=$<BOOL:${BUILD_TIFF_SUPPORT}>
+    CC_USE_NETWORK=$<BOOL:${BUILD_NETWORK_SUPPORT}>
 )
 
 if(XCODE OR VS)

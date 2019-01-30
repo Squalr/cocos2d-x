@@ -35,10 +35,10 @@
 #include "cocos2d.h"
 
 // encode / decode json
-#include "json/document-wrapper.h"
-#include "json/filereadstream.h"
-#include "json/stringbuffer.h"
-#include "json/writer.h"
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
 #include "SimulatorExport.h"
 
 enum

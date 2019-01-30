@@ -27,7 +27,7 @@
 
 #include <string>
 #include <unordered_map>
-#include "json/document-wrapper.h"
+#include "rapidjson/document.h"
 #include "editor-support/cocostudio/CocosStudioExport.h"
 
 namespace cocostudio {

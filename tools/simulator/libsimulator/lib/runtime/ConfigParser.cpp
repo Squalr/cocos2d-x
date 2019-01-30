@@ -23,9 +23,9 @@
  ****************************************************************************/
 
 #include "ConfigParser.h"
-#include "json/filereadstream.h"
-#include "json/stringbuffer.h"
-#include "json/writer.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
 #include "FileServer.h"
 
 // ConfigParser
