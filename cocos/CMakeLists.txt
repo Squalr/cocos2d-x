@@ -117,6 +117,13 @@ target_link_libraries(cocos2d PUBLIC
 
 # Private Dependencies
 target_link_libraries(cocos2d PRIVATE
+    # optional dependencies
+    $<$<BOOL:${BUILD_JPEG_SUPPORT}>:JPEG::JPEG>
+    $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
+    $<$<BOOL:${BUILD_TIFF_SUPPORT}>:TIFF::TIFF>
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:websockets>
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:CURL::libcurl>
+
     # dependencies
     OpenAL::AL
     OpenGL::GL
@@ -130,13 +137,6 @@ target_link_libraries(cocos2d PRIVATE
     MPG123::MPG123
     Vorbis::File
     sqlite3
-
-    # optional dependencies
-    $<$<BOOL:${BUILD_JPEG_SUPPORT}>:JPEG::JPEG>
-    $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
-    $<$<BOOL:${BUILD_TIFF_SUPPORT}>:TIFF::TIFF>
-    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:websockets>
-    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:CURL::libcurl>
 
     # internal dependencies
     unzip::unzip
