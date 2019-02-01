@@ -27,10 +27,6 @@
 # this CMakeLists is to generate Cocos2d-x Engine Library
 # build libcocos2d
 
-if(WINDOWS)
-    add_definitions(-DUNICODE -D_UNICODE)
-endif()
-
 include(2d/CMakeLists.txt)
 include(3d/CMakeLists.txt)
 include(platform/CMakeLists.txt)
@@ -121,16 +117,7 @@ target_link_libraries(cocos2d PUBLIC
 
 # Private Dependencies
 target_link_libraries(cocos2d PRIVATE
-    # optional dependencies
-    $<$<BOOL:${BUILD_JPEG_SUPPORT}>:JPEG::JPEG>
-    $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
-    $<$<BOOL:${BUILD_TIFF_SUPPORT}>:TIFF::TIFF>
-    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:websockets>
-    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:CURL::libcurl>
-    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:OpenSSL::SSL>
-    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:OpenSSL::Crypto>
-
-    # required dependencies
+    # dependencies
     OpenAL::AL
     OpenGL::GL
     GLEW::GLEW
@@ -142,13 +129,14 @@ target_link_libraries(cocos2d PRIVATE
     WebP::WebP
     MPG123::MPG123
     Vorbis::File
-    #### FIX FINDER MODULE DEPS ####
-    Vorbis::Codec
-    Ogg::Ogg
-    ################################
+    sqlite3
 
-    # required platform dependencies
-    $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
+    # optional dependencies
+    $<$<BOOL:${BUILD_JPEG_SUPPORT}>:JPEG::JPEG>
+    $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
+    $<$<BOOL:${BUILD_TIFF_SUPPORT}>:TIFF::TIFF>
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:websockets>
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:CURL::libcurl>
 
     # internal dependencies
     unzip::unzip
@@ -156,10 +144,17 @@ target_link_libraries(cocos2d PRIVATE
     clipper::clipper
     recast::recast
     chipmunk::chipmunk
+
+    # required platform dependencies
+    $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
+    $<$<PLATFORM_ID:Windows>:ws2_32>
+    $<$<PLATFORM_ID:Windows>:winmm>
+    $<$<PLATFORM_ID:Windows>:version>
 )
 
 # Private Compile Options
 target_compile_definitions(cocos2d PRIVATE
+    MPG123_DEF_SSIZE_T
     CC_USE_3D_PHYSICS=0
     CC_ENABLE_BULLET_INTEGRATION=0
     CC_USE_JPEG=$<BOOL:${BUILD_JPEG_SUPPORT}>
@@ -168,6 +163,7 @@ target_compile_definitions(cocos2d PRIVATE
     CC_USE_NETWORK=$<BOOL:${BUILD_NETWORK_SUPPORT}>
 )
 
-if(XCODE OR VS)
-    cocos_mark_code_files("cocos2d")
-endif()
+# Public Compile Options
+target_compile_definitions(cocos2d PUBLIC
+    CC_STATIC
+)

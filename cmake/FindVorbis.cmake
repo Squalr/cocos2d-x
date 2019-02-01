@@ -31,6 +31,7 @@ if (NOT TARGET Vorbis::Codec)
         IMPORTED_LOCATION ${VORBIS_LIBRARY}
         INTERFACE_INCLUDE_DIRECTORIES ${VORBIS_INCLUDE_DIR}
     )
+    target_link_libraries(Vorbis::Codec INTERFACE Ogg::Ogg)
 endif()
 
 if (NOT TARGET Vorbis::Encoder)
@@ -39,6 +40,7 @@ if (NOT TARGET Vorbis::Encoder)
         IMPORTED_LOCATION ${VORBISENC_LIBRARY}
         INTERFACE_INCLUDE_DIRECTORIES ${VORBIS_INCLUDE_DIR}
     )
+    target_link_libraries(Vorbis::Encoder INTERFACE Vorbis::Codec)
 endif()
 
 if(NOT TARGET Vorbis::File)
@@ -47,4 +49,5 @@ if(NOT TARGET Vorbis::File)
         IMPORTED_LOCATION ${VORBISFILE_LIBRARY}
         INTERFACE_INCLUDE_DIRECTORIES ${VORBIS_INCLUDE_DIR}
     )
+    target_link_libraries(Vorbis::File INTERFACE Vorbis::Codec)
 endif()

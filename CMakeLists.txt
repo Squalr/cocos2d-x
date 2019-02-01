@@ -29,7 +29,7 @@ cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 project(Cocos2d-x VERSION 3.17)
 
 set(COCOS2DX_ROOT_PATH ${PROJECT_SOURCE_DIR})
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/NewModules)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/Modules/CocosCompileOptions.cmake)
 
 # Options
@@ -56,14 +56,16 @@ find_package(xxhash REQUIRED)
 find_package(RapidJSON REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(MPG123 REQUIRED)
+find_package(sqlite3 REQUIRED)
 
+# Optional Dependencies
 find_package(JPEG QUIET)
 find_package(PNG QUIET)
 find_package(TIFF QUIET)
 find_package(CURL QUIET)
-find_package(OpenSSL QUIET)
 find_package(Libwebsockets QUIET)
 
+# Platform dependencies
 find_package(unofficial-fontconfig QUIET)
 
 # wrap openal vars in a target
@@ -72,11 +74,6 @@ set_target_properties(OpenAL::AL PROPERTIES
     IMPORTED_LOCATION ${OPENAL_LIBRARY}
     INTERFACE_INCLUDE_DIRECTORIES ${OPENAL_INCLUDE_DIR}
 )
-
-# wrap rapidjson vars in a target
-add_library(RapidJSON INTERFACE)
-add_library(RapidJSON::RapidJSON ALIAS RapidJSON)
-target_include_directories(RapidJSON INTERFACE ${RAPIDJSON_INCLUDE_DIRS})
 
 # Validate options
 if(BUILD_JPEG_SUPPORT AND NOT JPEG_FOUND)
@@ -99,10 +96,10 @@ if(LINUX AND NOT unofficial-fontconfig_FOUND)
     message(ERROR "Fontconfig is required on Linux, but it wasn't found.")
 endif()
 
-# Bundled Cocos (Source) Dependencies
+# Bundled Dependencies
 add_subdirectory(${PROJECT_SOURCE_DIR}/external)
 
-# Cocos Sources
+# Sources
 add_subdirectory(${PROJECT_SOURCE_DIR}/cocos)
 
 # Tests

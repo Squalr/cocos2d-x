@@ -7,7 +7,7 @@ if(NOT MPG123_INCLUDE_DIR)
 endif()
 
 if(NOT MPG123_LIBRARY)
-    find_library(MPG123_LIBRARY mpg123)
+    find_library(MPG123_LIBRARY libmpg123)
 endif()
 
 find_package_handle_standard_args(MPG123 REQUIRED_VARS

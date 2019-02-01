@@ -40,7 +40,7 @@ THE SOFTWARE.
 #ifndef GLFW_EXPOSE_NATIVE_WGL
 #define GLFW_EXPOSE_NATIVE_WGL
 #endif
-#include "glfw3native.h"
+#include <GLFW/glfw3native.h>
 #endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) */
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
@@ -50,7 +50,7 @@ THE SOFTWARE.
 #ifndef GLFW_EXPOSE_NATIVE_COCOA
 #define GLFW_EXPOSE_NATIVE_COCOA
 #endif
-#include "glfw3native.h"
+#include <GLFW/glfw3native.h>
 #endif // #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 
 NS_CC_BEGIN
