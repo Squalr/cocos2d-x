@@ -30,7 +30,15 @@ project(Cocos2d-x VERSION 3.17)
 
 set(COCOS2DX_ROOT_PATH ${PROJECT_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
-include(${PROJECT_SOURCE_DIR}/cmake/Modules/CocosCompileOptions.cmake)
+
+# Haven't removed all instances of these yet
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(WINDOWS TRUE)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set(LINUX TRUE)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(APPLE TRUE)
+endif()
 
 # Options
 option(BUILD_EDITOR_COCOSBUILDER "Build CocosBuilder Editor Support" OFF)
@@ -42,6 +50,7 @@ option(BUILD_JPEG_SUPPORT        "Build JPEG Support"                ON)
 option(BUILD_PNG_SUPPORT         "Build PNG Support"                 ON)
 option(BUILD_TIFF_SUPPORT        "Build TIFF Support"                ON)
 option(BUILD_NETWORK_SUPPORT     "Build Network Support"             OFF)
+option(USE_SYSTEM_MINIZIP        "Use system minizip"                OFF)
 
 # Dependencies
 find_package(OpenAL REQUIRED)
@@ -49,11 +58,12 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(xxhash REQUIRED)
+find_package(ZLIB REQUIRED)
 find_package(tinyxml2 REQUIRED)
 find_package(cereal REQUIRED)
-find_package(WebP REQUIRED)
-find_package(xxhash REQUIRED)
 find_package(RapidJSON REQUIRED)
+find_package(WebP REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(MPG123 REQUIRED)
 find_package(sqlite3 REQUIRED)
@@ -64,6 +74,7 @@ find_package(PNG QUIET)
 find_package(TIFF QUIET)
 find_package(CURL QUIET)
 find_package(Libwebsockets QUIET)
+find_package(MINIZIP QUIET)
 
 # Platform dependencies
 find_package(unofficial-fontconfig QUIET)
@@ -88,7 +99,7 @@ if(BUILD_TIFF_SUPPORT AND NOT TIFF_FOUND)
     message(ERROR "TIFF support was requested but libtiff wasn't found.")
 endif()
 
-if(BUILD_NETWORK_SUPPORT AND (NOT Libwebsockets_FOUND OR NOT OpenSSL_FOUND OR NOT CURL_FOUND))
+if(BUILD_NETWORK_SUPPORT AND (NOT Libwebsockets_FOUND OR NOT CURL_FOUND))
     message(ERROR "Network support was requested but dependencies weren't found.")
 endif()
 

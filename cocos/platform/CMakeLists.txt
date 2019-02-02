@@ -179,14 +179,15 @@ endif()
 
 #leave andatory external stuff here also
 
-include_directories(
-        ../external
-        ../external/ConvertUTF
-        ../external/edtaa3func
-        ../external/poly2tri
-        ../external/poly2tri/common
-        ../external/poly2tri/sweep
-)
+set(COCOS_PLATFORM_INCLUDE_PATHS
+    ${PROJECT_SOURCE_DIR}/external
+    ${PROJECT_SOURCE_DIR}/external/ConvertUTF
+    ${PROJECT_SOURCE_DIR}/external/edtaa3func
+    ${PROJECT_SOURCE_DIR}/external/poly2tri
+    ${PROJECT_SOURCE_DIR}/external/poly2tri/common
+    ${PROJECT_SOURCE_DIR}/external/poly2tri/sweep
+    $<$<NOT:$<BOOL:${USE_SYSTEM_MINIZIP}>>:${PROJECT_SOURCE_DIR}/external/unzip>
+    )
 
 set(COCOS_PLATFORM_HEADER
     ${COCOS_PLATFORM_SPECIFIC_HEADER}
@@ -222,4 +223,7 @@ set(COCOS_PLATFORM_SRC
     ../external/poly2tri/sweep/cdt.cc
     ../external/poly2tri/sweep/sweep_context.cc
     ../external/poly2tri/sweep/sweep.cc
+    $<$<NOT:$<BOOL:${USE_SYSTEM_MINIZIP}>>:../external/unzip/ioapi_mem.cpp>
+    $<$<NOT:$<BOOL:${USE_SYSTEM_MINIZIP}>>:../external/unzip/ioapi.cpp>
+    $<$<NOT:$<BOOL:${USE_SYSTEM_MINIZIP}>>:../external/unzip/unzip.cpp>
     )

@@ -103,67 +103,111 @@ add_library(cocos2d STATIC
 
 add_library(cocos2d::cocos2d ALIAS cocos2d)
 
-# Public Interface
-target_include_directories(cocos2d PUBLIC
-    ${PROJECT_SOURCE_DIR}
-    ${PROJECT_SOURCE_DIR}/extensions
-    ${CMAKE_CURRENT_LIST_DIR}
+# C++11 and PIC
+target_compile_features(cocos2d PUBLIC cxx_std_11 c_std_99)
+set_target_properties(cocos2d PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
 )
 
-# Public Dependencies (dependencies which leak into public headers)
-target_link_libraries(cocos2d PUBLIC
-    glfw
+# Include Interface
+target_include_directories(cocos2d
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/extensions
+        ${CMAKE_CURRENT_LIST_DIR}
+    PRIVATE
+        ${COCOS_PLATFORM_INCLUDE_PATHS}
 )
 
-# Private Dependencies
-target_link_libraries(cocos2d PRIVATE
-    # optional dependencies
-    $<$<BOOL:${BUILD_JPEG_SUPPORT}>:JPEG::JPEG>
-    $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
-    $<$<BOOL:${BUILD_TIFF_SUPPORT}>:TIFF::TIFF>
-    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:websockets>
-    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:CURL::libcurl>
+# Dependencies
+target_link_libraries(cocos2d
+    PUBLIC
+        glfw
 
-    # dependencies
-    OpenAL::AL
-    OpenGL::GL
-    GLEW::GLEW
-    Freetype::Freetype
-    tinyxml2::tinyxml2
-    RapidJSON::RapidJSON
-    xxhash::xxhash
-    cereal
-    WebP::WebP
-    MPG123::MPG123
-    Vorbis::File
-    sqlite3
+    PRIVATE
+        # optional dependencies
+        $<$<BOOL:${BUILD_JPEG_SUPPORT}>:JPEG::JPEG>
+        $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
+        $<$<BOOL:${BUILD_TIFF_SUPPORT}>:TIFF::TIFF>
+        $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:websockets>
+        $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:CURL::libcurl>
+        $<$<BOOL:${USE_SYSTEM_MINIZIP}>:MINIZIP::minizip>
 
-    # internal dependencies
-    unzip::unzip
-    xxtea::xxtea
-    clipper::clipper
-    recast::recast
-    chipmunk::chipmunk
+        # dependencies
+        OpenAL::AL
+        OpenGL::GL
+        GLEW::GLEW
+        Freetype::Freetype
+        tinyxml2::tinyxml2
+        RapidJSON::RapidJSON
+        xxhash::xxhash
+        cereal
+        WebP::WebP
+        MPG123::MPG123
+        Vorbis::File
+        sqlite3
 
-    # required platform dependencies
-    $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
-    $<$<PLATFORM_ID:Windows>:ws2_32>
-    $<$<PLATFORM_ID:Windows>:winmm>
-    $<$<PLATFORM_ID:Windows>:version>
+        # internal dependencies
+        xxtea::xxtea
+        clipper::clipper
+        recast::recast
+        chipmunk::chipmunk
+
+        # required platform dependencies
+        $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
+        $<$<PLATFORM_ID:Windows>:ws2_32>
+        $<$<PLATFORM_ID:Windows>:winmm>
+        $<$<PLATFORM_ID:Windows>:version>
+)
+
+# Definitions
+target_compile_definitions(cocos2d
+    PRIVATE
+        CC_USE_JPEG=$<BOOL:${BUILD_JPEG_SUPPORT}>
+        CC_USE_PNG=$<BOOL:${BUILD_PNG_SUPPORT}>
+        CC_USE_TIFF=$<BOOL:${BUILD_TIFF_SUPPORT}>
+        CC_USE_NETWORK=$<BOOL:${BUILD_NETWORK_SUPPORT}>
+        CC_USE_3D_PHYSICS=0
+        CC_ENABLE_BULLET_INTEGRATION=0
+
+        $<$<BOOL:${USE_SYSTEM_MINIZIP}>:MINIZIP_FROM_SYSTEM>
+
+        $<$<PLATFORM_ID:Windows>:MPG123_DEF_SSIZE_T>
+        $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+        $<$<PLATFORM_ID:Windows>:_SCL_SECURE_NO_WARNINGS>
+
+    PUBLIC
+        $<$<CONFIG:Debug>:COCOS2D_DEBUG>
+
+        $<$<PLATFORM_ID:Windows>:UNICODE>
+        $<$<PLATFORM_ID:Windows>:_UNICODE>
+        $<$<PLATFORM_ID:Windows>:WIN32>
+        $<$<PLATFORM_ID:Windows>:_WIN32>
+        $<$<PLATFORM_ID:Windows>:CC_STATIC>
+        $<$<PLATFORM_ID:Windows>:COCOS2DXWIN32_EXPORTS>
+        $<$<PLATFORM_ID:Darwin>:USE_FILE32API>
+        $<$<PLATFORM_ID:Darwin>:TARGET_OS_MAC>
+        $<$<PLATFORM_ID:Linux>:LINUX>
 )
 
 # Private Compile Options
-target_compile_definitions(cocos2d PRIVATE
-    MPG123_DEF_SSIZE_T
-    CC_USE_3D_PHYSICS=0
-    CC_ENABLE_BULLET_INTEGRATION=0
-    CC_USE_JPEG=$<BOOL:${BUILD_JPEG_SUPPORT}>
-    CC_USE_PNG=$<BOOL:${BUILD_PNG_SUPPORT}>
-    CC_USE_TIFF=$<BOOL:${BUILD_TIFF_SUPPORT}>
-    CC_USE_NETWORK=$<BOOL:${BUILD_NETWORK_SUPPORT}>
-)
+target_compile_options(cocos2d PRIVATE
+    # Enable all warnings on non-windows platforms
+    $<$<NOT:$<PLATFORM_ID:Windows>>:-Wall>
 
-# Public Compile Options
-target_compile_definitions(cocos2d PUBLIC
-    CC_STATIC
+    # Disable specific warnings (TODO: why?)
+    $<$<PLATFORM_ID:Windows>:-wd4005>
+    $<$<PLATFORM_ID:Windows>:-wd4056>
+    $<$<PLATFORM_ID:Windows>:-wd4099>
+    $<$<PLATFORM_ID:Windows>:-wd4244>
+    $<$<PLATFORM_ID:Windows>:-wd4251>
+    $<$<PLATFORM_ID:Windows>:-wd4334>
+    $<$<PLATFORM_ID:Windows>:-wd4514>
+    $<$<PLATFORM_ID:Windows>:-wd4710>
+    $<$<PLATFORM_ID:Windows>:-wd4820>
+    $<$<PLATFORM_ID:Windows>:-wd4996>
+
+    $<$<NOT:$<PLATFORM_ID:Windows>>:-Wno-deprecated-declarations>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:$<$<COMPILE_LANGUAGE:CXX>:-Wno-invalid-offsetof>>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:$<$<COMPILE_LANGUAGE:CXX>:-Wno-reorder>>
 )
