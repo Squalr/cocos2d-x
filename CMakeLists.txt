@@ -38,6 +38,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(LINUX TRUE)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(APPLE TRUE)
+    set(MACOSX TRUE)
 endif()
 
 # Options
@@ -77,14 +78,26 @@ find_package(Libwebsockets QUIET)
 find_package(MINIZIP QUIET)
 
 # Platform dependencies
-find_package(unofficial-fontconfig QUIET)
+if(LINUX)
+    find_package(unofficial-fontconfig REQUIRED)
+elseif(APPLE)
+    find_package(Iconv REQUIRED)
+    find_package(AudioToolbox REQUIRED)
+endif()
 
 # wrap openal vars in a target
-add_library(OpenAL::AL UNKNOWN IMPORTED)
-set_target_properties(OpenAL::AL PROPERTIES
-    IMPORTED_LOCATION ${OPENAL_LIBRARY}
-    INTERFACE_INCLUDE_DIRECTORIES ${OPENAL_INCLUDE_DIR}
-)
+if(APPLE AND ${OPENAL_LIBRARY} MATCHES "\\.framework$")
+    add_library(OpenAL::AL INTERFACE IMPORTED)
+    set_target_properties(OpenAL::AL PROPERTIES
+        INTERFACE_LINK_LIBRARIES ${OPENAL_LIBRARY}
+    )
+else()
+    add_library(OpenAL::AL UNKNOWN IMPORTED)
+    set_target_properties(OpenAL::AL PROPERTIES
+        IMPORTED_LOCATION ${OPENAL_LIBRARY}
+        INTERFACE_INCLUDE_DIRECTORIES ${OPENAL_INCLUDE_DIR}
+    )
+endif()
 
 # Validate options
 if(BUILD_JPEG_SUPPORT AND NOT JPEG_FOUND)
@@ -101,10 +114,6 @@ endif()
 
 if(BUILD_NETWORK_SUPPORT AND (NOT Libwebsockets_FOUND OR NOT CURL_FOUND))
     message(ERROR "Network support was requested but dependencies weren't found.")
-endif()
-
-if(LINUX AND NOT unofficial-fontconfig_FOUND)
-    message(ERROR "Fontconfig is required on Linux, but it wasn't found.")
 endif()
 
 # Bundled Dependencies

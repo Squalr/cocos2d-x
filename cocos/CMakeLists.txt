@@ -155,6 +155,8 @@ target_link_libraries(cocos2d
 
         # required platform dependencies
         $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
+        $<$<PLATFORM_ID:Darwin>:Iconv::Iconv>
+        $<$<PLATFORM_ID:Darwin>:AudioToolbox::AudioToolbox>
         $<$<PLATFORM_ID:Windows>:ws2_32>
         $<$<PLATFORM_ID:Windows>:winmm>
         $<$<PLATFORM_ID:Windows>:version>
