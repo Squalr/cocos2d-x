@@ -55,12 +55,12 @@ elseif(APPLE)
             )
     endif()
 elseif(LINUX)
-    set(COCOS_UI_SPECIFIC_HEADER
-        ui/UIEditBox/UIEditBoxImpl-linux.h
-        )
-    set(COCOS_UI_SPECIFIC_SRC
-        ui/UIEditBox/UIEditBoxImpl-linux.cpp
-        )
+#    set(COCOS_UI_SPECIFIC_HEADER
+#        ui/UIEditBox/UIEditBoxImpl-linux.h
+#        )
+#    set(COCOS_UI_SPECIFIC_SRC
+#        ui/UIEditBox/UIEditBoxImpl-linux.cpp
+#        )
 elseif(ANDROID)
     set(COCOS_UI_SPECIFIC_HEADER
         ui/UIWebView.h

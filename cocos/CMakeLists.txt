@@ -26,17 +26,6 @@
 
 # this CMakeLists is to generate Cocos2d-x Engine Library
 # build libcocos2d
-# build luacocos2d if BUILD_LUA_LIBS=ON
-# build jscocos2d if BUILD_JS_LIBS=ON
-
-# The version number
-set(COCOS2D_X_VERSION 3.17)
-
-set(COCOS_CORE_LIB cocos2d)
-
-if(WINDOWS)
-    add_definitions(-DUNICODE -D_UNICODE)
-endif()
 
 include(2d/CMakeLists.txt)
 include(3d/CMakeLists.txt)
@@ -73,7 +62,9 @@ if(BUILD_EXTENSIONS)
     include(../extensions/CMakeLists.txt)
 endif(BUILD_EXTENSIONS)
 
-set(COCOS_HEADER cocos2d.h
+add_library(cocos2d STATIC
+    cocos2d.h
+    cocos2d.cpp
     ${COCOS_2D_HEADER}
     ${COCOS_3D_HEADER}
     ${COCOS_PLATFORM_HEADER}
@@ -87,13 +78,9 @@ set(COCOS_HEADER cocos2d.h
     ${COCOS_AUDIO_HEADER}
     ${COCOS_UI_HEADER}
     ${COCOS_DEPRECATED_HEADER}
-    ${COCOS_NETWORK_HEADER}
     ${COCOS_EDITOR_SUPPORT_HEADER}
     ${COCOS_EXTENSIONS_HEADER}
     ${COCOS_STORAGE_HEADER}
-    )
-
-set(COCOS_SRC cocos2d.cpp
     ${COCOS_2D_SRC}
     ${COCOS_3D_SRC}
     ${COCOS_PLATFORM_SRC}
@@ -107,71 +94,122 @@ set(COCOS_SRC cocos2d.cpp
     ${COCOS_AUDIO_SRC}
     ${COCOS_UI_SRC}
     ${COCOS_DEPRECATED_SRC}
-    ${COCOS_NETWORK_SRC}
     ${COCOS_EDITOR_SUPPORT_SRC}
     ${COCOS_EXTENSIONS_SRC}
     ${COCOS_STORAGE_SRC}
-    )
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:${COCOS_NETWORK_HEADER}>
+    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:${COCOS_NETWORK_SRC}>
+)
 
-#todo: provide prebuild versions of the xx libs for all platforms
-include_directories(../external/xxtea)
-include_directories(../external/clipper)
+add_library(cocos2d::cocos2d ALIAS cocos2d)
 
-list(APPEND COCOS_SRC ${COCOS_HEADER})
+# C++11 and PIC
+target_compile_features(cocos2d PUBLIC cxx_std_11 c_std_99)
+set_target_properties(cocos2d PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
+)
 
-add_library(cocos2d ${COCOS_SRC})
+# Include Interface
+target_include_directories(cocos2d
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/extensions
+        ${CMAKE_CURRENT_LIST_DIR}
+    PRIVATE
+        ${COCOS_PLATFORM_INCLUDE_PATHS}
+)
 
-# use necessary external libs and system libs
-include(CocosUseLibs)
-target_use_cocos2d_depend_libs(cocos2d)
+# Dependencies
+target_link_libraries(cocos2d
+    PUBLIC
+        glfw
 
-set_target_properties(cocos2d
-                      PROPERTIES
-                      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-                      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-                      VERSION "${COCOS2D_X_VERSION}"
-                      FOLDER "Internal"
-                      )
+    PRIVATE
+        # optional dependencies
+        $<$<BOOL:${BUILD_JPEG_SUPPORT}>:JPEG::JPEG>
+        $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
+        $<$<BOOL:${BUILD_TIFF_SUPPORT}>:TIFF::TIFF>
+        $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:websockets>
+        $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:CURL::libcurl>
+        $<$<BOOL:${USE_SYSTEM_MINIZIP}>:MINIZIP::minizip>
 
-# set custom target: prebuilt, to copy all libs to prebuilt libs folder
-if(GEN_COCOS_PREBUILT)
-    add_custom_target(prebuilt ALL)
-    add_dependencies(prebuilt cocos2d)
-    set_target_properties(prebuilt
-                          PROPERTIES
-                          FOLDER "Internal"
-                          )
-    add_custom_command(TARGET "prebuilt"
-                       POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       "${CMAKE_BINARY_DIR}/lib"
-                       "${COCOS_PREBUILT_PATH}"
-                       COMMENT "copy library directory:${CMAKE_BINARY_DIR}/lib to directory:${COCOS_PREBUILT_PATH}"
-                       )
-    if(BUILD_LUA_LIBS)
-        add_dependencies(prebuilt luacocos2d)
-    endif()
-    if(BUILD_JS_LIBS)
-        add_dependencies(prebuilt jscocos2d)
-    endif()
-    if(BUILD_SIMU_LIB AND (MACOSX OR WINDOWS))
-        add_dependencies(prebuilt simulator)
-    endif()
-endif()
+        # dependencies
+        OpenAL::AL
+        OpenGL::GL
+        GLEW::GLEW
+        Freetype::Freetype
+        tinyxml2::tinyxml2
+        RapidJSON::RapidJSON
+        xxhash::xxhash
+        cereal
+        WebP::WebP
+        MPG123::MPG123
+        Vorbis::File
+        sqlite3
 
-## Lua bindings lib
-if(BUILD_LUA_LIBS)
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/scripting/lua-bindings ${ENGINE_BINARY_PATH}/cocos/lua-bindings)
-endif()
-## JS bindings lib
-if(BUILD_JS_LIBS)
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/scripting/js-bindings ${ENGINE_BINARY_PATH}/cocos/js-bindings)
-endif()
-# simulator
-if(BUILD_SIMU_LIB AND (MACOSX OR WINDOWS))
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/tools/simulator/libsimulator ${ENGINE_BINARY_PATH}/cocos/libsimulator)
-endif()
+        # internal dependencies
+        xxtea::xxtea
+        clipper::clipper
+        recast::recast
+        chipmunk::chipmunk
 
-if(XCODE OR VS)
-    cocos_mark_code_files("cocos2d")
-endif()
+        # required platform dependencies
+        $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
+        $<$<PLATFORM_ID:Darwin>:Iconv::Iconv>
+        $<$<PLATFORM_ID:Darwin>:AudioToolbox::AudioToolbox>
+        $<$<PLATFORM_ID:Windows>:ws2_32>
+        $<$<PLATFORM_ID:Windows>:winmm>
+        $<$<PLATFORM_ID:Windows>:version>
+)
+
+# Definitions
+target_compile_definitions(cocos2d
+    PRIVATE
+        CC_USE_JPEG=$<BOOL:${BUILD_JPEG_SUPPORT}>
+        CC_USE_PNG=$<BOOL:${BUILD_PNG_SUPPORT}>
+        CC_USE_TIFF=$<BOOL:${BUILD_TIFF_SUPPORT}>
+        CC_USE_NETWORK=$<BOOL:${BUILD_NETWORK_SUPPORT}>
+        CC_USE_3D_PHYSICS=0
+        CC_ENABLE_BULLET_INTEGRATION=0
+
+        $<$<BOOL:${USE_SYSTEM_MINIZIP}>:MINIZIP_FROM_SYSTEM>
+
+        $<$<PLATFORM_ID:Windows>:MPG123_DEF_SSIZE_T>
+        $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+        $<$<PLATFORM_ID:Windows>:_SCL_SECURE_NO_WARNINGS>
+
+    PUBLIC
+        $<$<CONFIG:Debug>:COCOS2D_DEBUG>
+
+        $<$<PLATFORM_ID:Windows>:UNICODE>
+        $<$<PLATFORM_ID:Windows>:_UNICODE>
+        $<$<PLATFORM_ID:Windows>:WIN32>
+        $<$<PLATFORM_ID:Windows>:_WIN32>
+        $<$<PLATFORM_ID:Windows>:CC_STATIC>
+        $<$<PLATFORM_ID:Windows>:COCOS2DXWIN32_EXPORTS>
+        $<$<PLATFORM_ID:Darwin>:USE_FILE32API>
+        $<$<PLATFORM_ID:Darwin>:TARGET_OS_MAC>
+        $<$<PLATFORM_ID:Linux>:LINUX>
+)
+
+# Private Compile Options
+target_compile_options(cocos2d PRIVATE
+    # Enable all warnings on non-windows platforms
+    $<$<NOT:$<PLATFORM_ID:Windows>>:-Wall>
+
+    # Disable specific warnings (TODO: why?)
+    $<$<PLATFORM_ID:Windows>:-wd4005>
+    $<$<PLATFORM_ID:Windows>:-wd4056>
+    $<$<PLATFORM_ID:Windows>:-wd4099>
+    $<$<PLATFORM_ID:Windows>:-wd4244>
+    $<$<PLATFORM_ID:Windows>:-wd4251>
+    $<$<PLATFORM_ID:Windows>:-wd4334>
+    $<$<PLATFORM_ID:Windows>:-wd4514>
+    $<$<PLATFORM_ID:Windows>:-wd4710>
+    $<$<PLATFORM_ID:Windows>:-wd4820>
+    $<$<PLATFORM_ID:Windows>:-wd4996>
+
+    $<$<NOT:$<PLATFORM_ID:Windows>>:-Wno-deprecated-declarations>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:$<$<COMPILE_LANGUAGE:CXX>:-Wno-invalid-offsetof>>
+    $<$<NOT:$<PLATFORM_ID:Windows>>:$<$<COMPILE_LANGUAGE:CXX>:-Wno-reorder>>
+)
