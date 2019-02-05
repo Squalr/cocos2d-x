@@ -99,7 +99,7 @@ extern "C"
 #include "base/TGAlib.h"
 
 #if CC_USE_WEBP
-#include "decode.h"
+#include "webp/decode.h"
 #endif // CC_USE_WEBP
 
 #include "base/ccMacros.h"

@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include "editor-support/cocostudio/DictionaryHelper.h"
 #include "editor-support/cocostudio/CocosStudioExport.h"
 
-#include "json/document-wrapper.h"
+#include "rapidjson/document.h"
 
 #include <string>
 #include <queue>
