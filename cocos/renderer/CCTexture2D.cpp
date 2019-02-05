@@ -1254,9 +1254,11 @@ bool Texture2D::hasMipmaps() const
 
 void Texture2D::setTexParameters(const TexParams &texParams)
 {
+	/*
     CCASSERT((_pixelsWide == ccNextPOT(_pixelsWide) || texParams.wrapS == GL_CLAMP_TO_EDGE) &&
         (_pixelsHigh == ccNextPOT(_pixelsHigh) || texParams.wrapT == GL_CLAMP_TO_EDGE),
         "GL_CLAMP_TO_EDGE should be used in NPOT dimensions");
+	*/
 
     GL::bindTexture2D( _name );
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texParams.minFilter );
