@@ -2026,20 +2026,39 @@ Mat4 Node::getWorldToNodeTransform() const
 
 Vec2 Node::convertToNodeSpace(const Vec2& worldPoint) const
 {
-    Mat4 tmp = getWorldToNodeTransform();
-    Vec3 vec3(worldPoint.x, worldPoint.y, 0);
-    Vec3 ret;
-    tmp.transformPoint(vec3,&ret);
-    return Vec2(ret.x, ret.y);
+	Mat4 tmp = getWorldToNodeTransform();
+	Vec3 vec3(worldPoint.x, worldPoint.y, 0);
+	Vec3 ret;
+	tmp.transformPoint(vec3, &ret);
+	return Vec2(ret.x, ret.y);
 }
 
 Vec2 Node::convertToWorldSpace(const Vec2& nodePoint) const
 {
-    Mat4 tmp = getNodeToWorldTransform();
-    Vec3 vec3(nodePoint.x, nodePoint.y, 0);
-    Vec3 ret;
-    tmp.transformPoint(vec3,&ret);
-    return Vec2(ret.x, ret.y);
+	Mat4 tmp = getNodeToWorldTransform();
+	Vec3 vec3(nodePoint.x, nodePoint.y, 0);
+	Vec3 ret;
+	tmp.transformPoint(vec3, &ret);
+	return Vec2(ret.x, ret.y);
+
+}
+
+Vec3 Node::convertToNodeSpace3(const Vec3& worldPoint) const
+{
+	Mat4 tmp = getWorldToNodeTransform();
+	Vec3 vec3(worldPoint);
+	Vec3 ret;
+	tmp.transformPoint(vec3, &ret);
+	return ret;
+}
+
+Vec3 Node::convertToWorldSpace3(const Vec3& nodePoint) const
+{
+	Mat4 tmp = getNodeToWorldTransform();
+	Vec3 vec3(nodePoint);
+	Vec3 ret;
+	tmp.transformPoint(vec3, &ret);
+	return ret;
 
 }
 

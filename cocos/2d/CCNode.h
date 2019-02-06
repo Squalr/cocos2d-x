@@ -1656,6 +1656,7 @@ public:
      * @return A point in node (local) space coordinates.
      */
     Vec2 convertToNodeSpace(const Vec2& worldPoint) const;
+	Vec3 convertToNodeSpace3(const Vec3& nodePoint) const;
 
     /**
      * Converts a Vec2 to world space coordinates. The result is in Points.
@@ -1663,7 +1664,8 @@ public:
      * @param nodePoint A given coordinate.
      * @return A point in world space coordinates.
      */
-    Vec2 convertToWorldSpace(const Vec2& nodePoint) const;
+	Vec2 convertToWorldSpace(const Vec2& nodePoint) const;
+	Vec3 convertToWorldSpace3(const Vec3& nodePoint) const;
 
     /**
      * Converts a Vec2 to node (local) space coordinates. The result is in Points.
