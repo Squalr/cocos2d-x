@@ -180,19 +180,6 @@ set(COCOS_EXTENSIONS_HEADER
     ../extensions/GUI/CCScrollView/CCTableView.h
     ../extensions/ExtensionDeprecated.h
     ../extensions/ExtensionExport.h
-	../extensions/SpriterPlusPlus/CCAnimationNode.h
-	../extensions/SpriterPlusPlus/CCBoneInstanceInfo.h
-	../extensions/SpriterPlusPlus/CCBoxInstanceInfo.h
-	../extensions/SpriterPlusPlus/CCFileFactory.h
-	../extensions/SpriterPlusPlus/CCImageFile.h
-	../extensions/SpriterPlusPlus/CCObjectFactory.h
-	../extensions/SpriterPlusPlus/CCPointInstanceInfo.h
-	../extensions/SpriterPlusPlus/CCSoundFile.h
-	../extensions/SpriterPlusPlus/CCSoundObjectInfoReference.h
-	../extensions/SpriterPlusPlus/CCTriggerObjectInfo.h
-	../extensions/SpriterPlusPlus/TinyXmlSpriterFileAttributeWrapper.h
-	../extensions/SpriterPlusPlus/TinyXmlSpriterFileDocumentWrapper.h
-	../extensions/SpriterPlusPlus/TinyXmlSpriterFileElementWrapper.h
     )
 
 set(COCOS_EXTENSIONS_SRC
@@ -369,17 +356,4 @@ set(COCOS_EXTENSIONS_SRC
     ../extensions/Particle3D/PU/CCPUBehaviourTranslator.cpp
     ../extensions/Particle3D/PU/CCPUSlaveBehaviour.cpp
     ../extensions/Particle3D/PU/CCPUSlaveBehaviourTranslator.cpp
-	../extensions/SpriterPlusPlus/CCAnimationNode.cpp
-	../extensions/SpriterPlusPlus/CCBoneInstanceInfo.cpp
-	../extensions/SpriterPlusPlus/CCBoxInstanceInfo.cpp
-	../extensions/SpriterPlusPlus/CCFileFactory.cpp
-	../extensions/SpriterPlusPlus/CCImageFile.cpp
-	../extensions/SpriterPlusPlus/CCObjectFactory.cpp
-	../extensions/SpriterPlusPlus/CCPointInstanceInfo.cpp
-	../extensions/SpriterPlusPlus/CCSoundFile.cpp
-	../extensions/SpriterPlusPlus/CCSoundObjectInfoReference.cpp
-	../extensions/SpriterPlusPlus/CCTriggerObjectInfo.cpp
-	../extensions/SpriterPlusPlus/TinyXmlSpriterFileAttributeWrapper.cpp
-	../extensions/SpriterPlusPlus/TinyXmlSpriterFileDocumentWrapper.cpp
-	../extensions/SpriterPlusPlus/TinyXmlSpriterFileElementWrapper.cpp
     )
