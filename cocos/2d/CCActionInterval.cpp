@@ -2639,6 +2639,10 @@ void Animate::update(float t)
 	auto& frames = _animation->getFrames();
 	auto numberOfFrames = frames.size();
 
+    if (_splitTimes->empty()) {
+        return;
+    }
+
     // if t==1, ignore. Animation should finish with t==1
     if( t < 1.0f )
     {
