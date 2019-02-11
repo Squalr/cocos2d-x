@@ -105,12 +105,19 @@ public:
      */
     void removeEventListenersForType(EventListener::Type listenerType);
 
-    /** Removes all listeners which are associated with the specified target.
-     *
-     * @param target A given target node.
-     * @param recursive True if remove recursively, the default value is false.
-     */
-    void removeEventListenersForTarget(Node* target, bool recursive = false);
+	/** Removes all listeners which are associated with the specified target.
+	 *
+	 * @param target A given target node.
+	 * @param recursive True if remove recursively, the default value is false.
+	 */
+	void removeEventListenersForTarget(Node* target, bool recursive = false);
+
+	/** Removes all listeners which are associated with the specified target matching the specified predicate.
+	 *
+	 * @param target A given target node.
+	 * @param recursive True if remove recursively, the default value is false.
+	 */
+	void removeEventListenersForTargetWhere(Node* target, std::function<bool(EventListener*)> predicate, bool recursive = false);
     
     /** Removes all custom listeners with the same event name.
      *

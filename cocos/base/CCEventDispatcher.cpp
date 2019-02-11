@@ -403,6 +403,53 @@ void EventDispatcher::removeEventListenersForTarget(Node* target, bool recursive
     }
 }
 
+void EventDispatcher::removeEventListenersForTargetWhere(Node* target, std::function<bool(EventListener*)> predicate, bool recursive/* = false */)
+{
+	auto listenerIter = _nodeListenersMap.find(target);
+	if (listenerIter != _nodeListenersMap.end())
+	{
+		auto listeners = listenerIter->second;
+
+		if (listeners == nullptr)
+			return;
+
+		auto listenersCopy = *listeners;
+		for (auto& l : listenersCopy)
+		{
+			if (predicate(l))
+			{
+				removeEventListener(l);
+			}
+		}
+	}
+	
+	for (auto iter = _toAddedListeners.begin(); iter != _toAddedListeners.end(); )
+	{
+		EventListener * listener = *iter;
+
+		if (listener->getAssociatedNode() == target && predicate(*iter))
+		{
+			listener->setAssociatedNode(nullptr);   // Ensure no dangling ptr to the target node.
+			listener->setRegistered(false);
+			releaseListener(listener);
+			iter = _toAddedListeners.erase(iter);
+		}
+		else
+		{
+			++iter;
+		}
+	}
+
+	if (recursive)
+	{
+		const auto& children = target->getChildren();
+		for (const auto& child : children)
+		{
+			removeEventListenersForTargetWhere(child, predicate, true);
+		}
+	}
+}
+
 void EventDispatcher::associateNodeAndEventListener(Node* node, EventListener* listener)
 {
     std::vector<EventListener*>* listeners = nullptr;
