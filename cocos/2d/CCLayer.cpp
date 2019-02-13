@@ -565,12 +565,17 @@ bool LayerColor::initWithColor(const Color4B& color)
 /// override contentSize
 void LayerColor::setContentSize(const Size & size)
 {
-    _squareVertices[1].x = size.width;
-    _squareVertices[2].y = size.height;
-    _squareVertices[3].x = size.width;
-    _squareVertices[3].y = size.height;
+	_squareVertices[0] = Vec2(0.0f, 0.0f);
+	_squareVertices[1] = Vec2(size.width, 0.0f);
+	_squareVertices[2] = Vec2(0.0f, size.height);
+	_squareVertices[3] = Vec2(size.width, size.height);
 
     Layer::setContentSize(size);
+}
+
+Rect LayerColor::getBoundingBox() const
+{
+	return Rect(Vec2::ZERO, this->getContentSize());
 }
 
 void LayerColor::changeWidthAndHeight(GLfloat w ,GLfloat h)
