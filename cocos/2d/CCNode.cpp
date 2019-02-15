@@ -779,8 +779,13 @@ Scene* Node::getScene() const
 
 Rect Node::getBoundingBox() const
 {
-    Rect rect(0, 0, _contentSize.width, _contentSize.height);
-    return RectApplyAffineTransform(rect, getNodeToParentAffineTransform());
+	Rect rect(0, 0, _contentSize.width, _contentSize.height);
+	return RectApplyAffineTransform(rect, getNodeToParentAffineTransform());
+}
+
+Rect Node::getBoundingBoxNoTransform() const
+{
+	return Rect(0, 0, _contentSize.width, _contentSize.height);
 }
 
 // MARK: Children logic

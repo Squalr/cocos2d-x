@@ -1220,7 +1220,8 @@ public:
      *
      * @return An AABB (axis-aligned bounding-box) in its parent's coordinate system
      */
-    virtual Rect getBoundingBox() const;
+	virtual Rect getBoundingBox() const;
+	virtual Rect getBoundingBoxNoTransform() const;
 
     /** @deprecated Use getBoundingBox instead */
     CC_DEPRECATED_ATTRIBUTE virtual Rect boundingBox() const { return getBoundingBox(); }

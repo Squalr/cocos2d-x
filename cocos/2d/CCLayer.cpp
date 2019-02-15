@@ -573,11 +573,6 @@ void LayerColor::setContentSize(const Size & size)
     Layer::setContentSize(size);
 }
 
-Rect LayerColor::getBoundingBox() const
-{
-	return Rect(Vec2::ZERO, this->getContentSize());
-}
-
 void LayerColor::changeWidthAndHeight(GLfloat w ,GLfloat h)
 {
     this->setContentSize(Size(w, h));
