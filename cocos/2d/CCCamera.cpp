@@ -266,10 +266,11 @@ Vec2 Camera::project(const Vec3& src) const
     auto viewport = Director::getInstance()->getWinSize();
     Vec4 clipPos;
     getViewProjectionMatrix().transformVector(Vec4(src.x, src.y, src.z, 1.0f), &clipPos);
-    
-    CCASSERT(clipPos.w != 0.0f, "clipPos.w can't be 0.0f!");
-    float ndcX = clipPos.x / clipPos.w;
-    float ndcY = clipPos.y / clipPos.w;
+
+	// Zac: Hey it's wonderful that clipPos.w can't be 0.0f, but sometimes it is, so uhh... handle it
+    // CCASSERT(clipPos.w != 0.0f, "clipPos.w can't be 0.0f!");
+	float ndcX = clipPos.x / (clipPos.w == 0.0f ? 1.0f : clipPos.w);
+    float ndcY = clipPos.y / (clipPos.w == 0.0f ? 1.0f : clipPos.w);
     
     screenPos.x = (ndcX + 1.0f) * 0.5f * viewport.width;
     screenPos.y = (1.0f - (ndcY + 1.0f) * 0.5f) * viewport.height;
@@ -283,10 +284,11 @@ Vec2 Camera::projectGL(const Vec3& src) const
     auto viewport = Director::getInstance()->getWinSize();
     Vec4 clipPos;
     getViewProjectionMatrix().transformVector(Vec4(src.x, src.y, src.z, 1.0f), &clipPos);
-    
-    CCASSERT(clipPos.w != 0.0f, "clipPos.w can't be 0.0f!");
-    float ndcX = clipPos.x / clipPos.w;
-    float ndcY = clipPos.y / clipPos.w;
+
+	// Zac: Same as above
+    // CCASSERT(clipPos.w != 0.0f, "clipPos.w can't be 0.0f!");
+    float ndcX = clipPos.x / (clipPos.w == 0.0f ? 1.0f : clipPos.w);
+    float ndcY = clipPos.y / (clipPos.w == 0.0f ? 1.0f : clipPos.w);
     
     screenPos.x = (ndcX + 1.0f) * 0.5f * viewport.width;
     screenPos.y = (ndcY + 1.0f) * 0.5f * viewport.height;
