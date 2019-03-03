@@ -370,8 +370,8 @@ void PhysicsBody::setPosition(float positionX, float positionY)
 {
     cpVect tt;
 
-    tt.x = positionX + _positionOffset.x;
-    tt.y = positionY + _positionOffset.y;
+    tt.x = (isnan(positionX) ? 0.0f : positionX) + _positionOffset.x;
+    tt.y = (isnan(positionY) ? 0.0f : positionY) + _positionOffset.y;
 
     cpBodySetPosition(_cpBody, tt);
 }
