@@ -29,6 +29,7 @@
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 
+#include <functional>
 #include <string>
 #include <mutex>
 #include <vector>
