@@ -367,6 +367,9 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     if(_glContextAttrs.multisamplingCount > 0)
         glEnable(GL_MULTISAMPLE);
 
+    // ZAC: attempt to patch double cursor issue for OSX
+    glfwFocusWindow(_mainWindow);
+
 //    // GLFW v3.2 no longer emits "onGLFWWindowSizeFunCallback" at creation time. Force default viewport:
 //    setViewPortInPoints(0, 0, neededWidth, neededHeight);
 //
