@@ -1563,10 +1563,10 @@ CC_CONSTRUCTOR_ACCESS:
 	std::function<int(int current, int max)> incrementCallback;
 
 protected:
-    std::vector<float>* _splitTimes;
+    float           _splitTime;
     int             _nextFrame;
 	float			_previousT;
-	float			_previousSplitTime;
+	float			_deltaSum;
     SpriteFrame*    _origFrame;
     unsigned int    _executedLoops;
     Animation*      _animation;

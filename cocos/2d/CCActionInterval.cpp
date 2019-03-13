@@ -2535,10 +2535,10 @@ Animate* Animate::create(Animation *animation)
 }
 
 Animate::Animate()
-: _splitTimes(new std::vector<float>)
+: _splitTime(0.0f)
 , _nextFrame(0)
 , _previousT(0.0f)
-, _previousSplitTime(0.0f)
+, _deltaSum(0.0f)
 , _origFrame(nullptr)
 , _executedLoops(0)
 , _animation(nullptr)
@@ -2551,7 +2551,6 @@ Animate::~Animate()
 {
     CC_SAFE_RELEASE(_animation);
     CC_SAFE_RELEASE(_origFrame);
-    CC_SAFE_DELETE(_splitTimes);
     CC_SAFE_RELEASE(_frameDisplayedEvent);
 }
 
@@ -2564,28 +2563,15 @@ bool Animate::initWithAnimation(Animation* animation)
         return false;
     }
 
-    float singleDuration = animation->getDuration();
-
-    if ( ActionInterval::initWithDuration(singleDuration * animation->getLoops() ) )
+    if ( ActionInterval::initWithDuration(animation->getDuration() * animation->getLoops() ) )
     {
         _nextFrame = 0;
+        _previousT = 0.0f;
+        _deltaSum = 0.0f;
         setAnimation(animation);
         _origFrame = nullptr;
         _executedLoops = 0;
-
-        _splitTimes->reserve(animation->getFrames().size());
-
-        float accumUnitsOfTime = 0;
-        float newUnitOfTimeValue = singleDuration / animation->getTotalDelayUnits();
-
-        auto& frames = animation->getFrames();
-
-        for (auto& frame : frames)
-        {
-            float value = (accumUnitsOfTime * newUnitOfTimeValue) / singleDuration;
-            accumUnitsOfTime += frame->getDelayUnits();
-            _splitTimes->push_back(value);
-        }    
+        _splitTime = (animation->getFrames().empty() ? 1.0f : 1.0f / float(animation->getFrames().size()));
         return true;
     }
     return false;
@@ -2639,10 +2625,6 @@ void Animate::update(float t)
 	auto& frames = _animation->getFrames();
 	auto numberOfFrames = frames.size();
 
-    if (_splitTimes->empty()) {
-        return;
-    }
-
     // if t==1, ignore. Animation should finish with t==1
     if( t < 1.0f )
     {
@@ -2650,20 +2632,18 @@ void Animate::update(float t)
 
         // new t for animations
         t = fmodf(t, 1.0f);
-
-		// Do nothing while waiting for the animation to finish
-		if (t > _splitTimes->back() && _nextFrame == 0)
-		{
-			return;
-		}
     }
 
-	float delta = std::abs(t - _previousT);
-	float splitTime = _splitTimes->at(_nextFrame);
-	float splitTimeDelta = std::abs(splitTime - _previousSplitTime);
 	SpriteFrame *frameToDisplay = nullptr;
 
-    if(delta >= splitTimeDelta)
+    // Figure out the intended index from the elapsed time (divide by 2 trick to avoid rounding errors)
+    int currentIndex = int((t + _splitTime / 2.0f) / _splitTime);
+    int previousIndex = int((_previousT + _splitTime / 2.0f) / _splitTime);
+
+    // Note: We don't use this index as a frame to give the user the opportunity to write hackable code
+    // modifying animation frame indicies
+
+    if(currentIndex > previousIndex)
     {
         auto blend = static_cast<Sprite*>(_target)->getBlendFunc();
 
@@ -2684,9 +2664,6 @@ void Animate::update(float t)
             Director::getInstance()->getEventDispatcher()->dispatchEvent(_frameDisplayedEvent);
         }
 
-		_previousT = t;
-		_previousSplitTime = splitTime;
-
 		if (this->incrementCallback != nullptr)
 		{
 			_nextFrame = this->incrementCallback(_nextFrame, numberOfFrames);
@@ -2700,15 +2677,15 @@ void Animate::update(float t)
 		{
 			_nextFrame = 0;
 			_executedLoops++;
-			_previousSplitTime = 0.0f;
 		}
 		else if (_nextFrame < 0)
 		{
 			_nextFrame = numberOfFrames - 1;
 			_executedLoops++;
-			_previousSplitTime = 1.0f;
 		}
 	}
+
+    _previousT = t;
 }
 
 Animate* Animate::reverse() const
