@@ -45,6 +45,7 @@ NS_CC_BEGIN
 // The root path of resources, the character encoding is UTF-8.
 // UTF-8 is the only encoding supported by cocos2d-x API.
 static std::string s_resourcePath = "";
+static std::string s_binaryPath = "";
 
 // D:\aaa\bbb\ccc\ddd\abc.txt --> D:/aaa/bbb/ccc/ddd/abc.txt
 static inline std::string convertPathFormatToUnixStyle(const std::string& path)
@@ -75,7 +76,8 @@ static void _checkPath()
         char utf8ExeDir[CC_MAX_PATH] = { 0 };
         int nNum = WideCharToMultiByte(CP_UTF8, 0, pUtf16ExePath, pUtf16DirEnd-pUtf16ExePath+1, utf8ExeDir, sizeof(utf8ExeDir), nullptr, nullptr);
 
-        s_resourcePath = convertPathFormatToUnixStyle(utf8ExeDir) + "Resources/";
+		s_binaryPath = convertPathFormatToUnixStyle(utf8ExeDir);
+		s_resourcePath = s_binaryPath + "Resources/";
     }
 }
 
@@ -102,6 +104,7 @@ bool FileUtilsWin32::init()
 {
     _checkPath();
     _defaultResRootPath = s_resourcePath;
+	_defaultBinaryPath = s_binaryPath;
     return FileUtils::init();
 }
 

@@ -975,7 +975,8 @@ protected:
      *  On Android, the default root path of resources will be assigned with "assets/" in FileUtilsAndroid::init().
      *  Similarly on Blackberry, we assign "app/native/Resources/" to this variable in FileUtilsBlackberry::init().
      */
-    std::string _defaultResRootPath;
+	std::string _defaultResRootPath;
+	std::string _defaultBinaryPath;
 
     /**
      *  The full path cache. When a file is found, it will be added into this cache.

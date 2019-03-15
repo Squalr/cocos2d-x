@@ -661,7 +661,8 @@ void FileUtils::writeDataToFile(Data data, const std::string& fullPath, std::fun
 
 bool FileUtils::init()
 {
-    _searchPathArray.push_back(_defaultResRootPath);
+	_searchPathArray.push_back(_defaultResRootPath);
+	_searchPathArray.push_back(_defaultBinaryPath);
     _searchResolutionsOrderArray.push_back("");
     return true;
 }

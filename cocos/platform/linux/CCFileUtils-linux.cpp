@@ -74,9 +74,9 @@ bool FileUtilsLinux::init()
     }
 
     fullpath[length] = '\0';
-    std::string appPath = fullpath;
-    _defaultResRootPath = appPath.substr(0, appPath.find_last_of("/"));
-    _defaultResRootPath += CC_RESOURCE_FOLDER_LINUX;
+	_defaultBinaryPath = fullpath;
+    _defaultResRootPath = _defaultBinaryPath.substr(0, _defaultBinaryPath.find_last_of("/"));
+	_defaultResRootPath += CC_RESOURCE_FOLDER_LINUX;
 
     // Set writable path to $XDG_CONFIG_HOME or ~/.config/<app name>/ if $XDG_CONFIG_HOME not exists.
     const char* xdg_config_path = getenv("XDG_CONFIG_HOME");
@@ -88,7 +88,7 @@ bool FileUtilsLinux::init()
         xdgConfigPath  = xdg_config_path;
     }
     _writablePath = xdgConfigPath;
-    _writablePath += appPath.substr(appPath.find_last_of("/"));
+    _writablePath += _defaultBinaryPath.substr(_defaultBinaryPath.find_last_of("/"));
     _writablePath += "/";
 
     return FileUtils::init();
