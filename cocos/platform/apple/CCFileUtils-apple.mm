@@ -30,12 +30,15 @@ THE SOFTWARE.
 
 #include <ftw.h>
 
+#include <libproc.h>
+
 #include <string>
 #include <stack>
 
 #include "base/CCDirector.h"
 #include "platform/CCFileUtils.h"
 #include "platform/CCSAXParser.h"
+
 
 NS_CC_BEGIN
 
@@ -228,6 +231,28 @@ FileUtils* FileUtils::getInstance()
     return s_sharedFileUtils;
 }
 
+bool FileUtilsApple::init()
+{
+    int ret;
+    pid_t pid; 
+    char pathbuf[PROC_PIDPATHINFO_MAXSIZE];
+
+    pid = getpid();
+    ret = proc_pidpath(pid, pathbuf, sizeof(pathbuf));
+    
+    if (ret <= 0)
+    {
+        return false;
+    }
+
+    // Construct binary/resource paths
+    _defaultBinaryPath = pathbuf;
+    _defaultBinaryPath = _defaultBinaryPath.substr(0, _defaultBinaryPath.find_last_of("\\/"));
+    _defaultResRootPath = _defaultBinaryPath.substr(0, _defaultBinaryPath.find_last_of("\\/")) + "/Resources/";
+    _defaultBinaryPath = _defaultBinaryPath + "/";
+
+    return FileUtils::init();
+}
 
 std::string FileUtilsApple::getWritablePath() const
 {
