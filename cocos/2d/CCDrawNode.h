@@ -364,8 +364,13 @@ protected:
     GLfloat         _lineWidth;
 
     GLfloat  _defaultLineWidth;
+
+    Vec2 _lowestPoint;
+    Vec2 _highestPoint;
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(DrawNode);
+
+    void updateBoundsToPoint(const Vec2& point);
 };
 /** @} */
 NS_CC_END

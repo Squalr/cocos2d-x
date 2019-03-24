@@ -197,6 +197,8 @@ void ClippingNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32
     
     uint32_t flags = processParentFlags(parentTransform, parentFlags);
 
+    this->setContentSize(_stencil == nullptr ? Size::ZERO : _stencil->getContentSize());
+
     // IMPORTANT:
     // To ease the migration to v3.0, we still support the Mat4 stack,
     // but it is deprecated and your code should not rely on it

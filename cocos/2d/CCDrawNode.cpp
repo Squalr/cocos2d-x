@@ -121,6 +121,8 @@ DrawNode::DrawNode(GLfloat lineWidth)
 , _dirtyGLLine(false)
 , _lineWidth(lineWidth)
 , _defaultLineWidth(lineWidth)
+, _lowestPoint(Vec2::ZERO)
+, _highestPoint(Vec2::ZERO)
 {
     _blendFunc = BlendFunc::ALPHA_PREMULTIPLIED;
 }
@@ -454,6 +456,8 @@ void DrawNode::onDrawGLPoint(const Mat4 &transform, uint32_t /*flags*/)
 void DrawNode::drawPoint(const Vec2& position, const float pointSize, const Color4F &color)
 {
     ensureCapacityGLPoint(1);
+
+    this->updateBoundsToPoint(position);
     
     V2F_C4B_T2F *point = (V2F_C4B_T2F*)(_bufferGLPoint + _bufferCountGLPoint);
     V2F_C4B_T2F a = {position, Color4B(color), Tex2F(pointSize,0)};
@@ -476,6 +480,8 @@ void DrawNode::drawPoints(const Vec2 *position, unsigned int numberOfPoints, con
     
     for(unsigned int i=0; i < numberOfPoints; i++,point++)
     {
+        this->updateBoundsToPoint(position[i]);
+
         V2F_C4B_T2F a = {position[i], Color4B(color), Tex2F(pointSize,0)};
         *point = a;
     }
@@ -487,6 +493,9 @@ void DrawNode::drawPoints(const Vec2 *position, unsigned int numberOfPoints, con
 void DrawNode::drawLine(const Vec2 &origin, const Vec2 &destination, const Color4F &color)
 {
     ensureCapacityGLLine(2);
+
+    this->updateBoundsToPoint(origin);
+    this->updateBoundsToPoint(destination);
     
     V2F_C4B_T2F *point = (V2F_C4B_T2F*)(_bufferGLLine + _bufferCountGLLine);
     
@@ -511,6 +520,12 @@ void DrawNode::drawRect(const Vec2 &origin, const Vec2 &destination, const Color
 void DrawNode::drawPoly(const Vec2 *poli, unsigned int numberOfPoints, bool closePolygon, const Color4F &color)
 {
     unsigned int vertex_count;
+
+    for (int i = 0; i < numberOfPoints; i++)
+    {
+        this->updateBoundsToPoint(poli[i]);
+    }
+
     if(closePolygon)
     {
         vertex_count = 2 * numberOfPoints;
@@ -714,6 +729,11 @@ void DrawNode::drawDot(const Vec2 &pos, float radius, const Color4F &color)
 {
     unsigned int vertex_count = 2*3;
     ensureCapacity(vertex_count);
+
+    this->updateBoundsToPoint(Vec2(pos.x - radius, pos.y - radius));
+    this->updateBoundsToPoint(Vec2(pos.x - radius, pos.y + radius));
+    this->updateBoundsToPoint(Vec2(pos.x + radius, pos.y + radius));
+    this->updateBoundsToPoint(Vec2(pos.x + radius, pos.y - radius));
     
     V2F_C4B_T2F a = {Vec2(pos.x - radius, pos.y - radius), Color4B(color), Tex2F(-1.0, -1.0) };
     V2F_C4B_T2F b = {Vec2(pos.x - radius, pos.y + radius), Color4B(color), Tex2F(-1.0,  1.0) };
@@ -743,6 +763,9 @@ void DrawNode::drawSegment(const Vec2 &from, const Vec2 &to, float radius, const
 {
     unsigned int vertex_count = 6*3;
     ensureCapacity(vertex_count);
+
+    this->updateBoundsToPoint(from);
+    this->updateBoundsToPoint(to);
     
     Vec2 a = __v2f(from);
     Vec2 b = __v2f(to);
@@ -815,6 +838,11 @@ void DrawNode::drawSegment(const Vec2 &from, const Vec2 &to, float radius, const
 void DrawNode::drawPolygon(const Vec2 *verts, int count, const Color4F &fillColor, float borderWidth, const Color4F &borderColor)
 {
     CCASSERT(count >= 0, "invalid count value");
+
+    for (int i = 0; i < count; i++)
+    {
+        this->updateBoundsToPoint(verts[i]);
+    }
     
     bool outline = (borderColor.a > 0.0f && borderWidth > 0.0f);
     
@@ -945,6 +973,10 @@ void DrawNode::drawTriangle(const Vec2 &p1, const Vec2 &p2, const Vec2 &p3, cons
     unsigned int vertex_count = 3;
     ensureCapacity(vertex_count);
 
+    this->updateBoundsToPoint(p1);
+    this->updateBoundsToPoint(p2);
+    this->updateBoundsToPoint(p3);
+
     Color4B col = Color4B(color);
     V2F_C4B_T2F a = {Vec2(p1.x, p1.y), col, Tex2F(0.0, 0.0) };
     V2F_C4B_T2F b = {Vec2(p2.x, p2.y), col, Tex2F(0.0,  0.0) };
@@ -965,6 +997,8 @@ void DrawNode::drawQuadraticBezier(const Vec2& from, const Vec2& control, const 
 
 void DrawNode::clear()
 {
+    _lowestPoint = Vec2::ZERO;
+    _highestPoint = Vec2::ZERO;
     _bufferCount = 0;
     _dirty = true;
     _bufferCountGLLine = 0;
@@ -994,5 +1028,14 @@ GLfloat DrawNode::getLineWidth()
     return this->_lineWidth;
 }
 
+void DrawNode::updateBoundsToPoint(const Vec2& point)
+{
+    this->_lowestPoint.x = std::min(this->_lowestPoint.x, point.x);
+    this->_lowestPoint.y = std::min(this->_lowestPoint.y, point.y);
+    this->_highestPoint.x = std::max(this->_highestPoint.x, point.x);
+    this->_highestPoint.y = std::max(this->_highestPoint.y, point.y);
+
+    this->setContentSize(Size(_highestPoint - _lowestPoint));
+}
 
 NS_CC_END
