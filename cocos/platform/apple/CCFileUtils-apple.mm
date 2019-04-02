@@ -260,12 +260,20 @@ std::string FileUtilsApple::getWritablePath() const
     {
         return _writablePath;
     }
-
-    // save to document folder
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    std::string strRet = [documentsDirectory UTF8String];
-    strRet.append("/");
+    
+    // save to application support folder
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+    NSString *applicationSupportDirectory = [NSString stringWithFormat:@"%@/%@/",[paths objectAtIndex:0], [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"]];
+    
+    NSError * error = nil;
+    [[NSFileManager defaultManager] createDirectoryAtPath:applicationSupportDirectory withIntermediateDirectories:YES attributes:nil error:&error];
+    
+    if (error != nil)
+    {
+        NSLog(@"error creating directory: %@", error);
+    }
+    
+    std::string strRet = [applicationSupportDirectory UTF8String];
     return strRet;
 }
 
