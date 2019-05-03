@@ -2636,14 +2636,15 @@ void Animate::update(float t)
 
 	SpriteFrame *frameToDisplay = nullptr;
 
-    // Figure out the intended index from the elapsed time (divide by 2 trick to avoid rounding errors)
-    int currentIndex = int((t + _splitTime / 2.0f) / _splitTime);
-    int previousIndex = int((_previousT + _splitTime / 2.0f) / _splitTime);
+    // Figure out the intended index from the elapsed time
+    int currentIndex = std::round((t + _splitTime) / _splitTime);
+    int previousIndex = std::round((_previousT + _splitTime) / _splitTime);
 
     // Note: We don't use this index as a frame to give the user the opportunity to write hackable code
     // modifying animation frame indicies
 
-    if(currentIndex > previousIndex)
+    // Progress frame if onto a new frame index, or if t is (0/1 -- first/last animation frame)
+    if(t == 0.0f || t == 1.0f || currentIndex != previousIndex)
     {
         auto blend = static_cast<Sprite*>(_target)->getBlendFunc();
 
