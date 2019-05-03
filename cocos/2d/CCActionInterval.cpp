@@ -2665,25 +2665,31 @@ void Animate::update(float t)
             Director::getInstance()->getEventDispatcher()->dispatchEvent(_frameDisplayedEvent);
         }
 
-		if (this->incrementCallback != nullptr)
-		{
-			_nextFrame = this->incrementCallback(_nextFrame, numberOfFrames);
-		}
-		else
-		{
-			_nextFrame++;
-		}
+        // Bad update loop timing can sometimes result in frames needing to be skipped, so we handle it
+        int frameDelta = std::max(1, std::abs(currentIndex - previousIndex));
 
-		if (_nextFrame >= numberOfFrames)
-		{
-			_nextFrame = 0;
-			_executedLoops++;
-		}
-		else if (_nextFrame < 0)
-		{
-			_nextFrame = numberOfFrames - 1;
-			_executedLoops++;
-		}
+        for (int i = 0; i < frameDelta; i++)
+        {
+            if (this->incrementCallback != nullptr)
+            {
+                _nextFrame = this->incrementCallback(_nextFrame, numberOfFrames);
+            }
+            else
+            {
+                _nextFrame++;
+            }
+
+            if (_nextFrame >= numberOfFrames)
+            {
+                _nextFrame = 0;
+                _executedLoops++;
+            }
+            else if (_nextFrame < 0)
+            {
+                _nextFrame = numberOfFrames - 1;
+                _executedLoops++;
+            }
+        }
 	}
 
     _previousT = t;
