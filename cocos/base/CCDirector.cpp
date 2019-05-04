@@ -1204,7 +1204,7 @@ void Director::setNextScene()
     bool newIsTransition = dynamic_cast<TransitionScene*>(_nextScene) != nullptr;
 
     // If it is not a transition, call onExit/cleanup
-     if (! newIsTransition)
+     if (! newIsTransition && _runningScene != _nextScene)
      {
          if (_runningScene)
          {
