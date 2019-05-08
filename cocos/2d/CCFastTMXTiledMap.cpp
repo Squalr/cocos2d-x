@@ -178,7 +178,7 @@ void TMXTiledMap::buildWithMapInfo(TMXMapInfo* mapInfo)
 
     auto& layers = mapInfo->getLayers();
     for(const auto &layerInfo : layers) {
-        if (layerInfo->_visible)
+        if (layerInfo != nullptr && layerInfo->_visible)
         {
             TMXLayer *child = parseLayer(layerInfo, mapInfo);
             if (child == nullptr) {

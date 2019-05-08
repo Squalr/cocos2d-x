@@ -375,6 +375,11 @@ void Sequence::update(float t)
             new_t = (t-_split) / (1 - _split );
     }
 
+	if (_actions == nullptr)
+	{
+		return;
+	}
+
     if ( found==1 )
     {
         if( _last == -1 )
