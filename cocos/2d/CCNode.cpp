@@ -946,6 +946,12 @@ bool Node::doEnumerate(std::string name, std::function<bool (Node *)> callback) 
 void Node::addChild(Node *child, int localZOrder, int tag)
 {
 	CCASSERT(child != nullptr, "Argument must be non-nil");
+
+	if (child == nullptr)
+	{
+		return;
+	}
+
 	CCASSERT(child->_parent == nullptr, "child already added. It can't be added again");
 
 	addChildHelper(child, localZOrder, tag, "", true);
@@ -954,6 +960,12 @@ void Node::addChild(Node *child, int localZOrder, int tag)
 void Node::addChild(Node* child, int localZOrder, const std::string &name)
 {
     CCASSERT(child != nullptr, "Argument must be non-nil");
+
+	if (child == nullptr)
+	{
+		return;
+	}
+
     CCASSERT(child->_parent == nullptr, "child already added. It can't be added again");
     
     addChildHelper(child, localZOrder, INVALID_TAG, name, false);
@@ -961,6 +973,11 @@ void Node::addChild(Node* child, int localZOrder, const std::string &name)
 
 void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag, bool isReentry)
 {
+	if (child == nullptr)
+	{
+		return;
+	}
+
     auto assertNotSelfChild
         ( [ this, child ]() -> bool
           {
@@ -1022,6 +1039,11 @@ void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::stri
 
 void Node::addChildInsert(Node *child, int index, bool isReentry)
 {
+	if (child == nullptr)
+	{
+		return;
+	}
+
 	auto assertNotSelfChild
 	([this, child]() -> bool
 	{
@@ -1094,18 +1116,36 @@ void Node::addChildInsert(Node *child, int index, bool isReentry)
 void Node::addChild(Node *child, int zOrder)
 {
     CCASSERT( child != nullptr, "Argument must be non-nil");
+
+	if (child == nullptr)
+	{
+		return;
+	}
+
     this->addChild(child, zOrder, child->_name);
 }
 
 void Node::addChild(Node *child)
 {
 	CCASSERT(child != nullptr, "Argument must be non-nil");
+
+	if (child == nullptr)
+	{
+		return;
+	}
+
 	this->addChild(child, child->getLocalZOrder(), child->_name);
 }
 
 void Node::addChildAsReentry(Node *child)
 {
 	CCASSERT(child != nullptr, "Argument must be non-nil");
+
+	if (child == nullptr)
+	{
+		return;
+	}
+
 	CCASSERT(child->_parent == nullptr, "child already added. It can't be added again");
 
 	addChildHelper(child, child->getLocalZOrder(), INVALID_TAG, child->_name, false, true);
@@ -1212,6 +1252,11 @@ void Node::removeAllChildrenWithCleanup(bool cleanup)
 
 void Node::detachChild(Node *child, ssize_t childIndex, bool doCleanup)
 {
+	if (child == nullptr)
+	{
+		return;
+	}
+
     // IMPORTANT:
     //  -1st do onExit
     //  -2nd cleanup
@@ -1245,6 +1290,11 @@ void Node::detachChild(Node *child, ssize_t childIndex, bool doCleanup)
 // helper used by reorderChild & add
 void Node::insertChild(Node* child, int z)
 {
+	if (child == nullptr)
+	{
+		return;
+	}
+
 #if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
     auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
     if (sEngine)

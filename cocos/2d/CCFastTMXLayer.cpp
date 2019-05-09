@@ -73,7 +73,11 @@ bool TMXLayer::initWithTilesetInfo(TMXTilesetInfo *tilesetInfo, TMXLayerInfo *la
     if( tilesetInfo )
     {
         _texture = Director::getInstance()->getTextureCache()->addImage(tilesetInfo->_sourceImage);
-        _texture->retain();
+
+		if (_texture != nullptr)
+		{
+			_texture->retain();
+		}
     }
 
     // layerInfo
@@ -186,15 +190,24 @@ void TMXLayer::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)
         if(iter.second->getCount() > 0)
         {
             auto& cmd = _renderCommands[index++];
-            auto blendfunc = _texture->hasPremultipliedAlpha() ? BlendFunc::ALPHA_PREMULTIPLIED : BlendFunc::ALPHA_NON_PREMULTIPLIED;
-            cmd.init(iter.first, _texture->getName(), getGLProgramState(), blendfunc, iter.second, _modelViewTransform, flags);
-            renderer->addCommand(&cmd);
+
+			if (_texture != nullptr)
+			{
+				auto blendfunc = _texture->hasPremultipliedAlpha() ? BlendFunc::ALPHA_PREMULTIPLIED : BlendFunc::ALPHA_NON_PREMULTIPLIED;
+				cmd.init(iter.first, _texture->getName(), getGLProgramState(), blendfunc, iter.second, _modelViewTransform, flags);
+				renderer->addCommand(&cmd);
+			}
         }
     }
 }
 
 void TMXLayer::onDraw(Primitive *primitive)
 {
+	if (_texture == nullptr)
+	{
+		return;
+	}
+
     GL::bindTexture2D(_texture->getName());
     getGLProgramState()->apply(_modelViewTransform);
     
@@ -335,7 +348,12 @@ void TMXLayer::updateIndexBuffer()
 
 // FastTMXLayer - setup Tiles
 void TMXLayer::setupTiles()
-{    
+{
+	if (_texture == nullptr)
+	{
+		return;
+	}
+
     // Optimization: quick hack that sets the image size on the tileset
     _tileSet->_imageSize = _texture->getContentSizeInPixels();
 
@@ -603,19 +621,23 @@ Sprite* TMXLayer::getTileAt(const Vec2& tileCoordinate)
             // tile not created yet. create it
             Rect rect = _tileSet->getRectForGID(gid);
             rect = CC_RECT_PIXELS_TO_POINTS(rect);
-            tile = Sprite::createWithTexture(_texture, rect);
-            
-            Vec2 p = this->getPositionAt(tileCoordinate);
-            tile->setAnchorPoint(Vec2::ZERO);
-            tile->setPosition(p);
-            tile->setPositionZ((float)getVertexZForPos(tileCoordinate));
-            tile->setOpacity(this->getOpacity());
-            tile->setTag(index);
-            this->addChild(tile, index);
-            _spriteContainer.insert(std::pair<int, std::pair<Sprite*, int> >(index, std::pair<Sprite*, int>(tile, gid)));
-            
-            // tile is converted to sprite.
-            setFlaggedTileGIDByIndex(index, 0);
+
+			if (_texture != nullptr)
+			{
+				tile = Sprite::createWithTexture(_texture, rect);
+
+				Vec2 p = this->getPositionAt(tileCoordinate);
+				tile->setAnchorPoint(Vec2::ZERO);
+				tile->setPosition(p);
+				tile->setPositionZ((float)getVertexZForPos(tileCoordinate));
+				tile->setOpacity(this->getOpacity());
+				tile->setTag(index);
+				this->addChild(tile, index);
+				_spriteContainer.insert(std::pair<int, std::pair<Sprite*, int> >(index, std::pair<Sprite*, int>(tile, gid)));
+
+				// tile is converted to sprite.
+				setFlaggedTileGIDByIndex(index, 0);
+			}
         }
     }
     return tile;
