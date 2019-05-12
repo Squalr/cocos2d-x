@@ -97,8 +97,8 @@ Rect TMXTilesetInfo::getRectForGID(uint32_t gid)
     // for compatible with "Tiled", change the max_x calculation
     int max_x = (int)((_imageSize.width - _margin + _spacing) / (_tileSize.width + _spacing));
     
-    rect.origin.x = (gid % max_x) * (_tileSize.width + _spacing) + _margin;
-    rect.origin.y = (gid / max_x) * (_tileSize.height + _spacing) + _margin;
+    rect.origin.x = (max_x == 0 ? 0 : (gid % max_x)) * (_tileSize.width + _spacing) + _margin;
+    rect.origin.y = (max_x == 0 ? 0 : (gid / max_x)) * (_tileSize.height + _spacing) + _margin;
     return rect;
 }
 
