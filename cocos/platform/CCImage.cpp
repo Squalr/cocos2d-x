@@ -442,15 +442,18 @@ namespace
     {
         tImageSource* isource = (tImageSource*)png_get_io_ptr(png_ptr);
         
-        if((int)(isource->offset + length) <= isource->size)
-        {
-            memcpy(data, isource->data+isource->offset, length);
-            isource->offset += length;
-        }
-        else
-        {
-            png_error(png_ptr, "pngReaderCallback failed");
-        }
+		if (data != nullptr && isource != nullptr && isource->data != nullptr)
+		{
+			if ((int)(isource->offset + length) <= isource->size)
+			{
+				memcpy(data, isource->data + isource->offset, length);
+				isource->offset += length;
+			}
+			else
+			{
+				png_error(png_ptr, "pngReaderCallback failed");
+			}
+		}
     }
 #endif //CC_USE_PNG
 }
