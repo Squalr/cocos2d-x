@@ -2644,7 +2644,7 @@ void Animate::update(float t)
     // modifying animation frame indicies
 
     // Progress frame if onto a new frame index, or if t is (0/1 -- first/last animation frame)
-    if(t == 0.0f || t == 1.0f || currentIndex != previousIndex)
+    if(currentIndex != previousIndex)
     {
         auto blend = static_cast<Sprite*>(_target)->getBlendFunc();
 
