@@ -241,6 +241,8 @@ public:
     virtual void onEnter() override;
     virtual void onExit() override;
 
+    virtual void setPositionZ(float positionZ) override;
+
     /**
      Before rendering scene with this camera, the background need to be cleared. It clears the depth buffer with max depth by default. Use setBackgroundBrush to modify the default behavior
      */

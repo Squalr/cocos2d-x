@@ -721,10 +721,13 @@ void Director::setProjection(Projection projection)
             break;
     }
 
+    Projection oldProjection = _projection;
+
     _projection = projection;
     GL::setProjectionMatrixDirty();
 
-    _eventDispatcher->dispatchEvent(_eventProjectionChanged);
+    if (_projection != oldProjection)
+        _eventDispatcher->dispatchEvent(_eventProjectionChanged);
 }
 
 void Director::purgeCachedData(void)

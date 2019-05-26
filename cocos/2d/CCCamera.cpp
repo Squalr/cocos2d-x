@@ -400,6 +400,12 @@ void Camera::onExit()
     Node::onExit();
 }
 
+void Camera::setPositionZ(float positionZ)
+{
+    // Override just so we can set breakpoints
+    Node::setPositionZ(positionZ);
+}
+
 void Camera::setScene(Scene* scene)
 {
     if (_scene != scene)
