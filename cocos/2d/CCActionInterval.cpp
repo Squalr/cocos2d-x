@@ -2538,9 +2538,7 @@ Animate::Animate()
 : _splitTime(0.0f)
 , _nextFrame(0)
 , _previousT(0.0f)
-, _deltaSum(0.0f)
 , _origFrame(nullptr)
-, _executedLoops(0)
 , _animation(nullptr)
 , _frameDisplayedEvent(nullptr)
 , incrementCallback(nullptr)
@@ -2567,10 +2565,8 @@ bool Animate::initWithAnimation(Animation* animation)
     {
         _nextFrame = 0;
         _previousT = 0.0f;
-        _deltaSum = 0.0f;
         setAnimation(animation);
         _origFrame = nullptr;
-        _executedLoops = 0;
         _splitTime = (animation->getFrames().empty() ? 1.0f : 1.0f / float(animation->getFrames().size()));
         return true;
     }
@@ -2605,7 +2601,6 @@ void Animate::startWithTarget(Node *target)
         _origFrame = sprite->getSpriteFrame();
         _origFrame->retain();
     }
-    _executedLoops = 0;
 }
 
 void Animate::stop()
@@ -2622,28 +2617,24 @@ void Animate::stop()
 
 void Animate::update(float t)
 {
+    if (t < _previousT)
+    {
+        _previousT = 0.0f;
+    }
+
 	auto& frames = _animation->getFrames();
 	auto numberOfFrames = frames.size();
-
-    // if t==1, ignore. Animation should finish with t==1
-    if( t < 1.0f )
-    {
-        t *= _animation->getLoops();
-
-        // new t for animations
-        t = fmodf(t, 1.0f);
-    }
 
 	SpriteFrame *frameToDisplay = nullptr;
 
     // Figure out the intended index from the elapsed time
-    int currentIndex = std::round((t + _splitTime) / _splitTime);
-    int previousIndex = std::round((_previousT + _splitTime) / _splitTime);
+    int currentIndex = std::round(t / _splitTime);
+    int previousIndex = std::round(_previousT / _splitTime);
 
     // Note: We don't use this index as a frame to give the user the opportunity to write hackable code
     // modifying animation frame indicies
 
-    // Progress frame if onto a new frame index, or if t is (0/1 -- first/last animation frame)
+    // Progress frame if onto a new frame index
     if(currentIndex != previousIndex)
     {
         auto blend = static_cast<Sprite*>(_target)->getBlendFunc();
@@ -2672,7 +2663,7 @@ void Animate::update(float t)
         {
             if (this->incrementCallback != nullptr)
             {
-                _nextFrame = this->incrementCallback(_nextFrame, numberOfFrames);
+                _nextFrame = this->incrementCallback(_nextFrame, numberOfFrames, frameToDisplay == nullptr ? "" : frameToDisplay->getTexture()->getPath());
             }
             else
             {
@@ -2682,12 +2673,10 @@ void Animate::update(float t)
             if (_nextFrame >= numberOfFrames)
             {
                 _nextFrame = 0;
-                _executedLoops++;
             }
             else if (_nextFrame < 0)
             {
                 _nextFrame = numberOfFrames - 1;
-                _executedLoops++;
             }
         }
 	}
