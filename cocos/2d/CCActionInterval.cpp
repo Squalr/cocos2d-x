@@ -2620,12 +2620,8 @@ void Animate::update(float t)
     if (t < _previousT)
     {
         _previousT = 0.0f;
+        _nextFrame = 0;
     }
-
-	auto& frames = _animation->getFrames();
-	auto numberOfFrames = frames.size();
-
-	SpriteFrame *frameToDisplay = nullptr;
 
     // Figure out the intended index from the elapsed time
     int currentIndex = std::round(t / _splitTime);
@@ -2634,32 +2630,14 @@ void Animate::update(float t)
     // Note: We don't use this index as a frame to give the user the opportunity to write hackable code
     // modifying animation frame indicies
 
-    // Progress frame if onto a new frame index
+    // Progress frame if onto a new frame index (or if on the last/first frame)
     if(currentIndex != previousIndex)
     {
-        auto blend = static_cast<Sprite*>(_target)->getBlendFunc();
+        auto frames = _animation->getFrames();
+        int frameDelta = std::abs(currentIndex - previousIndex);
+	    int numberOfFrames = frames.size();
 
-        AnimationFrame* frame = frames.at(_nextFrame);
-        frameToDisplay = frame->getSpriteFrame();
-        static_cast<Sprite*>(_target)->setSpriteFrame(frameToDisplay);
-        static_cast<Sprite*>(_target)->setBlendFunc(blend);
-
-        const ValueMap& dict = frame->getUserInfo();
-        if ( !dict.empty() )
-        {
-            if (_frameDisplayedEvent == nullptr)
-                _frameDisplayedEvent = new (std::nothrow) EventCustom(AnimationFrameDisplayedNotification);
-            
-            _frameDisplayedEventInfo.target = _target;
-            _frameDisplayedEventInfo.userInfo = &dict;
-            _frameDisplayedEvent->setUserData(&_frameDisplayedEventInfo);
-            Director::getInstance()->getEventDispatcher()->dispatchEvent(_frameDisplayedEvent);
-        }
-
-        // Bad update loop timing can sometimes result in frames needing to be skipped, so we handle it
-        int frameDelta = std::max(1, std::abs(currentIndex - previousIndex));
-
-        for (int i = 0; i < frameDelta; i++)
+        auto incrementFrame = [=](int _nextFrame, SpriteFrame* frameToDisplay)
         {
             if (this->incrementCallback != nullptr)
             {
@@ -2678,7 +2656,35 @@ void Animate::update(float t)
             {
                 _nextFrame = numberOfFrames - 1;
             }
+
+            return _nextFrame;
+        };
+        
+        // Bad update loop timing can sometimes result in frames needing to be skipped, so we handle it
+        for (int i = 0; i < frameDelta - 1; i++)
+        {
+            _nextFrame = incrementFrame(_nextFrame, frames.at(_nextFrame)->getSpriteFrame());
         }
+
+        auto blend = static_cast<Sprite*>(_target)->getBlendFunc();
+        AnimationFrame* frame = frames.at(_nextFrame);
+        SpriteFrame* frameToDisplay = frame->getSpriteFrame();
+        static_cast<Sprite*>(_target)->setSpriteFrame(frameToDisplay);
+        static_cast<Sprite*>(_target)->setBlendFunc(blend);
+
+        const ValueMap& dict = frame->getUserInfo();
+        if ( !dict.empty() )
+        {
+            if (_frameDisplayedEvent == nullptr)
+                _frameDisplayedEvent = new (std::nothrow) EventCustom(AnimationFrameDisplayedNotification);
+            
+            _frameDisplayedEventInfo.target = _target;
+            _frameDisplayedEventInfo.userInfo = &dict;
+            _frameDisplayedEvent->setUserData(&_frameDisplayedEventInfo);
+            Director::getInstance()->getEventDispatcher()->dispatchEvent(_frameDisplayedEvent);
+        }
+
+        _nextFrame = incrementFrame(_nextFrame, frameToDisplay);
 	}
 
     _previousT = t;
