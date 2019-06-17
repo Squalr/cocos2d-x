@@ -47,10 +47,19 @@ NS_CC_BEGIN
 Sprite* Sprite::createWithTexture(Texture2D *texture)
 {
     Sprite *sprite = new (std::nothrow) Sprite();
-    if (sprite && sprite->initWithTexture(texture))
+    if (sprite)
     {
-        sprite->autorelease();
-        return sprite;
+        if (sprite->initWithTexture(texture))
+        {
+            sprite->autorelease();
+            return sprite;
+        }
+        else
+        {
+            // Zac : just return an empty sprite to prevent dumb crashes
+            sprite->autorelease();
+            return sprite;
+        }
     }
     CC_SAFE_DELETE(sprite);
     return nullptr;
@@ -59,10 +68,19 @@ Sprite* Sprite::createWithTexture(Texture2D *texture)
 Sprite* Sprite::createWithTexture(Texture2D *texture, const Rect& rect, bool rotated)
 {
     Sprite *sprite = new (std::nothrow) Sprite();
-    if (sprite && sprite->initWithTexture(texture, rect, rotated))
+    if (sprite)
     {
-        sprite->autorelease();
-        return sprite;
+        if (sprite->initWithTexture(texture, rect, rotated))
+        {
+            sprite->autorelease();
+            return sprite;
+        }
+        else
+        {
+            // Zac : just return an empty sprite to prevent dumb crashes
+            sprite->autorelease();
+            return sprite;
+        }
     }
     CC_SAFE_DELETE(sprite);
     return nullptr;
@@ -71,10 +89,19 @@ Sprite* Sprite::createWithTexture(Texture2D *texture, const Rect& rect, bool rot
 Sprite* Sprite::create(const std::string& filename)
 {
     Sprite *sprite = new (std::nothrow) Sprite();
-    if (sprite && sprite->initWithFile(filename))
+    if (sprite)
     {
-        sprite->autorelease();
-        return sprite;
+        if (sprite->initWithFile(filename))
+        {
+            sprite->autorelease();
+            return sprite;
+        }
+        else
+        {
+            // Zac : just return an empty sprite to prevent dumb crashes
+            sprite->autorelease();
+            return sprite;
+        }
     }
     CC_SAFE_DELETE(sprite);
     return nullptr;
@@ -83,10 +110,19 @@ Sprite* Sprite::create(const std::string& filename)
 Sprite* Sprite::create(const PolygonInfo& info)
 {
     Sprite *sprite = new (std::nothrow) Sprite();
-    if(sprite && sprite->initWithPolygon(info))
+    if(sprite)
     {
-        sprite->autorelease();
-        return sprite;
+        if (sprite->initWithPolygon(info))
+        {
+            sprite->autorelease();
+            return sprite;
+        }
+        else
+        {
+            // Zac : just return an empty sprite to prevent dumb crashes
+            sprite->autorelease();
+            return sprite;
+        }
     }
     CC_SAFE_DELETE(sprite);
     return nullptr;
@@ -95,10 +131,19 @@ Sprite* Sprite::create(const PolygonInfo& info)
 Sprite* Sprite::create(const std::string& filename, const Rect& rect)
 {
     Sprite *sprite = new (std::nothrow) Sprite();
-    if (sprite && sprite->initWithFile(filename, rect))
+    if (sprite)
     {
-        sprite->autorelease();
-        return sprite;
+        if (sprite->initWithFile(filename, rect))
+        {
+            sprite->autorelease();
+            return sprite;
+        }
+        else
+        {
+            // Zac : just return an empty sprite to prevent dumb crashes
+            sprite->autorelease();
+            return sprite;
+        }
     }
     CC_SAFE_DELETE(sprite);
     return nullptr;
@@ -107,10 +152,19 @@ Sprite* Sprite::create(const std::string& filename, const Rect& rect)
 Sprite* Sprite::createWithSpriteFrame(SpriteFrame *spriteFrame)
 {
     Sprite *sprite = new (std::nothrow) Sprite();
-    if (sprite && spriteFrame && sprite->initWithSpriteFrame(spriteFrame))
+    if (sprite && spriteFrame)
     {
-        sprite->autorelease();
-        return sprite;
+        if (sprite->initWithSpriteFrame(spriteFrame))
+        {
+            sprite->autorelease();
+            return sprite;
+        }
+        else
+        {
+            // Zac : just return an empty sprite to prevent dumb crashes
+            sprite->autorelease();
+            return sprite;
+        }
     }
     CC_SAFE_DELETE(sprite);
     return nullptr;
@@ -132,10 +186,19 @@ Sprite* Sprite::createWithSpriteFrameName(const std::string& spriteFrameName)
 Sprite* Sprite::create()
 {
     Sprite *sprite = new (std::nothrow) Sprite();
-    if (sprite && sprite->init())
+    if (sprite)
     {
-        sprite->autorelease();
-        return sprite;
+        if (sprite->init())
+        {
+            sprite->autorelease();
+            return sprite;
+        }
+        else
+        {
+            // Zac : just return an empty sprite to prevent dumb crashes
+            sprite->autorelease();
+            return sprite;
+        }
     }
     CC_SAFE_DELETE(sprite);
     return nullptr;
