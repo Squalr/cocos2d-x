@@ -55,4 +55,14 @@ bool EventListener::checkAvailable()
 	return (_onEvent != nullptr);
 }
 
+EventListener::ListenerID EventListener::getListenerId()
+{
+    return this->_listenerID;
+}
+
+void EventListener::invoke(Event* event)
+{
+    this->_onEvent(event);
+}
+
 NS_CC_END

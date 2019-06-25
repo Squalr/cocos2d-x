@@ -79,6 +79,10 @@ CC_CONSTRUCTOR_ACCESS:
      * @js NA
      */
     bool init(Type t, const ListenerID& listenerID, const std::function<void(Event*)>& callback);
+
+    ListenerID getListenerId();
+    void invoke(Event*);
+
 public:
     /** Destructor.
      * @js NA 
