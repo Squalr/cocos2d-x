@@ -173,10 +173,18 @@ void Animation::addSpriteFrame(SpriteFrame* spriteFrame)
 void Animation::addSpriteFrameWithFile(const std::string& filename)
 {
     Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(filename);
-    Rect rect = Rect::ZERO;
-    rect.size = texture->getContentSize();
-    SpriteFrame *frame = SpriteFrame::createWithTexture(texture, rect);
-    addSpriteFrame(frame);
+
+    if (texture != nullptr)
+    {
+        Rect rect = Rect::ZERO;
+        rect.size = texture->getContentSize();
+        SpriteFrame *frame = SpriteFrame::createWithTexture(texture, rect);
+        
+        if (frame != nullptr)
+        {
+            addSpriteFrame(frame);
+        }
+    }
 }
 
 void Animation::addSpriteFrameWithTexture(Texture2D *pobTexture, const Rect& rect)

@@ -2616,7 +2616,7 @@ void Animate::stop()
 }
 
 void Animate::update(float t)
-{
+{   
     if (t < _previousT)
     {
         _previousT = 0.0f;
@@ -2636,6 +2636,11 @@ void Animate::update(float t)
         auto frames = _animation->getFrames();
         int frameDelta = std::abs(currentIndex - previousIndex);
 	    int numberOfFrames = frames.size();
+
+        if (frames.empty())
+        {
+            return;
+        }
 
         auto incrementFrame = [=](int _nextFrame, SpriteFrame* frameToDisplay)
         {
