@@ -901,6 +901,8 @@ public:
      */
     virtual void removeFromParentAndCleanup(bool cleanup);
 
+    virtual void removeChildNoExit(Node* child);
+
     /**
      * Removes a child from the container. It will also cleanup all running actions depending on the cleanup parameter.
      *

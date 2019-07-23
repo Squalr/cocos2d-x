@@ -1164,6 +1164,24 @@ void Node::removeFromParentAndCleanup(bool cleanup)
     } 
 }
 
+void Node::removeChildNoExit(Node* child)
+{
+    // explicit nil handling
+    if (_children.empty() || child == nullptr)
+    {
+        return;
+    }
+
+    ssize_t index = _children.getIndex(child);
+
+    if( index != CC_INVALID_INDEX )
+    {
+        child->setParent(nullptr);
+
+        _children.erase(index);
+    }
+}
+
 /* "remove" logic MUST only be on this method
 * If a class want's to extend the 'removeChild' behavior it only needs
 * to override this method
