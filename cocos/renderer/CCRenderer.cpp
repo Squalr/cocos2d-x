@@ -924,12 +924,15 @@ bool Renderer::checkVisibility(const Mat4 &transform, const Size &size)
     // convert content size to world coordinates
     float wshw = std::max(fabsf(hSizeX * transform.m[0] + hSizeY * transform.m[4]), fabsf(hSizeX * transform.m[0] - hSizeY * transform.m[4]));
     float wshh = std::max(fabsf(hSizeX * transform.m[1] + hSizeY * transform.m[5]), fabsf(hSizeX * transform.m[1] - hSizeY * transform.m[5]));
+
+    // ZAC: The culling for sprites is too zealous when the sprite is close to the camera -- this is an "elegant hack" to solve that
+    const float buffer = v3p.z > 0.0f ? v3p.z * 2.0f : 0.0f;
     
     // enlarge visible rect half size in screen coord
-    visibleRect.origin.x -= wshw;
-    visibleRect.origin.y -= wshh;
-    visibleRect.size.width += wshw * 2;
-    visibleRect.size.height += wshh * 2;
+    visibleRect.origin.x -= wshw + buffer;
+    visibleRect.origin.y -= wshh + buffer;
+    visibleRect.size.width += (wshw + buffer) * 2;
+    visibleRect.size.height += (wshh + buffer) * 2;
     bool ret = visibleRect.containsPoint(v2p);
     return ret;
 }
