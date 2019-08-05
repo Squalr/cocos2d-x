@@ -67,7 +67,7 @@ find_package(RapidJSON REQUIRED)
 find_package(WebP REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(MPG123 REQUIRED)
-find_package(sqlite3 REQUIRED)
+find_package(sqlite3 CONFIG REQUIRED)
 find_package(chipmunk REQUIRED)
 
 # Optional Dependencies
