@@ -108,6 +108,9 @@ static id convertCCValueToNSObject(const cocos2d::Value &value)
             return dictionary;
         }
             
+        case Value::Type::POINTER:
+            break;
+            
         case Value::Type::INT_KEY_MAP:
             break;
     }

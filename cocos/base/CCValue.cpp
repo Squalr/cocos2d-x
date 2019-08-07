@@ -98,6 +98,18 @@ Value::Value(const char* v)
     }
 }
 
+Value::Value(void* v)
+: _type(Type::POINTER)
+{
+    _field.pointerVal = v;
+}
+
+Value::Value(std::nullptr_t v)
+: _type(Type::POINTER)
+{
+    _field.pointerVal = v;
+}
+
 Value::Value(const std::string& v)
 : _type(Type::STRING)
 {
@@ -188,6 +200,9 @@ Value& Value::operator= (const Value& other)
             case Type::BOOLEAN:
                 _field.boolVal = other._field.boolVal;
                 break;
+            case Type::POINTER:
+                _field.pointerVal = other._field.pointerVal;
+                break;
             case Type::STRING:
                 if (_field.strVal == nullptr)
                 {
@@ -260,6 +275,9 @@ Value& Value::operator= (Value&& other)
             case Type::INT_KEY_MAP:
                 _field.intKeyMapVal = other._field.intKeyMapVal;
                 break;
+            case Type::POINTER:
+                _field.pointerVal = other._field.pointerVal;
+                break;
             default:
                 break;
         }
@@ -318,6 +336,13 @@ Value& Value::operator= (const char* v)
 {
     reset(Type::STRING);
     *_field.strVal = v ? v : "";
+    return *this;
+}
+
+Value& Value::operator= (void* v)
+{
+    reset(Type::POINTER);
+    _field.pointerVal = v;
     return *this;
 }
 
@@ -396,6 +421,7 @@ bool Value::operator== (const Value& v) const
         case Type::UNSIGNED:return v._field.unsignedVal == this->_field.unsignedVal;
         case Type::BOOLEAN: return v._field.boolVal     == this->_field.boolVal;
         case Type::STRING:  return *v._field.strVal     == *this->_field.strVal;
+        case Type::POINTER:  return v._field.pointerVal     == this->_field.strVal;
         case Type::FLOAT:   return std::abs(v._field.floatVal  - this->_field.floatVal)  <= FLT_EPSILON;
         case Type::DOUBLE:  return std::abs(v._field.doubleVal - this->_field.doubleVal) <= DBL_EPSILON;
         case Type::VECTOR:
@@ -733,6 +759,21 @@ bool Value::asBool() const
     }
 
     return false;
+}
+
+void* Value::asPointer() const
+{
+    switch(_type)
+    {
+        default:
+        {
+            return nullptr;
+        }
+        case Type::POINTER:
+        {
+            return _field.pointerVal;
+        }
+    }
 }
 
 std::string Value::asString() const

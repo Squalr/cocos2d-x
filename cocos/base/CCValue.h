@@ -192,6 +192,12 @@ public:
     /** Create a Value by a char pointer. It will copy the chars internally. */
     explicit Value(const char* v);
     
+    /** Create a Value by a pointer.*/
+    explicit Value(void* v);
+    
+    /** Create a Value by a pointer.*/
+    explicit Value(std::nullptr_t v);
+    
     /** Create a Value by a string. */
     explicit Value(const std::string& v);
     
@@ -237,6 +243,8 @@ public:
     Value& operator= (bool v);
     /** Assignment operator, assign from char* to Value. */
     Value& operator= (const char* v);
+    /** Assignment operator, assign from void* to Value. */
+    Value& operator= (void* v);
     /** Assignment operator, assign from string to Value. */
     Value& operator= (const std::string& v);
 
@@ -276,6 +284,8 @@ public:
     double asDouble() const;
     /** Gets as a bool value. Will convert to bool if possible, or will trigger assert error. */
     bool asBool() const;
+    /** Gets as a bool value. Will convert to bool if possible, or will trigger assert error. */
+    void* asPointer() const;
     /** Gets as a string value. Will convert to string if possible, or will trigger assert error. */
     std::string asString() const;
 
@@ -317,6 +327,8 @@ public:
         DOUBLE,
         /// wrap bool
         BOOLEAN,
+        /// wrap pointer
+        POINTER,
         /// wrap string
         STRING,
         /// wrap vector
@@ -345,6 +357,7 @@ private:
         float floatVal;
         double doubleVal;
         bool boolVal;
+        void* pointerVal;
 
         std::string* strVal;
         ValueVector* vectorVal;
