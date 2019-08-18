@@ -3,5 +3,5 @@
         url = git://github.com/dumganhar/ccs-res.git
 [submodule "external"]
 	path = external
-	url = git@github.com:zcanann/squally-external.git
-	branch = for-3.17
+	url = git@github.com:zcanann/cocos-external.git
+	branch = master
