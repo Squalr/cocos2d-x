@@ -46,6 +46,7 @@ bool EventListener::init(Type t, const ListenerID& listenerID, const std::functi
 	_ignorePause = false;
 	_isGlobal = false;
     _isEnabled = true;
+    _tag = "";
     
     return true;
 }

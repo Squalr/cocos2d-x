@@ -99,6 +99,10 @@ public:
      */
     virtual EventListener* clone() = 0;
 
+	void setTag(std::string tag) { _tag = tag; }
+
+    std::string getTag() { return _tag; };
+
 	/** Enables or disables the listener.
 	 * @note Only listeners with `enabled` state will be able to receive events.
 	 *        When an listener was initialized, it's enabled by default.
@@ -188,6 +192,7 @@ protected:
     bool _isEnabled;        // Whether the listener is enabled
 	bool _ignorePause;
 	bool _isGlobal;
+    std::string _tag;
     friend class EventDispatcher;
 };
 
