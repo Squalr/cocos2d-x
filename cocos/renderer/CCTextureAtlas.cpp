@@ -317,7 +317,7 @@ void TextureAtlas::updateQuad(V3F_C4B_T2F_Quad *quad, ssize_t index)
 {
     // CCASSERT( index >= 0 && index < _capacity, "updateQuadWithTexture: Invalid index");
 
-    if ((index < 0 && index >= _capacity) || _quads == nullptr)
+    if ((index < 0 || index >= _capacity) || _quads == nullptr)
     {
         _dirty = true;
         return;
