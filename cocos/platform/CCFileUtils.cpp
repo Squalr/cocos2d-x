@@ -1283,6 +1283,7 @@ std::vector<std::string> FileUtils::listFiles(const std::string& dirPath) const
 std::vector<std::string> FileUtils::listFilesRecursively(const std::string& dirPath) const
 {
     std::vector<std::string> retval;
+    /*
     for (std::tr2::sys::directory_iterator it(dirPath), end; it != end; ++it)
         {
         if (!std::tr2::sys::is_directory(it->path()))
@@ -1296,7 +1297,7 @@ std::vector<std::string> FileUtils::listFilesRecursively(const std::string& dirP
                 retval.push_back(*it);
             }
         }
-    }
+    }*/
 
     return retval;
 }
