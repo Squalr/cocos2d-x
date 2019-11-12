@@ -32,10 +32,6 @@ THE SOFTWARE.
 #include <type_traits>
 #include <fstream>
 
-#ifdef _WIN32
-    #include <filesystem>
-#endif
-
 #include "platform/CCPlatformMacros.h"
 #include "base/ccTypes.h"
 #include "base/CCValue.h"
