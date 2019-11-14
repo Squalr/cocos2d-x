@@ -98,6 +98,8 @@ Node::Node()
 , _running(false)
 , _paused(false)
 , _visible(true)
+, _physicsDirty(true)
+, _hasPhysicsChild(false)
 , _ignoreAnchorPointForPosition(false)
 , _reorderChildDirty(false)
 , _isTransitionFinished(false)
@@ -1166,6 +1168,8 @@ void Node::removeFromParentAndCleanup(bool cleanup)
 
 void Node::removeChildNoExit(Node* child)
 {
+    _physicsDirty = true;
+
     // explicit nil handling
     if (_children.empty() || child == nullptr)
     {
@@ -1238,6 +1242,8 @@ void Node::removeAllChildren()
 
 void Node::removeAllChildrenWithCleanup(bool cleanup)
 {
+    _physicsDirty = true;
+
     // not using detachChild improves speed here
     for (const auto& child : _children)
     {
@@ -1274,6 +1280,8 @@ void Node::detachChild(Node *child, ssize_t childIndex, bool doCleanup)
 	{
 		return;
 	}
+
+    _physicsDirty = true;
 
     // IMPORTANT:
     //  -1st do onExit
@@ -1312,6 +1320,8 @@ void Node::insertChild(Node* child, int z)
 	{
 		return;
 	}
+    
+    _physicsDirty = true;
 
 #if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
     auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();

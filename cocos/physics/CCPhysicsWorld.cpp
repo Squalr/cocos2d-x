@@ -1014,7 +1014,12 @@ void PhysicsWorld::beforeSimulation(Node *node, const Mat4& parentToWorldTransfo
     }
 
     for (auto child : node->getChildren())
-        beforeSimulation(child, nodeToWorldTransform, scaleX, scaleY, rotation);
+    {
+        if (child->hasPhysicsChild())
+        {
+            beforeSimulation(child, nodeToWorldTransform, scaleX, scaleY, rotation);
+        }
+    }
 }
 
 void PhysicsWorld::afterSimulation(Node *node, const Mat4& parentToWorldTransform, float parentRotation)
@@ -1029,7 +1034,12 @@ void PhysicsWorld::afterSimulation(Node *node, const Mat4& parentToWorldTransfor
     }
 
     for (auto child : node->getChildren())
-        afterSimulation(child, nodeToWorldTransform, nodeRotation);
+    {
+        if (child->hasPhysicsChild())
+        {
+            afterSimulation(child, nodeToWorldTransform, nodeRotation);
+        }
+    }
 }
 
 NS_CC_END

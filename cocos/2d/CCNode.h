@@ -583,6 +583,35 @@ public:
      */
     virtual bool isVisible() const;
 
+    bool hasPhysicsChild()
+    {
+        if (_physicsDirty)
+        {
+            // When physics is dirty, it means it is unknown if this node contains a nested physics object anymore.
+            // This flag is only set on initialization, when a physics body is added, or when a child is added/removed
+
+            // Easy case: this node has a physics body
+            _hasPhysicsChild |= (this->_physicsBody != nullptr);
+
+            if (!_hasPhysicsChild)
+            {
+                // Medium case: this node has a direct child w/ a physics body
+                for (auto child : this->getChildren())
+                {
+                    _hasPhysicsChild |= child->hasPhysicsChild();
+
+                    if (_hasPhysicsChild)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            _physicsDirty = false;
+        }
+
+        return _hasPhysicsChild;
+    }
 
     /**
      * Sets the rotation (angle) of the node in degrees.
@@ -2020,6 +2049,10 @@ protected:
 
     bool _visible;                  ///< is this node visible
 
+    bool _physicsDirty;
+
+    bool _hasPhysicsChild;
+
     bool _ignoreAnchorPointForPosition; ///< true if the Anchor Vec2 will be (0,0) when you position the Node, false otherwise.
                                           ///< Used by Layer and Scene.
 
@@ -2056,6 +2089,8 @@ protected:
 public:
     void setPhysicsBody(PhysicsBody* physicsBody)
     {
+        _physicsDirty = true;
+
         if (_physicsBody != nullptr)
         {
             removeComponent(_physicsBody);
