@@ -662,8 +662,10 @@ void EventDispatcher::removeEventListener(EventListener* listener)
     auto removeListenerInVector = [&](std::vector<EventListener*>* listeners){
         if (listeners == nullptr)
             return;
+
+        auto iter = std::find(listeners->begin(), listeners->end(), listener);
         
-        for (auto iter = listeners->begin(); iter != listeners->end(); ++iter)
+        if (iter != listeners->end())
         {
             auto l = *iter;
             if (l == listener)
@@ -687,7 +689,6 @@ void EventDispatcher::removeEventListener(EventListener* listener)
                 }
                 
                 isFound = true;
-                break;
             }
         }
     };
