@@ -1030,12 +1030,12 @@ void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::stri
     
     if (_cascadeColorEnabled)
     {
-        updateCascadeColor();
+        child->updateDisplayedColor(_displayedColor);
     }
     
     if (_cascadeOpacityEnabled)
     {
-        updateCascadeOpacity();
+        child->updateDisplayedOpacity(_displayedOpacity);
     }
 }
 
