@@ -380,6 +380,7 @@ Label::Label(TextHAlignment hAlignment /* = TextHAlignment::LEFT */,
 : _textSprite(nullptr)
 , _shadowNode(nullptr)
 , _fontAtlas(nullptr)
+, _purgeTextureListener(nullptr)
 , _reusedLetter(nullptr)
 , _horizontalKernings(nullptr)
 , _boldEnabled(false)
@@ -396,6 +397,7 @@ Label::Label(TextHAlignment hAlignment /* = TextHAlignment::LEFT */,
     addChild(_debugDrawNode);
 #endif
 
+    /*
     _purgeTextureListener = EventListenerCustom::create(FontAtlas::CMD_PURGE_FONTATLAS, [this](EventCustom* event){
         if (_fontAtlas && _currentLabelType == LabelType::TTF && event->getUserData() == _fontAtlas)
         {
@@ -430,6 +432,7 @@ Label::Label(TextHAlignment hAlignment /* = TextHAlignment::LEFT */,
         }
     });
     _eventDispatcher->addEventListenerWithFixedPriority(_resetTextureListener, 2);
+    */
 }
 
 Label::~Label()
@@ -443,8 +446,8 @@ Label::~Label()
         _batchNodes.clear();
         FontAtlasCache::releaseFontAtlas(_fontAtlas);
     }
-    _eventDispatcher->removeEventListener(_purgeTextureListener);
-    _eventDispatcher->removeEventListener(_resetTextureListener);
+    // _eventDispatcher->removeEventListener(_purgeTextureListener);
+    // _eventDispatcher->removeEventListener(_resetTextureListener);
 
     CC_SAFE_RELEASE_NULL(_textSprite);
     CC_SAFE_RELEASE_NULL(_shadowNode);
