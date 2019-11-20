@@ -101,6 +101,16 @@ public:
     void release();
 
     /**
+     * Releases the ownership immediately.
+     *
+     * This decrements the Ref's reference count.
+     *
+     * @see retain, autorelease
+     * @js NA
+     */
+    void softRelease();
+
+    /**
      * Releases the ownership sometime soon automatically.
      *
      * This decrements the Ref's reference count at the end of current
