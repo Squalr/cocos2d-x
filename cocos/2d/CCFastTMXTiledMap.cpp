@@ -70,7 +70,7 @@ bool TMXTiledMap::initWithTMXFile(const std::string& tmxFile)
     {
         return false;
     }
-    CCASSERT( !mapInfo->getTilesets().empty(), "FastTMXTiledMap: Map not found. Please check the filename.");
+    // CCASSERT( !mapInfo->getTilesets().empty(), "FastTMXTiledMap: Map not found. Please check the filename.");
     buildWithMapInfo(mapInfo);
 
     return true;
