@@ -2620,7 +2620,11 @@ void Animate::update(float t)
     if (t < _previousT)
     {
         _previousT = 0.0f;
-        _nextFrame = 0;
+
+        if (this->incrementCallback == nullptr)
+        {
+            _nextFrame = 0;
+        }
     }
 
     // Figure out the intended index from the elapsed time
@@ -2630,7 +2634,7 @@ void Animate::update(float t)
     // Note: We don't use this index as a frame to give the user the opportunity to write hackable code
     // modifying animation frame indicies
 
-    // Progress frame if onto a new frame index (or if on the last/first frame)
+    // Progress frame if onto a new frame index
     if(currentIndex != previousIndex)
     {
         auto frames = _animation->getFrames();
