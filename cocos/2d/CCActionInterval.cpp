@@ -2537,11 +2537,13 @@ Animate* Animate::create(Animation *animation)
 Animate::Animate()
 : _splitTime(0.0f)
 , _nextFrame(0)
+, _firstRun(true)
 , _previousT(0.0f)
 , _origFrame(nullptr)
 , _animation(nullptr)
 , _frameDisplayedEvent(nullptr)
 , incrementCallback(nullptr)
+, onSpriteChange(nullptr)
 {
 }
 
@@ -2564,10 +2566,12 @@ bool Animate::initWithAnimation(Animation* animation)
     if ( ActionInterval::initWithDuration(animation->getDuration() * animation->getLoops() ) )
     {
         _nextFrame = 0;
+        _firstRun = true;
         _previousT = 0.0f;
         setAnimation(animation);
         _origFrame = nullptr;
         _splitTime = (animation->getFrames().empty() ? 1.0f : 1.0f / float(animation->getFrames().size()));
+
         return true;
     }
     return false;
@@ -2620,19 +2624,11 @@ void Animate::update(float t)
     if (t < _previousT)
     {
         _previousT = 0.0f;
-
-        if (this->incrementCallback == nullptr)
-        {
-            _nextFrame = 0;
-        }
     }
 
     // Figure out the intended index from the elapsed time
-    int currentIndex = std::round(t / _splitTime);
-    int previousIndex = std::round(_previousT / _splitTime);
-
-    // Note: We don't use this index as a frame to give the user the opportunity to write hackable code
-    // modifying animation frame indicies
+    int currentIndex = int(t / _splitTime);
+    int previousIndex = int(_previousT / _splitTime);
 
     // Progress frame if onto a new frame index
     if(currentIndex != previousIndex)
@@ -2646,11 +2642,11 @@ void Animate::update(float t)
             return;
         }
 
-        auto incrementFrame = [=](int _nextFrame, SpriteFrame* frameToDisplay)
+        auto incrementFrame = [=](int _nextFrame)
         {
             if (this->incrementCallback != nullptr)
             {
-                _nextFrame = this->incrementCallback(_nextFrame, numberOfFrames, frameToDisplay == nullptr ? "" : frameToDisplay->getTexture()->getPath());
+                _nextFrame = this->incrementCallback(_nextFrame, numberOfFrames);
             }
             else
             {
@@ -2669,10 +2665,16 @@ void Animate::update(float t)
             return _nextFrame;
         };
         
-        // Bad update loop timing can sometimes result in frames needing to be skipped, so we handle it
-        for (int i = 0; i < frameDelta - 1; i++)
+        // Increment frame (may be by more than 1 if update loop timing caused a frame skip)
+        for (int i = 0; i < frameDelta; i++)
         {
-            _nextFrame = incrementFrame(_nextFrame, frames.at(_nextFrame)->getSpriteFrame());
+            if (_firstRun)
+            {
+                _firstRun = false;
+                continue;
+            }
+
+            _nextFrame = incrementFrame(_nextFrame);
         }
 
         auto blend = static_cast<Sprite*>(_target)->getBlendFunc();
@@ -2680,6 +2682,11 @@ void Animate::update(float t)
         SpriteFrame* frameToDisplay = frame->getSpriteFrame();
         static_cast<Sprite*>(_target)->setSpriteFrame(frameToDisplay);
         static_cast<Sprite*>(_target)->setBlendFunc(blend);
+
+        if (onSpriteChange != nullptr)
+        {
+            onSpriteChange(frameToDisplay == nullptr ? "" : frameToDisplay->getTexture()->getPath());
+        }
 
         const ValueMap& dict = frame->getUserInfo();
         if ( !dict.empty() )
@@ -2692,8 +2699,6 @@ void Animate::update(float t)
             _frameDisplayedEvent->setUserData(&_frameDisplayedEventInfo);
             Director::getInstance()->getEventDispatcher()->dispatchEvent(_frameDisplayedEvent);
         }
-
-        _nextFrame = incrementFrame(_nextFrame, frameToDisplay);
 	}
 
     _previousT = t;
