@@ -906,10 +906,14 @@ void PhysicsBody::beforeSimulation(const Mat4& parentToWorldTransform, const Mat
     // set position
     auto worldPosition = _ownerCenterOffset;
     nodeToWorldTransform.transformVector(worldPosition.x, worldPosition.y, worldPosition.z, 1.f, &worldPosition);
-    setPosition(worldPosition.x, worldPosition.y);
 
-    _recordPosX = worldPosition.x;
-    _recordPosY = worldPosition.y;
+    if (_recordPosX != worldPosition.x || _recordPosY != worldPosition.y)
+    {
+        setPosition(worldPosition.x, worldPosition.y);
+
+        _recordPosX = worldPosition.x;
+        _recordPosY = worldPosition.y;
+    }
 
     if (_owner->getAnchorPoint() != Vec2::ANCHOR_MIDDLE)
     {

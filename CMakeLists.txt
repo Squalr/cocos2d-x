@@ -81,6 +81,8 @@ find_package(MINIZIP QUIET)
 # Platform dependencies
 if(LINUX)
     find_package(unofficial-fontconfig REQUIRED)
+elseif(WINDOWS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
 elseif(APPLE)
     find_package(Iconv REQUIRED)
     find_package(AudioToolbox REQUIRED)
