@@ -41,6 +41,10 @@
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventCustom.h"
 
+#ifdef _MSC_VER
+    #include <execution>
+#endif
+
 NS_CC_BEGIN
 const float PHYSICS_INFINITY = FLT_MAX;
 extern const char* PHYSICSCONTACT_EVENT_NAME;
@@ -1001,45 +1005,42 @@ PhysicsWorld::~PhysicsWorld()
 
 void PhysicsWorld::beforeSimulation(Node *node, const Mat4& parentToWorldTransform, float nodeParentScaleX, float nodeParentScaleY, float parentRotation)
 {
-    auto scaleX = nodeParentScaleX * node->getScaleX();
-    auto scaleY = nodeParentScaleY * node->getScaleY();
-    auto rotation = parentRotation + node->getRotation();
-
-    auto nodeToWorldTransform = parentToWorldTransform * node->getNodeToParentTransform();
-
-    auto physicsBody = node->getPhysicsBody();
-    if (physicsBody)
-    {
-        physicsBody->beforeSimulation(parentToWorldTransform, nodeToWorldTransform, scaleX, scaleY, rotation);
-    }
-
-    for (auto child : node->getChildren())
-    {
-        if (child->hasPhysicsChild())
+    #ifdef _MSC_VER
+        std::for_each(
+            std::execution::par_unseq,
+            _bodies.begin(),
+            _bodies.end(),
+            [=](PhysicsBody* next)
+            {
+                next->beforeSimulation();
+            }
+        );
+    #else
+        for (auto next : _bodies)
         {
-            beforeSimulation(child, nodeToWorldTransform, scaleX, scaleY, rotation);
+            next->beforeSimulation();
         }
-    }
+    #endif
 }
 
 void PhysicsWorld::afterSimulation(Node *node, const Mat4& parentToWorldTransform, float parentRotation)
 {
-    auto nodeToWorldTransform = parentToWorldTransform * node->getNodeToParentTransform();
-    auto nodeRotation = parentRotation + node->getRotation();
-
-    auto physicsBody = node->getPhysicsBody();
-    if (physicsBody)
-    {
-        physicsBody->afterSimulation(parentToWorldTransform, parentRotation);
-    }
-
-    for (auto child : node->getChildren())
-    {
-        if (child->hasPhysicsChild())
+    #ifdef _MSC_VER
+        std::for_each(
+            std::execution::par_unseq,
+            _bodies.begin(),
+            _bodies.end(),
+            [=](PhysicsBody* next)
+            {
+                next->afterSimulation();
+            }
+        );
+    #else
+        for (auto next : _bodies)
         {
-            afterSimulation(child, nodeToWorldTransform, nodeRotation);
+            next->afterSimulation();
         }
-    }
+    #endif
 }
 
 NS_CC_END

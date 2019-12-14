@@ -104,7 +104,9 @@ PhysicsBody::PhysicsBody()
 , _momentSetByUser(false)
 , _recordScaleX(1.f)
 , _recordScaleY(1.f)
+, _parentDepth(0)
 {
+    _parentStack = std::vector<Node*>(128);
     _name = COMPONENT_NAME;
 }
 
@@ -888,8 +890,36 @@ Vec2 PhysicsBody::local2World(const Vec2& point)
     return PhysicsHelper::cpv2point(cpBodyLocalToWorld(_cpBody, PhysicsHelper::point2cpv(point)));
 }
 
-void PhysicsBody::beforeSimulation(const Mat4& parentToWorldTransform, const Mat4& nodeToWorldTransform, float scaleX, float scaleY, float rotation)
+void PhysicsBody::beforeSimulation()
 {
+    Node* next = this->getNode();
+    _parentDepth = 0;
+
+    while (next != nullptr)
+    {
+        _parentStack[_parentDepth++] = next;
+        next = next->getParent();
+    }
+
+    if (_parentDepth == 0)
+    {
+        return;
+    }
+    
+    Mat4 nodeToWorldTransform = static_cast<Scene*>(_parentStack[_parentDepth - 1])->getNodeToParentTransform();
+    auto scaleX = 1.0f;
+    auto scaleY = 1.0f;
+    _parentRotation = 0.0f;
+
+    for (int index = _parentDepth - 2; index >= 0; index--)
+    {
+        scaleX *= _parentStack[index]->getScaleX();
+        scaleY *= _parentStack[index]->getScaleY();
+        _parentRotation += _parentStack[index]->getRotation();
+        _parentToWorldTransform = nodeToWorldTransform;
+        nodeToWorldTransform.multiply(_parentStack[index]->getNodeToParentTransform());
+    }
+
     if (_recordScaleX != scaleX || _recordScaleY != scaleY)
     {
         _recordScaleX = scaleX;
@@ -898,9 +928,9 @@ void PhysicsBody::beforeSimulation(const Mat4& parentToWorldTransform, const Mat
     }
 
     // set rotation
-    if (_recordedRotation != rotation)
+    if (_recordedRotation != _parentRotation)
     {
-        setRotation(rotation);
+        setRotation(_parentRotation);
     }
 
     // set position
@@ -917,25 +947,25 @@ void PhysicsBody::beforeSimulation(const Mat4& parentToWorldTransform, const Mat
 
     if (_owner->getAnchorPoint() != Vec2::ANCHOR_MIDDLE)
     {
-        parentToWorldTransform.getInversed().transformVector(worldPosition.x, worldPosition.y, worldPosition.z, 1.f, &worldPosition);
+        _parentToWorldTransform.getInversed().transformVector(worldPosition.x, worldPosition.y, worldPosition.z, 1.f, &worldPosition);
         _offset.x = worldPosition.x - _owner->getPositionX();
         _offset.y = worldPosition.y - _owner->getPositionY();
     }
 }
 
-void PhysicsBody::afterSimulation(const Mat4& parentToWorldTransform, float parentRotation)
+void PhysicsBody::afterSimulation()
 {
     // set Node position   
     auto tmp = getPosition();
     Vec3 positionInParent(tmp.x, tmp.y, 0.f);
     if (_recordPosX != positionInParent.x || _recordPosY != positionInParent.y)
     {
-        parentToWorldTransform.getInversed().transformVector(positionInParent.x, positionInParent.y, positionInParent.z, 1.f, &positionInParent);
+        _parentToWorldTransform.getInversed().transformVector(positionInParent.x, positionInParent.y, positionInParent.z, 1.f, &positionInParent);
         _owner->setPosition(positionInParent.x - _offset.x, positionInParent.y - _offset.y);
     }
 
     // set Node rotation
-    _owner->setRotation(getRotation() - parentRotation);
+    _owner->setRotation(getRotation() - _parentRotation);
 }
 
 void PhysicsBody::onEnter()

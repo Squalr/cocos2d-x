@@ -518,12 +518,17 @@ protected:
     void addToPhysicsWorld();
     void removeFromPhysicsWorld();
 
-    void beforeSimulation(const Mat4& parentToWorldTransform, const Mat4& nodeToWorldTransform, float scaleX, float scaleY, float rotation);
-    void afterSimulation(const Mat4& parentToWorldTransform, float parentRotation);
+    void beforeSimulation();
+    void afterSimulation();
+    
 protected:
     std::vector<PhysicsJoint*> _joints;
     Vector<PhysicsShape*> _shapes;
+    std::vector<Node*> _parentStack;
     PhysicsWorld* _world;
+    Mat4 _parentToWorldTransform;
+    float _parentRotation;
+    int _parentDepth;
     
     cpBody* _cpBody;
     bool _dynamic;
