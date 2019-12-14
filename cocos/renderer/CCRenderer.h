@@ -106,7 +106,7 @@ public:
     /**Get a sub group of the render queue.*/
     std::vector<RenderCommand*>& getSubQueue(QUEUE_GROUP group) { return _commands[group]; }
     /**Get the number of render commands contained in a subqueue.*/
-    ssize_t getSubQueueSize(QUEUE_GROUP group) const { return _commands[group].size(); }
+    ssize_t getSubQueueSize(QUEUE_GROUP group) const { return _commandCounts[group]; }
 
     /**Save the current DepthState, CullState, DepthWriteState render state.*/
     void saveRenderState();
@@ -116,6 +116,7 @@ public:
 protected:
     /**The commands in the render queue.*/
     std::vector<RenderCommand*> _commands[QUEUE_COUNT];
+    int _commandCounts[QUEUE_COUNT];
     
     /**Cull state.*/
     bool _isCullEnabled;
