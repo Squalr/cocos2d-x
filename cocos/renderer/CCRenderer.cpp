@@ -641,10 +641,10 @@ void Renderer::render()
     {
         //Process render commands
         //1. Sort render commands based on ID
-        for (auto &renderqueue : _renderGroups)
+        /*for (auto &renderqueue : _renderGroups)
         {
             renderqueue.sort();
-        }
+        }*/
         visitRenderQueue(_renderGroups[0]);
     }
     clean();
