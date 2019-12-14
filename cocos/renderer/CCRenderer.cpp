@@ -64,9 +64,17 @@ static bool compare3DCommand(RenderCommand* a, RenderCommand* b)
 // queue
 RenderQueue::RenderQueue()
 {
+    // ZAC: I'm arbitrarily setting the limits according to the needs of Squally
+    // Apparently, only GLOBALZ_ZERO seems to be used.
+    
+    _commands[GLOBALZ_NEG] = std::vector<RenderCommand*>(1);
+    _commands[OPAQUE_3D] = std::vector<RenderCommand*>(1);
+    _commands[TRANSPARENT_3D] = std::vector<RenderCommand*>(1);
+    _commands[GLOBALZ_ZERO] = std::vector<RenderCommand*>(65536);
+    _commands[GLOBALZ_POS] = std::vector<RenderCommand*>(1);
+
     for (int index = 0; index < QUEUE_COUNT; index++)
     {
-        _commands[index] = std::vector<RenderCommand*>(2048);
         _commandCounts[index] = 0;
     }
 }
