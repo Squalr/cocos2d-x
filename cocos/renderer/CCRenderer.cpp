@@ -66,12 +66,18 @@ RenderQueue::RenderQueue()
 {
     // ZAC: I'm arbitrarily setting the limits according to the needs of Squally
     // Apparently, only GLOBALZ_ZERO seems to be used.
+
+    _commandMaximums[GLOBALZ_NEG] = 4;
+    _commandMaximums[OPAQUE_3D] = 4;
+    _commandMaximums[TRANSPARENT_3D] = 4;
+    _commandMaximums[GLOBALZ_ZERO] = 65536;
+    _commandMaximums[GLOBALZ_POS] = 4;
     
-    _commands[GLOBALZ_NEG] = std::vector<RenderCommand*>(1);
-    _commands[OPAQUE_3D] = std::vector<RenderCommand*>(1);
-    _commands[TRANSPARENT_3D] = std::vector<RenderCommand*>(1);
-    _commands[GLOBALZ_ZERO] = std::vector<RenderCommand*>(65536);
-    _commands[GLOBALZ_POS] = std::vector<RenderCommand*>(1);
+    _commands[GLOBALZ_NEG] = std::vector<RenderCommand*>(_commandMaximums[GLOBALZ_NEG]);
+    _commands[OPAQUE_3D] = std::vector<RenderCommand*>(_commandMaximums[OPAQUE_3D]);
+    _commands[TRANSPARENT_3D] = std::vector<RenderCommand*>(_commandMaximums[TRANSPARENT_3D]);
+    _commands[GLOBALZ_ZERO] = std::vector<RenderCommand*>(_commandMaximums[GLOBALZ_ZERO]);
+    _commands[GLOBALZ_POS] = std::vector<RenderCommand*>(_commandMaximums[GLOBALZ_POS]);
 
     for (int index = 0; index < QUEUE_COUNT; index++)
     {
@@ -82,13 +88,20 @@ RenderQueue::RenderQueue()
 void RenderQueue::push_back(RenderCommand* command)
 {
     float z = command->getGlobalOrder();
+    
     if(z < 0)
     {
-        _commands[QUEUE_GROUP::GLOBALZ_NEG][_commandCounts[QUEUE_GROUP::GLOBALZ_NEG]++] = command;
+        if (_commandCounts[QUEUE_GROUP::GLOBALZ_NEG] < _commandMaximums[GLOBALZ_NEG])
+        {
+            _commands[QUEUE_GROUP::GLOBALZ_NEG][_commandCounts[QUEUE_GROUP::GLOBALZ_NEG]++] = command;
+        }
     }
     else if(z > 0)
     {
-        _commands[QUEUE_GROUP::GLOBALZ_POS][_commandCounts[QUEUE_GROUP::GLOBALZ_POS]++] = command;
+        if (_commandCounts[QUEUE_GROUP::GLOBALZ_POS] < _commandMaximums[GLOBALZ_POS])
+        {
+            _commands[QUEUE_GROUP::GLOBALZ_POS][_commandCounts[QUEUE_GROUP::GLOBALZ_POS]++] = command;
+        }
     }
     else
     {
@@ -96,16 +109,25 @@ void RenderQueue::push_back(RenderCommand* command)
         {
             if(command->isTransparent())
             {
-                _commands[QUEUE_GROUP::TRANSPARENT_3D][_commandCounts[QUEUE_GROUP::TRANSPARENT_3D]++] = command;
+                if (_commandCounts[QUEUE_GROUP::TRANSPARENT_3D] < _commandMaximums[TRANSPARENT_3D])
+                {
+                    _commands[QUEUE_GROUP::TRANSPARENT_3D][_commandCounts[QUEUE_GROUP::TRANSPARENT_3D]++] = command;
+                }
             }
             else
             {
-                _commands[QUEUE_GROUP::OPAQUE_3D][_commandCounts[QUEUE_GROUP::OPAQUE_3D]++] = command;
+                if (_commandCounts[QUEUE_GROUP::OPAQUE_3D] < _commandMaximums[OPAQUE_3D])
+                {
+                    _commands[QUEUE_GROUP::OPAQUE_3D][_commandCounts[QUEUE_GROUP::OPAQUE_3D]++] = command;
+                }
             }
         }
         else
         {
-            _commands[QUEUE_GROUP::GLOBALZ_ZERO][_commandCounts[QUEUE_GROUP::GLOBALZ_ZERO]++] = command;
+            if (_commandCounts[QUEUE_GROUP::GLOBALZ_ZERO] < _commandMaximums[GLOBALZ_ZERO])
+            {
+                _commands[QUEUE_GROUP::GLOBALZ_ZERO][_commandCounts[QUEUE_GROUP::GLOBALZ_ZERO]++] = command;
+            }
         }
     }
 }

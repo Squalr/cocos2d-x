@@ -117,6 +117,7 @@ protected:
     /**The commands in the render queue.*/
     std::vector<RenderCommand*> _commands[QUEUE_COUNT];
     int _commandCounts[QUEUE_COUNT];
+    int _commandMaximums[QUEUE_COUNT];
     
     /**Cull state.*/
     bool _isCullEnabled;
