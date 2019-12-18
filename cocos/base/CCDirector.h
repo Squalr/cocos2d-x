@@ -615,7 +615,8 @@ protected:
 
     void initMatrixStack();
 
-    std::stack<Mat4> _modelViewMatrixStack;
+    std::vector<Mat4> _modelViewMatrixStack;
+    int _matrixStackIndex;
     /** In order to support GL MultiView features, we need to use the matrix array,
         but we don't know the number of MultiView, so using the vector instead.
      */

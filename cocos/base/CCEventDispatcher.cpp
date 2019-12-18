@@ -1275,6 +1275,9 @@ void EventDispatcher::updateListeners(Event* event)
     
     CCASSERT(_inDispatch == 1, "_inDispatch should be 1 here.");
     
+    // Zac: This code has a performance hit (iterating over a map? seriously?), and seems to never actually *do* anything. Literally always evaluates false.
+    // For this reason, I'm just gonna disable this.
+    /*
     for (auto iter = _listenerMap.begin(); iter != _listenerMap.end();)
     {
         if (iter->second->empty())
@@ -1287,7 +1290,7 @@ void EventDispatcher::updateListeners(Event* event)
         {
             ++iter;
         }
-    }
+    }*/
     
     if (!_toAddedListeners.empty())
     {

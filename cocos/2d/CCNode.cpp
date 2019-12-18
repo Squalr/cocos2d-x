@@ -1422,44 +1422,66 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
         return;
     }
 
-    uint32_t flags = processParentFlags(parentTransform, parentFlags);
-
     // IMPORTANT:
     // To ease the migration to v3.0, we still support the Mat4 stack,
     // but it is deprecated and your code should not rely on it
-    _director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-    _director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
     
     bool visibleByCamera = isVisitableByVisitingCamera();
 
-    int i = 0;
-
     if(!_children.empty())
     {
+        // int i = 0;
+        uint32_t flags = processParentFlags(parentTransform, parentFlags);
+        _director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+        _director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
+
         sortAllChildren();
+
+        // ZAC: Disabled for now. I think for Squally this logic should not matter. This code is neg Z => self => remaining
+        // However, 'self' in Squally is always container nodes, in which case self-draw isn't needed. We can just draw all children in 1 loop.
+        /*
         // draw children zOrder < 0
         for(auto size = _children.size(); i < size; ++i)
         {
             auto node = _children.at(i);
 
-            if (node && node->_localZOrder < 0)
-                node->visit(renderer, _modelViewTransform, flags);
-            else
+            if (!node || node->_localZOrder >= 0)
+            {
                 break;
-        }
+            }
+
+            node->visit(renderer, _modelViewTransform, flags);
+        }*/
+
         // self draw
         if (visibleByCamera)
+        {
             this->draw(renderer, _modelViewTransform, flags);
+        }
 
+        for (auto child : _children)
+        {
+            child->visit(renderer, _modelViewTransform, flags);
+        }
+
+        /*
         for(auto it=_children.cbegin()+i, itCend = _children.cend(); it != itCend; ++it)
+        {
             (*it)->visit(renderer, _modelViewTransform, flags);
+        }*/
+            
+        _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
     }
     else if (visibleByCamera)
     {
-        this->draw(renderer, _modelViewTransform, flags);
-    }
+        uint32_t flags = processParentFlags(parentTransform, parentFlags);
+        _director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+        _director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
 
-    _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+        this->draw(renderer, _modelViewTransform, flags);
+
+        _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+    }
     
     // FIX ME: Why need to set _orderOfArrival to 0??
     // Please refer to https://github.com/cocos2d/cocos2d-x/pull/6920
