@@ -57,6 +57,10 @@ THE SOFTWARE.
 #include "renderer/CCTextureCache.h"
 #include "platform/CCFileUtils.h"
 
+#ifdef _MSC_VER
+    #include <execution>
+#endif
+
 using namespace std;
 
 NS_CC_BEGIN
@@ -118,6 +122,13 @@ bool ParticleData::init(int count)
 {
     maxCount = count;
     
+    range = std::vector<int>(count);
+
+    for (int index = 0; index < count; index++)
+    {
+        range[index] = index;
+    }
+
     posx= (float*)malloc(count * sizeof(float));
     posy= (float*)malloc(count * sizeof(float));
     startPosX= (float*)malloc(count * sizeof(float));
@@ -934,42 +945,87 @@ void ParticleSystem::update(float dt)
         
         if (_emitterMode == Mode::GRAVITY)
         {
-            for (int i = 0 ; i < _particleCount; ++i)
-            {
-                particle_point tmp, radial = {0.0f, 0.0f}, tangential;
-                
-                // radial acceleration
-                if (_particleData.posx[i] || _particleData.posy[i])
+        
+            #ifdef _MSC_VER
+                std::for_each(
+                    std::execution::par_unseq,
+                    _particleData.range.begin(),
+                    _particleData.range.end(),
+                    [=](int i)
+                    {
+                        particle_point tmp, radial = {0.0f, 0.0f}, tangential;
+                        
+                        // radial acceleration
+                        if (_particleData.posx[i] || _particleData.posy[i])
+                        {
+                            normalize_point(_particleData.posx[i], _particleData.posy[i], &radial);
+                        }
+                        tangential = radial;
+                        radial.x *= _particleData.modeA.radialAccel[i];
+                        radial.y *= _particleData.modeA.radialAccel[i];
+                        
+                        // tangential acceleration
+                        std::swap(tangential.x, tangential.y);
+                        tangential.x *= - _particleData.modeA.tangentialAccel[i];
+                        tangential.y *= _particleData.modeA.tangentialAccel[i];
+                        
+                        // (gravity + radial + tangential) * dt
+                        tmp.x = radial.x + tangential.x + modeA.gravity.x;
+                        tmp.y = radial.y + tangential.y + modeA.gravity.y;
+                        tmp.x *= dt;
+                        tmp.y *= dt;
+                        
+                        _particleData.modeA.dirX[i] += tmp.x;
+                        _particleData.modeA.dirY[i] += tmp.y;
+                        
+                        // this is cocos2d-x v3.0
+                        // if (_configName.length()>0 && _yCoordFlipped != -1)
+                        
+                        // this is cocos2d-x v3.0
+                        tmp.x = _particleData.modeA.dirX[i] * dt * _yCoordFlipped;
+                        tmp.y = _particleData.modeA.dirY[i] * dt * _yCoordFlipped;
+                        _particleData.posx[i] += tmp.x;
+                        _particleData.posy[i] += tmp.y;
+                    }
+                );
+            #else
+                for (int i = 0 ; i < _particleCount; ++i)
                 {
-                    normalize_point(_particleData.posx[i], _particleData.posy[i], &radial);
+                    particle_point tmp, radial = {0.0f, 0.0f}, tangential;
+                    
+                    // radial acceleration
+                    if (_particleData.posx[i] || _particleData.posy[i])
+                    {
+                        normalize_point(_particleData.posx[i], _particleData.posy[i], &radial);
+                    }
+                    tangential = radial;
+                    radial.x *= _particleData.modeA.radialAccel[i];
+                    radial.y *= _particleData.modeA.radialAccel[i];
+                    
+                    // tangential acceleration
+                    std::swap(tangential.x, tangential.y);
+                    tangential.x *= - _particleData.modeA.tangentialAccel[i];
+                    tangential.y *= _particleData.modeA.tangentialAccel[i];
+                    
+                    // (gravity + radial + tangential) * dt
+                    tmp.x = radial.x + tangential.x + modeA.gravity.x;
+                    tmp.y = radial.y + tangential.y + modeA.gravity.y;
+                    tmp.x *= dt;
+                    tmp.y *= dt;
+                    
+                    _particleData.modeA.dirX[i] += tmp.x;
+                    _particleData.modeA.dirY[i] += tmp.y;
+                    
+                    // this is cocos2d-x v3.0
+                    // if (_configName.length()>0 && _yCoordFlipped != -1)
+                    
+                    // this is cocos2d-x v3.0
+                    tmp.x = _particleData.modeA.dirX[i] * dt * _yCoordFlipped;
+                    tmp.y = _particleData.modeA.dirY[i] * dt * _yCoordFlipped;
+                    _particleData.posx[i] += tmp.x;
+                    _particleData.posy[i] += tmp.y;
                 }
-                tangential = radial;
-                radial.x *= _particleData.modeA.radialAccel[i];
-                radial.y *= _particleData.modeA.radialAccel[i];
-                
-                // tangential acceleration
-                std::swap(tangential.x, tangential.y);
-                tangential.x *= - _particleData.modeA.tangentialAccel[i];
-                tangential.y *= _particleData.modeA.tangentialAccel[i];
-                
-                // (gravity + radial + tangential) * dt
-                tmp.x = radial.x + tangential.x + modeA.gravity.x;
-                tmp.y = radial.y + tangential.y + modeA.gravity.y;
-                tmp.x *= dt;
-                tmp.y *= dt;
-                
-                _particleData.modeA.dirX[i] += tmp.x;
-                _particleData.modeA.dirY[i] += tmp.y;
-                
-                // this is cocos2d-x v3.0
-                // if (_configName.length()>0 && _yCoordFlipped != -1)
-                
-                // this is cocos2d-x v3.0
-                tmp.x = _particleData.modeA.dirX[i] * dt * _yCoordFlipped;
-                tmp.y = _particleData.modeA.dirY[i] * dt * _yCoordFlipped;
-                _particleData.posx[i] += tmp.x;
-                _particleData.posy[i] += tmp.y;
-            }
+            #endif
         }
         else
         {

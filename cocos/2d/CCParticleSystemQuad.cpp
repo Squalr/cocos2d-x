@@ -44,6 +44,10 @@ THE SOFTWARE.
 #include "base/CCEventDispatcher.h"
 #include "base/ccUTF8.h"
 
+#ifdef _MSC_VER
+    #include <execution>
+#endif
+
 NS_CC_BEGIN
 
 ParticleSystemQuad::ParticleSystemQuad()
@@ -318,6 +322,7 @@ void ParticleSystemQuad::updateParticleQuads()
     
     V3F_C4B_T2F_Quad *startQuad;
     Vec2 pos = Vec2::ZERO;
+    
     if (_batchNode)
     {
         V3F_C4B_T2F_Quad *batchQuads = _batchNode->getTextureAtlas()->getQuads();
@@ -334,103 +339,191 @@ void ParticleSystemQuad::updateParticleQuads()
         Vec3 p1(currentPosition.x, currentPosition.y, 0);
         Mat4 worldToNodeTM = getWorldToNodeTransform();
         worldToNodeTM.transformPoint(&p1);
-        Vec3 p2;
-        Vec2 newPos;
-        float* startX = _particleData.startPosX;
-        float* startY = _particleData.startPosY;
-        float* x = _particleData.posx;
-        float* y = _particleData.posy;
-        float* s = _particleData.size;
-        float* r = _particleData.rotation;
-        V3F_C4B_T2F_Quad* quadStart = startQuad;
-        for (int i = 0 ; i < _particleCount; ++i, ++startX, ++startY, ++x, ++y, ++quadStart, ++s, ++r)
-        {
-            p2.set(*startX, *startY, 0);
-            worldToNodeTM.transformPoint(&p2);
-            newPos.set(*x,*y);
-            p2 = p1 - p2;
-            newPos.x -= p2.x - pos.x;
-            newPos.y -= p2.y - pos.y;
-            updatePosWithParticle(quadStart, newPos, *s, *r);
-        }
+        
+        #ifdef _MSC_VER
+            std::for_each(
+                std::execution::par_unseq,
+                _particleData.range.begin(),
+                _particleData.range.end(),
+                [=](int i)
+                {
+                    Vec3 p2 = Vec3(_particleData.startPosX[i], _particleData.startPosY[i], 0);
+                    worldToNodeTM.transformPoint(&p2);
+                    p2 = p1 - p2;
+
+                    updatePosWithParticle(
+                        &startQuad[i],
+                        Vec2(_particleData.posx[i] - (p2.x - pos.x), _particleData.posy[i] - (p2.y - pos.y)),
+                        _particleData.size[i],
+                        _particleData.rotation[i]
+                    );
+                }
+            );
+        #else
+            for (int i = 0 ; i < _particleCount; ++i)
+            {
+                Vec3 p2 = Vec3(_particleData.startPosX[i], _particleData.startPosY[i], 0);
+                worldToNodeTM.transformPoint(&p2);
+                p2 = p1 - p2;
+
+                updatePosWithParticle(
+                    &startQuad[i],
+                    Vec2(_particleData.posx[i] - (p2.x - pos.x), _particleData.posy[i] - (p2.y - pos.y)),
+                    _particleData.size[i],
+                    _particleData.rotation[i]
+                );
+            }
+        #endif
     }
     else if( _positionType == PositionType::RELATIVE )
     {
-        Vec2 newPos;
-        float* startX = _particleData.startPosX;
-        float* startY = _particleData.startPosY;
-        float* x = _particleData.posx;
-        float* y = _particleData.posy;
-        float* s = _particleData.size;
-        float* r = _particleData.rotation;
-        V3F_C4B_T2F_Quad* quadStart = startQuad;
-        for (int i = 0 ; i < _particleCount; ++i, ++startX, ++startY, ++x, ++y, ++quadStart, ++s, ++r)
-        {
-            newPos.set(*x, *y);
-            newPos.x = *x - (currentPosition.x - *startX);
-            newPos.y = *y - (currentPosition.y - *startY);
-            newPos += pos;
-            updatePosWithParticle(quadStart, newPos, *s, *r);
-        }
+        #ifdef _MSC_VER
+            std::for_each(
+                std::execution::par_unseq,
+                _particleData.range.begin(),
+                _particleData.range.end(),
+                [=](int i)
+                {
+                    updatePosWithParticle(
+                        &startQuad[i],
+                        Vec2(
+                            _particleData.posx[i] - (currentPosition.x - _particleData.startPosX[i]) + pos.x,
+                            _particleData.posy[i] - (currentPosition.y - _particleData.startPosY[i]) + pos.y
+                        ),
+                        _particleData.size[i],
+                        _particleData.rotation[i]
+                    );
+                }
+            );
+        #else
+            for (int i = 0 ; i < _particleCount; ++i)
+            {
+                updatePosWithParticle(
+                    &startQuad[i],
+                    Vec2(
+                        _particleData.posx[i] - (currentPosition.x - _particleData.startPosX[i]) + pos.x,
+                        _particleData.posy[i] - (currentPosition.y - _particleData.startPosY[i]) + pos.y
+                    ),
+                    _particleData.size[i],
+                    _particleData.rotation[i]
+                );
+            }
+        #endif
     }
     else
     {
-        Vec2 newPos;
-        float* startX = _particleData.startPosX;
-        float* startY = _particleData.startPosY;
-        float* x = _particleData.posx;
-        float* y = _particleData.posy;
-        float* s = _particleData.size;
-        float* r = _particleData.rotation;
-        V3F_C4B_T2F_Quad* quadStart = startQuad;
-        for (int i = 0 ; i < _particleCount; ++i, ++startX, ++startY, ++x, ++y, ++quadStart, ++s, ++r)
-        {
-            newPos.set(*x + pos.x, *y + pos.y);
-            updatePosWithParticle(quadStart, newPos, *s, *r);
-        }
+        #ifdef _MSC_VER
+            std::for_each(
+                std::execution::par_unseq,
+                _particleData.range.begin(),
+                _particleData.range.end(),
+                [=](int i)
+                {
+                    updatePosWithParticle(
+                        &startQuad[i],
+                        Vec2(
+                            _particleData.posx[i] + pos.x,
+                            _particleData.posy[i] + pos.y
+                        ),
+                        _particleData.size[i],
+                        _particleData.rotation[i]
+                    );
+                }
+            );
+        #else
+            for (int i = 0 ; i < _particleCount; ++i)
+            {
+                updatePosWithParticle(
+                    &startQuad[i],
+                    Vec2(
+                        _particleData.posx[i] + pos.x,
+                        _particleData.posy[i] + pos.y
+                    ),
+                    _particleData.size[i],
+                    _particleData.rotation[i]
+                );
+            }
+        #endif
     }
     
-    //set color
-    if(_opacityModifyRGB)
-    {
+    #ifdef _MSC_VER
+        if(_opacityModifyRGB)
+        {
+            std::for_each(
+                std::execution::par_unseq,
+                _particleData.range.begin(),
+                _particleData.range.end(),
+                [=](int i)
+                {
+                    GLubyte colorR = _particleData.colorR[i] * _particleData.colorA[i] * 255;
+                    GLubyte colorG = _particleData.colorG[i] * _particleData.colorA[i] * 255;
+                    GLubyte colorB = _particleData.colorB[i] * _particleData.colorA[i] * 255;
+                    GLubyte colorA = _particleData.colorA[i] * 255;
+
+                    startQuad[i].bl.colors.set(colorR, colorG, colorB, colorA);
+                    startQuad[i].br.colors.set(colorR, colorG, colorB, colorA);
+                    startQuad[i].tl.colors.set(colorR, colorG, colorB, colorA);
+                    startQuad[i].tr.colors.set(colorR, colorG, colorB, colorA);
+                }
+            );
+        }
+        else
+        {
+            std::for_each(
+                std::execution::par_unseq,
+                _particleData.range.begin(),
+                _particleData.range.end(),
+                [=](int i)
+                {
+                    GLubyte colorR = _particleData.colorR[i] * 255;
+                    GLubyte colorG = _particleData.colorG[i] * 255;
+                    GLubyte colorB = _particleData.colorB[i] * 255;
+                    GLubyte colorA = _particleData.colorA[i] * 255;
+
+                    startQuad[i].bl.colors.set(colorR, colorG, colorB, colorA);
+                    startQuad[i].br.colors.set(colorR, colorG, colorB, colorA);
+                    startQuad[i].tl.colors.set(colorR, colorG, colorB, colorA);
+                    startQuad[i].tr.colors.set(colorR, colorG, colorB, colorA);
+                }
+            );
+        }
+    #else
         V3F_C4B_T2F_Quad* quad = startQuad;
         float* r = _particleData.colorR;
         float* g = _particleData.colorG;
         float* b = _particleData.colorB;
         float* a = _particleData.colorA;
-        
-        for (int i = 0; i < _particleCount; ++i,++quad,++r,++g,++b,++a)
+    
+        //set color
+        if(_opacityModifyRGB)
         {
-            GLubyte colorR = *r * *a * 255;
-            GLubyte colorG = *g * *a * 255;
-            GLubyte colorB = *b * *a * 255;
-            GLubyte colorA = *a * 255;
-            quad->bl.colors.set(colorR, colorG, colorB, colorA);
-            quad->br.colors.set(colorR, colorG, colorB, colorA);
-            quad->tl.colors.set(colorR, colorG, colorB, colorA);
-            quad->tr.colors.set(colorR, colorG, colorB, colorA);
+            for (int i = 0; i < _particleCount; ++i,++quad,++r,++g,++b,++a)
+            {
+                GLubyte colorR = *r * *a * 255;
+                GLubyte colorG = *g * *a * 255;
+                GLubyte colorB = *b * *a * 255;
+                GLubyte colorA = *a * 255;
+                quad->bl.colors.set(colorR, colorG, colorB, colorA);
+                quad->br.colors.set(colorR, colorG, colorB, colorA);
+                quad->tl.colors.set(colorR, colorG, colorB, colorA);
+                quad->tr.colors.set(colorR, colorG, colorB, colorA);
+            }
         }
-    }
-    else
-    {
-        V3F_C4B_T2F_Quad* quad = startQuad;
-        float* r = _particleData.colorR;
-        float* g = _particleData.colorG;
-        float* b = _particleData.colorB;
-        float* a = _particleData.colorA;
-        
-        for (int i = 0; i < _particleCount; ++i,++quad,++r,++g,++b,++a)
+        else
         {
-            GLubyte colorR = *r * 255;
-            GLubyte colorG = *g * 255;
-            GLubyte colorB = *b * 255;
-            GLubyte colorA = *a * 255;
-            quad->bl.colors.set(colorR, colorG, colorB, colorA);
-            quad->br.colors.set(colorR, colorG, colorB, colorA);
-            quad->tl.colors.set(colorR, colorG, colorB, colorA);
-            quad->tr.colors.set(colorR, colorG, colorB, colorA);
+            for (int i = 0; i < _particleCount; ++i,++quad,++r,++g,++b,++a)
+            {
+                GLubyte colorR = *r * 255;
+                GLubyte colorG = *g * 255;
+                GLubyte colorB = *b * 255;
+                GLubyte colorA = *a * 255;
+                quad->bl.colors.set(colorR, colorG, colorB, colorA);
+                quad->br.colors.set(colorR, colorG, colorB, colorA);
+                quad->tl.colors.set(colorR, colorG, colorB, colorA);
+                quad->tr.colors.set(colorR, colorG, colorB, colorA);
+            }
         }
-    }
+    #endif
 }
 
 void ParticleSystemQuad::postStep()

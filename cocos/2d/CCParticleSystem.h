@@ -54,6 +54,7 @@ struct particle_point
 class CC_DLL ParticleData
 {
 public:
+    std::vector<int> range;
     float* posx;
     float* posy;
     float* startPosX;
