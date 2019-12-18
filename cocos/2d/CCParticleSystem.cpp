@@ -224,6 +224,7 @@ ParticleSystem::ParticleSystem()
 , _yCoordFlipped(1)
 , _positionType(PositionType::FREE)
 , _paused(false)
+, _isUpdateWhileNotVisibleDisabled(false)
 , _sourcePositionCompatible(true) // In the furture this member's default value maybe false or be removed.
 {
     modeA.gravity.setZero();
@@ -864,6 +865,11 @@ bool ParticleSystem::isFull()
 void ParticleSystem::update(float dt)
 {
     CC_PROFILER_START_CATEGORY(kProfilerCategoryParticles , "CCParticleSystem - update");
+
+    if (!this->isVisible() && _isUpdateWhileNotVisibleDisabled)
+    {
+        return;
+    }
 
     if (_isActive && _emissionRate)
     {

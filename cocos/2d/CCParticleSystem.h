@@ -717,6 +717,11 @@ public:
      */
     void setEmissionRate(float rate) { _emissionRate = rate; }
 
+    bool isUpdateWhileNotVisibleDisabled() const { return _isUpdateWhileNotVisibleDisabled; }
+
+    void setUpdateWhileNotVisibleDisabled(bool isUpdateWhileNotVisibleDisabled) { _isUpdateWhileNotVisibleDisabled = isUpdateWhileNotVisibleDisabled; }
+    
+
     /** Gets the maximum particles of the system.
      *
      * @return The maximum particles of the system.
@@ -913,6 +918,8 @@ protected:
     bool _transformSystemDirty;
     // Number of allocated particles
     int _allocatedParticles;
+
+    bool _isUpdateWhileNotVisibleDisabled;
 
     /** Is the emitter active */
     bool _isActive;
