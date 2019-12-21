@@ -621,7 +621,8 @@ void Director::pushMatrix(MATRIX_STACK_TYPE type)
 {
     if(type == MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW)
     {
-        _modelViewMatrixStack[_matrixStackIndex++] = _modelViewMatrixStack[_matrixStackIndex - 1];
+        _modelViewMatrixStack[_matrixStackIndex] = _modelViewMatrixStack[_matrixStackIndex - 1];
+        _matrixStackIndex++;
     }
     else if(type == MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION)
     {

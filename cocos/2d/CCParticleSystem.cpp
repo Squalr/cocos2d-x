@@ -57,10 +57,6 @@ THE SOFTWARE.
 #include "renderer/CCTextureCache.h"
 #include "platform/CCFileUtils.h"
 
-#ifdef _MSC_VER
-    #include <execution>
-#endif
-
 using namespace std;
 
 NS_CC_BEGIN

@@ -50,8 +50,10 @@ CP_EXPORT void cpMessage(const char *condition, const char *file, int line, int 
 	#define	cpAssertWarn(__condition__, ...)
 	#define	cpAssertSoft(__condition__, ...)
 #else
-	#define cpAssertSoft(__condition__, ...) if(!(__condition__)){cpMessage(#__condition__, __FILE__, __LINE__, 1, 0, __VA_ARGS__); abort();}
-	#define cpAssertWarn(__condition__, ...) if(!(__condition__)) cpMessage(#__condition__, __FILE__, __LINE__, 0, 0, __VA_ARGS__)
+	#define	cpAssertWarn(__condition__, ...)
+	#define	cpAssertSoft(__condition__, ...)
+	// #define cpAssertSoft(__condition__, ...) if(!(__condition__)){cpMessage(#__condition__, __FILE__, __LINE__, 1, 0, __VA_ARGS__); abort();}
+	// #define cpAssertWarn(__condition__, ...) if(!(__condition__)) cpMessage(#__condition__, __FILE__, __LINE__, 0, 0, __VA_ARGS__)
 #endif
 
 // Hard assertions are used in situations where the program definitely will crash anyway, and the reason is inexpensive to detect.

@@ -27,6 +27,7 @@
 #if CC_USE_PHYSICS
 #include <algorithm>
 #include <climits>
+#include <execution>
 
 #include "chipmunk/chipmunk_private.h"
 #include "physics/CCPhysicsBody.h"
@@ -40,10 +41,6 @@
 #include "base/CCDirector.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventCustom.h"
-
-#ifdef _MSC_VER
-    #include <execution>
-#endif
 
 NS_CC_BEGIN
 const float PHYSICS_INFINITY = FLT_MAX;
@@ -492,7 +489,23 @@ bool PhysicsWorld::init()
     do
     {
         _cpSpace = cpHastySpaceNew();
-        cpHastySpaceSetThreads(_cpSpace, 0);
+        #ifdef _MSC_VER
+            unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
+            
+            // Windows needs explicit # of threads passed
+            if (concurentThreadsSupported <= 2)
+            {
+                cpHastySpaceSetThreads(_cpSpace, 1);
+            }
+            else
+            {
+                cpHastySpaceSetThreads(_cpSpace, 2);
+            }
+
+        #else
+            // Other platforms auto-detect this
+            cpHastySpaceSetThreads(_cpSpace, 0);
+        #endif
 
         CC_BREAK_IF(_cpSpace == nullptr);
         
@@ -987,42 +1000,28 @@ PhysicsWorld::~PhysicsWorld()
 
 void PhysicsWorld::beforeSimulation(Node *node, const Mat4& parentToWorldTransform, float nodeParentScaleX, float nodeParentScaleY, float parentRotation)
 {
-    #ifdef _MSC_VER
-        std::for_each(
-            std::execution::par_unseq,
-            _bodies.begin(),
-            _bodies.end(),
-            [=](PhysicsBody* next)
-            {
-                next->beforeSimulation();
-            }
-        );
-    #else
-        for (auto next : _bodies)
+    std::for_each(
+        std::execution::par_unseq,
+        _bodies.begin(),
+        _bodies.end(),
+        [=](auto next)
         {
             next->beforeSimulation();
         }
-    #endif
+    );
 }
 
 void PhysicsWorld::afterSimulation(Node *node, const Mat4& parentToWorldTransform, float parentRotation)
 {
-    #ifdef _MSC_VER
-        std::for_each(
-            std::execution::par_unseq,
-            _bodies.begin(),
-            _bodies.end(),
-            [=](PhysicsBody* next)
-            {
-                next->afterSimulation();
-            }
-        );
-    #else
-        for (auto next : _bodies)
+    std::for_each(
+        std::execution::par_unseq,
+        _bodies.begin(),
+        _bodies.end(),
+        [=](auto next)
         {
             next->afterSimulation();
         }
-    #endif
+    );
 }
 
 NS_CC_END
