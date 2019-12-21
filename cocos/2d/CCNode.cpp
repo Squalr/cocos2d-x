@@ -1458,10 +1458,13 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
         {
             this->draw(renderer, _modelViewTransform, flags);
         }
-
+        
         for (auto child : _children)
         {
-            child->visit(renderer, _modelViewTransform, flags);
+            if (child->_visible)
+            {
+                child->visit(renderer, _modelViewTransform, flags);
+            }
         }
 
         /*
