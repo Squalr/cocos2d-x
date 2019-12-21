@@ -151,7 +151,6 @@ target_link_libraries(cocos2d
         xxtea::xxtea
         clipper::clipper
         recast::recast
-        chipmunk::chipmunk
 
         # required platform dependencies
         $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>

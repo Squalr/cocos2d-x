@@ -18,7 +18,6 @@
         "cmake/Modules/CocosPickLibs.cmake", 
         "cmake/Modules/CocosSelectModule.cmake", 
         "cmake/Modules/CocosUseLibs.cmake", 
-        "cmake/Modules/FindChipmunk.cmake", 
         "cmake/Modules/FindFontconfig.cmake", 
         "cmake/Modules/FindGLFW3.cmake", 
         "cmake/Modules/FindGTK3.cmake", 
