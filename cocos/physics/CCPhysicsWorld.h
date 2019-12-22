@@ -334,6 +334,9 @@ public:
     */
     bool isAutoStep() { return _autoStep; }
 
+    void pause(){ _paused = true; }
+    void resume() { _paused = false; }
+
     /**
      * The step for physics world.
      *
@@ -383,6 +386,7 @@ protected:
     std::list<PhysicsJoint*> _joints;
     Scene* _scene;
     
+    bool _paused;
     bool _autoStep;
     DrawNode* _debugDraw;
     int _debugDrawMask;

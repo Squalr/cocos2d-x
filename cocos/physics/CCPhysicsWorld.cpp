@@ -885,6 +885,11 @@ void PhysicsWorld::step(float delta)
 
 void PhysicsWorld::update(float delta, bool userCall/* = false*/)
 {
+    if (_paused)
+    {
+        return;
+    }
+
     if(!_delayAddBodies.empty())
     {
         updateBodies();
@@ -980,6 +985,7 @@ PhysicsWorld::PhysicsWorld()
 , _updateBodyTransform(false)
 , _scene(nullptr)
 , _autoStep(true)
+, _paused(false)
 , _debugDraw(nullptr)
 , _debugDrawMask(DEBUGDRAW_NONE)
 , _eventDispatcher(nullptr)

@@ -1435,7 +1435,7 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
         _director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
         _director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
 
-        sortAllChildren();
+        // sortAllChildren();
 
         // ZAC: Disabled for now. I think for Squally this logic should not matter. This code is neg Z => self => remaining
         // However, 'self' in Squally is always container nodes, in which case self-draw isn't needed. We can just draw all children in 1 loop.
