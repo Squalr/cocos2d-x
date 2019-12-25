@@ -27,7 +27,12 @@
 #if CC_USE_PHYSICS
 #include <algorithm>
 #include <climits>
-#include <execution>
+
+#if __GNUC__ || __clang__
+    // #include <execution>
+#else
+    #include <execution>
+#endif
 
 #include "chipmunk/chipmunk_private.h"
 #include "physics/CCPhysicsBody.h"
@@ -1006,11 +1011,10 @@ PhysicsWorld::~PhysicsWorld()
 
 void PhysicsWorld::beforeSimulation(Node *node, const Mat4& parentToWorldTransform, float nodeParentScaleX, float nodeParentScaleY, float parentRotation)
 {
-    std::for_each(
-        std::execution::par_unseq,
+    TRY_PARALLELIZE(
         _bodies.begin(),
         _bodies.end(),
-        [=](auto next)
+        [=](PhysicsBody* next)
         {
             next->beforeSimulation();
         }
@@ -1019,11 +1023,10 @@ void PhysicsWorld::beforeSimulation(Node *node, const Mat4& parentToWorldTransfo
 
 void PhysicsWorld::afterSimulation(Node *node, const Mat4& parentToWorldTransform, float parentRotation)
 {
-    std::for_each(
-        std::execution::par_unseq,
+    TRY_PARALLELIZE(
         _bodies.begin(),
         _bodies.end(),
-        [=](auto next)
+        [=](PhysicsBody* next)
         {
             next->afterSimulation();
         }

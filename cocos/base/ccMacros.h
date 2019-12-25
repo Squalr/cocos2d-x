@@ -54,6 +54,21 @@ THE SOFTWARE.
     #define CCASSERT(cond, msg)
 #endif
 
+#if __GNUC__ || __clang__
+    #define TRY_PARALLELIZE(begin, end, body) std::for_each(        \
+          begin,                                                    \
+          end,                                                      \
+          body                                                      \
+    );                                      
+#else
+    #define TRY_PARALLELIZE(begin, end, body) std::for_each(      \
+          std::execution::par_unseq,                              \
+          begin                                                   \
+          end                                                     \
+          body                                                    \
+    );  
+#endif
+
 #define GP_ASSERT(cond) CCASSERT(cond, "")
 
 // FIXME:: Backward compatible

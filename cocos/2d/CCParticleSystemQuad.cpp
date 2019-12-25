@@ -44,7 +44,11 @@ THE SOFTWARE.
 #include "base/CCEventDispatcher.h"
 #include "base/ccUTF8.h"
 
-#include <execution>
+#if __GNUC__ || __clang__
+    // #include <execution>
+#else
+    #include <execution>
+#endif
 
 NS_CC_BEGIN
 
@@ -333,9 +337,8 @@ void ParticleSystemQuad::updateParticleQuads()
         Vec3 p1(currentPosition.x, currentPosition.y, 0);
         Mat4 worldToNodeTM = getWorldToNodeTransform();
         worldToNodeTM.transformPoint(&p1);
-        
-        std::for_each(
-            std::execution::par_unseq,
+
+        TRY_PARALLELIZE(
             _particleData.range.begin(),
             _particleData.range.end(),
             [=](int i)
