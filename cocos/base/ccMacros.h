@@ -61,11 +61,11 @@ THE SOFTWARE.
           body                                                      \
     );                                      
 #else
-    #define TRY_PARALLELIZE(begin, end, body) std::for_each(      \
-          std::execution::par_unseq,                              \
-          begin                                                   \
-          end                                                     \
-          body                                                    \
+    #define TRY_PARALLELIZE(begin, end, body) std::for_each(        \
+          std::execution::par_unseq,                                \
+          begin,                                                    \
+          end,                                                      \
+          body                                                      \
     );  
 #endif
 
