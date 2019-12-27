@@ -240,10 +240,7 @@ Renderer::Renderer() : _filledVertex(0)
 {
     _groupCommandManager = new (std::nothrow) GroupCommandManager();
     
-    _commandGroupStack.push(DEFAULT_RENDER_QUEUE);
-    
-    RenderQueue defaultRenderQueue;
-    _renderGroups.push_back(defaultRenderQueue);
+    _renderQueue = RenderQueue();
     _queuedTriangleCommands.reserve(BATCH_TRIAGCOMMAND_RESERVED_SIZE);
 
     // default clear color
@@ -256,7 +253,6 @@ Renderer::Renderer() : _filledVertex(0)
 
 Renderer::~Renderer()
 {
-    _renderGroups.clear();
     _groupCommandManager->release();
     
     glDeleteBuffers(2, _buffersVBO);
@@ -376,90 +372,80 @@ void Renderer::mapBuffers()
 
 void Renderer::addCommand(RenderCommand* command)
 {
-    int renderQueueID =_commandGroupStack.top();
-    addCommand(command, renderQueueID);
-}
-
-void Renderer::addCommand(RenderCommand* command, int renderQueueID)
-{
-    CCASSERT(!_isRendering, "Cannot add command while rendering");
-    CCASSERT(renderQueueID >=0, "Invalid render queue");
-    CCASSERT(command->getType() != RenderCommand::Type::UNKNOWN_COMMAND, "Invalid Command Type");
-
-    _renderGroups[renderQueueID].push_back(command);
+    _renderQueue.push_back(command);
 }
 
 void Renderer::pushGroup(int renderQueueID)
 {
-    CCASSERT(!_isRendering, "Cannot change render queue while rendering");
-    _commandGroupStack.push(renderQueueID);
 }
 
 void Renderer::popGroup()
 {
-    CCASSERT(!_isRendering, "Cannot change render queue while rendering");
-    _commandGroupStack.pop();
 }
 
 int Renderer::createRenderQueue()
 {
-    RenderQueue newRenderQueue;
-    _renderGroups.push_back(newRenderQueue);
-    return (int)_renderGroups.size() - 1;
+    return 0;
 }
 
 void Renderer::processRenderCommand(RenderCommand* command)
 {
     auto commandType = command->getType();
-    if( RenderCommand::Type::TRIANGLES_COMMAND == commandType)
+
+    switch(commandType)
     {
-        auto cmd = static_cast<TrianglesCommand*>(command);
-        
-        // flush own queue when buffer is full
-        if(_filledVertex + cmd->getVertexCount() > VBO_SIZE || _filledIndex + cmd->getIndexCount() > INDEX_VBO_SIZE)
+        case RenderCommand::Type::TRIANGLES_COMMAND:
         {
-            CCASSERT(cmd->getVertexCount()>= 0 && cmd->getVertexCount() < VBO_SIZE, "VBO for vertex is not big enough, please break the data down or use customized render command");
-            CCASSERT(cmd->getIndexCount()>= 0 && cmd->getIndexCount() < INDEX_VBO_SIZE, "VBO for index is not big enough, please break the data down or use customized render command");
-            drawBatchedTriangles();
+            auto cmd = static_cast<TrianglesCommand*>(command);
+            
+            // flush own queue when buffer is full
+            if(_filledVertex + cmd->getVertexCount() > VBO_SIZE || _filledIndex + cmd->getIndexCount() > INDEX_VBO_SIZE)
+            {
+                CCASSERT(cmd->getVertexCount()>= 0 && cmd->getVertexCount() < VBO_SIZE, "VBO for vertex is not big enough, please break the data down or use customized render command");
+                CCASSERT(cmd->getIndexCount()>= 0 && cmd->getIndexCount() < INDEX_VBO_SIZE, "VBO for index is not big enough, please break the data down or use customized render command");
+                drawBatchedTriangles();
+            }
+            
+            // queue it
+            _queuedTriangleCommands.push_back(cmd);
+            _filledIndex += cmd->getIndexCount();
+            _filledVertex += cmd->getVertexCount();
+            break;
         }
-        
-        // queue it
-        _queuedTriangleCommands.push_back(cmd);
-        _filledIndex += cmd->getIndexCount();
-        _filledVertex += cmd->getVertexCount();
-    }
-    else if(RenderCommand::Type::GROUP_COMMAND == commandType)
-    {
-        flush();
-        int renderQueueID = ((GroupCommand*) command)->getRenderQueueID();
-        CCGL_DEBUG_PUSH_GROUP_MARKER("RENDERER_GROUP_COMMAND");
-        visitRenderQueue(_renderGroups[renderQueueID]);
-        CCGL_DEBUG_POP_GROUP_MARKER();
-    }
-    else if(RenderCommand::Type::CUSTOM_COMMAND == commandType)
-    {
-        flush();
-        auto cmd = static_cast<CustomCommand*>(command);
-        CCGL_DEBUG_INSERT_EVENT_MARKER("RENDERER_CUSTOM_COMMAND");
-        cmd->execute();
-    }
-    else if(RenderCommand::Type::BATCH_COMMAND == commandType)
-    {
-        flush();
-        auto cmd = static_cast<BatchCommand*>(command);
-        CCGL_DEBUG_INSERT_EVENT_MARKER("RENDERER_BATCH_COMMAND");
-        cmd->execute();
-    }
-    else if(RenderCommand::Type::PRIMITIVE_COMMAND == commandType)
-    {
-        flush();
-        auto cmd = static_cast<PrimitiveCommand*>(command);
-        CCGL_DEBUG_INSERT_EVENT_MARKER("RENDERER_PRIMITIVE_COMMAND");
-        cmd->execute();
-    }
-    else
-    {
-        CCLOGERROR("Unknown commands in renderQueue");
+        case RenderCommand::Type::GROUP_COMMAND:
+        {
+            flush();
+            break;
+        }
+        case RenderCommand::Type::CUSTOM_COMMAND:
+        {
+            flush();
+            auto cmd = static_cast<CustomCommand*>(command);
+            CCGL_DEBUG_INSERT_EVENT_MARKER("RENDERER_CUSTOM_COMMAND");
+            cmd->execute();
+            break;
+        }
+        case RenderCommand::Type::BATCH_COMMAND:
+        {
+            flush();
+            auto cmd = static_cast<BatchCommand*>(command);
+            CCGL_DEBUG_INSERT_EVENT_MARKER("RENDERER_BATCH_COMMAND");
+            cmd->execute();
+            break;
+        }
+        case RenderCommand::Type::PRIMITIVE_COMMAND:
+        {
+            flush();
+            auto cmd = static_cast<PrimitiveCommand*>(command);
+            CCGL_DEBUG_INSERT_EVENT_MARKER("RENDERER_PRIMITIVE_COMMAND");
+            cmd->execute();
+            break;
+        }
+        default:
+        {
+            CCLOGERROR("Unknown commands in renderQueue");
+            break;
+        }
     }
 }
 
@@ -641,38 +627,22 @@ void Renderer::render()
 {
     //Uncomment this once everything is rendered by new renderer
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //TODO: setup camera or MVP
+    
     _isRendering = true;
     
     if (_glViewAssigned)
     {
-        //Process render commands
-        //1. Sort render commands based on ID
-        /*for (auto &renderqueue : _renderGroups)
-        {
-            renderqueue.sort();
-        }*/
-        visitRenderQueue(_renderGroups[0]);
+        visitRenderQueue(_renderQueue);
     }
+
     clean();
     _isRendering = false;
 }
 
 void Renderer::clean()
 {
-    // Clear render group
-    for (size_t j = 0, size = _renderGroups.size() ; j < size; j++)
-    {
-        //commands are owned by nodes
-        // for (const auto &cmd : _renderGroups[j])
-        // {
-        //     cmd->releaseToCommandPool();
-        // }
-        _renderGroups[j].clear();
-    }
-
     // Clear batch commands
+    _renderQueue.clear();
     _queuedTriangleCommands.clear();
     _filledVertex = 0;
     _filledIndex = 0;

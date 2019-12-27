@@ -1380,12 +1380,11 @@ uint32_t Node::processParentFlags(const Mat4& parentTransform, uint32_t parentFl
         return parentFlags;
     }
 
-    parentFlags |= (_transformUpdated ? FLAGS_TRANSFORM_DIRTY : 0);
-    parentFlags |= (_contentSizeDirty ? FLAGS_CONTENT_SIZE_DIRTY : 0);
+    parentFlags |= (_transformUpdated ? FLAGS_TRANSFORM_DIRTY : 0) | (_contentSizeDirty ? FLAGS_CONTENT_SIZE_DIRTY : 0);
     
     if(parentFlags & FLAGS_DIRTY_MASK)
     {
-        _modelViewTransform = this->transform(parentTransform);
+        _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
 
     _transformUpdated = false;
@@ -1412,8 +1411,6 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
     bool visibleByCamera = isVisitableByVisitingCamera();
 
     uint32_t flags = processParentFlags(parentTransform, parentFlags);
-    _director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-    _director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
 
     // self draw
     if (visibleByCamera)
@@ -1421,23 +1418,11 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
         this->draw(renderer, _modelViewTransform, flags);
     }
 
-    for (auto child : _children)
+    for (int index = 0; index < _children.size(); index++)
     {
-        if (child->_visible)
-        {
-            child->visit(renderer, _modelViewTransform, flags);
-        }
+        _children[index]->visit(renderer, _modelViewTransform, flags);
     }
-        
-    _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
 }
-
-Mat4 Node::transform(const Mat4& parentTransform)
-{
-    return parentTransform * this->getNodeToParentTransform();
-}
-
-// MARK: events
 
 void Node::onEnter()
 {

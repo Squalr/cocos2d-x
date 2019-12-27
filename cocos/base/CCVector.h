@@ -182,16 +182,15 @@ public:
         return *this;
     }
     
-// Don't uses operator since we could not decide whether it needs 'retain'/'release'.
-//    T& operator[](int index)
-//    {
-//        return _data[index];
-//    }
-//    
-//    const T& operator[](int index) const
-//    {
-//        return _data[index];
-//    }
+    T& operator[](int index)
+    {
+        return _data[index];
+    }
+
+    const T& operator[](int index) const
+    {
+        return _data[index];
+    }
     
     /** 
      * Requests that the vector capacity be at least enough to contain n elements.
@@ -268,7 +267,7 @@ public:
     /** Returns the element at position 'index' in the Vector. */
     T at(ssize_t index) const
     {
-        CCASSERT( index >= 0 && index < size(), "index out of range in getObjectAtIndex()");
+        // CCASSERT( index >= 0 && index < size(), "index out of range in getObjectAtIndex()");
         return _data[index];
     }
 

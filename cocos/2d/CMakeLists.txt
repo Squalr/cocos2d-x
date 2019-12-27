@@ -7,7 +7,6 @@ include_directories(
 
 set(COCOS_2D_HEADER
 
-    2d/CCActionPageTurn3D.h
     2d/CCActionTween.h
     2d/CCGrid.h
     2d/CCSpriteFrameCache.h
@@ -19,7 +18,6 @@ set(COCOS_2D_HEADER
     2d/CCSprite.h
     2d/CCNode.h
     2d/CCComponentContainer.h
-    2d/CCActionProgressTimer.h
     2d/CCTweenFunction.h
     2d/CCLight.h
     2d/CCAutoPolygon.h
@@ -34,10 +32,8 @@ set(COCOS_2D_HEADER
     2d/CCComponent.h
     2d/CCLabelAtlas.h
     2d/CCActionCatmullRom.h
-    2d/CCActionGrid.h
     2d/CCDrawingPrimitives.h
     2d/CCParticleBatchNode.h
-    2d/CCClippingRectangleNode.h
     2d/CCActionEase.h
     2d/CCScene.h
     2d/CCProtectedNode.h
@@ -47,32 +43,21 @@ set(COCOS_2D_HEADER
     2d/CCFontAtlasCache.h
     2d/CCFont.h
     2d/CCParticleSystemQuad.h
-    2d/CCActionGrid3D.h
     2d/CCCameraBackgroundBrush.h
     2d/CCFastTMXTiledMap.h
     2d/CCLabelTextFormatter.h
-    2d/CCMenuItem.h
-    2d/CCLabelBMFont.h
     2d/CCFontFNT.h
     2d/CCSpriteBatchNode.h
-    2d/CCTransitionProgress.h
     2d/CCSpriteFrame.h
     2d/CCTMXObjectGroup.h
     2d/CCAnimation.h
-    2d/CCNodeGrid.h
     2d/CCFontFreeType.h
     2d/CCGLBufferedNode.h
     2d/CCAction.h
-    2d/CCTransition.h
-    2d/CCTransitionPageTurn.h
     2d/CCFontCharMap.h
     2d/CCParticleSystem.h
-    2d/CCProgressTimer.h
     2d/CCTileMapAtlas.h
-    2d/CCActionTiledGrid.h
     2d/CCActionManager.h
-    2d/CCMotionStreak.h
-    2d/CCMenu.h
     2d/CCDrawNode.h
     2d/CCTMXLayer.h
     2d/CCCamera.h
@@ -87,14 +72,9 @@ set(COCOS_2D_SRC
     2d/CCActionCatmullRom.cpp
     2d/CCAction.cpp
     2d/CCActionEase.cpp
-    2d/CCActionGrid3D.cpp
-    2d/CCActionGrid.cpp
     2d/CCActionInstant.cpp
     2d/CCActionInterval.cpp
     2d/CCActionManager.cpp
-    2d/CCActionPageTurn3D.cpp
-    2d/CCActionProgressTimer.cpp
-    2d/CCActionTiledGrid.cpp
     2d/CCActionTween.cpp
     2d/CCAnimationCache.cpp
     2d/CCAnimation.cpp
@@ -102,7 +82,6 @@ set(COCOS_2D_SRC
     2d/CCCamera.cpp
     2d/CCCameraBackgroundBrush.cpp
     2d/CCClippingNode.cpp
-    2d/CCClippingRectangleNode.cpp
     2d/CCComponentContainer.cpp
     2d/CCComponent.cpp
     2d/CCDrawingPrimitives.cpp
@@ -119,23 +98,17 @@ set(COCOS_2D_SRC
     2d/CCGrabber.cpp
     2d/CCGrid.cpp
     2d/CCLabelAtlas.cpp
-    2d/CCLabelBMFont.cpp
     2d/CCLabel.cpp
     2d/CCLabelTextFormatter.cpp
     2d/CCLabelTTF.cpp
     2d/CCLayer.cpp
     2d/CCLight.cpp
-    2d/CCMenu.cpp
-    2d/CCMenuItem.cpp
-    2d/CCMotionStreak.cpp
     2d/CCNode.cpp
-    2d/CCNodeGrid.cpp
     2d/CCParallaxNode.cpp
     2d/CCParticleBatchNode.cpp
     2d/CCParticleExamples.cpp
     2d/CCParticleSystem.cpp
     2d/CCParticleSystemQuad.cpp
-    2d/CCProgressTimer.cpp
     2d/CCProtectedNode.cpp
     2d/CCRenderTexture.cpp
     2d/CCScene.cpp
@@ -151,9 +124,5 @@ set(COCOS_2D_SRC
     2d/CCTMXObjectGroup.cpp
     2d/CCTMXTiledMap.cpp
     2d/CCTMXXMLParser.cpp
-    2d/CCTransition.cpp
-    2d/CCTransitionPageTurn.cpp
-    2d/CCTransitionProgress.cpp
     2d/CCTweenFunction.cpp
-
     )

@@ -161,7 +161,6 @@ protected:
    
     StencilStateManager* _stencilStateManager;
     
-    GroupCommand _groupCommand;
     CustomCommand _beforeVisitCmd;
     CustomCommand _afterDrawStencilCmd;
     CustomCommand _afterVisitCmd;

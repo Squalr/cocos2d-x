@@ -148,9 +148,6 @@ public:
     /** Adds a `RenderComamnd` into the renderer */
     void addCommand(RenderCommand* command);
 
-    /** Adds a `RenderComamnd` into the renderer specifying a particular render queue ID */
-    void addCommand(RenderCommand* command, int renderQueueID);
-
     /** Pushes a group into the render queue */
     void pushGroup(int renderQueueID);
 
@@ -215,10 +212,8 @@ protected:
 
     /* clear color set outside be used in setGLDefaultValues() */
     Color4F _clearColor;
-
-    std::stack<int> _commandGroupStack;
     
-    std::vector<RenderQueue> _renderGroups;
+    RenderQueue _renderQueue;
 
     std::vector<TrianglesCommand*> _queuedTriangleCommands;
 

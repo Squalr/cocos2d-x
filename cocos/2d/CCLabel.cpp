@@ -1642,7 +1642,7 @@ void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t pare
         _position.y += _shadowOffset.height;
         _transformDirty = _inverseDirty = true;
 
-        _shadowTransform = transform(parentTransform);
+        _shadowTransform = parentTransform * getNodeToParentTransform();
 
         _position.x -= _shadowOffset.width;
         _position.y -= _shadowOffset.height;
