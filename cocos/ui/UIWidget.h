@@ -27,9 +27,6 @@ THE SOFTWARE.
 #define __UIWIDGET_H__
 
 #include "2d/CCProtectedNode.h"
-#include "ui/UILayoutParameter.h"
-#include "ui/GUIDefine.h"
-#include "ui/GUIExport.h"
 #include "ui/UIWidget.h"
 #include "base/CCMap.h"
 
@@ -64,19 +61,12 @@ typedef enum
 typedef void (Ref::*SEL_TouchEvent)(Ref*,TouchEventType);
 #define toucheventselector(_SELECTOR) (SEL_TouchEvent)(&_SELECTOR)
 
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-#ifdef ABSOLUTE
-#undef ABSOLUTE
-#endif
-#endif
-
 /**
  *@brief Base class for all ui widgets.
  * This class inherent from `ProtectedNode` and `LayoutParameterProtocol`.
  * If you want to implements your own ui widget, you should subclass it.
  */
-class CC_GUI_DLL Widget : public ProtectedNode, public LayoutParameterProtocol
+class Widget : public ProtectedNode
 {
 public:
     /**
@@ -582,32 +572,6 @@ public:
     virtual void onTouchCancelled(Touch *touch, Event *unusedEvent);
 
     /**
-     * Sets a LayoutParameter to widget.
-     *
-     * @see LayoutParameter
-     * @param parameter LayoutParameter pointer
-     */
-    void setLayoutParameter(LayoutParameter* parameter);
-
-    /**
-     * Gets LayoutParameter of widget.
-     *
-     * @see LayoutParameter
-     * @return LayoutParameter
-     */
-    LayoutParameter* getLayoutParameter()const override;
-    /**
-     * Gets LayoutParameter of widget.
-     *
-     * @see LayoutParameter
-     * @deprecated use `getLayoutParameter()` instead.
-     * @param type  Relative or Linear
-     * @return LayoutParameter
-     */
-    CC_DEPRECATED_ATTRIBUTE LayoutParameter* getLayoutParameter(LayoutParameter::Type type);
-
-
-    /**
      * Toggle whether ignore user defined content size for widget.
      * Set true will ignore user defined content size which means 
      * the widget size is always equal to the return value of `getVirtualRendererSize`.
@@ -964,10 +928,6 @@ protected:
 
     bool _flippedX;
     bool _flippedY;
-
-    //use map to enable switch back and forth for user layout parameters
-    Map<int,LayoutParameter*> _layoutParameterDictionary;
-    LayoutParameter::Type _layoutParameterType;
 
     bool _focused;
     bool _focusEnabled;

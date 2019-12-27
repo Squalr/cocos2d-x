@@ -46,7 +46,6 @@ THE SOFTWARE.
 #include "renderer/CCMaterial.h"
 #include "math/TransformUtils.h"
 
-
 #if CC_NODE_RENDER_SUBPIXEL
 #define RENDER_IN_SUBPIXEL
 #else
@@ -99,7 +98,6 @@ Node::Node()
 , _paused(false)
 , _visible(true)
 , _physicsDirty(true)
-, _hasPhysicsChild(false)
 , _ignoreAnchorPointForPosition(false)
 , _reorderChildDirty(false)
 , _isTransitionFinished(false)
@@ -1375,36 +1373,25 @@ void Node::visit()
 
 uint32_t Node::processParentFlags(const Mat4& parentTransform, uint32_t parentFlags)
 {
-    if(_usingNormalizedPosition)
-    {
-        CCASSERT(_parent, "setPositionNormalized() doesn't work with orphan nodes");
-        if ((parentFlags & FLAGS_CONTENT_SIZE_DIRTY) || _normalizedPositionDirty)
-        {
-            auto& s = _parent->getContentSize();
-            _position.x = _normalizedPosition.x * s.width;
-            _position.y = _normalizedPosition.y * s.height;
-            _transformUpdated = _transformDirty = _inverseDirty = true;
-            _normalizedPositionDirty = false;
-        }
-    }
-
     // Fixes Github issue #16100. Basically when having two cameras, one camera might set as dirty the
     // node that is not visited by it, and might affect certain calculations. Besides, it is faster to do this.
     if (!isVisitableByVisitingCamera())
+    {
         return parentFlags;
+    }
 
-    uint32_t flags = parentFlags;
-    flags |= (_transformUpdated ? FLAGS_TRANSFORM_DIRTY : 0);
-    flags |= (_contentSizeDirty ? FLAGS_CONTENT_SIZE_DIRTY : 0);
+    parentFlags |= (_transformUpdated ? FLAGS_TRANSFORM_DIRTY : 0);
+    parentFlags |= (_contentSizeDirty ? FLAGS_CONTENT_SIZE_DIRTY : 0);
     
-
-    if(flags & FLAGS_DIRTY_MASK)
+    if(parentFlags & FLAGS_DIRTY_MASK)
+    {
         _modelViewTransform = this->transform(parentTransform);
-    
+    }
+
     _transformUpdated = false;
     _contentSizeDirty = false;
 
-    return flags;
+    return parentFlags;
 }
 
 bool Node::isVisitableByVisitingCamera() const
@@ -1421,75 +1408,28 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
     {
         return;
     }
-
-    // IMPORTANT:
-    // To ease the migration to v3.0, we still support the Mat4 stack,
-    // but it is deprecated and your code should not rely on it
     
     bool visibleByCamera = isVisitableByVisitingCamera();
 
-    if(!_children.empty())
+    uint32_t flags = processParentFlags(parentTransform, parentFlags);
+    _director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+    _director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
+
+    // self draw
+    if (visibleByCamera)
     {
-        // int i = 0;
-        uint32_t flags = processParentFlags(parentTransform, parentFlags);
-        _director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-        _director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
-
-        // sortAllChildren();
-
-        // ZAC: Disabled for now. I think for Squally this logic should not matter. This code is neg Z => self => remaining
-        // However, 'self' in Squally is always container nodes, in which case self-draw isn't needed. We can just draw all children in 1 loop.
-        /*
-        // draw children zOrder < 0
-        for(auto size = _children.size(); i < size; ++i)
-        {
-            auto node = _children.at(i);
-
-            if (!node || node->_localZOrder >= 0)
-            {
-                break;
-            }
-
-            node->visit(renderer, _modelViewTransform, flags);
-        }*/
-
-        // self draw
-        if (visibleByCamera)
-        {
-            this->draw(renderer, _modelViewTransform, flags);
-        }
-        
-        for (auto child : _children)
-        {
-            if (child->_visible)
-            {
-                child->visit(renderer, _modelViewTransform, flags);
-            }
-        }
-
-        /*
-        for(auto it=_children.cbegin()+i, itCend = _children.cend(); it != itCend; ++it)
-        {
-            (*it)->visit(renderer, _modelViewTransform, flags);
-        }*/
-            
-        _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-    }
-    else if (visibleByCamera)
-    {
-        uint32_t flags = processParentFlags(parentTransform, parentFlags);
-        _director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-        _director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
-
         this->draw(renderer, _modelViewTransform, flags);
-
-        _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
     }
-    
-    // FIX ME: Why need to set _orderOfArrival to 0??
-    // Please refer to https://github.com/cocos2d/cocos2d-x/pull/6920
-    // reset for next frame
-    // _orderOfArrival = 0;
+
+    for (auto child : _children)
+    {
+        if (child->_visible)
+        {
+            child->visit(renderer, _modelViewTransform, flags);
+        }
+    }
+        
+    _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
 }
 
 Mat4 Node::transform(const Mat4& parentTransform)

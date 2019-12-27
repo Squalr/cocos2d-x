@@ -75,7 +75,6 @@ set(COCOS_BASE_HEADER
     base/CCConfiguration.h
     base/CCProtocols.h
     base/TGAlib.h
-    base/CCDataVisitor.h
     base/CCEventMouse.h
     base/CCIMEDelegate.h
     base/CCNS.h
@@ -98,7 +97,6 @@ set(COCOS_BASE_SRC
     base/CCConsole.cpp
     base/CCController.cpp
     base/CCData.cpp
-    base/CCDataVisitor.cpp
     base/CCNinePatchImageParser.cpp
     base/CCDirector.cpp
     base/CCEvent.cpp

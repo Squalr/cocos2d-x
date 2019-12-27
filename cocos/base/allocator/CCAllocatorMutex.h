@@ -30,7 +30,7 @@
 
 #include "platform/CCPlatformMacros.h"
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_TIZEN || CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
+#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 #include "pthread.h"
 #define MUTEX pthread_mutex_t
 #define MUTEX_INIT(m) \
@@ -42,7 +42,7 @@
     pthread_mutex_lock(&m);
 #define MUTEX_UNLOCK(m) \
     pthread_mutex_unlock(&m);
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 #include "windows.h"
 #define MUTEX HANDLE
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
@@ -50,11 +50,6 @@
     m = CreateMutex(0, FALSE, 0)
 #define MUTEX_LOCK(m) \
     WaitForSingleObject(m, INFINITE)
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
-#define MUTEX_INIT(m) \
-	m = CreateMutexEx(NULL,FALSE,0,NULL);
-#define MUTEX_LOCK(m) \
-    WaitForSingleObjectEx(m, INFINITE, false)
 #endif
 #define MUTEX_UNLOCK(m) \
     ReleaseMutex(m)

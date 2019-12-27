@@ -420,25 +420,10 @@ GLProgramState::GLProgramState()
 , _glprogram(nullptr)
 , _nodeBinding(nullptr)
 {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-    /** listen the event that renderer was recreated on Android/WP8 */
-    CCLOG("create rendererRecreatedListener for GLProgramState");
-    _backToForegroundlistener = EventListenerCustom::create(EVENT_RENDERER_RECREATED, 
-        [this](EventCustom*) 
-        {
-            CCLOG("Dirty Uniform and Attributes of GLProgramState"); 
-            _uniformAttributeValueDirty = true;
-        });
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_backToForegroundlistener, -1);
-#endif
 }
 
 GLProgramState::~GLProgramState()
 {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-    Director::getInstance()->getEventDispatcher()->removeEventListener(_backToForegroundlistener);
-#endif
-
     // _uniforms must be cleared before releasing _glprogram since
     // the destructor of UniformValue will call a weak pointer
     // which points to the member variable in GLProgram.

@@ -171,7 +171,6 @@ THE SOFTWARE.
 #include "renderer/CCTextureCube.h"
 #include "renderer/CCTextureCache.h"
 #include "renderer/CCTrianglesCommand.h"
-#include "renderer/CCVertexAttribBinding.h"
 #include "renderer/CCVertexIndexBuffer.h"
 #include "renderer/CCVertexIndexData.h"
 #include "renderer/CCFrameBuffer.h"
@@ -195,30 +194,6 @@ THE SOFTWARE.
 #include "platform/CCSAXParser.h"
 #include "platform/CCThread.h"
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    #include "platform/ios/CCApplication-ios.h"
-    #include "platform/ios/CCGLViewImpl-ios.h"
-    #include "platform/ios/CCGL-ios.h"
-    #include "platform/ios/CCStdC-ios.h"
-#endif // CC_TARGET_PLATFORM == CC_PLATFORM_IOS
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    #include "platform/android/CCApplication-android.h"
-    #include "platform/android/CCGLViewImpl-android.h"
-    #include "platform/android/CCGL-android.h"
-    #include "platform/android/CCStdC-android.h"
-//Enhance modification begin
-    #include "platform/android/CCEnhanceAPI-android.h"
-//Enhance modification end
-#endif // CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_BLACKBERRY)
-    #include "platform/blackberry/CCApplication.h"
-    #include "platform/blackberry/CCGLViewImpl.h"
-    #include "platform/blackberry/CCGL.h"
-    #include "platform/blackberry/CCStdC.h"
-#endif // CC_TARGET_PLATFORM == CC_PLATFORM_BLACKBERRY
-
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
     #include "platform/win32/CCApplication-win32.h"
     #include "platform/desktop/CCGLViewImpl-desktop.h"
@@ -239,20 +214,6 @@ THE SOFTWARE.
     #include "platform/linux/CCGL-linux.h"
     #include "platform/linux/CCStdC-linux.h"
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-	#include "platform/winrt/CCApplication.h"
-	#include "platform/winrt/CCGLViewImpl-winrt.h"
-	#include "platform/winrt/CCGL.h"
-	#include "platform/winrt/CCStdC.h"
-#endif // CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_TIZEN)
-	#include "platform/tizen/CCApplication-tizen.h"
-	#include "platform/tizen/CCGLViewImpl-tizen.h"
-	#include "platform/tizen/CCGL-tizen.h"
-	#include "platform/tizen/CCStdC-tizen.h"
-#endif
 
 // script_support
 #include "base/CCScriptSupport.h"
@@ -285,37 +246,6 @@ THE SOFTWARE.
 // component
 #include "2d/CCComponent.h"
 #include "2d/CCComponentContainer.h"
-
-//3d
-#include "3d/CCAABB.h"
-#include "3d/CCAnimate3D.h"
-#include "3d/CCAnimation3D.h"
-#include "3d/CCAttachNode.h"
-#include "3d/CCBillBoard.h"
-#include "3d/CCFrustum.h"
-#include "3d/CCMesh.h"
-#include "3d/CCMeshSkin.h"
-#include "3d/CCMotionStreak3D.h"
-#include "3d/CCMeshVertexIndexData.h"
-#include "3d/CCOBB.h"
-#include "3d/CCPlane.h"
-#include "3d/CCRay.h"
-#include "3d/CCSkeleton3D.h"
-#include "3d/CCSkybox.h"
-#include "3d/CCSprite3D.h"
-#include "3d/CCSprite3DMaterial.h"
-#include "3d/CCTerrain.h"
-
-// vr
-#include "vr/CCVRGenericRenderer.h"
-
-
-// Deprecated
-// All deprecated features are include inside deprecated/CCDeprecated.h.
-// It is recommended that you just include what is needed.
-// eg. #include "deprecated/CCString.h" if you only need cocos2d::__String.
-#include "deprecated/CCDeprecated.h"
-
 
 NS_CC_BEGIN
 

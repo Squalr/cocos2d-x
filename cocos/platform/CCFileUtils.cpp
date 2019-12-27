@@ -56,7 +56,7 @@ NS_CC_BEGIN
 
 // Implement DictMaker
 
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_IOS) && (CC_TARGET_PLATFORM != CC_PLATFORM_MAC)
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_MAC)
 
 typedef enum
 {
@@ -543,7 +543,7 @@ ValueMap FileUtils::getValueMapFromData(const char* /*filedata*/, int /*filesize
 ValueVector FileUtils::getValueVectorFromFile(const std::string& /*filename*/) {return ValueVector();}
 bool FileUtils::writeToFile(const ValueMap& /*dict*/, const std::string &/*fullPath*/) {return false;}
 
-#endif /* (CC_TARGET_PLATFORM != CC_PLATFORM_IOS) && (CC_TARGET_PLATFORM != CC_PLATFORM_MAC) */
+#endif /* (CC_TARGET_PLATFORM != CC_PLATFORM_MAC) */
 
 bool FileUtils::serializeValueMapToFile(const ValueMap& dict, const std::string& fullPath)
 {
@@ -1224,7 +1224,7 @@ void FileUtils::listFilesRecursivelyAsync(const std::string& dirPath, std::funct
     }, std::move(callback));
 }
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 // windows os implement should override in platform specific FileUtiles class
 bool FileUtils::isDirectoryExistInternal(const std::string& dirPath) const
 {
@@ -1309,10 +1309,7 @@ std::vector<std::string> FileUtils::listFilesRecursively(const std::string& dirP
 #include <errno.h>
 #include <dirent.h>
 
-// android doesn't have ftw.h
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
 #include <ftw.h>
-#endif
 
 bool FileUtils::isDirectoryExistInternal(const std::string& dirPath) const
 {
@@ -1389,7 +1386,6 @@ bool FileUtils::createDirectory(const std::string& path)
 
 namespace
 {
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
     int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
     {
         int rv = remove(fpath);
@@ -1399,27 +1395,16 @@ namespace
         
         return rv;
     }
-#endif
 }
 
 bool FileUtils::removeDirectory(const std::string& path)
 {
 #if !defined(CC_TARGET_OS_TVOS)
 
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
     if (nftw(path.c_str(), unlink_cb, 64, FTW_DEPTH | FTW_PHYS) == -1)
         return false;
     else
         return true;
-#else
-    std::string command = "rm -r ";
-    // Path may include space.
-    command += "\"" + path + "\"";
-    if (system(command.c_str()) >= 0)
-        return true;
-    else
-        return false;
-#endif // (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID)
 
 #else
     return false;

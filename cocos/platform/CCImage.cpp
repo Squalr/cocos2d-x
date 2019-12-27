@@ -37,7 +37,7 @@ extern "C"
 {
     // To resolve link error when building 32bits with Xcode 6.
     // More information please refer to the discussion in https://github.com/cocos2d/cocos2d-x/pull/6986
-#if defined (__unix) || (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#if defined (__unix)
 #ifndef __ENABLE_COMPATIBILITY_WITH_UNIX_2003__
 #define __ENABLE_COMPATIBILITY_WITH_UNIX_2003__
 #include <stdio.h>
@@ -109,9 +109,6 @@ extern "C"
 #include "base/CCConfiguration.h"
 #include "base/ccUtils.h"
 #include "base/ZipUtils.h"
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-#include "platform/android/CCFileUtils-android.h"
-#endif
 
 #define CC_GL_ATC_RGB_AMD                                          0x8C92
 #define CC_GL_ATC_RGBA_EXPLICIT_ALPHA_AMD                          0x8C93
@@ -1049,9 +1046,7 @@ bool Image::initWithPngData(const unsigned char * data, ssize_t dataLen)
         info_ptr = png_create_info_struct(png_ptr);
         CC_BREAK_IF(!info_ptr);
 
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_BADA && CC_TARGET_PLATFORM != CC_PLATFORM_NACL && CC_TARGET_PLATFORM != CC_PLATFORM_TIZEN)
         CC_BREAK_IF(setjmp(png_jmpbuf(png_ptr)));
-#endif
 
         // set the read call back function
         tImageSource imageSource;
@@ -2117,9 +2112,6 @@ bool Image::initWithWebpData(const unsigned char * data, ssize_t dataLen)
 #if CC_USE_WEBP
     bool ret = false;
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-    CCLOG("WEBP image format not supported on WinRT or WP8");
-#else
     do
     {
         WebPDecoderConfig config;
@@ -2152,7 +2144,7 @@ bool Image::initWithWebpData(const unsigned char * data, ssize_t dataLen)
         
         ret = true;
     } while (0);
-#endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+
     return ret;
 #else 
     CCLOG("webp is not enabled, please enable it in ccConfig.h");
@@ -2186,8 +2178,6 @@ bool Image::initWithRawData(const unsigned char * data, ssize_t /*dataLen*/, int
     return ret;
 }
 
-
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_IOS)
 bool Image::saveToFile(const std::string& filename, bool isToRGB)
 {
     //only support for Texture2D::PixelFormat::RGB888 or Texture2D::PixelFormat::RGBA8888 uncompressed data
@@ -2213,7 +2203,6 @@ bool Image::saveToFile(const std::string& filename, bool isToRGB)
         return false;
     }
 }
-#endif
 
 bool Image::saveImageToPNG(const std::string& filePath, bool isToRGB)
 {
@@ -2246,14 +2235,12 @@ bool Image::saveImageToPNG(const std::string& filePath, bool isToRGB)
             png_destroy_write_struct(&png_ptr, nullptr);
             break;
         }
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_BADA && CC_TARGET_PLATFORM != CC_PLATFORM_NACL && CC_TARGET_PLATFORM != CC_PLATFORM_TIZEN)
         if (setjmp(png_jmpbuf(png_ptr)))
         {
             fclose(fp);
             png_destroy_write_struct(&png_ptr, &info_ptr);
             break;
         }
-#endif
         png_init_io(png_ptr, fp);
 
         if (!isToRGB && hasAlpha())

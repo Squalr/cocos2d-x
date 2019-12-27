@@ -1352,20 +1352,11 @@ void Label::setFontDefinition(const FontDefinition& textDefinition)
     textColor.a = textDefinition._fontAlpha;
     setTextColor(textColor);
     
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID) && (CC_TARGET_PLATFORM != CC_PLATFORM_IOS)
     if (textDefinition._stroke._strokeEnabled)
     {
         CCLOGERROR("Stroke Currently only supported on iOS and Android!");
     }
     _outlineSize = 0.f;
-#else
-    if (textDefinition._stroke._strokeEnabled && textDefinition._stroke._strokeSize > 0.f)
-    {
-        Color4B outlineColor = Color4B(textDefinition._stroke._strokeColor);
-        outlineColor.a = textDefinition._stroke._strokeAlpha;
-        enableOutline(outlineColor, textDefinition._stroke._strokeSize);
-    }
-#endif
 
     if (textDefinition._shadow._shadowEnabled)
     {
@@ -2127,13 +2118,11 @@ FontDefinition Label::_getFontDefinition() const
         systemFontDef._stroke._strokeEnabled = false;
     }
 
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID) && (CC_TARGET_PLATFORM != CC_PLATFORM_IOS)
     if (systemFontDef._stroke._strokeEnabled)
     {
         CCLOGERROR("Stroke Currently only supported on iOS and Android!");
+        systemFontDef._stroke._strokeEnabled = false;
     }
-    systemFontDef._stroke._strokeEnabled = false;
-#endif
 
     return systemFontDef;
 }

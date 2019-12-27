@@ -5,7 +5,6 @@ set(COCOS_RENDERER_HEADER
     renderer/ccGLStateCache.h
     renderer/CCRenderCommandPool.h
     renderer/ccShaders.h
-    renderer/CCMeshCommand.h
     renderer/CCGLProgramStateCache.h
     renderer/CCRenderCommand.h
     renderer/CCTextureCube.h
@@ -13,7 +12,6 @@ set(COCOS_RENDERER_HEADER
     renderer/CCGLProgramCache.h
     renderer/CCTextureAtlas.h
     renderer/CCGroupCommand.h
-    renderer/CCVertexAttribBinding.h
     renderer/CCVertexIndexBuffer.h
     renderer/CCVertexIndexData.h
     renderer/CCPrimitive.h
@@ -39,7 +37,6 @@ set(COCOS_RENDERER_SRC
     renderer/CCGLProgramStateCache.cpp
     renderer/CCGroupCommand.cpp
     renderer/CCMaterial.cpp
-    renderer/CCMeshCommand.cpp
     renderer/CCPass.cpp
     renderer/CCPrimitive.cpp
     renderer/CCPrimitiveCommand.cpp
@@ -53,7 +50,6 @@ set(COCOS_RENDERER_SRC
     renderer/CCTextureCache.cpp
     renderer/CCTextureCube.cpp
     renderer/CCTrianglesCommand.cpp
-    renderer/CCVertexAttribBinding.cpp
     renderer/CCVertexIndexBuffer.cpp
     renderer/CCVertexIndexData.cpp
     renderer/ccGLStateCache.cpp

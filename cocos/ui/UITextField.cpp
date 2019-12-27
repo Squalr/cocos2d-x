@@ -279,9 +279,6 @@ bool UICCTextField::getDeleteBackward()const
 
 static const int TEXTFIELD_RENDERER_Z = (-1);
 
-IMPLEMENT_CLASS_GUI_INFO(TextField)
-    
-    
 TextField::TextField():
 _textFieldRenderer(nullptr),
 _touchWidth(0.0f),

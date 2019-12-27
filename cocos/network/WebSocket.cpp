@@ -183,19 +183,6 @@ static std::mutex __instanceMutex;
 static struct lws_context* __wsContext = nullptr;
 static WsThreadHelper* __wsHelper = nullptr;
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-static std::string getFileNameForPath(const std::string& filePath)
-{
-    std::string fileName = filePath;
-    const size_t lastSlashIdx = fileName.find_last_of("\\/");
-    if (std::string::npos != lastSlashIdx)
-    {
-        fileName.erase(0, lastSlashIdx + 1);
-    }
-    return fileName;
-}
-#endif
-
 static struct lws_protocols __defaultProtocols[2];
 
 static lws_context_creation_info convertToContextCreationInfo(const struct lws_protocols* protocols, bool peerServerCert)
@@ -774,64 +761,7 @@ struct lws_vhost* WebSocket::createVhost(struct lws_protocols* protocols, int& s
     {
         if (isCAFileExist)
         {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-            // if ca file is in the apk, try to extract it to writable path
-            std::string writablePath = fileUtils->getWritablePath();
-            std::string caFileName = getFileNameForPath(_caFilePath);
-            std::string newCaFilePath = writablePath + caFileName;
-
-            if (fileUtils->isFileExist(newCaFilePath))
-            {
-                LOGD("CA file (%s) in writable path exists!", newCaFilePath.c_str());
-                _caFilePath = newCaFilePath;
-                info.ssl_ca_filepath = _caFilePath.c_str();
-            }
-            else
-            {
-                if (fileUtils->isFileExist(_caFilePath))
-                {
-                    std::string fullPath = fileUtils->fullPathForFilename(_caFilePath);
-                    LOGD("Found CA file: %s", fullPath.c_str());
-                    if (fullPath[0] != '/')
-                    {
-                        LOGD("CA file is in APK");
-                        auto caData = fileUtils->getDataFromFile(fullPath);
-                        if (!caData.isNull())
-                        {
-                            FILE* fp = fopen(newCaFilePath.c_str(), "wb");
-                            if (fp != nullptr)
-                            {
-                                LOGD("New CA file path: %s", newCaFilePath.c_str());
-                                fwrite(caData.getBytes(), caData.getSize(), 1, fp);
-                                fclose(fp);
-                                _caFilePath = newCaFilePath;
-                                info.ssl_ca_filepath = _caFilePath.c_str();
-                            }
-                            else
-                            {
-                                CCASSERT(false, "Open new CA file failed");
-                            }
-                        }
-                        else
-                        {
-                            CCASSERT(false, "CA file is empty!");
-                        }
-                    }
-                    else
-                    {
-                        LOGD("CA file isn't in APK!");
-                        _caFilePath = fullPath;
-                        info.ssl_ca_filepath = _caFilePath.c_str();
-                    }
-                }
-                else
-                {
-                    CCASSERT(false, "CA file doesn't exist!");
-                }
-            }
-#else
             info.ssl_ca_filepath = _caFilePath.c_str();
-#endif
         }
         else
         {

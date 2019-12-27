@@ -54,7 +54,7 @@ THE SOFTWARE.
     #define CCASSERT(cond, msg)
 #endif
 
-#if __GNUC__ || __clang__
+#if __GNUC__ || __clang__ || _MSC_VER
     #define TRY_PARALLELIZE(begin, end, body) std::for_each(        \
           begin,                                                    \
           end,                                                      \
@@ -66,6 +66,21 @@ THE SOFTWARE.
           begin,                                                    \
           end,                                                      \
           body                                                      \
+    );  
+#endif
+
+#if __GNUC__ || __clang__
+    #define TRY_SEQ_PARALLELIZE(begin, end, body) std::for_each(  \
+          begin,                                                  \
+          end,                                                    \
+          body                                                    \
+    );                                      
+#else
+    #define TRY_SEQ_PARALLELIZE(begin, end, body) std::for_each(  \
+          std::execution::par,                                    \
+          begin,                                                  \
+          end,                                                    \
+          body                                                    \
     );  
 #endif
 
@@ -312,9 +327,6 @@ CC_ASSERT(__gl_error_code == GL_NO_ERROR, "Error"); \
   #endif
 #else
   #include <sys/param.h>
-  #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    #include <sys/endian.h>
-  #endif // CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
   #if ((defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)) || \
          (defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN)) 
     #define CC_LITTLE_ENDIAN 1

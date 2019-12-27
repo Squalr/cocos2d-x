@@ -26,7 +26,6 @@
 #define __UIRICHTEXT_H__
 
 #include "ui/UIWidget.h"
-#include "ui/GUIExport.h"
 #include "base/CCValue.h"
 
 NS_CC_BEGIN
@@ -43,7 +42,7 @@ namespace ui {
  *@brief Rich text element base class.
  * It defines the basic common properties for all rich text element.
  */
-class CC_GUI_DLL RichElement : public Ref
+class RichElement : public Ref
 {
 public:
     /**
@@ -95,7 +94,7 @@ protected:
 /**
  *@brief Rich element for displaying text.
  */
-class CC_GUI_DLL RichElementText : public RichElement
+class RichElementText : public RichElement
 {
 public:
     
@@ -192,7 +191,7 @@ protected:
 /**
  *@brief Rich element for displaying images.
  */
-class CC_GUI_DLL RichElementImage : public RichElement
+class RichElementImage : public RichElement
 {
 public:
     
@@ -256,7 +255,7 @@ protected:
 /**
  *@brief Rich element for displaying custom node type.
  */
-class CC_GUI_DLL RichElementCustomNode : public RichElement
+class RichElementCustomNode : public RichElement
 {
 public:
     
@@ -305,7 +304,7 @@ protected:
 /**
  *@brief Rich element for new line.
  */
-class CC_GUI_DLL RichElementNewLine : public RichElement
+class RichElementNewLine : public RichElement
 {
 public:
     
@@ -341,7 +340,7 @@ protected:
  *@brief A container for displaying various RichElements.
  * We could use it to display texts with images easily.
  */
-class CC_GUI_DLL RichText : public Widget
+class RichText : public Widget
 {
 public:
 

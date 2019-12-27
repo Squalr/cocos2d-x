@@ -725,15 +725,6 @@ static BOOL configured = FALSE;
     [self audioSessionResumed];
 }
 
-#if __CC_PLATFORM_IOS >= 40000
--(void) endInterruptionWithFlags:(NSUInteger)flags {
-    CDLOGINFO(@"Denshion::CDAudioManager - interruption ended with flags %i",flags);
-    if (flags == AVAudioSessionInterruptionFlags_ShouldResume) {
-        [self audioSessionResumed];
-    }    
-}
-#endif
-
 -(void)audioSessionInterrupted 
 { 
     if (!_interrupted) {

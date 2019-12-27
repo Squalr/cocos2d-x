@@ -111,12 +111,10 @@ Camera::Camera()
 : _scene(nullptr)
 , _viewProjectionDirty(true)
 , _cameraFlag(1)
-, _frustumDirty(true)
 , _viewProjectionUpdated(false)
 , _depth(-1)
 , _fbo(nullptr)
 {
-    _frustum.setClipZ(true);
     _clearBrush = CameraBackgroundBrush::createDepthBrush(1.f);
     _clearBrush->retain();
 }
@@ -138,7 +136,6 @@ const Mat4& Camera::getViewMatrix() const
     if (memcmp(viewInv.m, _viewInv.m, count) != 0)
     {
         _viewProjectionDirty = true;
-        _frustumDirty = true;
         _viewInv = viewInv;
         _view = viewInv.getInversed();
     }
@@ -239,7 +236,6 @@ bool Camera::initPerspective(float fieldOfView, float aspectRatio, float nearPla
     _farPlane = farPlane;
     Mat4::createPerspective(_fieldOfView, _aspectRatio, _nearPlane, _farPlane, &_projection);
     _viewProjectionDirty = true;
-    _frustumDirty = true;
     _type = Type::PERSPECTIVE;
     
     return true;
@@ -253,7 +249,6 @@ bool Camera::initOrthographic(float zoomX, float zoomY, float nearPlane, float f
     _farPlane = farPlane;
     Mat4::createOrthographicOffCenter(0, _zoom[0], 0, _zoom[1], _nearPlane, _farPlane, &_projection);
     _viewProjectionDirty = true;
-    _frustumDirty = true;
     _type = Type::ORTHOGRAPHIC;
     
     return true;
@@ -347,16 +342,6 @@ void Camera::unprojectGL(const Size& viewport, const Vec3* src, Vec3* dst) const
     }
     
     dst->set(screen.x, screen.y, screen.z);
-}
-
-bool Camera::isVisibleInFrustum(const AABB* aabb) const
-{
-    if (_frustumDirty)
-    {
-        _frustum.initFrustum(this);
-        _frustumDirty = false;
-    }
-    return !_frustum.isOutOfFrustum(*aabb);
 }
 
 float Camera::getDepthInView(const Mat4& transform) const

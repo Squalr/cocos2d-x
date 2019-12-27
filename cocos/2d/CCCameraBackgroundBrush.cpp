@@ -36,13 +36,6 @@
 #include "renderer/CCRenderState.h"
 #include "renderer/CCTextureCube.h"
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-#include "base/CCEventCustom.h"
-#include "base/CCEventListenerCustom.h"
-#include "base/CCEventType.h"
-#include "base/CCEventDispatcher.h"
-#endif
-
 NS_CC_BEGIN
 
 CameraBackgroundBrush::CameraBackgroundBrush()
@@ -326,15 +319,6 @@ CameraBackgroundSkyBoxBrush::CameraBackgroundSkyBoxBrush()
 , _actived(true)
 , _textureValid(true)
 {
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-    _backToForegroundListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED,
-                                                            [this](EventCustom*)
-                                                            {
-                                                                initBuffer();
-                                                            }
-                                                            );
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_backToForegroundListener, -1);
-#endif
 }
 
 CameraBackgroundSkyBoxBrush::~CameraBackgroundSkyBoxBrush()

@@ -35,7 +35,6 @@
 #include "renderer/ccGLStateCache.h"
 #include "renderer/CCTechnique.h"
 #include "renderer/CCMaterial.h"
-#include "renderer/CCVertexAttribBinding.h"
 
 #include "base/ccTypes.h"
 #include "2d/CCNode.h"
@@ -85,14 +84,12 @@ bool Pass::initWithGLProgramState(Technique* technique, GLProgramState *glProgra
 
 Pass::Pass()
 : _glProgramState(nullptr)
-, _vertexAttribBinding(nullptr)
 {
 }
 
 Pass::~Pass()
 {
     CC_SAFE_RELEASE(_glProgramState);
-    CC_SAFE_RELEASE(_vertexAttribBinding);
 }
 
 Pass* Pass::clone() const
@@ -103,9 +100,6 @@ Pass* Pass::clone() const
         RenderState::cloneInto(pass);
         pass->_glProgramState = _glProgramState->clone();
         CC_SAFE_RETAIN(pass->_glProgramState);
-
-        pass->_vertexAttribBinding = _vertexAttribBinding;
-        CC_SAFE_RETAIN(pass->_vertexAttribBinding);
 
         pass->autorelease();
     }
@@ -151,11 +145,6 @@ void Pass::bind(const Mat4& modelView)
 
 void Pass::bind(const Mat4& modelView, bool bindAttributes)
 {
-
-    // vertex attribs
-    if (bindAttributes && _vertexAttribBinding)
-        _vertexAttribBinding->bind();
-
     auto glprogramstate = _glProgramState ? _glProgramState : getTarget()->getGLProgramState();
 
     glprogramstate->applyGLProgram(modelView);
@@ -177,24 +166,6 @@ Node* Pass::getTarget() const
 void Pass::unbind()
 {
     RenderState::StateBlock::restore(0);
-
-    _vertexAttribBinding->unbind();
 }
-
-void Pass::setVertexAttribBinding(VertexAttribBinding* binding)
-{
-    if (_vertexAttribBinding != binding)
-    {
-        CC_SAFE_RELEASE(_vertexAttribBinding);
-        _vertexAttribBinding = binding;
-        CC_SAFE_RETAIN(_vertexAttribBinding);
-    }
-}
-
-VertexAttribBinding* Pass::getVertexAttributeBinding() const
-{
-    return _vertexAttribBinding;
-}
-
 
 NS_CC_END

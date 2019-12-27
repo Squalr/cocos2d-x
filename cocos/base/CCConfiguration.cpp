@@ -59,7 +59,6 @@ Configuration::Configuration()
 , _maxDirLightInShader(1)
 , _maxPointLightInShader(1)
 , _maxSpotLightInShader(1)
-, _animate3DQuality(Animate3DQuality::QUALITY_LOW)
 {
     _loadedEvent = new (std::nothrow) EventCustom(CONFIG_FILE_LOADED);
 }
@@ -125,11 +124,6 @@ void Configuration::gatherGPUInfo()
     glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &_maxTextureUnits);
 	_valueDict["gl.max_texture_units"] = Value((int)_maxTextureUnits);
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    glGetIntegerv(GL_MAX_SAMPLES_APPLE, &_maxSamplesAllowed);
-	_valueDict["gl.max_samples_allowed"] = Value((int)_maxSamplesAllowed);
-#endif
-    
     _supportsETC1 = checkForGLExtension("GL_OES_compressed_ETC1_RGB8_texture");
     _valueDict["gl.supports_ETC1"] = Value(_supportsETC1);
     
@@ -151,11 +145,8 @@ void Configuration::gatherGPUInfo()
     _supportsDiscardFramebuffer = checkForGLExtension("GL_EXT_discard_framebuffer");
 	_valueDict["gl.supports_discard_framebuffer"] = Value(_supportsDiscardFramebuffer);
 
-#ifdef CC_PLATFORM_PC
     _supportsShareableVAO = checkForGLExtension("vertex_array_object");
-#else
-    _supportsShareableVAO = checkForGLExtension("GL_OES_vertex_array_object");
-#endif
+    
     _valueDict["gl.supports_vertex_array_object"] = Value(_supportsShareableVAO);
 
     _supportsOESMapBuffer = checkForGLExtension("GL_OES_mapbuffer");
@@ -280,19 +271,7 @@ bool Configuration::supportsShareableVAO() const
 
 bool Configuration::supportsMapBuffer() const
 {
-    // Fixes Github issue #16123
-    //
-    // XXX: Fixme. Should check GL ES and not iOS or Android
-    // For example, linux could be compiled with GL ES. Or perhaps in the future Android will
-    // support OpenGL. This is because glMapBufferOES() is an extension of OpenGL ES. And glMapBuffer()
-    // is always implemented in OpenGL.
-
-    // XXX: Warning. On iOS this is always `true`. Avoiding the comparison.
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    return _supportsOESMapBuffer;
-#else
     return true;
-#endif
 }
 
 bool Configuration::supportsOESDepth24() const
@@ -320,11 +299,6 @@ int Configuration::getMaxSupportPointLightInShader() const
 int Configuration::getMaxSupportSpotLightInShader() const
 {
     return _maxSpotLightInShader;
-}
-
-Animate3DQuality Configuration::getAnimate3DQuality() const
-{
-    return _animate3DQuality;
 }
 
 //
@@ -416,12 +390,6 @@ void Configuration::loadConfigFile(const std::string& filename)
         _maxSpotLightInShader = _valueDict[name].asInt();
     else
         _valueDict[name] = Value(_maxSpotLightInShader);
-    
-    name = "cocos2d.x.3d.animate_quality";
-    if (_valueDict.find(name) != _valueDict.end())
-        _animate3DQuality = (Animate3DQuality)_valueDict[name].asInt();
-    else
-        _valueDict[name] = Value((int)_animate3DQuality);
     
     Director::getInstance()->getEventDispatcher()->dispatchEvent(_loadedEvent);
 }

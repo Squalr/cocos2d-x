@@ -28,7 +28,6 @@
 
 #include "base/ccTypes.h"
 #include "base/CCRef.h"
-#include "3d/CCFrustum.h"
 #include "renderer/CCQuadCommand.h"
 #include "renderer/CCCustomCommand.h"
 #include "renderer/CCFrameBuffer.h"
@@ -270,10 +269,6 @@ protected:
     GLuint      _indexBuffer;
     
     TextureCube*  _texture;
-    
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-    EventListenerCustom* _backToForegroundListener;
-#endif
 
 private:
     bool _actived;

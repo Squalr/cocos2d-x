@@ -68,10 +68,6 @@ THE SOFTWARE.
 #include "base/CCScriptSupport.h"
 #endif
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-#include "platform/android/jni/Java_org_cocos2dx_lib_Cocos2dxEngineDataManager.h"
-#endif
-
 /**
  Position of the FPS
  
@@ -200,9 +196,6 @@ bool Director::init(void)
     _renderer = new (std::nothrow) Renderer;
     RenderState::initialize();
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-    EngineDataManager::init();
-#endif
     return true;
 }
 
@@ -323,7 +316,7 @@ void Director::drawScene()
     
     if (_runningScene)
     {
-#if (CC_USE_PHYSICS || (CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION) || CC_USE_NAVMESH)
+#if (CC_USE_PHYSICS)
         _runningScene->stepPhysicsAndNavigation(_deltaTime);
 #endif
         //clear draw stats
@@ -1162,10 +1155,7 @@ void Director::purgeDirector()
         _openGLView->end();
         _openGLView = nullptr;
     }
-
-#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-    EngineDataManager::destroy();
-#endif
+    
     // delete Director
     release();
 }

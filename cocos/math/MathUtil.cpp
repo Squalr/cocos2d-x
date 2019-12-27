@@ -22,37 +22,12 @@ This file was modified to fit the cocos2d-x project
 #include "math/MathUtil.h"
 #include "base/ccMacros.h"
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-#include <cpu-features.h>
-#endif
-
 //#define USE_NEON32        : neon 32 code will be used
 //#define USE_NEON64        : neon 64 code will be used
 //#define INCLUDE_NEON32    : neon 32 code included
 //#define INCLUDE_NEON64    : neon 64 code included
 //#define USE_SSE           : SSE code used
 //#define INCLUDE_SSE       : SSE code included
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    #if defined (__arm64__)
-    #define USE_NEON64
-    #define INCLUDE_NEON64
-    #elif defined (__ARM_NEON__)
-    #define USE_NEON32
-    #define INCLUDE_NEON32
-    #else
-    #endif
-#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    #if defined (__arm64__) || defined (__aarch64__)
-    #define USE_NEON64
-    #define INCLUDE_NEON64
-    #elif defined (__ARM_NEON__)
-    #define INCLUDE_NEON32
-    #else
-    #endif
-#else
-
-#endif
 
 #if defined (__SSE__)
 #define USE_SSE
@@ -105,23 +80,6 @@ bool MathUtil::isNeon32Enabled()
 {
 #ifdef USE_NEON32
     return true;
-#elif (defined (INCLUDE_NEON32) && (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) )
-    class AnrdoidNeonChecker
-    {
-    public:
-        AnrdoidNeonChecker()
-        {
-            if (android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM && (android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON) != 0)
-                _isNeonEnabled = true;
-            else
-                _isNeonEnabled = false;
-        }
-        bool isNeonEnabled() const { return _isNeonEnabled; }
-    private:
-        bool _isNeonEnabled;
-    };
-    static AnrdoidNeonChecker checker;
-    return checker.isNeonEnabled();
 #else
     return false;
 #endif

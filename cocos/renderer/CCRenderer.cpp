@@ -32,7 +32,6 @@
 #include "renderer/CCCustomCommand.h"
 #include "renderer/CCGroupCommand.h"
 #include "renderer/CCPrimitiveCommand.h"
-#include "renderer/CCMeshCommand.h"
 #include "renderer/CCGLProgramCache.h"
 #include "renderer/CCMaterial.h"
 #include "renderer/CCTechnique.h"
@@ -228,9 +227,7 @@ static const int DEFAULT_RENDER_QUEUE = 0;
 //
 // constructors, destructor, init
 //
-Renderer::Renderer()
-:_lastBatchedMeshCommand(nullptr)
-,_filledVertex(0)
+Renderer::Renderer() : _filledVertex(0)
 ,_filledIndex(0)
 ,_glViewAssigned(false)
 ,_isRendering(false)
@@ -416,9 +413,6 @@ void Renderer::processRenderCommand(RenderCommand* command)
     auto commandType = command->getType();
     if( RenderCommand::Type::TRIANGLES_COMMAND == commandType)
     {
-        // flush other queues
-        flush3D();
-
         auto cmd = static_cast<TrianglesCommand*>(command);
         
         // flush own queue when buffer is full
@@ -433,37 +427,6 @@ void Renderer::processRenderCommand(RenderCommand* command)
         _queuedTriangleCommands.push_back(cmd);
         _filledIndex += cmd->getIndexCount();
         _filledVertex += cmd->getVertexCount();
-    }
-    else if (RenderCommand::Type::MESH_COMMAND == commandType)
-    {
-        flush2D();
-        auto cmd = static_cast<MeshCommand*>(command);
-        
-        if (cmd->isSkipBatching() || _lastBatchedMeshCommand == nullptr || _lastBatchedMeshCommand->getMaterialID() != cmd->getMaterialID())
-        {
-            flush3D();
-
-            CCGL_DEBUG_INSERT_EVENT_MARKER("RENDERER_MESH_COMMAND");
-
-            if(cmd->isSkipBatching())
-            {
-                // XXX: execute() will call bind() and unbind()
-                // but unbind() shouldn't be call if the next command is a MESH_COMMAND with Material.
-                // Once most of cocos2d-x moves to Pass/StateBlock, only bind() should be used.
-                cmd->execute();
-            }
-            else
-            {
-                cmd->preBatchDraw();
-                cmd->batchDraw();
-                _lastBatchedMeshCommand = cmd;
-            }
-        }
-        else
-        {
-            CCGL_DEBUG_INSERT_EVENT_MARKER("RENDERER_MESH_COMMAND");
-            cmd->batchDraw();
-        }
     }
     else if(RenderCommand::Type::GROUP_COMMAND == commandType)
     {
@@ -713,7 +676,6 @@ void Renderer::clean()
     _queuedTriangleCommands.clear();
     _filledVertex = 0;
     _filledIndex = 0;
-    _lastBatchedMeshCommand = nullptr;
 }
 
 void Renderer::clear()
@@ -920,28 +882,6 @@ void Renderer::drawBatchedTriangles()
 }
 
 void Renderer::flush()
-{
-    flush2D();
-    flush3D();
-}
-
-void Renderer::flush2D()
-{
-    flushTriangles();
-}
-
-void Renderer::flush3D()
-{
-    if (_lastBatchedMeshCommand)
-    {
-        CCGL_DEBUG_INSERT_EVENT_MARKER("RENDERER_BATCH_MESH");
-
-        _lastBatchedMeshCommand->postBatchDraw();
-        _lastBatchedMeshCommand = nullptr;
-    }
-}
-
-void Renderer::flushTriangles()
 {
     drawBatchedTriangles();
 }

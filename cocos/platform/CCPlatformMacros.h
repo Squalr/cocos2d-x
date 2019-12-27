@@ -81,18 +81,12 @@ CC_DEPRECATED_ATTRIBUTE static __TYPE__* node() \
 
 /** @def CC_ENABLE_CACHE_TEXTURE_DATA
  * Enable it if you want to cache the texture data.
- * Not enabling for Emscripten any more -- doesn't seem necessary and don't want
- * to be different from other platforms unless there's a good reason.
  * 
  * @since v0.99.5
  */
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) 
-    #define CC_ENABLE_CACHE_TEXTURE_DATA       1
-#else
-    #define CC_ENABLE_CACHE_TEXTURE_DATA       0
-#endif
+#define CC_ENABLE_CACHE_TEXTURE_DATA       0
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
     /** Application will crash in glDrawElements function on some win32 computers and some android devices.
      *  Indices should be bound again while drawing to avoid this bug.
      */

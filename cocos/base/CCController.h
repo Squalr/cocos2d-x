@@ -25,7 +25,6 @@
 
 #ifndef __cocos2d_libs__CCController__
 #define __cocos2d_libs__CCController__
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 )
 
 #include "platform/CCPlatformMacros.h"
 #include <string>
@@ -247,5 +246,4 @@ private:
 /// @}
 
 NS_CC_END
-#endif
 #endif /* defined(__cocos2d_libs__CCController__) */

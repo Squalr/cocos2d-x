@@ -25,7 +25,7 @@
  ****************************************************************************/
 
 #include "platform/CCPlatformConfig.h"
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 
 #import <Foundation/Foundation.h>
 
@@ -558,4 +558,4 @@ void UserDefault::deleteValueForKey(const char* key)
 
 NS_CC_END
 
-#endif // (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#endif // (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)

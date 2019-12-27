@@ -48,11 +48,8 @@ void* operator new[] (std::size_t size)
     void* ptr = global.allocate(size);
     assert(ptr && "No memory");
 
-    // disabling exceptions since cocos2d-x doesn't use them
-//#if CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
 //    if (nullptr == ptr)
 //        throw std::bad_alloc();
-//#endif
     return ptr;
 }
 
@@ -63,10 +60,8 @@ void* operator new(std::size_t size)
     assert(ptr && "No memory");
 
     // disabling exceptions since cocos2d-x doesn't use them
-//#if CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
 //    if (nullptr == ptr)
 //        throw std::bad_alloc();
-//#endif
     return ptr;
 }
 

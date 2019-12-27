@@ -28,75 +28,36 @@
 # build libcocos2d
 
 include(2d/CMakeLists.txt)
-include(3d/CMakeLists.txt)
 include(platform/CMakeLists.txt)
 include(physics/CMakeLists.txt)
-include(physics3d/CMakeLists.txt)
 include(math/CMakeLists.txt)
-include(navmesh/CMakeLists.txt)
 include(renderer/CMakeLists.txt)
-include(vr/CMakeLists.txt)
 include(base/CMakeLists.txt)
-include(deprecated/CMakeLists.txt)
 include(ui/CMakeLists.txt)
 include(network/CMakeLists.txt)
 include(audio/CMakeLists.txt)
-include(storage/CMakeLists.txt)
-
-if(BUILD_EDITOR_COCOSBUILDER)
-    include(editor-support/cocosbuilder/CMakeLists.txt)
-    set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_CCB_SRC} ${COCOS_CCB_HEADER})
-endif(BUILD_EDITOR_COCOSBUILDER)
-
-if(BUILD_EDITOR_COCOSTUDIO)
-    include(editor-support/cocostudio/CMakeLists.txt)
-    set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_CS_SRC} ${COCOS_CS_HEADER})
-endif(BUILD_EDITOR_COCOSTUDIO)
-
-if(BUILD_EDITOR_SPINE)
-    include(editor-support/spine/CMakeLists.txt)
-    set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_SPINE_SRC} ${COCOS_SPINE_HEADER})
-endif(BUILD_EDITOR_SPINE)
-
-if(BUILD_EXTENSIONS)
-    include(../extensions/CMakeLists.txt)
-endif(BUILD_EXTENSIONS)
 
 add_library(cocos2d STATIC
     cocos2d.h
     cocos2d.cpp
     ${COCOS_2D_HEADER}
-    ${COCOS_3D_HEADER}
     ${COCOS_PLATFORM_HEADER}
     ${COCOS_PHYSICS_HEADER}
-    ${COCOS_PHYSICS3D_HEADER}
     ${COCOS_MATH_HEADER}
-    ${COCOS_NAVMESH_HEADER}
     ${COCOS_RENDERER_HEADER}
-    ${COCOS_VR_HEADER}
     ${COCOS_BASE_HEADER}
     ${COCOS_AUDIO_HEADER}
     ${COCOS_UI_HEADER}
-    ${COCOS_DEPRECATED_HEADER}
-    ${COCOS_EDITOR_SUPPORT_HEADER}
     ${COCOS_EXTENSIONS_HEADER}
-    ${COCOS_STORAGE_HEADER}
     ${COCOS_2D_SRC}
-    ${COCOS_3D_SRC}
     ${COCOS_PLATFORM_SRC}
     ${COCOS_PHYSICS_SRC}
-    ${COCOS_PHYSICS3D_SRC}
     ${COCOS_MATH_SRC}
-    ${COCOS_NAVMESH_SRC}
     ${COCOS_RENDERER_SRC}
-    ${COCOS_VR_SRC}
     ${COCOS_BASE_SRC}
     ${COCOS_AUDIO_SRC}
     ${COCOS_UI_SRC}
-    ${COCOS_DEPRECATED_SRC}
-    ${COCOS_EDITOR_SUPPORT_SRC}
     ${COCOS_EXTENSIONS_SRC}
-    ${COCOS_STORAGE_SRC}
     $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:${COCOS_NETWORK_HEADER}>
     $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:${COCOS_NETWORK_SRC}>
 )
@@ -148,9 +109,7 @@ target_link_libraries(cocos2d
         sqlite3
 
         # internal dependencies
-        xxtea::xxtea
         clipper::clipper
-        recast::recast
 
         # required platform dependencies
         $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
@@ -168,8 +127,6 @@ target_compile_definitions(cocos2d
         CC_USE_PNG=$<BOOL:${BUILD_PNG_SUPPORT}>
         CC_USE_TIFF=$<BOOL:${BUILD_TIFF_SUPPORT}>
         CC_USE_NETWORK=$<BOOL:${BUILD_NETWORK_SUPPORT}>
-        CC_USE_3D_PHYSICS=0
-        CC_ENABLE_BULLET_INTEGRATION=0
 
         $<$<BOOL:${USE_SYSTEM_MINIZIP}>:MINIZIP_FROM_SYSTEM>
 

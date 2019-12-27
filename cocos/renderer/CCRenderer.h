@@ -35,22 +35,9 @@
 #include "renderer/CCGLProgram.h"
 #include "platform/CCGL.h"
 
-#if !defined(NDEBUG) && CC_TARGET_PLATFORM == CC_PLATFORM_IOS
-
-/// Basic wrapper for glInsertEventMarkerEXT() depending on the current build settings and platform.
-#define CCGL_DEBUG_INSERT_EVENT_MARKER(__message__) glInsertEventMarkerEXT(0, __message__)
-/// Basic wrapper for glPushGroupMarkerEXT() depending on the current build settings and platform.
-#define CCGL_DEBUG_PUSH_GROUP_MARKER(__message__) glPushGroupMarkerEXT(0, __message__)
-/// Basic wrapper for CCGL_DEBUG_POP_GROUP_MARKER() depending on the current build settings and platform.
-#define CCGL_DEBUG_POP_GROUP_MARKER() glPopGroupMarkerEXT()
-
-#else
-
 #define CCGL_DEBUG_INSERT_EVENT_MARKER(__message__)
 #define CCGL_DEBUG_PUSH_GROUP_MARKER(__message__)
 #define CCGL_DEBUG_POP_GROUP_MARKER()
-
-#endif
 
 /**
  * @addtogroup renderer
@@ -61,7 +48,6 @@ NS_CC_BEGIN
 
 class EventListenerCustom;
 class TrianglesCommand;
-class MeshCommand;
 
 /** Class that knows how to sort `RenderCommand` objects.
  Since the commands that have `z == 0` are "pushed back" in
@@ -220,12 +206,6 @@ protected:
 
     //Draw the previews queued triangles and flush previous context
     void flush();
-    
-    void flush2D();
-    
-    void flush3D();
-
-    void flushTriangles();
 
     void processRenderCommand(RenderCommand* command);
     void visitRenderQueue(RenderQueue& queue);
@@ -240,7 +220,6 @@ protected:
     
     std::vector<RenderQueue> _renderGroups;
 
-    MeshCommand* _lastBatchedMeshCommand;
     std::vector<TrianglesCommand*> _queuedTriangleCommands;
 
     //for TrianglesCommand

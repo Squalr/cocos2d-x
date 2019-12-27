@@ -458,22 +458,12 @@ static bool parseBoolean(const std::string& value)
 
 //static int parseInt(const std::string& value)
 //{
-//    // Android NDK 10 doesn't support std::stoi a/ std::stoul
-//#if CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
 //    return std::stoi(value);
-//#else
-//    return atoi(value.c_str());
-//#endif
 //}
 //
 //static unsigned int parseUInt(const std::string& value)
 //{
-//    // Android NDK 10 doesn't support std::stoi a/ std::stoul
-//#if CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
 //    return (unsigned int)std::stoul(value);
-//#else
-//    return (unsigned int)atoi(value.c_str());
-//#endif
 //
 //}
 
