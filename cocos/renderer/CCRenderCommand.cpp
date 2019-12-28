@@ -47,18 +47,9 @@ RenderCommand::~RenderCommand()
 void RenderCommand::init(float globalZOrder, const cocos2d::Mat4 &transform, uint32_t flags)
 {
     _globalOrder = globalZOrder;
-    if (flags & Node::FLAGS_RENDER_AS_3D)
-    {
-        if (Camera::getVisitingCamera())
-            _depth = Camera::getVisitingCamera()->getDepthInView(transform);
-        
-        set3D(true);
-    }
-    else
-    {
-        set3D(false);
-        _depth = 0;
-    }
+    
+    set3D(false);
+    _depth = 0;
 }
 
 void RenderCommand::printID()

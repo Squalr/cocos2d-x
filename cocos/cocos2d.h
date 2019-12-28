@@ -121,7 +121,6 @@ THE SOFTWARE.
 #include "2d/CCParticleExamples.h"
 #include "2d/CCParticleSystem.h"
 #include "2d/CCParticleSystemQuad.h"
-#include "2d/CCProtectedNode.h"
 #include "2d/CCRenderTexture.h"
 #include "2d/CCScene.h"
 
@@ -220,9 +219,7 @@ THE SOFTWARE.
 
 // tilemap_parallax_nodes
 #include "2d/CCParallaxNode.h"
-#include "2d/CCTMXLayer.h"
 #include "2d/CCTMXObjectGroup.h"
-#include "2d/CCTMXTiledMap.h"
 #include "2d/CCTMXXMLParser.h"
 #include "2d/CCTileMapAtlas.h"
 #include "2d/CCFastTMXLayer.h"

@@ -54,7 +54,7 @@ THE SOFTWARE.
     #define CCASSERT(cond, msg)
 #endif
 
-#if __GNUC__ || __clang__ || _MSC_VER
+#if __GNUC__ || __clang__
     #define TRY_PARALLELIZE(begin, end, body) std::for_each(        \
           begin,                                                    \
           end,                                                      \
@@ -66,21 +66,6 @@ THE SOFTWARE.
           begin,                                                    \
           end,                                                      \
           body                                                      \
-    );  
-#endif
-
-#if __GNUC__ || __clang__
-    #define TRY_SEQ_PARALLELIZE(begin, end, body) std::for_each(  \
-          begin,                                                  \
-          end,                                                    \
-          body                                                    \
-    );                                      
-#else
-    #define TRY_SEQ_PARALLELIZE(begin, end, body) std::for_each(  \
-          std::execution::par,                                    \
-          begin,                                                  \
-          end,                                                    \
-          body                                                    \
     );  
 #endif
 

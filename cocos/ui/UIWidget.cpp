@@ -205,7 +205,7 @@ Widget* Widget::create()
 
 bool Widget::init()
 {
-    if (ProtectedNode::init())
+    if (Node::init())
     {
         initRenderer();
         setBright(true);
@@ -232,7 +232,7 @@ void Widget::onEnter()
     
     if (!_usingLayoutComponent)
         updateSizeAndPosition();
-    ProtectedNode::onEnter();
+    Node::onEnter();
 }
 
 void Widget::onExit()
@@ -246,7 +246,7 @@ void Widget::onExit()
 #endif
     
     unscheduleUpdate();
-    ProtectedNode::onExit();
+    Node::onExit();
 }
 
 void Widget::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
@@ -254,7 +254,7 @@ void Widget::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
     if (_visible)
     {
         adaptRenderers();
-        ProtectedNode::visit(renderer, parentTransform, parentFlags);
+        Node::visit(renderer, parentTransform, parentFlags);
     }
 }
 
@@ -275,12 +275,12 @@ void Widget::initRenderer()
 
 void Widget::setContentSize(const cocos2d::Size &contentSize)
 {
-    Size previousSize = ProtectedNode::getContentSize();
+    Size previousSize = Node::getContentSize();
     if(previousSize.equals(contentSize))
     {
         return;
     }
-    ProtectedNode::setContentSize(contentSize);
+    Node::setContentSize(contentSize);
 
     _customSize = contentSize;
     if (_unifySize)
@@ -289,7 +289,7 @@ void Widget::setContentSize(const cocos2d::Size &contentSize)
     }
     else if (_ignoreSize)
     {
-        ProtectedNode::setContentSize(getVirtualRendererSize());
+        Node::setContentSize(getVirtualRendererSize());
     }
     if (_running)
     {
@@ -988,7 +988,7 @@ void Widget::setPosition(const Vec2 &pos)
             }
         }
     }
-    ProtectedNode::setPosition(pos);
+    Node::setPosition(pos);
 }
 
 void Widget::setPositionPercent(const Vec2 &percent)

@@ -74,7 +74,7 @@ void StencilStateManager::drawFullScreenQuadClearStencil()
     
     auto glProgram = GLProgramCache::getInstance()->getGLProgram(GLProgram::SHADER_NAME_POSITION_U_COLOR);
     
-    int colorLocation = glProgram->getUniformLocation("u_color");
+    static int colorLocation = glProgram->getUniformLocation("u_color");
     CHECK_GL_ERROR_DEBUG();
     
     Color4F color(1, 1, 1, 1);
@@ -131,15 +131,21 @@ void StencilStateManager::onBeforeVisit()
     _mask_layer_le = mask_layer | mask_layer_l;
     
     // manually save the stencil state
+
+    static bool runOnce = true;
+
+    if (runOnce)
+    {
+        _currentStencilEnabled = glIsEnabled(GL_STENCIL_TEST);
+        glGetIntegerv(GL_STENCIL_WRITEMASK, (GLint *)&_currentStencilWriteMask);
+        glGetIntegerv(GL_STENCIL_FUNC, (GLint *)&_currentStencilFunc);
+        glGetIntegerv(GL_STENCIL_REF, &_currentStencilRef);
+        glGetIntegerv(GL_STENCIL_VALUE_MASK, (GLint *)&_currentStencilValueMask);
+        glGetIntegerv(GL_STENCIL_FAIL, (GLint *)&_currentStencilFail);
+        glGetIntegerv(GL_STENCIL_PASS_DEPTH_FAIL, (GLint *)&_currentStencilPassDepthFail);
+        glGetIntegerv(GL_STENCIL_PASS_DEPTH_PASS, (GLint *)&_currentStencilPassDepthPass);
+    }
     
-    _currentStencilEnabled = glIsEnabled(GL_STENCIL_TEST);
-    glGetIntegerv(GL_STENCIL_WRITEMASK, (GLint *)&_currentStencilWriteMask);
-    glGetIntegerv(GL_STENCIL_FUNC, (GLint *)&_currentStencilFunc);
-    glGetIntegerv(GL_STENCIL_REF, &_currentStencilRef);
-    glGetIntegerv(GL_STENCIL_VALUE_MASK, (GLint *)&_currentStencilValueMask);
-    glGetIntegerv(GL_STENCIL_FAIL, (GLint *)&_currentStencilFail);
-    glGetIntegerv(GL_STENCIL_PASS_DEPTH_FAIL, (GLint *)&_currentStencilPassDepthFail);
-    glGetIntegerv(GL_STENCIL_PASS_DEPTH_PASS, (GLint *)&_currentStencilPassDepthPass);
     
     // enable stencil use
     glEnable(GL_STENCIL_TEST);
@@ -155,8 +161,12 @@ void StencilStateManager::onBeforeVisit()
     
     // manually save the depth test state
     
-    glGetBooleanv(GL_DEPTH_WRITEMASK, &_currentDepthWriteMask);
-    
+    if (runOnce)
+    {
+        glGetBooleanv(GL_DEPTH_WRITEMASK, &_currentDepthWriteMask);
+
+        runOnce = false;
+    }
     // disable depth test while drawing the stencil
     //glDisable(GL_DEPTH_TEST);
     // disable update to the depth buffer while drawing the stencil,

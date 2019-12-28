@@ -217,7 +217,12 @@ public:
      */
     ssize_t size() const
     {
-        return  _data.size();
+        return _data.size();
+    }
+    
+    const T* data() const
+    {
+        return _data.data();
     }
     
     /** @brief Returns whether the Vector is empty (i.e. whether its size is 0).

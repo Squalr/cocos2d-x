@@ -441,7 +441,7 @@ void Camera::setFrameBufferObject(cocos_experimental::FrameBuffer *fbo)
 
 void Camera::apply()
 {
-    _viewProjectionUpdated = _transformUpdated;
+    _viewProjectionUpdated = (_selfFlags & FLAGS_TRANSFORM_DIRTY);
     applyFrameBufferObject();
     applyViewport();
 }
@@ -522,7 +522,7 @@ int Camera::getRenderOrder() const
 
 void Camera::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
-    _viewProjectionUpdated = _transformUpdated;
+    _viewProjectionUpdated = (_selfFlags & FLAGS_TRANSFORM_DIRTY);
     return Node::visit(renderer, parentTransform, parentFlags);
 }
 

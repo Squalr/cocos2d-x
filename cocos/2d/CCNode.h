@@ -116,7 +116,6 @@ public:
     enum {
         FLAGS_TRANSFORM_DIRTY = (1 << 0),
         FLAGS_CONTENT_SIZE_DIRTY = (1 << 1),
-        FLAGS_RENDER_AS_3D = (1 << 3),
 
         FLAGS_DIRTY_MASK = (FLAGS_TRANSFORM_DIRTY | FLAGS_CONTENT_SIZE_DIRTY),
     };
@@ -1919,9 +1918,6 @@ protected:
     bool doEnumerate(std::string name, std::function<bool (Node *)> callback) const;
     bool doEnumerateRecursive(const Node* node, const std::string &name, std::function<bool (Node *)> callback) const;
     
-    //check whether this camera mask is visible by the current visiting camera
-    bool isVisitableByVisitingCamera() const;
-    
     // update quaternion from Rotation3D
     void updateRotationQuat();
     // update Rotation3D from quaternion
@@ -1958,7 +1954,6 @@ protected:
     Vec2 _anchorPoint;              ///< anchor point normalized (NOT in points)
 
     Size _contentSize;              ///< untransformed size of the node
-    bool _contentSizeDirty;         ///< whether or not the contentSize is dirty
 
     Mat4 _modelViewTransform;       ///< ModelView transform of the Node.
 
@@ -1969,7 +1964,7 @@ protected:
     mutable bool _inverseDirty;     ///< inverse transform dirty flag
     mutable Mat4* _additionalTransform; ///< two transforms needed by additional transforms
     mutable bool _additionalTransformDirty; ///< transform dirty ?
-    bool _transformUpdated;         ///< Whether or not the Transform object was updated since the last frame
+    uint32_t _selfFlags;    ///< Whether or not the Transform object was updated since the last frame < whether or not the contentSize is dirty
 
 #if CC_LITTLE_ENDIAN
     union {

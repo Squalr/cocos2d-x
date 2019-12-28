@@ -326,7 +326,9 @@ void DrawNode::onDraw(const Mat4 &transform, uint32_t /*flags*/)
 {
     getGLProgramState()->apply(transform);
     auto glProgram = this->getGLProgram();
-    glProgram->setUniformLocationWith1f(glProgram->getUniformLocation("u_alpha"), _displayedOpacity / 255.0);
+    static auto uniformLocation = glProgram->getUniformLocation("u_alpha");
+    glProgram->setUniformLocationWith1f(uniformLocation, _displayedOpacity / 255.0);
+
     GL::blendFunc(_blendFunc.src, _blendFunc.dst);
 
     if (_dirty)
@@ -521,7 +523,7 @@ void DrawNode::drawPoly(const Vec2 *poli, unsigned int numberOfPoints, bool clos
 {
     unsigned int vertex_count;
 
-    for (int i = 0; i < numberOfPoints; i++)
+    for (unsigned int i = 0; i < numberOfPoints; i++)
     {
         this->updateBoundsToPoint(poli[i]);
     }

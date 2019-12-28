@@ -1634,9 +1634,16 @@ void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t pare
         updateContent();
     }
     
-    uint32_t flags = processParentFlags(parentTransform, parentFlags);
+    parentFlags |= _selfFlags;
+    
+    if(parentFlags & FLAGS_DIRTY_MASK)
+    {
+        _modelViewTransform = parentTransform * getNodeToParentTransform();
+    }
 
-    if (!_utf8Text.empty() && _shadowEnabled && (_shadowDirty || (flags & FLAGS_DIRTY_MASK)))
+    _selfFlags = 0;
+
+    if (_shadowEnabled && (_shadowDirty || (parentFlags & FLAGS_DIRTY_MASK)) && !_utf8Text.empty())
     {
         _position.x += _shadowOffset.width;
         _position.y += _shadowOffset.height;
@@ -1651,48 +1658,13 @@ void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t pare
         _shadowDirty = false;
     }
 
-    bool visibleByCamera = isVisitableByVisitingCamera();
-    if (_children.empty() && !_textSprite && !visibleByCamera)
+    // self draw
+    this->drawSelf(true, renderer, parentFlags);
+
+    for (int index = 0; index < _children.size(); index++)
     {
-        return;
+        _children[index]->visit(renderer, _modelViewTransform, parentFlags);
     }
-
-    // IMPORTANT:
-    // To ease the migration to v3.0, we still support the Mat4 stack,
-    // but it is deprecated and your code should not rely on it
-    _director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-    _director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
-    
-    if (!_children.empty())
-    {
-        sortAllChildren();
-
-        int i = 0;
-        // draw children zOrder < 0
-        for (auto size = _children.size(); i < size; ++i)
-        {
-            auto node = _children.at(i);
-
-            if (node && node->getLocalZOrder() < 0)
-                node->visit(renderer, _modelViewTransform, flags);
-            else
-                break;
-        }
-        
-        this->drawSelf(visibleByCamera, renderer, flags);
-
-        for (auto it = _children.cbegin() + i, itCend = _children.cend(); it != itCend; ++it)
-        {
-            (*it)->visit(renderer, _modelViewTransform, flags);
-        }
-            
-    }
-    else
-    {
-        this->drawSelf(visibleByCamera, renderer, flags);
-    }
-
-    _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
 }
 
 void Label::drawSelf(bool visibleByCamera, Renderer* renderer, uint32_t flags)

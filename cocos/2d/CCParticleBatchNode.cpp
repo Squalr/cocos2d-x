@@ -127,21 +127,16 @@ void ParticleBatchNode::visit(Renderer *renderer, const Mat4 &parentTransform, u
         return;
     }
 
-    uint32_t flags = processParentFlags(parentTransform, parentFlags);
-
-    if (isVisitableByVisitingCamera())
+    parentFlags |= _selfFlags;
+    
+    if(parentFlags & FLAGS_DIRTY_MASK)
     {
-        // IMPORTANT:
-        // To ease the migration to v3.0, we still support the Mat4 stack,
-        // but it is deprecated and your code should not rely on it
-        Director* director = Director::getInstance();
-        director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-        director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
-        
-        draw(renderer, _modelViewTransform, flags);
-        
-        director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+        _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
+
+    _selfFlags = 0;
+
+    draw(renderer, _modelViewTransform, parentFlags);
 }
 
 // override addChild:

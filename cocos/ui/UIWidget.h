@@ -26,7 +26,7 @@ THE SOFTWARE.
 #ifndef __UIWIDGET_H__
 #define __UIWIDGET_H__
 
-#include "2d/CCProtectedNode.h"
+#include "2d/CCNode.h"
 #include "ui/UIWidget.h"
 #include "base/CCMap.h"
 
@@ -63,10 +63,8 @@ typedef void (Ref::*SEL_TouchEvent)(Ref*,TouchEventType);
 
 /**
  *@brief Base class for all ui widgets.
- * This class inherent from `ProtectedNode` and `LayoutParameterProtocol`.
- * If you want to implements your own ui widget, you should subclass it.
  */
-class Widget : public ProtectedNode
+class Widget : public Node
 {
 public:
     /**

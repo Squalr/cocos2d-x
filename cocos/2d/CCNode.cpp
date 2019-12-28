@@ -75,12 +75,10 @@ Node::Node()
 , _skewX(0.0f)
 , _skewY(0.0f)
 , _contentSize(Size::ZERO)
-, _contentSizeDirty(true)
 , _transformDirty(true)
 , _inverseDirty(true)
 , _additionalTransform(nullptr)
 , _additionalTransformDirty(false)
-, _transformUpdated(true)
 // children (lazy allocs)
 // lazy alloc
 , _localZOrder$Arrival(0LL)
@@ -251,7 +249,8 @@ void Node::setSkewX(float skewX)
         return;
     
     _skewX = skewX;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 float Node::getSkewY() const
@@ -265,7 +264,8 @@ void Node::setSkewY(float skewY)
         return;
     
     _skewY = skewY;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 void Node::setLocalZOrder(std::int32_t z)
@@ -317,7 +317,8 @@ void Node::setRotation(float rotation)
         return;
     
     _rotationZ_X = _rotationZ_Y = rotation;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
     
     updateRotationQuat();
 }
@@ -334,7 +335,8 @@ void Node::setRotation3D(const Vec3& rotation)
         _rotationZ_X == rotation.z)
         return;
     
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 
     _rotationX = rotation.x;
     _rotationY = rotation.y;
@@ -385,7 +387,8 @@ void Node::setRotationQuat(const Quaternion& quat)
 {
     _rotationQuat = quat;
     updateRotation3D();
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 Quaternion Node::getRotationQuat() const
@@ -399,7 +402,8 @@ void Node::setRotationSkewX(float rotationX)
         return;
     
     _rotationZ_X = rotationX;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
     
     updateRotationQuat();
 }
@@ -415,7 +419,8 @@ void Node::setRotationSkewY(float rotationY)
         return;
     
     _rotationZ_Y = rotationY;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
     
     updateRotationQuat();
 }
@@ -434,7 +439,8 @@ void Node::setScale(float scale)
         return;
     
     _scaleX = _scaleY = _scaleZ = scale;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 /// scaleX getter
@@ -451,7 +457,8 @@ void Node::setScale(float scaleX,float scaleY)
     
     _scaleX = scaleX;
     _scaleY = scaleY;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 /// scaleX setter
@@ -461,7 +468,8 @@ void Node::setScaleX(float scaleX)
         return;
     
     _scaleX = scaleX;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 /// scaleY getter
@@ -477,7 +485,8 @@ void Node::setScaleZ(float scaleZ)
         return;
     
     _scaleZ = scaleZ;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 /// scaleY getter
@@ -493,7 +502,8 @@ void Node::setScaleY(float scaleY)
         return;
     
     _scaleY = scaleY;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 
@@ -523,7 +533,8 @@ void Node::setPosition(float x, float y)
     _position.x = x;
     _position.y = y;
     
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
     _usingNormalizedPosition = false;
 }
 
@@ -568,7 +579,8 @@ void Node::setPositionZ(float positionZ)
     if (_positionZ == positionZ)
         return;
     
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 
     _positionZ = positionZ;
 }
@@ -588,7 +600,8 @@ void Node::setPositionNormalized(const Vec2& position)
     _normalizedPosition = position;
     _usingNormalizedPosition = true;
     _normalizedPositionDirty = true;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 ssize_t Node::getChildrenCount() const
@@ -609,7 +622,10 @@ void Node::setVisible(bool visible)
     {
         _visible = visible;
         if(_visible)
-            _transformUpdated = _transformDirty = _inverseDirty = true;
+        {
+            _transformDirty = _inverseDirty = true;
+            _selfFlags |= FLAGS_TRANSFORM_DIRTY;
+        }
     }
 }
 
@@ -630,7 +646,8 @@ void Node::setAnchorPoint(const Vec2& point)
     {
         _anchorPoint = point;
         _anchorPointInPoints.set(_contentSize.width * _anchorPoint.x, _contentSize.height * _anchorPoint.y);
-        _transformUpdated = _transformDirty = _inverseDirty = true;
+        _transformDirty = _inverseDirty = true;
+        _selfFlags |= FLAGS_TRANSFORM_DIRTY;
     }
 }
 
@@ -647,7 +664,9 @@ void Node::setContentSize(const Size & size)
         _contentSize = size;
 
         _anchorPointInPoints.set(_contentSize.width * _anchorPoint.x, _contentSize.height * _anchorPoint.y);
-        _transformUpdated = _transformDirty = _inverseDirty = _contentSizeDirty = true;
+        _transformDirty = _inverseDirty = true;
+        _selfFlags |= FLAGS_CONTENT_SIZE_DIRTY;
+        _selfFlags |= FLAGS_CONTENT_SIZE_DIRTY;
     }
 }
 
@@ -661,7 +680,8 @@ bool Node::isRunning() const
 void Node::setParent(Node * parent)
 {
     _parent = parent;
-    _transformUpdated = _transformDirty = _inverseDirty = true;
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 /// isRelativeAnchorPoint getter
@@ -676,7 +696,8 @@ void Node::setIgnoreAnchorPointForPosition(bool newValue)
     if (newValue != _ignoreAnchorPointForPosition) 
     {
         _ignoreAnchorPointForPosition = newValue;
-        _transformUpdated = _transformDirty = _inverseDirty = true;
+        _transformDirty = _inverseDirty = true;
+        _selfFlags |= FLAGS_TRANSFORM_DIRTY;
     }
 }
 
@@ -1071,7 +1092,7 @@ void Node::addChildInsert(Node *child, int index, bool isReentry)
 		sEngine->retainScriptObject(this, child);
 	}
 #endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-	_transformUpdated = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 	_reorderChildDirty = true;
 	_children.insert(std::min(index, (int)_children.size()), child);
 	child->_setLocalZOrder(0);
@@ -1328,7 +1349,7 @@ void Node::insertChild(Node* child, int z)
         sEngine->retainScriptObject(this, child);
     }
 #endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-    _transformUpdated = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
     _reorderChildDirty = true;
     _children.pushBack(child);
     child->_setLocalZOrder(z);
@@ -1373,54 +1394,43 @@ void Node::visit()
 
 uint32_t Node::processParentFlags(const Mat4& parentTransform, uint32_t parentFlags)
 {
-    // Fixes Github issue #16100. Basically when having two cameras, one camera might set as dirty the
-    // node that is not visited by it, and might affect certain calculations. Besides, it is faster to do this.
-    if (!isVisitableByVisitingCamera())
-    {
-        return parentFlags;
-    }
-
-    parentFlags |= (_transformUpdated ? FLAGS_TRANSFORM_DIRTY : 0) | (_contentSizeDirty ? FLAGS_CONTENT_SIZE_DIRTY : 0);
+    parentFlags |= _selfFlags;
     
     if(parentFlags & FLAGS_DIRTY_MASK)
     {
         _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
 
-    _transformUpdated = false;
-    _contentSizeDirty = false;
+    _selfFlags = 0;
 
     return parentFlags;
-}
-
-bool Node::isVisitableByVisitingCamera() const
-{
-    auto camera = Camera::getVisitingCamera();
-    bool visibleByCamera = camera ? ((unsigned short)camera->getCameraFlag() & _cameraMask) != 0 : true;
-    return visibleByCamera;
 }
 
 void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
     // quick return if not visible. children won't be drawn.
-    if (!_visible)
+    if (!_visible || (_displayedOpacity == 0 && _cascadeOpacityEnabled))
     {
         return;
     }
     
-    bool visibleByCamera = isVisitableByVisitingCamera();
-
-    uint32_t flags = processParentFlags(parentTransform, parentFlags);
-
-    // self draw
-    if (visibleByCamera)
+    parentFlags |= _selfFlags;
+    
+    if(parentFlags & FLAGS_DIRTY_MASK)
     {
-        this->draw(renderer, _modelViewTransform, flags);
+        _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
 
-    for (int index = 0; index < _children.size(); index++)
+    _selfFlags = 0;
+
+    // self draw
+    this->draw(renderer, _modelViewTransform, parentFlags);
+
+    const int size = _children.size();
+
+    for (int index = 0; index < size; index++)
     {
-        _children[index]->visit(renderer, _modelViewTransform, flags);
+        _children[index]->visit(renderer, _modelViewTransform, parentFlags);
     }
 }
 
@@ -1962,8 +1972,10 @@ const Mat4& Node::getNodeToParentTransform() const
         if (_transformDirty)
             _additionalTransform[1] = _transform;
 
-        if (_transformUpdated)
+        if (_selfFlags & FLAGS_TRANSFORM_DIRTY)
+        {
             _transform = _additionalTransform[1] * _additionalTransform[0];
+        }
     }
 
     _transformDirty = _additionalTransformDirty = false;
@@ -1975,7 +1987,7 @@ void Node::setNodeToParentTransform(const Mat4& transform)
 {
     _transform = transform;
     _transformDirty = false;
-    _transformUpdated = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 
     if (_additionalTransform)
         // _additionalTransform[1] has a copy of lastest transform
@@ -2008,7 +2020,8 @@ void Node::setAdditionalTransform(const Mat4* additionalTransform)
 
         _additionalTransform[0] = *additionalTransform;
     }
-    _transformUpdated = _additionalTransformDirty = _inverseDirty = true;
+    _additionalTransformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 void Node::setAdditionalTransform(const Mat4& additionalTransform)

@@ -174,40 +174,38 @@ void ClippingNode::onExit()
 
 void ClippingNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
-    if (!_visible || !hasContent())
+    if (!_visible || !hasContent() || (_displayedOpacity == 0 && _cascadeOpacityEnabled))
         return;
     
-    uint32_t flags = processParentFlags(parentTransform, parentFlags);
+    parentFlags |= _selfFlags;
+    
+    if(parentFlags & FLAGS_DIRTY_MASK)
+    {
+        _modelViewTransform = parentTransform * getNodeToParentTransform();
+    }
+
+    _selfFlags = 0;
 
     this->setContentSize(_stencil == nullptr ? Size::ZERO : _stencil->getContentSize());
-
-    // IMPORTANT:
-    // To ease the migration to v3.0, we still support the Mat4 stack,
-    // but it is deprecated and your code should not rely on it
-    Director* director = Director::getInstance();
-    CCASSERT(nullptr != director, "Director is null when setting matrix stack");
 
     _beforeVisitCmd.init(_globalZOrder);
     _beforeVisitCmd.func = CC_CALLBACK_0(StencilStateManager::onBeforeVisit, _stencilStateManager);
     renderer->addCommand(&_beforeVisitCmd);
     
-    _stencil->visit(renderer, _modelViewTransform, flags);
+    _stencil->visit(renderer, _modelViewTransform, parentFlags);
 
     _afterDrawStencilCmd.init(_globalZOrder);
     _afterDrawStencilCmd.func = CC_CALLBACK_0(StencilStateManager::onAfterDrawStencil, _stencilStateManager);
     renderer->addCommand(&_afterDrawStencilCmd);
-
-    bool visibleByCamera = isVisitableByVisitingCamera();
     
     // self draw
-    if (visibleByCamera)
-    {
-        this->draw(renderer, _modelViewTransform, flags);
-    }
+    this->draw(renderer, _modelViewTransform, parentFlags);
 
-    for (int index = 0; index < _children.size(); index++)
+    const int size = _children.size();
+
+    for (int index = 0; index < size; index++)
     {
-        _children[index]->visit(renderer, _modelViewTransform, flags);
+        _children[index]->visit(renderer, _modelViewTransform, parentFlags);
     }
 
     _afterVisitCmd.init(_globalZOrder);

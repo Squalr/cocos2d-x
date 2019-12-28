@@ -10,7 +10,6 @@ set(COCOS_2D_HEADER
     2d/CCActionTween.h
     2d/CCGrid.h
     2d/CCSpriteFrameCache.h
-    2d/CCTMXTiledMap.h
     2d/CCLayer.h
     2d/CCActionCamera.h
     2d/CCLabelTTF.h
@@ -36,7 +35,6 @@ set(COCOS_2D_HEADER
     2d/CCParticleBatchNode.h
     2d/CCActionEase.h
     2d/CCScene.h
-    2d/CCProtectedNode.h
     2d/CCTextFieldTTF.h
     2d/CCAnimationCache.h
     2d/CCFastTMXLayer.h
@@ -59,7 +57,6 @@ set(COCOS_2D_HEADER
     2d/CCTileMapAtlas.h
     2d/CCActionManager.h
     2d/CCDrawNode.h
-    2d/CCTMXLayer.h
     2d/CCCamera.h
     2d/CCParallaxNode.h
     2d/CCGrabber.h
@@ -109,7 +106,6 @@ set(COCOS_2D_SRC
     2d/CCParticleExamples.cpp
     2d/CCParticleSystem.cpp
     2d/CCParticleSystemQuad.cpp
-    2d/CCProtectedNode.cpp
     2d/CCRenderTexture.cpp
     2d/CCScene.cpp
     2d/CCSpriteBatchNode.cpp
@@ -120,9 +116,7 @@ set(COCOS_2D_SRC
     ../external/clipper/clipper.cpp
     2d/CCTextFieldTTF.cpp
     2d/CCTileMapAtlas.cpp
-    2d/CCTMXLayer.cpp
     2d/CCTMXObjectGroup.cpp
-    2d/CCTMXTiledMap.cpp
     2d/CCTMXXMLParser.cpp
     2d/CCTweenFunction.cpp
     )

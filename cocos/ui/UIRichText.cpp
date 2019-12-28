@@ -1360,7 +1360,7 @@ void RichText::formatText()
 {
     if (_formatTextDirty)
     {
-        this->removeAllProtectedChildren();
+        this->removeAllChildren();
         _elementRenders.clear();
         if (_ignoreSize)
         {
@@ -1776,7 +1776,7 @@ void RichText::formarRenderers()
             {
                 iter->setAnchorPoint(Vec2::ZERO);
                 iter->setPosition(nextPosX, nextPosY);
-                this->addProtectedChild(iter, 1);
+                this->addChild(iter, 1);
                 Size iSize = iter->getContentSize();
                 newContentSizeWidth += iSize.width;
                 nextPosX += iSize.width;
@@ -1824,7 +1824,7 @@ void RichText::formarRenderers()
             {
                 iter->setAnchorPoint(Vec2::ZERO);
                 iter->setPosition(nextPosX, nextPosY);
-                this->addProtectedChild(iter, 1);
+                this->addChild(iter, 1);
                 nextPosX += iter->getContentSize().width;
             }
             
