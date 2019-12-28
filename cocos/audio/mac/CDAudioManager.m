@@ -23,7 +23,7 @@
  */
 
 
-#import "audio/mac/CDAudioManager.h"
+#include "audio/mac/CDAudioManager.h"
 
 NSString * const kCDN_AudioManagerInitialised = @"kCDN_AudioManagerInitialised";
 

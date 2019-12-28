@@ -35,7 +35,7 @@
 #include "base/CCDirector.h"
 #include "2d/CCLabel.h"
 
-#import <GameController/GameController.h>
+#include <GameController/GameController.h>
 
 typedef void (^GCControllerConnectionBlock)(GCController* controller);
 typedef void (^GCControllerDisconnectionBlock)(GCController* controller);

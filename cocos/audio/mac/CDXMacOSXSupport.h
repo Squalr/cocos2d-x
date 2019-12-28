@@ -33,12 +33,12 @@
  AVAudioSession nothing is supported, not applicable to MacOS X.
  */
 
-#import <Availability.h>
+#include <Availability.h>
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 #elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
 
-#import <Foundation/Foundation.h>
-#import <AppKit/NSSound.h>
+#include <Foundation/Foundation.h>
+#include <AppKit/NSSound.h>
 
 enum AudioSessionProperties {
 	kAudioSessionProperty_OtherAudioIsPlaying,

@@ -129,17 +129,17 @@ elseif(LINUX)
 elseif(APPLE)
     # common
     set(COCOS_AUDIO_PLATFORM_HEADER
-        audio/apple/AudioDecoder.h
-        audio/apple/AudioPlayer.h
-        audio/apple/AudioMacros.h
-        audio/apple/AudioCache.h
-        audio/apple/AudioEngine-inl.h
+        audio/mac/AudioDecoder.h
+        audio/mac/AudioPlayer.h
+        audio/mac/AudioMacros.h
+        audio/mac/AudioCache.h
+        audio/mac/AudioEngine-inl.h
         )
     set(COCOS_AUDIO_PLATFORM_SRC
-        audio/apple/AudioCache.mm
-        audio/apple/AudioDecoder.mm
-        audio/apple/AudioEngine-inl.mm
-        audio/apple/AudioPlayer.mm
+        audio/mac/AudioCache.mm
+        audio/mac/AudioDecoder.mm
+        audio/mac/AudioEngine-inl.mm
+        audio/mac/AudioPlayer.mm
         )
     # split it in _C and non C
     # because C files needs to be compiled with C compiler and not C++

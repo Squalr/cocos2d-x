@@ -28,14 +28,14 @@
 #include "platform/CCPlatformConfig.h"
 #if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
 
-#import <OpenAL/al.h>
+#include <OpenAL/al.h>
 
 #include <string>
 #include <mutex>
 #include <vector>
 
 #include "platform/CCPlatformMacros.h"
-#include "audio/apple/AudioMacros.h"
+#include "audio/mac/AudioMacros.h"
 
 NS_CC_BEGIN
 namespace cocos_experimental{

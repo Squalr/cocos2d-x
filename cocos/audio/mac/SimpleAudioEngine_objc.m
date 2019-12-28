@@ -22,7 +22,7 @@
  $Id$
  */
 
-#import "audio/mac/SimpleAudioEngine_objc.h"
+#include "audio/mac/SimpleAudioEngine_objc.h"
 
 @implementation SimpleAudioEngine
 

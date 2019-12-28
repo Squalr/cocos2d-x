@@ -23,7 +23,7 @@
  */
 
 
-#import "audio/mac/CDAudioManager.h"
+#include "audio/mac/CDAudioManager.h"
 
 /**
  A wrapper to the CDAudioManager object.

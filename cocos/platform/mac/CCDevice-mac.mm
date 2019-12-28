@@ -32,7 +32,7 @@ THE SOFTWARE.
 #include <Cocoa/Cocoa.h>
 #include <string>
 #include "base/ccTypes.h"
-#include "platform/apple/CCDevice-apple.h"
+#include "platform/mac/CCDevice-apple.h"
 
 NS_CC_BEGIN
 

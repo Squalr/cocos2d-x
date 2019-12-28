@@ -22,12 +22,8 @@
  $Id$
  */
 
-#import "audio/mac/CocosDenshion.h"
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 30000
-    #import <AVFoundation/AVFoundation.h>
-#else
-    #import "audio/mac/CDXMacOSXSupport.h"
-#endif
+#include "audio/mac/CocosDenshion.h"
+#include "audio/mac/CDXMacOSXSupport.h"
 
 /** Different modes of the engine */
 typedef enum {

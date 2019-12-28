@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include "platform/CCPlatformConfig.h"
 #if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
 
-#import <Cocoa/Cocoa.h>
+#include <Cocoa/Cocoa.h>
 #include <algorithm>
 
 #include "platform/CCApplication.h"

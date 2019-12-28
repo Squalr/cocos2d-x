@@ -27,16 +27,16 @@
 #include "platform/CCPlatformConfig.h"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 #include <string>
 
-#import "base/CCUserDefault.h"
-#import "tinyxml2.h"
-#import "platform/CCPlatformConfig.h"
-#import "platform/CCPlatformMacros.h"
-#import "base/base64.h"
-#import "platform/CCFileUtils.h"
+#include "base/CCUserDefault.h"
+#include "tinyxml2.h"
+#include "platform/CCPlatformConfig.h"
+#include "platform/CCPlatformMacros.h"
+#include "base/base64.h"
+#include "platform/CCFileUtils.h"
 
 #define XML_FILE_NAME "UserDefault.xml"
 

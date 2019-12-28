@@ -22,13 +22,13 @@
  $Id$
  */
 
-#import <Availability.h>
+#include <Availability.h>
 #ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
 #elif defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
 
-#import "audio/mac/CDXMacOSXSupport.h"
-#import "audio/include/SimpleAudioEngine.h"
-#import "audio/mac/CocosDenshion.h"
+#include "audio/mac/CDXMacOSXSupport.h"
+#include "audio/include/SimpleAudioEngine.h"
+#include "audio/mac/CocosDenshion.h"
 
 NSString * const AVAudioSessionCategoryAmbient = @"AVAudioSessionCategoryAmbient";
 NSString *const AVAudioSessionCategorySoloAmbient = @"AVAudioSessionCategorySoloAmbient";

@@ -67,11 +67,11 @@ Requirements:
  
 */ 
 
-#import <OpenAL/al.h>
-#import <OpenAL/alc.h>
-#import <AudioToolbox/AudioToolbox.h>
-#import <Foundation/Foundation.h>
-#import "audio/mac/CDConfig.h"
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+#include <AudioToolbox/AudioToolbox.h>
+#include <Foundation/Foundation.h>
+#include "audio/mac/CDConfig.h"
 
 
 #if !defined(CD_DEBUG) || CD_DEBUG == 0
@@ -88,7 +88,7 @@ Requirements:
 #endif // CD_DEBUG
 
 
-#import "audio/mac/CDOpenALSupport.h"
+#include "audio/mac/CDOpenALSupport.h"
 
 //Tested source limit on 2.2.1 and 3.1.2 with up to 128 sources and appears to work. Older OS versions e.g 2.2 may support only 32
 #define CD_SOURCE_LIMIT 32 //Total number of sources we will ever want, may actually get less

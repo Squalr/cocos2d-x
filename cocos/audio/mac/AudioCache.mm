@@ -28,15 +28,15 @@
 #include "platform/CCPlatformConfig.h"
 #if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
 
-#include "audio/apple/AudioCache.h"
+#include "audio/mac/AudioCache.h"
 
-#import <Foundation/Foundation.h>
-#import <OpenAL/alc.h>
+#include <Foundation/Foundation.h>
+#include <OpenAL/alc.h>
 #include <thread>
 #include "base/CCDirector.h"
 #include "base/CCScheduler.h"
 
-#include "audio/apple/AudioDecoder.h"
+#include "audio/mac/AudioDecoder.h"
 
 #ifdef VERY_VERY_VERBOSE_LOGGING
 #define ALOGVV ALOGV

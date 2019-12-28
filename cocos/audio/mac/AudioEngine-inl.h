@@ -33,8 +33,8 @@
 #include <list>
 
 #include "base/CCRef.h"
-#include "audio/apple/AudioCache.h"
-#include "audio/apple/AudioPlayer.h"
+#include "audio/mac/AudioCache.h"
+#include "audio/mac/AudioPlayer.h"
 
 NS_CC_BEGIN
 class Scheduler;

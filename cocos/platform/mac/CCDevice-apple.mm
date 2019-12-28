@@ -36,7 +36,7 @@
 #endif
 
 #include "base/ccTypes.h"
-#include "platform/apple/CCDevice-apple.h"
+#include "platform/mac/CCDevice-apple.h"
 
 namespace FontUtils {
     NSMutableParagraphStyle* _calculateParagraphStyle(bool enableWrap, int overflow)

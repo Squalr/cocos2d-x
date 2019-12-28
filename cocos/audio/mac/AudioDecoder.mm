@@ -23,10 +23,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "audio/apple/AudioDecoder.h"
-#include "audio/apple/AudioMacros.h"
+#include "audio/mac/AudioDecoder.h"
+#include "audio/mac/AudioMacros.h"
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 #define LOG_TAG "AudioDecoder"
 

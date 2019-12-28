@@ -47,15 +47,15 @@ if(WINDOWS)
 
 elseif(APPLE)
     set(COCOS_PLATFORM_SPECIFIC_HEADER
-        platform/apple/CCFileUtils-apple.h
-        platform/apple/CCLock-apple.h
-        platform/apple/CCDevice-apple.h
+        platform/mac/CCFileUtils-apple.h
+        platform/mac/CCLock-apple.h
+        platform/mac/CCDevice-apple.h
         )
     set(COCOS_PLATFORM_SPECIFIC_SRC
-        platform/apple/CCLock-apple.cpp
-        platform/apple/CCFileUtils-apple.mm
-        platform/apple/CCThread-apple.mm
-        platform/apple/CCDevice-apple.mm
+        platform/mac/CCLock-apple.cpp
+        platform/mac/CCFileUtils-apple.mm
+        platform/mac/CCThread-apple.mm
+        platform/mac/CCDevice-apple.mm
         )
     if(MACOSX)
         set(COCOS_PLATFORM_SPECIFIC_HEADER

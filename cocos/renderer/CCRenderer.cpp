@@ -49,17 +49,6 @@
 
 NS_CC_BEGIN
 
-// helper
-static bool compareRenderCommand(RenderCommand* a, RenderCommand* b)
-{
-    return a->getGlobalOrder() < b->getGlobalOrder();
-}
-
-static bool compare3DCommand(RenderCommand* a, RenderCommand* b)
-{
-    return  a->getDepth() > b->getDepth();
-}
-
 // queue
 RenderQueue::RenderQueue()
 {
@@ -218,11 +207,6 @@ void RenderQueue::restoreRenderState()
 
     CHECK_GL_ERROR_DEBUG();
 }
-
-//
-//
-//
-static const int DEFAULT_RENDER_QUEUE = 0;
 
 //
 // constructors, destructor, init

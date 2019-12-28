@@ -58,9 +58,9 @@ extern "C" {
 #endif    
     
 
-#import <OpenAL/al.h>
-#import <OpenAL/alc.h>
-#import <CoreFoundation/CFURL.h>
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
+#include <CoreFoundation/CFURL.h>
 
 
 //Taken from oalTouch MyOpenALSupport 1.1

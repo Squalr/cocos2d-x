@@ -26,7 +26,7 @@
 #pragma once
 
 #include <stdint.h>
-#import <AudioToolbox/ExtendedAudioFile.h>
+#include <AudioToolbox/ExtendedAudioFile.h>
 
 namespace cocos2d { namespace cocos_experimental {
 
