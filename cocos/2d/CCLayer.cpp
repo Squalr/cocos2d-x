@@ -28,19 +28,14 @@ THE SOFTWARE.
 
 #include <stdarg.h>
 #include "2d/CCLayer.h"
-#include "base/CCScriptSupport.h"
 #include "platform/CCDevice.h"
 #include "renderer/CCRenderer.h"
 #include "renderer/ccGLStateCache.h"
 #include "renderer/CCGLProgramState.h"
 #include "base/CCDirector.h"
 #include "base/CCEventDispatcher.h"
-#include "base/CCEventListenerTouch.h"
-#include "base/CCEventTouch.h"
 #include "base/CCEventKeyboard.h"
 #include "base/CCEventListenerKeyboard.h"
-#include "base/CCEventAcceleration.h"
-#include "base/CCEventListenerAcceleration.h"
 #include "base/ccUTF8.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
@@ -50,15 +45,9 @@ THE SOFTWARE.
 NS_CC_BEGIN
 
 // Layer
-Layer::Layer()
-: _touchEnabled(false)
-, _accelerometerEnabled(false)
-, _keyboardEnabled(false)
-, _touchListener(nullptr)
+Layer::Layer() :
+_keyboardEnabled(false)
 , _keyboardListener(nullptr)
-, _accelerationListener(nullptr)
-, _touchMode(Touch::DispatchMode::ALL_AT_ONCE)
-, _swallowsTouches(true)
 {
     _ignoreAnchorPointForPosition = true;
     setAnchorPoint(Vec2(0.5f, 0.5f));
@@ -91,49 +80,6 @@ Layer *Layer::create()
     }
 }
 
-int Layer::executeScriptTouchHandler(EventTouch::EventCode eventType, Touch* touch, Event* event)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (kScriptTypeLua == _scriptType)
-    {
-        TouchScriptData data(eventType, this, touch, event);
-        ScriptEvent scriptEvent(kTouchEvent, &data);
-        return ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&scriptEvent);
-    }
-#else
-    CC_UNUSED_PARAM(eventType);
-    CC_UNUSED_PARAM(touch);
-    CC_UNUSED_PARAM(event);
-#endif
-    return 0;
-}
-
-int Layer::executeScriptTouchesHandler(EventTouch::EventCode eventType, const std::vector<Touch*>& touches, Event* event)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (kScriptTypeLua == _scriptType)
-    {
-        TouchesScriptData data(eventType, this, touches, event);
-        ScriptEvent scriptEvent(kTouchesEvent, &data);
-        return ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&scriptEvent);
-    }
-#else
-    CC_UNUSED_PARAM(eventType);
-    CC_UNUSED_PARAM(touches);
-    CC_UNUSED_PARAM(event);
-#endif
-    return 0;
-}
-
-bool Layer::ccTouchBegan(Touch* /*pTouch*/, Event* /*pEvent*/) {return false;};
-void Layer::ccTouchMoved(Touch* /*pTouch*/, Event* /*pEvent*/) {}
-void Layer::ccTouchEnded(Touch* /*pTouch*/, Event* /*pEvent*/) {}
-void Layer::ccTouchCancelled(Touch* /*pTouch*/, Event* /*pEvent*/) {}
-void Layer::ccTouchesBegan(__Set* /*pTouches*/, Event* /*pEvent*/) {}
-void Layer::ccTouchesMoved(__Set* /*pTouches*/, Event* /*pEvent*/) {}
-void Layer::ccTouchesEnded(__Set* /*pTouches*/, Event* /*pEvent*/) {}
-void Layer::ccTouchesCancelled(__Set* /*pTouches*/, Event* /*pEvent*/) {}
-
 #if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #elif _MSC_VER >= 1400 //vs 2005 or higher
@@ -141,162 +87,13 @@ void Layer::ccTouchesCancelled(__Set* /*pTouches*/, Event* /*pEvent*/) {}
 #pragma warning (disable: 4996)
 #endif
 
-/// isTouchEnabled getter
-bool Layer::isTouchEnabled() const
-{
-    return _touchEnabled;
-}
-
-/// isTouchEnabled setter
-void Layer::setTouchEnabled(bool enabled)
-{
-    if (_touchEnabled != enabled)
-    {
-        _touchEnabled = enabled;
-        if (enabled)
-        {
-            if (_touchListener != nullptr)
-                return;
-
-            if( _touchMode == Touch::DispatchMode::ALL_AT_ONCE )
-            {
-                // Register Touch Event
-                auto listener = EventListenerTouchAllAtOnce::create();
-
-                listener->onTouchesBegan = CC_CALLBACK_2(Layer::onTouchesBegan, this);
-                listener->onTouchesMoved = CC_CALLBACK_2(Layer::onTouchesMoved, this);
-                listener->onTouchesEnded = CC_CALLBACK_2(Layer::onTouchesEnded, this);
-                listener->onTouchesCancelled = CC_CALLBACK_2(Layer::onTouchesCancelled, this);
-
-                _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-                _touchListener = listener;
-            }
-            else
-            {
-                // Register Touch Event
-                auto listener = EventListenerTouchOneByOne::create();
-                listener->setSwallowTouches(_swallowsTouches);
-
-                listener->onTouchBegan = CC_CALLBACK_2(Layer::onTouchBegan, this);
-                listener->onTouchMoved = CC_CALLBACK_2(Layer::onTouchMoved, this);
-                listener->onTouchEnded = CC_CALLBACK_2(Layer::onTouchEnded, this);
-                listener->onTouchCancelled = CC_CALLBACK_2(Layer::onTouchCancelled, this);
-
-                _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-                _touchListener = listener;
-            }
-        }
-        else
-        {
-            _eventDispatcher->removeEventListener(_touchListener);
-            _touchListener = nullptr;
-        }
-    }
-}
-
-void Layer::setTouchMode(Touch::DispatchMode mode)
-{
-    if(_touchMode != mode)
-    {
-        _touchMode = mode;
-
-        if( _touchEnabled)
-        {
-            setTouchEnabled(false);
-            setTouchEnabled(true);
-        }
-    }
-}
-
-void Layer::setSwallowsTouches(bool swallowsTouches)
-{
-    if (_swallowsTouches != swallowsTouches)
-    {
-        _swallowsTouches = swallowsTouches;
-
-        if( _touchEnabled)
-        {
-            setTouchEnabled(false);
-            setTouchEnabled(true);
-        }
-    }
-}
-
-Touch::DispatchMode Layer::getTouchMode() const
-{
-    return _touchMode;
-}
-
-bool Layer::isSwallowsTouches() const
-{
-    return _swallowsTouches;
-}
-
-/// isAccelerometerEnabled getter
-bool Layer::isAccelerometerEnabled() const
-{
-    return _accelerometerEnabled;
-}
-/// isAccelerometerEnabled setter
-void Layer::setAccelerometerEnabled(bool enabled)
-{
-    if (enabled != _accelerometerEnabled)
-    {
-        _accelerometerEnabled = enabled;
-
-        Device::setAccelerometerEnabled(enabled);
-
-        _eventDispatcher->removeEventListener(_accelerationListener);
-        _accelerationListener = nullptr;
-
-        if (enabled)
-        {
-            _accelerationListener = EventListenerAcceleration::create(CC_CALLBACK_2(Layer::onAcceleration, this));
-            _eventDispatcher->addEventListenerWithSceneGraphPriority(_accelerationListener, this);
-        }
-    }
-}
-
-void Layer::setAccelerometerInterval(double interval) {
-    if (_accelerometerEnabled)
-    {
-        if (_running)
-        {
-            Device::setAccelerometerInterval(interval);
-        }
-    }
-}
-
-void Layer::onAcceleration(Acceleration* acc, Event* /*unused_event*/)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if(kScriptTypeNone != _scriptType)
-    {
-        BasicScriptData data(this,(void*)acc);
-        ScriptEvent event(kAccelerometerEvent,&data);
-        ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&event);
-    }
-#else
-    CC_UNUSED_PARAM(acc);
-#endif
-}
-
 void Layer::onKeyPressed(EventKeyboard::KeyCode /*keyCode*/, Event* /*unused_event*/)
 {
 }
 
 void Layer::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* /*unused_event*/)
 {
-#if CC_ENABLE_SCRIPT_BINDING
-    if(kScriptTypeNone != _scriptType)
-    {
-        KeypadScriptData data(keyCode, this);
-        ScriptEvent event(kKeypadEvent,&data);
-        ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&event);
-    }
-#else
     CC_UNUSED_PARAM(keyCode);
-#endif
 }
 
 /// isKeyboardEnabled getter
@@ -329,120 +126,6 @@ void Layer::setKeyboardEnabled(bool enabled)
 void Layer::setKeypadEnabled(bool enabled)
 {
     setKeyboardEnabled(enabled);
-}
-/// Callbacks
-
-bool Layer::onTouchBegan(Touch *touch, Event *event)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (kScriptTypeLua == _scriptType)
-    {
-        return executeScriptTouchHandler(EventTouch::EventCode::BEGAN, touch, event) == 0 ? false : true;
-    }
-#else
-    CC_UNUSED_PARAM(touch);
-    CC_UNUSED_PARAM(event);
-#endif
-    CCASSERT(false, "Layer#ccTouchBegan override me");
-    return true;
-}
-
-void Layer::onTouchMoved(Touch *touch, Event *event)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (kScriptTypeLua == _scriptType)
-    {
-        executeScriptTouchHandler(EventTouch::EventCode::MOVED, touch, event);
-        return;
-    }
-#else
-    CC_UNUSED_PARAM(touch);
-    CC_UNUSED_PARAM(event);
-#endif
-}
-
-void Layer::onTouchEnded(Touch *touch, Event *event)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (kScriptTypeLua == _scriptType)
-    {
-        executeScriptTouchHandler(EventTouch::EventCode::ENDED, touch, event);
-        return;
-    }
-#else
-    CC_UNUSED_PARAM(touch);
-    CC_UNUSED_PARAM(event);
-#endif
-}
-
-void Layer::onTouchCancelled(Touch *touch, Event *event)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (kScriptTypeLua == _scriptType)
-    {
-        executeScriptTouchHandler(EventTouch::EventCode::CANCELLED, touch, event);
-        return;
-    }
-#else
-    CC_UNUSED_PARAM(touch);
-    CC_UNUSED_PARAM(event);
-#endif
-}    
-
-void Layer::onTouchesBegan(const std::vector<Touch*>& touches, Event *event)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (kScriptTypeLua == _scriptType)
-    {
-        executeScriptTouchesHandler(EventTouch::EventCode::BEGAN, touches, event);
-        return;
-    }
-#else
-    CC_UNUSED_PARAM(touches);
-    CC_UNUSED_PARAM(event);
-#endif
-}
-
-void Layer::onTouchesMoved(const std::vector<Touch*>& touches, Event *event)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (kScriptTypeLua == _scriptType)
-    {
-        executeScriptTouchesHandler(EventTouch::EventCode::MOVED, touches, event);
-        return;
-    }
-#else
-    CC_UNUSED_PARAM(touches);
-    CC_UNUSED_PARAM(event);
-#endif
-}
-
-void Layer::onTouchesEnded(const std::vector<Touch*>& touches, Event *event)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (kScriptTypeLua == _scriptType)
-    {
-        executeScriptTouchesHandler(EventTouch::EventCode::ENDED, touches, event);
-        return;
-    }
-#else
-    CC_UNUSED_PARAM(touches);
-    CC_UNUSED_PARAM(event);
-#endif
-}
-
-void Layer::onTouchesCancelled(const std::vector<Touch*>& touches, Event *event)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (kScriptTypeLua == _scriptType)
-    {
-        executeScriptTouchesHandler(EventTouch::EventCode::CANCELLED, touches, event);
-        return;
-    }
-#else
-    CC_UNUSED_PARAM(touches);
-    CC_UNUSED_PARAM(event);
-#endif
 }
 
 std::string Layer::getDescription() const

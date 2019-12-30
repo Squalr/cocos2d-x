@@ -26,11 +26,9 @@ THE SOFTWARE.
 #define LOG_TAG "AudioDecoderManager"
 
 #include "audio/win32/AudioDecoderManager.h"
-#include "audio/win32/AudioDecoderOgg.h"
 #include "audio/win32/AudioDecoderMp3.h"
 #include "audio/win32/AudioMacros.h"
 #include "platform/CCFileUtils.h"
-#include "base/CCConsole.h"
 #include "mpg123.h"
 
 namespace cocos2d { namespace cocos_experimental {
@@ -50,11 +48,8 @@ void AudioDecoderManager::destroy()
 AudioDecoder* AudioDecoderManager::createDecoder(const char* path)
 {
     std::string suffix = FileUtils::getInstance()->getFileExtension(path);
-    if (suffix == ".ogg")
-    {
-        return new (std::nothrow) AudioDecoderOgg();
-    }
-    else if (suffix == ".mp3")
+    
+    if (suffix == ".mp3")
     {
         return new (std::nothrow) AudioDecoderMp3();
     }

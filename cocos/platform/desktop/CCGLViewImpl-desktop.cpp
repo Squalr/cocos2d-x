@@ -31,7 +31,6 @@ THE SOFTWARE.
 
 #include "platform/CCApplication.h"
 #include "base/CCDirector.h"
-#include "base/CCTouch.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventKeyboard.h"
 #include "base/CCEventMouse.h"
@@ -195,7 +194,6 @@ static keyCodeItem g_keyCodeStructArray[] = {
 
 GLViewImpl::GLViewImpl(bool initglfw)
 : _captured(false)
-, _supportTouch(false)
 , _isInRetinaMonitor(false)
 , _isRetinaEnabled(false)
 , _retinaFactor(1)
@@ -659,19 +657,12 @@ void GLViewImpl::onGLFWMouseCallBack(GLFWwindow* /*window*/, int button, int act
         if(GLFW_PRESS == action)
         {
             _captured = true;
-            if (this->getViewPortRect().equals(Rect::ZERO) || this->getViewPortRect().containsPoint(Vec2(_mouseX,_mouseY)))
-            {
-                intptr_t id = 0;
-                this->handleTouchesBegin(1, &id, &_mouseX, &_mouseY);
-            }
         }
         else if(GLFW_RELEASE == action)
         {
             if (_captured)
             {
                 _captured = false;
-                intptr_t id = 0;
-                this->handleTouchesEnd(1, &id, &_mouseX, &_mouseY);
             }
         }
     }
@@ -712,18 +703,13 @@ void GLViewImpl::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
             _mouseY *= 2;
         }
     }
-
-    if (_captured)
-    {
-        intptr_t id = 0;
-        this->handleTouchesMove(1, &id, &_mouseX, &_mouseY);
-    }
     
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
     float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
     float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
 
     EventMouse event(EventMouse::MouseEventType::MOUSE_MOVE);
+
     // Set current button
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
@@ -893,10 +879,10 @@ static bool glew_dynamic_binding()
     // If the current opengl driver doesn't have framebuffers methods, check if an extension exists
     if (glGenFramebuffers == nullptr)
     {
-        log("OpenGL: glGenFramebuffers is nullptr, try to detect an extension");
+        CCLOG("OpenGL: glGenFramebuffers is nullptr, try to detect an extension");
         if (strstr(gl_extensions, "ARB_framebuffer_object"))
         {
-            log("OpenGL: ARB_framebuffer_object is supported");
+            CCLOG("OpenGL: ARB_framebuffer_object is supported");
 
             glIsRenderbuffer = (PFNGLISRENDERBUFFERPROC) wglGetProcAddress("glIsRenderbuffer");
             glBindRenderbuffer = (PFNGLBINDRENDERBUFFERPROC) wglGetProcAddress("glBindRenderbuffer");
@@ -919,7 +905,7 @@ static bool glew_dynamic_binding()
         else
         if (strstr(gl_extensions, "EXT_framebuffer_object"))
         {
-            log("OpenGL: EXT_framebuffer_object is supported");
+            CCLOG("OpenGL: EXT_framebuffer_object is supported");
             glIsRenderbuffer = (PFNGLISRENDERBUFFERPROC) wglGetProcAddress("glIsRenderbufferEXT");
             glBindRenderbuffer = (PFNGLBINDRENDERBUFFERPROC) wglGetProcAddress("glBindRenderbufferEXT");
             glDeleteRenderbuffers = (PFNGLDELETERENDERBUFFERSPROC) wglGetProcAddress("glDeleteRenderbuffersEXT");
@@ -940,8 +926,8 @@ static bool glew_dynamic_binding()
         }
         else
         {
-            log("OpenGL: No framebuffers extension is supported");
-            log("OpenGL: Any call to Fbo will crash!");
+            CCLOG("OpenGL: No framebuffers extension is supported");
+            CCLOG("OpenGL: Any call to Fbo will crash!");
             return false;
         }
     }
@@ -962,20 +948,20 @@ bool GLViewImpl::initGlew()
 
     if (GLEW_ARB_vertex_shader && GLEW_ARB_fragment_shader)
     {
-        log("Ready for GLSL");
+        CCLOG("Ready for GLSL");
     }
     else
     {
-        log("Not totally ready :(");
+        CCLOG("Not totally ready :(");
     }
 
     if (glewIsSupported("GL_VERSION_2_0"))
     {
-        log("Ready for OpenGL 2.0");
+        CCLOG("Ready for OpenGL 2.0");
     }
     else
     {
-        log("OpenGL 2.0 not supported");
+        CCLOG("OpenGL 2.0 not supported");
     }
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)

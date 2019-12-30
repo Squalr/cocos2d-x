@@ -57,8 +57,6 @@ add_library(cocos2d STATIC
     ${COCOS_AUDIO_SRC}
     ${COCOS_UI_SRC}
     ${COCOS_EXTENSIONS_SRC}
-    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:${COCOS_NETWORK_HEADER}>
-    $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:${COCOS_NETWORK_SRC}>
 )
 
 add_library(cocos2d::cocos2d ALIAS cocos2d)
@@ -89,8 +87,6 @@ target_link_libraries(cocos2d
         $<$<BOOL:${BUILD_JPEG_SUPPORT}>:JPEG::JPEG>
         $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
         $<$<BOOL:${BUILD_TIFF_SUPPORT}>:TIFF::TIFF>
-        $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:websockets>
-        $<$<BOOL:${BUILD_NETWORK_SUPPORT}>:CURL::libcurl>
         $<$<BOOL:${USE_SYSTEM_MINIZIP}>:MINIZIP::minizip>
 
         # dependencies
@@ -102,10 +98,8 @@ target_link_libraries(cocos2d
         RapidJSON::RapidJSON
         xxhash::xxhash
         cereal
-        WebP::WebP
         MPG123::MPG123
         Vorbis::File
-        sqlite3
 
         # internal dependencies
         clipper::clipper
@@ -125,7 +119,6 @@ target_compile_definitions(cocos2d
         CC_USE_JPEG=$<BOOL:${BUILD_JPEG_SUPPORT}>
         CC_USE_PNG=$<BOOL:${BUILD_PNG_SUPPORT}>
         CC_USE_TIFF=$<BOOL:${BUILD_TIFF_SUPPORT}>
-        CC_USE_NETWORK=$<BOOL:${BUILD_NETWORK_SUPPORT}>
 
         $<$<BOOL:${USE_SYSTEM_MINIZIP}>:MINIZIP_FROM_SYSTEM>
 

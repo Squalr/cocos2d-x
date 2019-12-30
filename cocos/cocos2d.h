@@ -42,7 +42,6 @@ THE SOFTWARE.
 #include "base/CCAsyncTaskPool.h"
 #include "base/CCAutoreleasePool.h"
 #include "base/CCConfiguration.h"
-#include "base/CCConsole.h"
 #include "base/CCData.h"
 #include "base/CCDirector.h"
 #include "base/CCIMEDelegate.h"
@@ -54,7 +53,6 @@ THE SOFTWARE.
 #include "base/CCRef.h"
 #include "base/CCRefPtr.h"
 #include "base/CCScheduler.h"
-#include "base/CCUserDefault.h"
 #include "base/CCValue.h"
 #include "base/CCVector.h"
 #include "base/ZipUtils.h"
@@ -66,22 +64,18 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 
 // EventDispatcher
-#include "base/CCEventAcceleration.h"
 #include "base/CCEventCustom.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventFocus.h"
 #include "base/CCEventKeyboard.h"
-#include "base/CCEventListenerAcceleration.h"
 #include "base/CCEventListenerCustom.h"
 #include "base/CCEventListenerFocus.h"
 #include "base/CCEventListenerKeyboard.h"
 #include "base/CCEventListenerMouse.h"
 #include "base/CCEventListenerController.h"
-#include "base/CCEventListenerTouch.h"
 #include "base/CCEventMouse.h"
 #include "base/CCEventController.h"
 #include "base/CCController.h"
-#include "base/CCEventTouch.h"
 #include "base/CCEventType.h"
 
 // math
@@ -198,9 +192,6 @@ THE SOFTWARE.
     #include "platform/linux/CCGL-linux.h"
     #include "platform/linux/CCStdC-linux.h"
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-
-// script_support
-#include "base/CCScriptSupport.h"
 
 // sprite_nodes
 #include "2d/CCAnimation.h"

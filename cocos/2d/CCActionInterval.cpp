@@ -38,7 +38,6 @@ THE SOFTWARE.
 #include "base/CCEventCustom.h"
 #include "base/CCEventDispatcher.h"
 #include "platform/CCStdC.h"
-#include "base/CCScriptSupport.h"
 
 NS_CC_BEGIN
 
@@ -97,18 +96,6 @@ bool ActionInterval::initWithDuration(float d)
     return true;
 }
 
-bool ActionInterval::sendUpdateEventToScript(float dt, Action *actionObject)
-{
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendActionEventToJS(actionObject, kActionUpdate, (void *)&dt))
-            return true;
-    }
-#endif
-    return false;
-}
-
 bool ActionInterval::isDone() const
 {
     return _done;
@@ -130,8 +117,6 @@ void ActionInterval::step(float dt)
     float updateDt = std::max(0.0f,                                  // needed for rewind. elapsed could be negative
                               std::min(1.0f, _elapsed / _duration)
                               );
-
-    if (sendUpdateEventToScript(updateDt, this)) return;
     
     this->update(updateDt);
 
@@ -256,7 +241,7 @@ bool Sequence::initWithTwoActions(FiniteTimeAction *actionOne, FiniteTimeAction 
     CCASSERT(actionTwo != nullptr, "actionTwo can't be nullptr!");
     if (actionOne == nullptr || actionTwo == nullptr)
     {
-        log("Sequence::initWithTwoActions error: action is nullptr!!");
+        CCLOG("Sequence::initWithTwoActions error: action is nullptr!!");
         return false;
     }
 
@@ -309,12 +294,12 @@ void Sequence::startWithTarget(Node *target)
 {
     if (target == nullptr)
     {
-        log("Sequence::startWithTarget error: target is nullptr!");
+        CCLOG("Sequence::startWithTarget error: target is nullptr!");
         return;
     }
     if (_actions[0] == nullptr || _actions[1] == nullptr)
     {
-        log("Sequence::startWithTarget error: _actions[0] or _actions[1] is nullptr!");
+        CCLOG("Sequence::startWithTarget error: _actions[0] or _actions[1] is nullptr!");
         return;
     }
     if (_duration > FLT_EPSILON)
@@ -367,15 +352,13 @@ void Sequence::update(float t)
         {
             // action[0] was skipped, execute it.
             _actions[0]->startWithTarget(_target);
-            if (!(sendUpdateEventToScript(1.0f, _actions[0])))
-                _actions[0]->update(1.0f);
+            _actions[0]->update(1.0f);
             _actions[0]->stop();
         }
         else if( _last == 0 )
         {
             // switching to action 1. stop action 0.
-            if (!(sendUpdateEventToScript(1.0f, _actions[0])))
-                _actions[0]->update(1.0f);
+            _actions[0]->update(1.0f);
             _actions[0]->stop();
         }
     }
@@ -385,8 +368,7 @@ void Sequence::update(float t)
         // FIXME: Bug. this case doesn't contemplate when _last==-1, found=0 and in "reverse mode"
         // since it will require a hack to know if an action is on reverse mode or not.
         // "step" should be overridden, and the "reverseMode" value propagated to inner Sequences.
-        if (!(sendUpdateEventToScript(0, _actions[1])))
-            _actions[1]->update(0);
+        _actions[1]->update(0);
         _actions[1]->stop();
     }
     // Last action found and it is done.
@@ -400,8 +382,7 @@ void Sequence::update(float t)
     {
         _actions[found]->startWithTarget(_target);
     }
-    if (!(sendUpdateEventToScript(new_t, _actions[found])))
-        _actions[found]->update(new_t);
+    _actions[found]->update(new_t);
     _last = found;
 }
 
@@ -486,8 +467,7 @@ void Repeat::update(float dt)
     {
         while (dt >= _nextDt && _total < _times)
         {
-            if (!(sendUpdateEventToScript(1.0f, _innerAction)))
-                _innerAction->update(1.0f);
+            _innerAction->update(1.0f);
             _total++;
 
             _innerAction->stop();
@@ -498,8 +478,7 @@ void Repeat::update(float dt)
         // fix for issue #1288, incorrect end value of repeat
         if (std::abs(dt - 1.0f) < FLT_EPSILON && _total < _times)
         {
-            if (!(sendUpdateEventToScript(1.0f, _innerAction)))
-                _innerAction->update(1.0f);
+            _innerAction->update(1.0f);
             
             _total++;
         }
@@ -509,23 +488,18 @@ void Repeat::update(float dt)
         {
             if (_total == _times)
             {
-                // minggo: inner action update is invoked above, don't have to invoke it here
-//                if (!(sendUpdateEventToScript(1, _innerAction)))
-//                    _innerAction->update(1);
                 _innerAction->stop();
             }
             else
             {
                 // issue #390 prevent jerk, use right update
-                if (!(sendUpdateEventToScript(dt - (_nextDt - _innerAction->getDuration()/_duration), _innerAction)))
-                    _innerAction->update(dt - (_nextDt - _innerAction->getDuration()/_duration));
+                _innerAction->update(dt - (_nextDt - _innerAction->getDuration()/_duration));
             }
         }
     }
     else
     {
-        if (!(sendUpdateEventToScript(fmodf(dt * _times,1.0f), _innerAction)))
-            _innerAction->update(fmodf(dt * _times,1.0f));
+        _innerAction->update(fmodf(dt * _times,1.0f));
     }
 }
 
@@ -565,7 +539,7 @@ bool RepeatForever::initWithAction(ActionInterval *action)
     CCASSERT(action != nullptr, "action can't be nullptr!");
     if (action == nullptr)
     {
-        log("RepeatForever::initWithAction error:action is nullptr!");
+        CCLOG("RepeatForever::initWithAction error:action is nullptr!");
         return false;
     }
     
@@ -710,7 +684,7 @@ bool Spawn::initWithTwoActions(FiniteTimeAction *action1, FiniteTimeAction *acti
     CCASSERT(action2 != nullptr, "action2 can't be nullptr!");
     if (action1 == nullptr || action2 == nullptr)
     {
-        log("Spawn::initWithTwoActions error: action is nullptr!");
+        CCLOG("Spawn::initWithTwoActions error: action is nullptr!");
         return false;
     }
 
@@ -768,12 +742,12 @@ void Spawn::startWithTarget(Node *target)
 {
     if (target == nullptr)
     {
-        log("Spawn::startWithTarget error: target is nullptr!");
+        CCLOG("Spawn::startWithTarget error: target is nullptr!");
         return;
     }
     if (_one == nullptr || _two == nullptr)
     {
-        log("Spawn::startWithTarget error: _one or _two is nullptr!");
+        CCLOG("Spawn::startWithTarget error: _one or _two is nullptr!");
         return;
     }
     
@@ -797,13 +771,11 @@ void Spawn::update(float time)
 {
     if (_one)
     {
-        if (!(sendUpdateEventToScript(time, _one)))
-            _one->update(time);
+        _one->update(time);
     }
     if (_two)
     {
-        if (!(sendUpdateEventToScript(time, _two)))
-            _two->update(time);
+        _two->update(time);
     }
 }
 
@@ -1580,7 +1552,7 @@ bool JumpBy::initWithDuration(float duration, const Vec2& position, float height
     CCASSERT(jumps>=0, "Number of jumps must be >= 0");
     if (jumps < 0)
     {
-        log("JumpBy::initWithDuration error: Number of jumps must be >= 0");
+        CCLOG("JumpBy::initWithDuration error: Number of jumps must be >= 0");
         return false;
     }
     
@@ -1662,7 +1634,7 @@ bool JumpTo::initWithDuration(float duration, const Vec2& position, float height
     CCASSERT(jumps>=0, "Number of jumps must be >= 0");
     if (jumps < 0)
     {
-        log("JumpTo::initWithDuration error:Number of jumps must be >= 0");
+        CCLOG("JumpTo::initWithDuration error:Number of jumps must be >= 0");
         return false;
     }
 
@@ -2041,7 +2013,7 @@ bool Blink::initWithDuration(float duration, int blinks)
     CCASSERT(blinks>=0, "blinks should be >= 0");
     if (blinks < 0)
     {
-        log("Blink::initWithDuration error:blinks should be >= 0");
+        CCLOG("Blink::initWithDuration error:blinks should be >= 0");
         return false;
     }
     
@@ -2429,7 +2401,7 @@ bool ReverseTime::initWithAction(FiniteTimeAction *action)
     CCASSERT(action != _other, "action doesn't equal to _other!");
     if (action == nullptr || action == _other)
     {
-        log("ReverseTime::initWithAction error: action is null or action equal to _other");
+        CCLOG("ReverseTime::initWithAction error: action is null or action equal to _other");
         return false;
     }
 
@@ -2479,8 +2451,7 @@ void ReverseTime::update(float time)
 {
     if (_other)
     {
-        if (!(sendUpdateEventToScript(1 - time, _other)))
-            _other->update(1 - time);
+        _other->update(1 - time);
     }
 }
 
@@ -2531,7 +2502,7 @@ bool Animate::initWithAnimation(Animation* animation)
     CCASSERT( animation!=nullptr, "Animate: argument Animation must be non-nullptr");
     if (animation == nullptr)
     {
-        log("Animate::initWithAnimation: argument Animation must be non-nullptr");
+        CCLOG("Animate::initWithAnimation: argument Animation must be non-nullptr");
         return false;
     }
 
@@ -2771,8 +2742,7 @@ void TargetedAction::stop()
 
 void TargetedAction::update(float time)
 {
-    if (!(sendUpdateEventToScript(time, _action)))
-        _action->update(time);
+    _action->update(time);
 }
 
 void TargetedAction::setForcedTarget(Node* forcedTarget)

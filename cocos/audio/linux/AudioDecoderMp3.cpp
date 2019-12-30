@@ -27,7 +27,6 @@
 #include "audio/linux/AudioMacros.h"
 #include "platform/CCFileUtils.h"
 
-#include "base/CCConsole.h"
 #include "mpg123.h"
 
 #define LOG_TAG "AudioDecoderMp3-Linux"

@@ -50,7 +50,6 @@ option(BUILD_TESTS               "Build ${PROJECT_NAME} Tests"       OFF)
 option(BUILD_JPEG_SUPPORT        "Build JPEG Support"                ON)
 option(BUILD_PNG_SUPPORT         "Build PNG Support"                 ON)
 option(BUILD_TIFF_SUPPORT        "Build TIFF Support"                ON)
-option(BUILD_NETWORK_SUPPORT     "Build Network Support"             OFF)
 option(USE_SYSTEM_MINIZIP        "Use system minizip"                OFF)
 
 # Dependencies
@@ -64,17 +63,13 @@ find_package(ZLIB REQUIRED)
 find_package(tinyxml2 REQUIRED)
 find_package(cereal REQUIRED)
 find_package(RapidJSON REQUIRED)
-find_package(WebP REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(MPG123 REQUIRED)
-find_package(sqlite3 CONFIG REQUIRED)
 
 # Optional Dependencies
 find_package(JPEG QUIET)
 find_package(PNG QUIET)
 find_package(TIFF QUIET)
-find_package(CURL QUIET)
-find_package(Libwebsockets QUIET)
 find_package(MINIZIP QUIET)
 
 # Platform dependencies
@@ -112,10 +107,6 @@ endif()
 
 if(BUILD_TIFF_SUPPORT AND NOT TIFF_FOUND)
     message(ERROR "TIFF support was requested but libtiff wasn't found.")
-endif()
-
-if(BUILD_NETWORK_SUPPORT AND (NOT Libwebsockets_FOUND OR NOT CURL_FOUND))
-    message(ERROR "Network support was requested but dependencies weren't found.")
 endif()
 
 # Bundled Dependencies

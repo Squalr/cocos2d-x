@@ -45,7 +45,6 @@
 NS_CC_BEGIN
 
 class Event;
-class EventTouch;
 class Node;
 class EventCustom;
 class EventListenerCustom;
@@ -279,9 +278,6 @@ protected:
      *  2) Adds all listener items that have been marked as 'added' when dispatching event.
      */
     void updateListeners(Event* event);
-
-    /** Touch event needs to be processed different with other events since it needs support ALL_AT_ONCE and ONE_BY_NONE mode. */
-    void dispatchTouchEvent(EventTouch* event);
     
     /** Associates node with event listener */
     void associateNodeAndEventListener(Node* node, EventListener* listener);
@@ -294,13 +290,13 @@ protected:
     
     /** Special version dispatchEventToListeners for touch/mouse event.
      *
-     *  Touch/mouse event process flow different with common event,
+     *  mouse event process flow different with common event,
      *      for scene graph node listeners, touch event process flow should
      *      order by viewport/camera first, because the touch location convert
      *      to 3D world space is different by different camera.
      *  When listener process touch event, can get current camera by Camera::getVisitingCamera().
      */
-    void dispatchTouchEventToListeners(EventListenerVector* listeners, const std::function<bool(EventListener*)>& onEvent);
+    void dispatchMouseEventToListeners(EventListenerVector* listeners, const std::function<bool(EventListener*)>& onEvent);
     
     void releaseListener(EventListener* listener);
     

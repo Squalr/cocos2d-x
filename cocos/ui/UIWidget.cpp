@@ -25,7 +25,6 @@ THE SOFTWARE.
 
 #include "ui/UIWidget.h"
 #include "ui/UIHelper.h"
-#include "base/CCEventListenerTouch.h"
 #include "base/CCEventListenerKeyboard.h"
 #include "base/CCDirector.h"
 #include "base/CCEventFocus.h"
@@ -144,11 +143,9 @@ _usingLayoutComponent(false),
 _unifySize(false),
 _enabled(true),
 _bright(true),
-_touchEnabled(false),
 _highlight(false),
 _affectByClipping(false),
 _ignoreSize(false),
-_propagateTouchEvents(true),
 _brightStyle(BrightStyle::NONE),
 _sizeType(SizeType::ABSOLUTE),
 _positionType(PositionType::ABSOLUTE),
@@ -156,13 +153,10 @@ _actionTag(0),
 _customSize(Size::ZERO),
 _hitted(false),
 _hittedByCamera(nullptr),
-_touchListener(nullptr),
 _flippedX(false),
 _flippedY(false),
 _focused(false),
 _focusEnabled(true),
-_touchEventListener(nullptr),
-_touchEventSelector(nullptr),
 _ccEventCallback(nullptr),
 _callbackType(""),
 _callbackName("")
@@ -177,10 +171,6 @@ Widget::~Widget()
 
 void Widget::cleanupWidget()
 {
-    //clean up _touchListener
-    _eventDispatcher->removeEventListener(_touchListener);
-    CC_SAFE_RELEASE_NULL(_touchListener);
-
     //cleanup focused widget and focus navigation controller
     if (_focusedWidget == this)
     {
@@ -222,14 +212,6 @@ bool Widget::init()
 
 void Widget::onEnter()
 {
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnEnter))
-            return;
-    }
-#endif
-    
     if (!_usingLayoutComponent)
         updateSizeAndPosition();
     Node::onEnter();
@@ -237,14 +219,6 @@ void Widget::onEnter()
 
 void Widget::onExit()
 {
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnExit))
-            return;
-    }
-#endif
-    
     unscheduleUpdate();
     Node::onExit();
 }
@@ -525,36 +499,6 @@ void Widget::updateContentSizeWithTextureSize(const cocos2d::Size &size)
     }
 }
 
-void Widget::setTouchEnabled(bool enable)
-{
-    if (enable == _touchEnabled)
-    {
-        return;
-    }
-    _touchEnabled = enable;
-    if (_touchEnabled)
-    {
-        _touchListener = EventListenerTouchOneByOne::create();
-        CC_SAFE_RETAIN(_touchListener);
-        _touchListener->setSwallowTouches(true);
-        _touchListener->onTouchBegan = CC_CALLBACK_2(Widget::onTouchBegan, this);
-        _touchListener->onTouchMoved = CC_CALLBACK_2(Widget::onTouchMoved, this);
-        _touchListener->onTouchEnded = CC_CALLBACK_2(Widget::onTouchEnded, this);
-        _touchListener->onTouchCancelled = CC_CALLBACK_2(Widget::onTouchCancelled, this);
-        _eventDispatcher->addEventListenerWithSceneGraphPriority(_touchListener, this);
-    }
-    else
-    {
-        _eventDispatcher->removeEventListener(_touchListener);
-        CC_SAFE_RELEASE_NULL(_touchListener);
-    }
-}
-
-bool Widget::isTouchEnabled() const
-{
-    return _touchEnabled;
-}
-
 bool Widget::isHighlighted() const
 {
     return _highlight;
@@ -699,160 +643,15 @@ bool Widget::isAncestorsEnabled()
     return parentWidget->isAncestorsEnabled();
 }
 
-void Widget::setPropagateTouchEvents(bool isPropagate)
-{
-    _propagateTouchEvents = isPropagate;
-}
-
-bool Widget::isPropagateTouchEvents()const
-{
-    return _propagateTouchEvents;
-}
-
-void Widget::setSwallowTouches(bool swallow)
-{
-    if (_touchListener)
-    {
-        _touchListener->setSwallowTouches(swallow);
-    }
-}
-
-bool Widget::isSwallowTouches()const
-{
-    if (_touchListener)
-    {
-        return _touchListener->isSwallowTouches();
-    }
-    return false;
-}
-
-bool Widget::onTouchBegan(Touch *touch, Event* /*unusedEvent*/)
-{
-    _hitted = false;
-    if (isVisible() && isEnabled() && isAncestorsEnabled() && isAncestorsVisible(this) )
-    {
-        _touchBeganPosition = touch->getLocation();
-        auto camera = Camera::getVisitingCamera();
-        if(hitTest(_touchBeganPosition, camera, nullptr))
-        {
-            if (isClippingParentContainsPoint(_touchBeganPosition)) {
-                _hittedByCamera = camera;
-                _hitted = true;
-            }
-        }
-    }
-    if (!_hitted)
-    {
-        return false;
-    }
-    setHighlighted(true);
-
-    /*
-     * Propagate touch events to its parents
-     */
-    if (_propagateTouchEvents)
-    {
-        this->propagateTouchEvent(TouchEventType::BEGAN, this, touch);
-    }
-
-    pushDownEvent();
-    return true;
-}
-
-void Widget::propagateTouchEvent(cocos2d::ui::Widget::TouchEventType event, cocos2d::ui::Widget *sender, cocos2d::Touch *touch)
-{
-    Widget* widgetParent = getWidgetParent();
-    if (widgetParent)
-    {
-        widgetParent->_hittedByCamera = _hittedByCamera;
-        widgetParent->interceptTouchEvent(event, sender, touch);
-        widgetParent->_hittedByCamera = nullptr;
-    }
-}
-
-void Widget::onTouchMoved(Touch *touch, Event* /*unusedEvent*/)
-{
-    _touchMovePosition = touch->getLocation();
-
-    setHighlighted(hitTest(_touchMovePosition, _hittedByCamera, nullptr));
-
-    /*
-     * Propagate touch events to its parents
-     */
-    if (_propagateTouchEvents)
-    {
-        this->propagateTouchEvent(TouchEventType::MOVED, this, touch);
-    }
-
-    moveEvent();
-}
-
-void Widget::onTouchEnded(Touch *touch, Event* /*unusedEvent*/)
-{
-    _touchEndPosition = touch->getLocation();
-
-    /*
-     * Propagate touch events to its parents
-     */
-    if (_propagateTouchEvents)
-    {
-        this->propagateTouchEvent(TouchEventType::ENDED, this, touch);
-    }
-
-    bool highlight = _highlight;
-    setHighlighted(false);
-
-    if (highlight)
-    {
-        releaseUpEvent();
-    }
-    else
-    {
-        cancelUpEvent();
-    }
-}
-
-void Widget::onTouchCancelled(Touch* touch, Event* /*unusedEvent*/)
-{
-    /*
-     * Propagate touch events to its parents
-     */
-    if (_propagateTouchEvents)
-    {
-        this->propagateTouchEvent(TouchEventType::CANCELED, this, touch);
-    }
-    
-    setHighlighted(false);
-    cancelUpEvent();
-}
-
 void Widget::pushDownEvent()
 {
     this->retain();
-    if (_touchEventCallback)
-    {
-        _touchEventCallback(this, TouchEventType::BEGAN);
-    }
-
-    if (_touchEventListener && _touchEventSelector)
-    {
-        (_touchEventListener->*_touchEventSelector)(this,TOUCH_EVENT_BEGAN);
-    }
     this->release();
 }
 
 void Widget::moveEvent()
 {
     this->retain();
-    if (_touchEventCallback)
-    {
-        _touchEventCallback(this, TouchEventType::MOVED);
-    }
-
-    if (_touchEventListener && _touchEventSelector)
-    {
-        (_touchEventListener->*_touchEventSelector)(this,TOUCH_EVENT_MOVED);
-    }
     this->release();
 }
 
@@ -865,16 +664,6 @@ void Widget::releaseUpEvent()
         requestFocus();
     }
 
-    if (_touchEventCallback)
-    {
-        _touchEventCallback(this, TouchEventType::ENDED);
-    }
-
-    if (_touchEventListener && _touchEventSelector)
-    {
-        (_touchEventListener->*_touchEventSelector)(this,TOUCH_EVENT_ENDED);
-    }
-
     if (_clickEventListener) {
         _clickEventListener(this);
     }
@@ -884,27 +673,7 @@ void Widget::releaseUpEvent()
 void Widget::cancelUpEvent()
 {
     this->retain();
-    if (_touchEventCallback)
-    {
-        _touchEventCallback(this, TouchEventType::CANCELED);
-    }
-
-    if (_touchEventListener && _touchEventSelector)
-    {
-        (_touchEventListener->*_touchEventSelector)(this,TOUCH_EVENT_CANCELED);
-    }
     this->release();
-}
-
-void Widget::addTouchEventListener(Ref *target, SEL_TouchEvent selector)
-{
-    _touchEventListener = target;
-    _touchEventSelector = selector;
-}
-
-void Widget::addTouchEventListener(const ccWidgetTouchCallback& callback)
-{
-    this->_touchEventCallback = callback;
 }
 
 void Widget::addClickEventListener(const ccWidgetClickCallback &callback)
@@ -956,18 +725,6 @@ bool Widget::isClippingParentContainsPoint(const Vec2 &pt)
         return false;
     }
     return true;
-}
-
-void Widget::interceptTouchEvent(cocos2d::ui::Widget::TouchEventType event, cocos2d::ui::Widget *sender, Touch *touch)
-{
-    Widget* widgetParent = getWidgetParent();
-    if (widgetParent)
-    {
-        widgetParent->_hittedByCamera = _hittedByCamera;
-        widgetParent->interceptTouchEvent(event,sender,touch);
-        widgetParent->_hittedByCamera = nullptr;
-    }
-
 }
 
 void Widget::setPosition(const Vec2 &pos)
@@ -1051,21 +808,6 @@ float Widget::getTopBoundary() const
     return getBottomBoundary() + getBoundingBox().size.height;
 }
 
-const Vec2& Widget::getTouchBeganPosition()const
-{
-    return _touchBeganPosition;
-}
-
-const Vec2& Widget::getTouchMovePosition()const
-{
-    return _touchMovePosition;
-}
-
-const Vec2& Widget::getTouchEndPosition()const
-{
-    return _touchEndPosition;
-}
-
 std::string Widget::getDescription() const
 {
     return "Widget";
@@ -1118,7 +860,6 @@ void Widget::copyProperties(Widget *widget)
     setEnabled(widget->isEnabled());
     setVisible(widget->isVisible());
     setBright(widget->isBright());
-    setTouchEnabled(widget->isTouchEnabled());
     setLocalZOrder(widget->getLocalZOrder());
     setTag(widget->getTag());
     setName(widget->getName());
@@ -1143,13 +884,9 @@ void Widget::copyProperties(Widget *widget)
     setOpacity(widget->getOpacity());
     setCascadeColorEnabled(widget->isCascadeColorEnabled());
     setCascadeOpacityEnabled(widget->isCascadeOpacityEnabled());
-    _touchEventCallback = widget->_touchEventCallback;
-    _touchEventListener = widget->_touchEventListener;
-    _touchEventSelector = widget->_touchEventSelector;
     _clickEventListener = widget->_clickEventListener;
     _focused = widget->_focused;
     _focusEnabled = widget->_focusEnabled;
-    _propagateTouchEvents = widget->_propagateTouchEvents;
 
     copySpecialProperties(widget);
 }

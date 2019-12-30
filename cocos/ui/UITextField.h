@@ -290,27 +290,6 @@ public:
                              const std::string& fontName,
                              int fontSize);
     
-    /**
-     * @brief Set the touch size
-     * The touch size is used for @see `hitTest`.
-     * @param size A delimitation zone.
-     */
-    void setTouchSize(const Size &size);
-    
-    /**
-     * @brief Get current touch size of TextField.
-     *
-     * @return The TextField's touch size.
-     */
-    Size getTouchSize()const;
-    
-    /**
-     * @brief Toggle enable touch area.
-     *
-     * @param enable True if enable touch area, false otherwise.
-     */
-    void setTouchAreaEnabled(bool enable);
-    
     virtual bool hitTest(const Vec2 &pt, const Camera* camera, Vec3 *p) const override;
     
     
@@ -422,8 +401,6 @@ public:
      *@return The string value of TextField.
      */
     const std::string& getString()const;
-    
-    virtual bool onTouchBegan(Touch *touch, Event *unusedEvent) override;
     
     
     /**
@@ -663,7 +640,6 @@ protected:
 
     float _touchWidth;
     float _touchHeight;
-    bool _useTouchArea;
     
     Ref* _textFieldEventListener;
 #if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))

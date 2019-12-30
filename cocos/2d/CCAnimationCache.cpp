@@ -225,7 +225,7 @@ void AnimationCache::addAnimationsWithFile(const std::string& plist)
 {
     CCASSERT(!plist.empty(), "Invalid texture file name");
     if (plist.empty()) {
-        log("%s error:file name is empty!", __FUNCTION__);
+        CCLOG("%s error:file name is empty!", __FUNCTION__);
         return;
     }
     
@@ -233,7 +233,7 @@ void AnimationCache::addAnimationsWithFile(const std::string& plist)
 
     CCASSERT( !dict.empty(), "CCAnimationCache: File could not be found");
     if (dict.empty()) {
-        log("AnimationCache::addAnimationsWithFile error:%s not exist!", plist.c_str());
+        CCLOG("AnimationCache::addAnimationsWithFile error:%s not exist!", plist.c_str());
     }
 
     addAnimationsWithDictionary(dict,plist);

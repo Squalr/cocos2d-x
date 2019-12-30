@@ -48,9 +48,7 @@ public:
     /** Type Event type.*/
     enum class Type
     {
-        TOUCH,
         KEYBOARD,
-        ACCELERATION,
         MOUSE,
         FOCUS,
         GAME_CONTROLLER,

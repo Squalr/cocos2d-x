@@ -119,7 +119,6 @@ protected:
     bool _done;
     
 protected:
-    bool sendUpdateEventToScript(float dt, Action *actionObject);
 };
 
 /** @class Sequence

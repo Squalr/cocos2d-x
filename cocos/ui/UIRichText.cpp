@@ -32,7 +32,6 @@
 
 #include "platform/CCFileUtils.h"
 #include "platform/CCApplication.h"
-#include "base/CCEventListenerTouch.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCDirector.h"
 #include "2d/CCLabel.h"
@@ -63,32 +62,10 @@ public:
     , _handleOpenUrl(handleOpenUrl)
     {
         setName(ListenerComponent::COMPONENT_NAME);
-        
-        _touchListener = cocos2d::EventListenerTouchAllAtOnce::create();
-        _touchListener->onTouchesEnded = CC_CALLBACK_2(ListenerComponent::onTouchesEnded, this);
-
-        Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_touchListener, _parent);
-        _touchListener->retain();
     }
 
     virtual ~ListenerComponent()
     {
-        Director::getInstance()->getEventDispatcher()->removeEventListener(_touchListener);
-        _touchListener->release();
-    }
-
-    void onTouchesEnded(const std::vector<Touch*>& touches, Event* /*event*/)
-    {
-        for (const auto& touch: touches)
-        {
-            // FIXME: Node::getBoundBox() doesn't return it in local coordinates... so create one manually.
-            Rect localRect = Rect(Vec2::ZERO, _parent->getContentSize());
-            if (localRect.containsPoint(_parent->convertTouchToNodeSpace(touch))) {
-                if (_handleOpenUrl) {
-                    _handleOpenUrl(_url);
-                }
-            }
-        }
     }
     
     void setOpenUrlHandler(const RichText::OpenUrlHandler& handleOpenUrl)
@@ -101,7 +78,6 @@ private:
     std::string _url;
     RichText::OpenUrlHandler _handleOpenUrl;
     EventDispatcher* _eventDispatcher;  // weak ref.
-    EventListenerTouchAllAtOnce* _touchListener;    // strong ref.
 };
 const std::string ListenerComponent::COMPONENT_NAME("cocos2d_ui_UIRichText_ListenerComponent");
 

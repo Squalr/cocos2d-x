@@ -151,8 +151,7 @@ Main features
    * Parallax scrolling
    * Motion Streak
    * Render To Texture
-   * Touch/Accelerometer on mobile devices
-   * Touch/Mouse/Keyboard on desktop
+   * Mouse/Keyboard on desktop
    * Sound Engine support (CocosDenshion library) based on OpenAL
    * Integrated Slow motion/Fast forward
    * Fast and compressed textures: PVR compressed and uncompressed textures, ETC1 compressed textures, and more

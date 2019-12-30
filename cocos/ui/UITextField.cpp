@@ -283,7 +283,6 @@ TextField::TextField():
 _textFieldRenderer(nullptr),
 _touchWidth(0.0f),
 _touchHeight(0.0f),
-_useTouchArea(false),
 _textFieldEventListener(nullptr),
 _textFieldEventSelector(nullptr),
 _eventCallback(nullptr),
@@ -331,7 +330,6 @@ bool TextField::init()
 {
     if (Widget::init())
     {
-        setTouchEnabled(true);
         return true;
     }
     return false;
@@ -339,14 +337,6 @@ bool TextField::init()
     
 void TextField::onEnter()
 {
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnEnter))
-            return;
-    }
-#endif
-    
     Widget::onEnter();
     scheduleUpdate();
 }
@@ -357,33 +347,14 @@ void TextField::initRenderer()
     addChild(_textFieldRenderer, TEXTFIELD_RENDERER_Z, -1);
 }
 
-void TextField::setTouchSize(const Size &size)
-{
-    _touchWidth = size.width;
-    _touchHeight = size.height;
-}
-    
-void TextField::setTouchAreaEnabled(bool enable)
-{
-    _useTouchArea = enable;
-}
-    
 bool TextField::hitTest(const Vec2 &pt, const Camera* camera, Vec3* /*p*/) const
 {
-    if (false == _useTouchArea)
-    {
-        return Widget::hitTest(pt, camera, nullptr);
-    }
+    // return Widget::hitTest(pt, camera, nullptr);
 
     auto size = getContentSize();
     auto anch = getAnchorPoint();
     Rect rect((size.width - _touchWidth) * anch.x, (size.height - _touchHeight) * anch.y, _touchWidth, _touchHeight);
     return isScreenPointInRect(pt, camera, getWorldToNodeTransform(), rect, nullptr);
-}
-
-Size TextField::getTouchSize()const
-{
-    return Size(_touchWidth, _touchHeight);
 }
 
 void TextField::setString(const std::string& text)
@@ -514,26 +485,6 @@ const std::string& TextField::getString()const
     
 int TextField::getStringLength() const {
     return _textFieldRenderer->getStringLength();
-}
-
-
-bool TextField::onTouchBegan(Touch *touch, Event *unusedEvent)
-{
-    bool pass = Widget::onTouchBegan(touch, unusedEvent);
-    if (_hitted)
-    {
-        if (isFocusEnabled())
-        {
-            requestFocus();
-        }
-
-        _textFieldRenderer->attachWithIME();
-    }
-    else
-    {
-        this->didNotSelectSelf();
-    }
-    return pass;
 }
 
 void TextField::setMaxLengthEnabled(bool enable)

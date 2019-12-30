@@ -36,30 +36,11 @@ THE SOFTWARE.
  */
 NS_CC_BEGIN
 
-class EventListenerTouchOneByOne;
+class Event;
 class Camera;
 
 namespace ui {
     class LayoutComponent;
-
-/**
- * Touch event type.
- *@deprecated use `Widget::TouchEventType` instead
- */
-typedef enum
-{
-    TOUCH_EVENT_BEGAN,
-    TOUCH_EVENT_MOVED,
-    TOUCH_EVENT_ENDED,
-    TOUCH_EVENT_CANCELED
-}TouchEventType;
-    
-/**
- * Touch event callback.
- *@deprecated use `Widget::ccWidgetTouchCallback` instead
- */
-typedef void (Ref::*SEL_TouchEvent)(Ref*,TouchEventType);
-#define toucheventselector(_SELECTOR) (SEL_TouchEvent)(&_SELECTOR)
 
 /**
  *@brief Base class for all ui widgets.
@@ -95,18 +76,7 @@ public:
         ABSOLUTE,
         PERCENT
     };
-    
-    /**
-     * Touch event type.
-     */
-    enum class TouchEventType
-    {
-        BEGAN,
-        MOVED,
-        ENDED,
-        CANCELED
-    };
-    
+
     /**
      * Texture resource type.
      * - LOCAL:  It means the texture is loaded from image.
@@ -128,11 +98,6 @@ public:
         HIGHLIGHT
     };
 
-    
-    /**
-     * Widget touch event callback.
-     */
-    typedef std::function<void(Ref*,Widget::TouchEventType)> ccWidgetTouchCallback;
     /**
      * Widget click event callback.
      */
@@ -197,15 +162,6 @@ public:
     bool isBright() const;
 
     /**
-     * Sets whether the widget is touch enabled.
-     *
-     * The default value is false, a widget is default to touch disabled.
-     *
-     * @param enabled   True if the widget is touch enabled, false if the widget is touch disabled.
-     */
-    virtual void setTouchEnabled(bool enabled);
-
-    /**
      * To set the bright style of widget.
      *
      * @see BrightStyle
@@ -213,13 +169,6 @@ public:
      * @param style   BrightStyle::NORMAL means the widget is in normal state, BrightStyle::HIGHLIGHT means the widget is in highlight state.
      */
     void setBrightStyle(BrightStyle style);
-
-    /**
-     * Determines if the widget is touch enabled
-     *
-     * @return true if the widget is touch enabled, false if the widget is touch disabled.
-     */
-    bool isTouchEnabled() const;
 
     /**
      * Determines if the widget is highlighted
@@ -290,16 +239,6 @@ public:
      * @js NA
      */
     virtual void visit(cocos2d::Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags) override;
-
-    /**
-     * Sets the touch event target/selector to the widget
-     */
-    CC_DEPRECATED_ATTRIBUTE void addTouchEventListener(Ref* target,SEL_TouchEvent selector);
-    /**
-     * Set a callback to touch vent listener.
-     *@param callback  The callback in `ccWidgetEventCallback.`
-     */
-    void addTouchEventListener(const ccWidgetTouchCallback& callback);
     
     /**
      * Set a click event handler to the widget.
@@ -432,42 +371,6 @@ public:
     bool isClippingParentContainsPoint(const Vec2& pt);
 
     /**
-     * Gets the touch began point of widget when widget is selected.
-     * @deprecated use `getTouchBeganPosition` instead.
-     * @return the touch began point.
-     */
-    CC_DEPRECATED_ATTRIBUTE const Vec2& getTouchStartPos()const{return this->getTouchBeganPosition();}
-    /**
-     * Gets the touch began point of widget when widget is selected.
-     * @return the touch began point.
-     */
-    const Vec2& getTouchBeganPosition()const;
-
-    /*
-     * Gets the touch move point of widget when widget is selected.
-     * @deprecated use `getTouchMovePosition` instead.
-     * @return the touch move point.
-     */
-    CC_DEPRECATED_ATTRIBUTE const Vec2& getTouchMovePos()const{ return this->getTouchMovePosition();}
-    /*
-     * Gets the touch move point of widget when widget is selected.
-     * @return the touch move point.
-     */
-    const Vec2& getTouchMovePosition()const;
-
-    /*
-     * Gets the touch end point of widget when widget is selected.
-     * @deprecated use `getTouchEndPosition` instead.
-     * @return the touch end point.
-     */
-    CC_DEPRECATED_ATTRIBUTE const Vec2& getTouchEndPos()const{return this->getTouchEndPosition();}
-    /*
-     * Gets the touch end point of widget when widget is selected.
-     * @return the touch end point.
-     */
-    const Vec2& getTouchEndPosition()const;
-
-    /**
      * Changes the size that is widget's size
      * @deprecated use `setContentSize` instead.
      * @param size that is widget's size
@@ -539,35 +442,6 @@ public:
      * @return true if the point is in widget's content space, false otherwise.
      */
     virtual bool hitTest(const Vec2 &pt, const Camera* camera, Vec3 *p) const;
-
-    /**
-     * A callback which will be called when touch began event is issued.
-     *@param touch The touch info.
-     *@param unusedEvent The touch event info.
-     *@return True if user want to handle touches, false otherwise.
-     */
-    virtual bool onTouchBegan(Touch *touch, Event *unusedEvent);
-
-    /**
-     * A callback which will be called when touch moved event is issued.
-     *@param touch The touch info.
-     *@param unusedEvent The touch event info.
-     */
-    virtual void onTouchMoved(Touch *touch, Event *unusedEvent);
-
-    /**
-     * A callback which will be called when touch ended event is issued.
-     *@param touch The touch info.
-     *@param unusedEvent The touch event info.
-     */
-    virtual void onTouchEnded(Touch *touch, Event *unusedEvent);
-
-    /**
-     * A callback which will be called when touch cancelled event is issued.
-     *@param touch The touch info.
-     *@param unusedEvent The touch event info.
-     */
-    virtual void onTouchCancelled(Touch *touch, Event *unusedEvent);
 
     /**
      * Toggle whether ignore user defined content size for widget.
@@ -652,36 +526,6 @@ public:
      *@return Action tag.
      */
     int getActionTag()const;
-    
-    /**
-     * @brief Allow widget touch events to propagate to its parents. Set false will disable propagation
-     * @param isPropagate  True to allow propagation, false otherwise.
-     * @since v3.3
-     */
-    void setPropagateTouchEvents(bool isPropagate);
-    
-    /**
-     * Return whether the widget is propagate touch events to its parents or not
-     * @return whether touch event propagation is allowed or not.
-     * @since v3.3
-     */
-     
-    bool isPropagateTouchEvents()const;
-    
-    /**
-     * Toggle widget swallow touch option.
-     * @brief Specify widget to swallow touches or not
-     * @param swallow True to swallow touch, false otherwise.
-     * @since v3.3
-     */
-    void setSwallowTouches(bool swallow);
-    
-    /**
-     * Return whether the widget is swallowing touch or not
-     * @return Whether touch is swallowed.
-     * @since v3.3
-     */
-    bool isSwallowTouches()const;
     
     /**
      * Query whether widget is focused or not.
@@ -806,20 +650,6 @@ CC_CONSTRUCTOR_ACCESS:
 
     //initializes state of widget.
     virtual bool init() override;
-
-    /*
-     * @brief Sends the touch event to widget's parent, if a widget wants to handle touch event under another widget, 
-     *        it must override this function.
-     * @param  event  the touch event type, it could be BEGAN/MOVED/CANCELED/ENDED
-     * @param parent
-     * @param point
-     */
-    virtual void interceptTouchEvent(TouchEventType event, Widget* sender, Touch *touch);
-    
-    /**
-     *@brief Propagate touch events to its parents
-     */
-    void propagateTouchEvent(TouchEventType event, Widget* sender, Touch *touch);
     
     friend class PageView;
     /**
@@ -897,11 +727,9 @@ protected:
     bool _unifySize;
     bool _enabled;
     bool _bright;
-    bool _touchEnabled;
     bool _highlight;
     bool _affectByClipping;
     bool _ignoreSize;
-    bool _propagateTouchEvents;
 
     BrightStyle _brightStyle;
     SizeType _sizeType;
@@ -919,10 +747,6 @@ protected:
     // weak reference of the camera which made the widget passed the hit test when response touch begin event
     // it's useful in the next touch move/end events
     const Camera *_hittedByCamera;
-    EventListenerTouchOneByOne* _touchListener;
-    Vec2 _touchBeganPosition;
-    Vec2 _touchMovePosition;
-    Vec2 _touchEndPosition;
 
     bool _flippedX;
     bool _flippedY;
@@ -934,20 +758,6 @@ protected:
      */
     static Widget *_focusedWidget;  //both layout & widget will be stored in this variable
 
-    Ref*       _touchEventListener;
-    #if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    #elif _MSC_VER >= 1400 //vs 2005 or higher
-    #pragma warning (push)
-    #pragma warning (disable: 4996)
-    #endif
-    SEL_TouchEvent    _touchEventSelector;
-    #if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-    #pragma GCC diagnostic warning "-Wdeprecated-declarations"
-    #elif _MSC_VER >= 1400 //vs 2005 or higher
-    #pragma warning (pop)
-    #endif
-    ccWidgetTouchCallback _touchEventCallback;
     ccWidgetClickCallback _clickEventListener;
     ccWidgetEventCallback _ccEventCallback;
     

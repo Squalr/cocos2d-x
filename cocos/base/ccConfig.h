@@ -280,40 +280,13 @@ THE SOFTWARE.
 #define CC_USE_TIFF  1
 #endif // CC_USE_TIFF
 
-/** Support webp or not. If your application don't use webp format picture, you can undefine this macro to save package size.
- */
-#ifndef CC_USE_WEBP
-#define CC_USE_WEBP  1
-#endif // CC_USE_WEBP
-
-/** Enable Script binding. */
-#ifndef CC_ENABLE_SCRIPT_BINDING
-#define CC_ENABLE_SCRIPT_BINDING 0
-#endif
-
-/** When CC_ENABLE_SCRIPT_BINDING and CC_ENABLE_GC_FOR_NATIVE_OBJECTS are both 1
- * then the Garbage collector will release the native objects, only when the JS/Lua objects
- * are collected.
- * The benefit is that users don't need to retain/release the JS/Lua objects manually.
- * Disabled by default.
- */
-#ifdef CC_ENABLE_SCRIPT_BINDING
-  #ifndef CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-  #define CC_ENABLE_GC_FOR_NATIVE_OBJECTS 0
-  #endif
-#endif
-
 /** @def CC_CONSTRUCTOR_ACCESS
  * Indicate the init functions access modifier. If value equals to protected, then these functions are protected.
  * If value equals to public, these functions are public,
  * protected by default.
  */
 #ifndef CC_CONSTRUCTOR_ACCESS
-  #ifdef CC_ENABLE_SCRIPT_BINDING
     #define CC_CONSTRUCTOR_ACCESS public
-  #else
-    #define CC_CONSTRUCTOR_ACCESS protected
-  #endif
 #endif
 
 /** @def CC_ENABLE_ALLOCATOR

@@ -495,7 +495,7 @@ Data Device::getTextureDataForText(const char * text, const FontDefinition& text
 
         if (!dc.setFont(textDefinition._fontName.c_str(), textDefinition._fontSize,false))
         {
-            log("Can't found font(%s), use system default", textDefinition._fontName.c_str());
+            CCLOG("Can't found font(%s), use system default", textDefinition._fontName.c_str());
         }
 
         // draw text

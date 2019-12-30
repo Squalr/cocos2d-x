@@ -29,7 +29,6 @@ THE SOFTWARE.
 /// @cond DO_NOT_SHOW
 #include <string>
 #include "base/CCRef.h"
-#include "base/CCScriptSupport.h"
 
 NS_CC_BEGIN
 
@@ -83,10 +82,6 @@ protected:
     Node* _owner;
     std::string _name;
     bool _enabled;
-    
-#if CC_ENABLE_SCRIPT_BINDING
-    ccScriptType _scriptType;         ///< type of script binding, lua or javascript
-#endif
 };
 
 NS_CC_END

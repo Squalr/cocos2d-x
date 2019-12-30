@@ -495,13 +495,13 @@ std::vector<Vec2> AutoPolygon::reduce(const std::vector<Vec2>& points, const Rec
     // if there are less than 3 points, then we have nothing
     if(size<3)
     {
-        log("AUTOPOLYGON: cannot reduce points for %s that has less than 3 points in input, e: %f", _filename.c_str(), epsilon);
+        CCLOG("AUTOPOLYGON: cannot reduce points for %s that has less than 3 points in input, e: %f", _filename.c_str(), epsilon);
         return std::vector<Vec2>();
     }
     // if there are less than 9 points (but more than 3), then we don't need to reduce it
     else if (size < 9)
     {
-        log("AUTOPOLYGON: cannot reduce points for %s e: %f",_filename.c_str(), epsilon);
+        CCLOG("AUTOPOLYGON: cannot reduce points for %s e: %f",_filename.c_str(), epsilon);
         return points;
     }
     float maxEp = MIN(rect.size.width, rect.size.height);
@@ -523,7 +523,7 @@ std::vector<Vec2> AutoPolygon::expand(const std::vector<Vec2>& points, const coc
     // if there are less than 3 points, then we have nothing
     if(size<3)
     {
-        log("AUTOPOLYGON: cannot expand points for %s with less than 3 points, e: %f", _filename.c_str(), epsilon);
+        CCLOG("AUTOPOLYGON: cannot expand points for %s with less than 3 points, e: %f", _filename.c_str(), epsilon);
         return std::vector<Vec2>();
     }
     ClipperLib::Path subj;
@@ -540,7 +540,7 @@ std::vector<Vec2> AutoPolygon::expand(const std::vector<Vec2>& points, const coc
     ClipperLib::PolyNode* p = solution.GetFirst();
     if(!p)
     {
-        log("AUTOPOLYGON: Clipper failed to expand the points");
+        CCLOG("AUTOPOLYGON: Clipper failed to expand the points");
         return points;
     }
     while(p->IsHole()){
@@ -579,7 +579,7 @@ TrianglesCommand::Triangles AutoPolygon::triangulate(const std::vector<Vec2>& po
     // if there are less than 3 points, then we can't triangulate
     if(points.size()<3)
     {
-        log("AUTOPOLYGON: cannot triangulate %s with less than 3 points", _filename.c_str());
+        CCLOG("AUTOPOLYGON: cannot triangulate %s with less than 3 points", _filename.c_str());
         return TrianglesCommand::Triangles();
     }
     std::vector<p2t::Point*> p2points;

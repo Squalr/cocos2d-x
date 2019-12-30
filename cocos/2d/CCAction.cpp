@@ -43,10 +43,6 @@ Action::Action()
 ,_tag(Action::INVALID_TAG)
 ,_flags(0)
 {
-#if CC_ENABLE_SCRIPT_BINDING
-    ScriptEngineProtocol* engine = ScriptEngineManager::getInstance()->getScriptEngine();
-    _scriptType = engine != nullptr ? engine->getScriptType() : kScriptTypeNone;
-#endif
 }
 
 Action::~Action()
@@ -115,7 +111,7 @@ bool Speed::initWithAction(ActionInterval *action, float speed)
     CCASSERT(action != nullptr, "action must not be NULL");
     if (action == nullptr)
     {
-        log("Speed::initWithAction error: action is nullptr!");
+        CCLOG("Speed::initWithAction error: action is nullptr!");
         return false;
     }
     
@@ -142,7 +138,7 @@ void Speed::startWithTarget(Node* target)
         _innerAction->startWithTarget(target);
     }
     else
-        log("Speed::startWithTarget error: target(%p) or _innerAction(%p) is nullptr!", target, _innerAction);
+        CCLOG("Speed::startWithTarget error: target(%p) or _innerAction(%p) is nullptr!", target, _innerAction);
 }
 
 void Speed::stop()
@@ -231,7 +227,7 @@ bool Follow::initWithTargetAndOffset(Node *followedNode, float xOffset,float yOf
     CCASSERT(followedNode != nullptr, "FollowedNode can't be NULL");
     if(followedNode == nullptr)
     {
-        log("Follow::initWithTarget error: followedNode is nullptr!");
+        CCLOG("Follow::initWithTarget error: followedNode is nullptr!");
         return false;
     }
  

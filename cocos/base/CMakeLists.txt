@@ -1,14 +1,7 @@
 
 if(APPLE)
     set(COCOS_BASE_SPECIFIC_SRC
-        base/CCUserDefault-apple.mm
         base/CCController-apple.mm
-        )
-
-elseif(ANDROID)
-    set(COCOS_BASE_SPECIFIC_SRC
-        base/CCUserDefault-android.cpp
-        base/CCController-android.cpp
         )
 elseif(LINUX)
     set(COCOS_BASE_SPECIFIC_SRC
@@ -22,19 +15,15 @@ set(COCOS_BASE_HEADER
     base/CCEventListenerMouse.h
     base/atitc.h
     base/utlist.h
-    base/CCEventTouch.h
     base/CCData.h
     base/ccMacros.h
-    base/CCEventAcceleration.h
     base/CCEventListenerKeyboard.h
     base/CCController.h
-    base/CCTouch.h
     base/base64.h
     base/CCEventListenerController.h
     base/s3tc.h
     base/etc1.h
     base/CCGameController.h
-    base/CCConsole.h
     base/CCEvent.h
     base/ccTypes.h
     base/CCAsyncTaskPool.h
@@ -55,13 +44,11 @@ set(COCOS_BASE_HEADER
     base/CCRefPtr.h
     base/CCDirector.h
     base/CCEventListenerFocus.h
-    base/CCUserDefault.h
     base/ccConfig.h
     base/ccFPSImages.h
     base/ZipUtils.h
     base/CCMap.h
     base/ccUTF8.h
-    base/CCScriptSupport.h
     base/allocator/CCAllocatorBase.h
     base/allocator/CCAllocatorDiagnostics.h
     base/allocator/CCAllocatorMacros.h
@@ -80,9 +67,6 @@ set(COCOS_BASE_HEADER
     base/CCNS.h
     base/CCAutoreleasePool.h
     base/CCStencilStateManager.h
-    base/CCEventListenerTouch.h
-    base/CCEventListenerAcceleration.h
-    base/firePngData.h
     base/ccCArray.h
     base/CCEventListener.h
     base/CCScheduler.h
@@ -94,37 +78,29 @@ set(COCOS_BASE_SRC
     base/CCAsyncTaskPool.cpp
     base/CCAutoreleasePool.cpp
     base/CCConfiguration.cpp
-    base/CCConsole.cpp
     base/CCController.cpp
     base/CCData.cpp
     base/CCNinePatchImageParser.cpp
     base/CCDirector.cpp
     base/CCEvent.cpp
-    base/CCEventAcceleration.cpp
     base/CCEventController.cpp
     base/CCEventCustom.cpp
     base/CCEventDispatcher.cpp
     base/CCEventFocus.cpp
     base/CCEventKeyboard.cpp
     base/CCEventListener.cpp
-    base/CCEventListenerAcceleration.cpp
     base/CCEventListenerController.cpp
     base/CCEventListenerCustom.cpp
     base/CCEventListenerFocus.cpp
     base/CCEventListenerKeyboard.cpp
     base/CCEventListenerMouse.cpp
-    base/CCEventListenerTouch.cpp
     base/CCEventMouse.cpp
-    base/CCEventTouch.cpp
     base/CCIMEDispatcher.cpp
     base/CCNS.cpp
     base/CCProfiling.cpp
     base/CCProperties.cpp
     base/CCRef.cpp
     base/CCScheduler.cpp
-    base/CCScriptSupport.cpp
-    base/CCTouch.cpp
-    base/CCUserDefault.cpp
     base/CCValue.cpp
     base/ObjectFactory.cpp
     base/CCStencilStateManager.cpp

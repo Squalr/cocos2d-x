@@ -205,19 +205,19 @@ int AudioEngine::play2d(const std::string& filePath, bool loop, float volume, co
         }
         
         if (_audioIDInfoMap.size() >= _maxInstances) {
-            log("Fail to play %s cause by limited max instance of AudioEngine",filePath.c_str());
+            CCLOG("Fail to play %s cause by limited max instance of AudioEngine",filePath.c_str());
             break;
         }
         if (profileHelper)
         {
              if(profileHelper->profile.maxInstances != 0 && profileHelper->audioIDs.size() >= profileHelper->profile.maxInstances){
-                 log("Fail to play %s cause by limited max instance of AudioProfile",filePath.c_str());
+                 CCLOG("Fail to play %s cause by limited max instance of AudioProfile",filePath.c_str());
                  break;
              }
              if (profileHelper->profile.minDelay > TIME_DELAY_PRECISION) {
                  auto currTime = utils::gettime();
                  if (profileHelper->lastPlayTime > TIME_DELAY_PRECISION && currTime - profileHelper->lastPlayTime <= profileHelper->profile.minDelay) {
-                     log("Fail to play %s cause by limited minimum delay",filePath.c_str());
+                     CCLOG("Fail to play %s cause by limited minimum delay",filePath.c_str());
                      break;
                  }
              }
@@ -467,7 +467,7 @@ bool AudioEngine::isLoop(int audioID)
         return tmpIterator->second.loop;
     }
     
-    log("AudioEngine::isLoop-->The audio instance %d is non-existent", audioID);
+    CCLOG("AudioEngine::isLoop-->The audio instance %d is non-existent", audioID);
     return false;
 }
 
@@ -479,7 +479,7 @@ float AudioEngine::getVolume(int audioID)
         return tmpIterator->second.volume;
     }
 
-    log("AudioEngine::getVolume-->The audio instance %d is non-existent", audioID);
+    CCLOG("AudioEngine::getVolume-->The audio instance %d is non-existent", audioID);
     return 0.0f;
 }
 

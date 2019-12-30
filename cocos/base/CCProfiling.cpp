@@ -90,7 +90,7 @@ void Profiler::displayTimers()
     for (auto& iter : _activeTimers)
     {
         ProfilingTimer* timer = iter.second;
-        log("%s", timer->getDescription().c_str());
+        CCLOG("%s", timer->getDescription().c_str());
     }
 }
 

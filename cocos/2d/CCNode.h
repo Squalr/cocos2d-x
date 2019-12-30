@@ -34,7 +34,6 @@
 #include "base/ccMacros.h"
 #include "base/CCVector.h"
 #include "base/CCProtocols.h"
-#include "base/CCScriptSupport.h"
 #include "math/CCAffineTransform.h"
 #include "math/CCMath.h"
 #include "2d/CCComponentContainer.h"
@@ -47,7 +46,6 @@
 NS_CC_BEGIN
 
 class GridBase;
-class Touch;
 class Action;
 class LabelProtocol;
 class Scheduler;
@@ -1687,22 +1685,6 @@ public:
     Vec2 convertToWorldSpaceAR(const Vec2& nodePoint) const;
 
     /**
-     * convenience methods which take a Touch instead of Vec2.
-     *
-     * @param touch A given touch.
-     * @return A point in world space coordinates.
-     */
-    Vec2 convertTouchToNodeSpace(Touch * touch) const;
-
-    /**
-     * converts a Touch (world coordinates) into a local coordinate. This method is AR (Anchor Relative).
-     *
-     * @param touch A given touch.
-     * @return A point in world space coordinates, anchor relative.
-     */
-    Vec2 convertTouchToNodeSpaceAR(Touch * touch) const;
-
-    /**
      *  Sets an additional transform matrix to the node.
      *
      *  In order to remove it, call it again with the argument `nullptr`.
@@ -2021,12 +2003,6 @@ protected:
     bool _reorderChildDirty;          ///< children order dirty flag
     bool _isTransitionFinished;       ///< flag to indicate whether the transition was finished
 
-#if CC_ENABLE_SCRIPT_BINDING
-    int _scriptHandler;               ///< script handler for onEnter() & onExit(), used in Javascript binding and Lua binding.
-    int _updateScriptHandler;         ///< script handler for update() callback per frame, which is invoked from lua & javascript.
-    ccScriptType _scriptType;         ///< type of script binding, lua or javascript
-#endif
-    
     ComponentContainer *_componentContainer;        ///< Dictionary of components
     
     // opacity controls

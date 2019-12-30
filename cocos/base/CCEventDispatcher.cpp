@@ -26,8 +26,6 @@
 #include <algorithm>
 
 #include "base/CCEventCustom.h"
-#include "base/CCEventListenerTouch.h"
-#include "base/CCEventListenerAcceleration.h"
 #include "base/CCEventListenerMouse.h"
 #include "base/CCEventListenerKeyboard.h"
 #include "base/CCEventListenerCustom.h"
@@ -70,35 +68,37 @@ static EventListener::ListenerID __getListenerID(Event* event)
     EventListener::ListenerID ret;
     switch (event->getType())
     {
-        case Event::Type::ACCELERATION:
-            ret = EventListenerAcceleration::LISTENER_ID;
-            break;
         case Event::Type::CUSTOM:
-            {
-                auto customEvent = static_cast<EventCustom*>(event);
-                ret = customEvent->getEventName();
-            }
+        {
+            auto customEvent = static_cast<EventCustom*>(event);
+            ret = customEvent->getEventName();
             break;
+        }
         case Event::Type::KEYBOARD:
+        {
             ret = EventListenerKeyboard::LISTENER_ID;
             break;
+        }
         case Event::Type::MOUSE:
+        {
             ret = EventListenerMouse::LISTENER_ID;
             break;
+        }
         case Event::Type::FOCUS:
+        {
             ret = EventListenerFocus::LISTENER_ID;
             break;
-        case Event::Type::TOUCH:
-            // Touch listener is very special, it contains two kinds of listeners, EventListenerTouchOneByOne and EventListenerTouchAllAtOnce.
-            // return UNKNOWN instead.
-            CCASSERT(false, "Don't call this method if the event is for touch.");
-            break;
+        }
         case Event::Type::GAME_CONTROLLER:
+        {
             ret = EventListenerController::LISTENER_ID;
             break;
+        }
         default:
+        {
             CCASSERT(false, "Invalid type!");
             break;
+        }
     }
     
     return ret;
@@ -845,7 +845,7 @@ void EventDispatcher::dispatchEventToListeners(EventListenerVector* listeners, c
     }
 }
 
-void EventDispatcher::dispatchTouchEventToListeners(EventListenerVector* listeners, const std::function<bool(EventListener*)>& onEvent)
+void EventDispatcher::dispatchMouseEventToListeners(EventListenerVector* listeners, const std::function<bool(EventListener*)>& onEvent)
 {
     bool shouldStopPropagation = false;
     auto fixedPriorityListeners = listeners->getFixedPriorityListeners();
@@ -952,19 +952,14 @@ void EventDispatcher::dispatchEvent(Event* event)
     
     DispatchGuard guard(_inDispatch);
     
-    if (event->getType() == Event::Type::TOUCH)
-    {
-        dispatchTouchEvent(static_cast<EventTouch*>(event));
-        return;
-    }
-    
     auto listenerID = __getListenerID(event);
     
     sortEventListeners(listenerID);
     
     auto pfnDispatchEventToListeners = &EventDispatcher::dispatchEventToListeners;
-    if (event->getType() == Event::Type::MOUSE) {
-        pfnDispatchEventToListeners = &EventDispatcher::dispatchTouchEventToListeners;
+    if (event->getType() == Event::Type::MOUSE)
+    {
+        pfnDispatchEventToListeners = &EventDispatcher::dispatchMouseEventToListeners;
     }
     auto iter = _listenerMap.find(listenerID);
     if (iter != _listenerMap.end())
@@ -993,199 +988,6 @@ void EventDispatcher::dispatchCustomEvent(const std::string &eventName, void *op
 bool EventDispatcher::hasEventListener(const EventListener::ListenerID& listenerID) const
 {
     return getListeners(listenerID) != nullptr;
-}
-
-void EventDispatcher::dispatchTouchEvent(EventTouch* event)
-{
-    sortEventListeners(EventListenerTouchOneByOne::LISTENER_ID);
-    sortEventListeners(EventListenerTouchAllAtOnce::LISTENER_ID);
-    
-    auto oneByOneListeners = getListeners(EventListenerTouchOneByOne::LISTENER_ID);
-    auto allAtOnceListeners = getListeners(EventListenerTouchAllAtOnce::LISTENER_ID);
-    
-    // If there aren't any touch listeners, return directly.
-    if (nullptr == oneByOneListeners && nullptr == allAtOnceListeners)
-        return;
-    
-    bool isNeedsMutableSet = (oneByOneListeners && allAtOnceListeners);
-    
-    const std::vector<Touch*>& originalTouches = event->getTouches();
-    std::vector<Touch*> mutableTouches(originalTouches.size());
-    std::copy(originalTouches.begin(), originalTouches.end(), mutableTouches.begin());
-
-    //
-    // process the target handlers 1st
-    //
-    if (oneByOneListeners)
-    {
-        auto mutableTouchesIter = mutableTouches.begin();
-        
-        for (auto& touches : originalTouches)
-        {
-            bool isSwallowed = false;
-
-            auto onTouchEvent = [&](EventListener* l) -> bool { // Return true to break
-                EventListenerTouchOneByOne* listener = static_cast<EventListenerTouchOneByOne*>(l);
-                
-                // Skip if the listener was removed.
-                if (!listener->_isRegistered)
-                    return false;
-             
-                event->setCurrentTarget(listener->_node);
-                
-                bool isClaimed = false;
-                std::vector<Touch*>::iterator removedIter;
-                
-                EventTouch::EventCode eventCode = event->getEventCode();
-                
-                if (eventCode == EventTouch::EventCode::BEGAN)
-                {
-                    if (listener->onTouchBegan)
-                    {
-                        isClaimed = listener->onTouchBegan(touches, event);
-                        if (isClaimed && listener->_isRegistered)
-                        {
-                            listener->_claimedTouches.push_back(touches);
-                        }
-                    }
-                }
-                else if (listener->_claimedTouches.size() > 0
-                         && ((removedIter = std::find(listener->_claimedTouches.begin(), listener->_claimedTouches.end(), touches)) != listener->_claimedTouches.end()))
-                {
-                    isClaimed = true;
-                    
-                    switch (eventCode)
-                    {
-                        case EventTouch::EventCode::MOVED:
-                            if (listener->onTouchMoved)
-                            {
-                                listener->onTouchMoved(touches, event);
-                            }
-                            break;
-                        case EventTouch::EventCode::ENDED:
-                            if (listener->onTouchEnded)
-                            {
-                                listener->onTouchEnded(touches, event);
-                            }
-                            if (listener->_isRegistered)
-                            {
-                                listener->_claimedTouches.erase(removedIter);
-                            }
-                            break;
-                        case EventTouch::EventCode::CANCELLED:
-                            if (listener->onTouchCancelled)
-                            {
-                                listener->onTouchCancelled(touches, event);
-                            }
-                            if (listener->_isRegistered)
-                            {
-                                listener->_claimedTouches.erase(removedIter);
-                            }
-                            break;
-                        default:
-                            CCASSERT(false, "The eventcode is invalid.");
-                            break;
-                    }
-                }
-                
-                // If the event was stopped, return directly.
-                if (event->isStopped())
-                {
-                    updateListeners(event);
-                    return true;
-                }
-                
-                CCASSERT(touches->getID() == (*mutableTouchesIter)->getID(),
-                         "touches ID should be equal to mutableTouchesIter's ID.");
-                
-                if (isClaimed && listener->_isRegistered && listener->_needSwallow)
-                {
-                    if (isNeedsMutableSet)
-                    {
-                        mutableTouchesIter = mutableTouches.erase(mutableTouchesIter);
-                        isSwallowed = true;
-                    }
-                    return true;
-                }
-                
-                return false;
-            };
-            
-            //
-            dispatchTouchEventToListeners(oneByOneListeners, onTouchEvent);
-            if (event->isStopped())
-            {
-                return;
-            }
-            
-            if (!isSwallowed)
-                ++mutableTouchesIter;
-        }
-    }
-    
-    //
-    // process standard handlers 2nd
-    //
-    if (allAtOnceListeners && mutableTouches.size() > 0)
-    {
-        
-        auto onTouchesEvent = [&](EventListener* l) -> bool{
-            EventListenerTouchAllAtOnce* listener = static_cast<EventListenerTouchAllAtOnce*>(l);
-            // Skip if the listener was removed.
-            if (!listener->_isRegistered)
-                return false;
-            
-            event->setCurrentTarget(listener->_node);
-            
-            switch (event->getEventCode())
-            {
-                case EventTouch::EventCode::BEGAN:
-                    if (listener->onTouchesBegan)
-                    {
-                        listener->onTouchesBegan(mutableTouches, event);
-                    }
-                    break;
-                case EventTouch::EventCode::MOVED:
-                    if (listener->onTouchesMoved)
-                    {
-                        listener->onTouchesMoved(mutableTouches, event);
-                    }
-                    break;
-                case EventTouch::EventCode::ENDED:
-                    if (listener->onTouchesEnded)
-                    {
-                        listener->onTouchesEnded(mutableTouches, event);
-                    }
-                    break;
-                case EventTouch::EventCode::CANCELLED:
-                    if (listener->onTouchesCancelled)
-                    {
-                        listener->onTouchesCancelled(mutableTouches, event);
-                    }
-                    break;
-                default:
-                    CCASSERT(false, "The eventcode is invalid.");
-                    break;
-            }
-            
-            // If the event was stopped, return directly.
-            if (event->isStopped())
-            {
-                updateListeners(event);
-                return true;
-            }
-            
-            return false;
-        };
-        
-        dispatchTouchEventToListeners(allAtOnceListeners, onTouchesEvent);
-        if (event->isStopped())
-        {
-            return;
-        }
-    }
-    
-    updateListeners(event);
 }
 
 void EventDispatcher::updateListeners(Event* event)
@@ -1259,15 +1061,7 @@ void EventDispatcher::updateListeners(Event* event)
         }
     };
 
-    if (event->getType() == Event::Type::TOUCH)
-    {
-        onUpdateListeners(EventListenerTouchOneByOne::LISTENER_ID);
-        onUpdateListeners(EventListenerTouchAllAtOnce::LISTENER_ID);
-    }
-    else
-    {
-        onUpdateListeners(__getListenerID(event));
-    }
+    onUpdateListeners(__getListenerID(event));
     
     CCASSERT(_inDispatch == 1, "_inDispatch should be 1 here.");
     
@@ -1504,21 +1298,9 @@ void EventDispatcher::removeEventListenersForListenerID(const EventListener::Lis
 
 void EventDispatcher::removeEventListenersForType(EventListener::Type listenerType)
 {
-    if (listenerType == EventListener::Type::TOUCH_ONE_BY_ONE)
-    {
-        removeEventListenersForListenerID(EventListenerTouchOneByOne::LISTENER_ID);
-    }
-    else if (listenerType == EventListener::Type::TOUCH_ALL_AT_ONCE)
-    {
-        removeEventListenersForListenerID(EventListenerTouchAllAtOnce::LISTENER_ID);
-    }
-    else if (listenerType == EventListener::Type::MOUSE)
+    if (listenerType == EventListener::Type::MOUSE)
     {
         removeEventListenersForListenerID(EventListenerMouse::LISTENER_ID);
-    }
-    else if (listenerType == EventListener::Type::ACCELERATION)
-    {
-        removeEventListenersForListenerID(EventListenerAcceleration::LISTENER_ID);
     }
     else if (listenerType == EventListener::Type::KEYBOARD)
     {

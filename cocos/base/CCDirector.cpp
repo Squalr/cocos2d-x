@@ -50,22 +50,16 @@ THE SOFTWARE.
 #include "renderer/CCRenderState.h"
 #include "renderer/CCFrameBuffer.h"
 #include "2d/CCCamera.h"
-#include "base/CCUserDefault.h"
 #include "base/ccFPSImages.h"
 #include "base/CCScheduler.h"
 #include "base/ccMacros.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventCustom.h"
-#include "base/CCConsole.h"
 #include "base/CCAutoreleasePool.h"
 #include "base/CCConfiguration.h"
 #include "base/CCAsyncTaskPool.h"
 #include "base/ObjectFactory.h"
 #include "platform/CCApplication.h"
-
-#if CC_ENABLE_SCRIPT_BINDING
-#include "base/CCScriptSupport.h"
-#endif
 
 /**
  Position of the FPS
@@ -161,8 +155,6 @@ bool Director::init(void)
     
     _contentScaleFactor = 1.0f;
 
-    _console = new (std::nothrow) Console;
-
     // scheduler
     _scheduler = new (std::nothrow) Scheduler();
     // action manager
@@ -223,7 +215,6 @@ Director::~Director(void)
     CC_SAFE_RELEASE(_eventResetDirector);
 
     delete _renderer;
-    delete _console;
 
     CC_SAFE_RELEASE(_eventDispatcher);
     
@@ -731,7 +722,7 @@ void Director::purgeCachedData(void)
 
         // Note: some tests such as ActionsTest are leaking refcounted textures
         // There should be no test textures left in the cache
-        log("%s\n", _textureCache->getCachedTextureInfo().c_str());
+        CCLOG("%s\n", _textureCache->getCachedTextureInfo().c_str());
     }
     FileUtils::getInstance()->purgeCachedEntries();
 }
@@ -1132,9 +1123,6 @@ void Director::reset()
     FileUtils::destroyInstance();
     AsyncTaskPool::destroyInstance();
     
-    // cocos2d-x specific data structures
-    UserDefault::destroyInstance();
-    
     GL::invalidateStateCache();
 
     RenderState::finalize();
@@ -1177,12 +1165,6 @@ void Director::restartDirector()
 
     // Restart animation
     startAnimation();
-    
-    // Real restart in script level
-#if CC_ENABLE_SCRIPT_BINDING
-    ScriptEvent scriptEvent(kRestartGame, nullptr);
-    ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&scriptEvent);
-#endif
 }
 
 void Director::setNextScene()
