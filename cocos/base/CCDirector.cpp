@@ -48,7 +48,6 @@ THE SOFTWARE.
 #include "base/ccFPSImages.h"
 #include "base/ccMacros.h"
 #include "base/CCScheduler.h"
-#include "base/ObjectFactory.h"
 #include "platform/CCApplication.h"
 #include "platform/CCFileUtils.h"
 #include "renderer/CCFrameBuffer.h"
@@ -217,7 +216,6 @@ Director::~Director(void)
     CC_SAFE_RELEASE(_eventDispatcher);
     
     Configuration::destroyInstance();
-    ObjectFactory::destroyInstance();
 
     s_SharedDirector = nullptr;
 }
@@ -252,10 +250,6 @@ void Director::setDefaultValues(void)
         Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
     else if(pixel_format == "rgba5551")
         Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB5A1);
-
-    // PVR v2 has alpha premultiplied ?
-    bool pvr_alpha_premultiplied = conf->getValue("cocos2d.x.texture.pvrv2_has_alpha_premultiplied", Value(false)).asBool();
-    Image::setPVRImagesHavePremultipliedAlpha(pvr_alpha_premultiplied);
 }
 
 void Director::setGLDefaultValues()

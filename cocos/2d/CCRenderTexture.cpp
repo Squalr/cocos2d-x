@@ -61,7 +61,6 @@ RenderTexture::RenderTexture()
 , _clearStencil(0)
 , _autoDraw(false)
 , _sprite(nullptr)
-, _saveFileCallback(nullptr)
 , _depthAndStencilFormat(0)
 {
 #if CC_ENABLE_CACHE_TEXTURE_DATA
@@ -456,58 +455,6 @@ void RenderTexture::visit(Renderer *renderer, const Mat4 &parentTransform, uint3
 
     _sprite->visit(renderer, _modelViewTransform, parentFlags);
     draw(renderer, _modelViewTransform, parentFlags);
-}
-
-bool RenderTexture::saveToFile(const std::string& filename, bool isRGBA, std::function<void (RenderTexture*, const std::string&)> callback)
-{
-    std::string basename(filename);
-    std::transform(basename.begin(), basename.end(), basename.begin(), ::tolower);
-    
-    if (basename.find(".png") != std::string::npos)
-    {
-        return saveToFile(filename, Image::Format::PNG, isRGBA, callback);
-    }
-    else if (basename.find(".jpg") != std::string::npos)
-    {
-        if (isRGBA) CCLOG("RGBA is not supported for JPG format.");
-        return saveToFile(filename, Image::Format::JPG, false, callback);
-    }
-    else
-    {
-        CCLOG("Only PNG and JPG format are supported now!");
-    }
-    
-    return saveToFile(filename, Image::Format::JPG, false, callback);
-}
-
-bool RenderTexture::saveToFile(const std::string& fileName, Image::Format format, bool isRGBA, std::function<void (RenderTexture*, const std::string&)> callback)
-{
-    CCASSERT(format == Image::Format::JPG || format == Image::Format::PNG,
-             "the image can only be saved as JPG or PNG format");
-    if (isRGBA && format == Image::Format::JPG) CCLOG("RGBA is not supported for JPG format");
-    
-    _saveFileCallback = callback;
-    
-    std::string fullpath = FileUtils::getInstance()->getWritablePath() + fileName;
-    _saveToFileCommand.init(_globalZOrder);
-    _saveToFileCommand.func = CC_CALLBACK_0(RenderTexture::onSaveToFile, this, fullpath, isRGBA);
-    
-    Director::getInstance()->getRenderer()->addCommand(&_saveToFileCommand);
-    return true;
-}
-
-void RenderTexture::onSaveToFile(const std::string& filename, bool isRGBA)
-{
-    Image *image = newImage(true);
-    if (image)
-    {
-        image->saveToFile(filename, !isRGBA);
-    }
-    if(_saveFileCallback)
-    {
-        _saveFileCallback(this, filename);
-    }
-    CC_SAFE_DELETE(image);
 }
 
 /* get buffer as Image */

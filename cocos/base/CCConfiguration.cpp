@@ -42,20 +42,7 @@ const char* Configuration::CONFIG_FILE_LOADED = "config_file_loaded";
 
 Configuration::Configuration()
 : _maxTextureSize(0) 
-, _maxModelviewStackDepth(0)
-, _supportsPVRTC(false)
-, _supportsETC1(false)
-, _supportsS3TC(false)
-, _supportsATITC(false)
-, _supportsNPOT(false)
-, _supportsBGRA8888(false)
-, _supportsDiscardFramebuffer(false)
-, _supportsShareableVAO(false)
-, _supportsOESDepth24(false)
-, _supportsOESPackedDepthStencil(false)
-, _supportsOESMapBuffer(false)
 , _maxSamplesAllowed(0)
-, _maxTextureUnits(0)
 , _glExtensions(nullptr)
 , _maxDirLightInShader(1)
 , _maxPointLightInShader(1)
@@ -122,44 +109,12 @@ void Configuration::gatherGPUInfo()
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize);
 	_valueDict["gl.max_texture_size"] = Value((int)_maxTextureSize);
 
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &_maxTextureUnits);
-	_valueDict["gl.max_texture_units"] = Value((int)_maxTextureUnits);
-
-    _supportsETC1 = checkForGLExtension("GL_OES_compressed_ETC1_RGB8_texture");
-    _valueDict["gl.supports_ETC1"] = Value(_supportsETC1);
-    
-    _supportsS3TC = checkForGLExtension("GL_EXT_texture_compression_s3tc");
-    _valueDict["gl.supports_S3TC"] = Value(_supportsS3TC);
-    
-    _supportsATITC = checkForGLExtension("GL_AMD_compressed_ATC_texture");
-    _valueDict["gl.supports_ATITC"] = Value(_supportsATITC);
-    
-    _supportsPVRTC = checkForGLExtension("GL_IMG_texture_compression_pvrtc");
-	_valueDict["gl.supports_PVRTC"] = Value(_supportsPVRTC);
-
     _supportsNPOT = true;
 	_valueDict["gl.supports_NPOT"] = Value(_supportsNPOT);
-	
-    _supportsBGRA8888 = checkForGLExtension("GL_IMG_texture_format_BGRA8888");
-	_valueDict["gl.supports_BGRA8888"] = Value(_supportsBGRA8888);
-
-    _supportsDiscardFramebuffer = checkForGLExtension("GL_EXT_discard_framebuffer");
-	_valueDict["gl.supports_discard_framebuffer"] = Value(_supportsDiscardFramebuffer);
 
     _supportsShareableVAO = checkForGLExtension("vertex_array_object");
     
     _valueDict["gl.supports_vertex_array_object"] = Value(_supportsShareableVAO);
-
-    _supportsOESMapBuffer = checkForGLExtension("GL_OES_mapbuffer");
-    _valueDict["gl.supports_OES_map_buffer"] = Value(_supportsOESMapBuffer);
-
-    _supportsOESDepth24 = checkForGLExtension("GL_OES_depth24");
-    _valueDict["gl.supports_OES_depth24"] = Value(_supportsOESDepth24);
-
-    
-    _supportsOESPackedDepthStencil = checkForGLExtension("GL_OES_packed_depth_stencil");
-    _valueDict["gl.supports_OES_packed_depth_stencil"] = Value(_supportsOESPackedDepthStencil);
-
 
     CHECK_GL_ERROR_DEBUG();
 }
@@ -207,58 +162,9 @@ int Configuration::getMaxTextureSize() const
 	return _maxTextureSize;
 }
 
-int Configuration::getMaxModelviewStackDepth() const
-{
-	return _maxModelviewStackDepth;
-}
-
-int Configuration::getMaxTextureUnits() const
-{
-	return _maxTextureUnits;
-}
-
 bool Configuration::supportsNPOT() const
 {
 	return _supportsNPOT;
-}
-
-bool Configuration::supportsPVRTC() const
-{
-	return _supportsPVRTC;
-}
-
-bool Configuration::supportsETC() const
-{
-    //GL_ETC1_RGB8_OES is not defined in old opengl version
-#ifdef GL_ETC1_RGB8_OES
-    return _supportsETC1;
-#else
-    return false;
-#endif
-}
-
-bool Configuration::supportsS3TC() const
-{
-#ifdef GL_EXT_texture_compression_s3tc
-    return _supportsS3TC;
-#else
-    return false;
-#endif
-}
-
-bool Configuration::supportsATITC() const
-{
-    return _supportsATITC;
-}
-
-bool Configuration::supportsBGRA8888() const
-{
-	return _supportsBGRA8888;
-}
-
-bool Configuration::supportsDiscardFramebuffer() const
-{
-	return _supportsDiscardFramebuffer;
 }
 
 bool Configuration::supportsShareableVAO() const
@@ -274,18 +180,6 @@ bool Configuration::supportsMapBuffer() const
 {
     return true;
 }
-
-bool Configuration::supportsOESDepth24() const
-{
-    return _supportsOESDepth24;
-    
-}
-bool Configuration::supportsOESPackedDepthStencil() const
-{
-    return _supportsOESPackedDepthStencil;
-}
-
-
 
 int Configuration::getMaxSupportDirLightInShader() const
 {
@@ -318,7 +212,6 @@ void Configuration::setValue(const std::string& key, const Value& value)
 {
 	_valueDict[key] = value;
 }
-
 
 //
 // load file

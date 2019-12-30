@@ -71,44 +71,6 @@ namespace {
         PixelFormatInfoMapValue(Texture2D::PixelFormat::A8, Texture2D::PixelFormatInfo(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE, 8, false, false)),
         PixelFormatInfoMapValue(Texture2D::PixelFormat::I8, Texture2D::PixelFormatInfo(GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 8, false, false)),
         PixelFormatInfoMapValue(Texture2D::PixelFormat::AI88, Texture2D::PixelFormatInfo(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 16, false, true)),
-        
-#ifdef GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::PVRTC2, Texture2D::PixelFormatInfo(GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG, 0xFFFFFFFF, 0xFFFFFFFF, 2, true, false)),
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::PVRTC2A, Texture2D::PixelFormatInfo(GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG, 0xFFFFFFFF, 0xFFFFFFFF, 2, true, true)),
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::PVRTC4, Texture2D::PixelFormatInfo(GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG, 0xFFFFFFFF, 0xFFFFFFFF, 4, true, false)),
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::PVRTC4A, Texture2D::PixelFormatInfo(GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG, 0xFFFFFFFF, 0xFFFFFFFF, 4, true, true)),
-#endif
-        
-#ifdef GL_ETC1_RGB8_OES
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::ETC, Texture2D::PixelFormatInfo(GL_ETC1_RGB8_OES, 0xFFFFFFFF, 0xFFFFFFFF, 4, true, false)),
-#endif
-        
-#ifdef GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::S3TC_DXT1, Texture2D::PixelFormatInfo(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, 0xFFFFFFFF, 0xFFFFFFFF, 4, true, false)),
-#endif
-        
-#ifdef GL_COMPRESSED_RGBA_S3TC_DXT3_EXT
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::S3TC_DXT3, Texture2D::PixelFormatInfo(GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, 0xFFFFFFFF, 0xFFFFFFFF, 8, true, false)),
-#endif
-        
-#ifdef GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::S3TC_DXT5, Texture2D::PixelFormatInfo(GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, 0xFFFFFFFF, 0xFFFFFFFF, 8, true, false)),
-#endif
-        
-#ifdef GL_ATC_RGB_AMD
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::ATC_RGB, Texture2D::PixelFormatInfo(GL_ATC_RGB_AMD,
-            0xFFFFFFFF, 0xFFFFFFFF, 4, true, false)),
-#endif
-        
-#ifdef GL_ATC_RGBA_EXPLICIT_ALPHA_AMD
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::ATC_EXPLICIT_ALPHA, Texture2D::PixelFormatInfo(GL_ATC_RGBA_EXPLICIT_ALPHA_AMD,
-            0xFFFFFFFF, 0xFFFFFFFF, 8, true, false)),
-#endif
-        
-#ifdef GL_ATC_RGBA_INTERPOLATED_ALPHA_AMD
-        PixelFormatInfoMapValue(Texture2D::PixelFormat::ATC_INTERPOLATED_ALPHA, Texture2D::PixelFormatInfo(GL_ATC_RGBA_INTERPOLATED_ALPHA_AMD,
-            0xFFFFFFFF, 0xFFFFFFFF, 8, true, false)),
-#endif
     };
 }
 
@@ -568,8 +530,6 @@ bool Texture2D::initWithData(const void *data, ssize_t dataLen, Texture2D::Pixel
 
 bool Texture2D::initWithMipmaps(MipmapInfo* mipmaps, int mipmapsNum, PixelFormat pixelFormat, int pixelsWide, int pixelsHigh)
 {
-
-
     //the pixelFormat must be a certain value 
     CCASSERT(pixelFormat != PixelFormat::NONE && pixelFormat != PixelFormat::AUTO, "the \"pixelFormat\" param must be a certain value!");
     CCASSERT(pixelsWide>0 && pixelsHigh>0, "Invalid size");
@@ -589,12 +549,8 @@ bool Texture2D::initWithMipmaps(MipmapInfo* mipmaps, int mipmapsNum, PixelFormat
 
     const PixelFormatInfo& info = _pixelFormatInfoTables.at(pixelFormat);
 
-    if (info.compressed && !Configuration::getInstance()->supportsPVRTC()
-                        && !Configuration::getInstance()->supportsETC()
-                        && !Configuration::getInstance()->supportsS3TC()
-                        && !Configuration::getInstance()->supportsATITC())
+    if (info.compressed)
     {
-        CCLOG("cocos2d: WARNING: PVRTC/ETC images are not supported");
         return false;
     }
 
@@ -1224,12 +1180,6 @@ void Texture2D::drawInRect(const Rect& rect)
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-void Texture2D::PVRImagesHavePremultipliedAlpha(bool haveAlphaPremultiplied)
-{
-    Image::setPVRImagesHavePremultipliedAlpha(haveAlphaPremultiplied);
-}
-
-
 //
 // Use to apply MIN/MAG filter
 //
@@ -1361,39 +1311,6 @@ const char* Texture2D::getStringForFormat() const
 
         case Texture2D::PixelFormat::I8:
             return  "I8";
-
-        case Texture2D::PixelFormat::PVRTC4:
-            return  "PVRTC4";
-
-        case Texture2D::PixelFormat::PVRTC2:
-            return  "PVRTC2";
-
-        case Texture2D::PixelFormat::PVRTC2A:
-            return "PVRTC2A";
-        
-        case Texture2D::PixelFormat::PVRTC4A:
-            return "PVRTC4A";
-            
-        case Texture2D::PixelFormat::ETC:
-            return "ETC";
-
-        case Texture2D::PixelFormat::S3TC_DXT1:
-            return "S3TC_DXT1";
-            
-        case Texture2D::PixelFormat::S3TC_DXT3:
-            return "S3TC_DXT3";
-
-        case Texture2D::PixelFormat::S3TC_DXT5:
-            return "S3TC_DXT5";
-            
-        case Texture2D::PixelFormat::ATC_RGB:
-            return "ATC_RGB";
-
-        case Texture2D::PixelFormat::ATC_EXPLICIT_ALPHA:
-            return "ATC_EXPLICIT_ALPHA";
-
-        case Texture2D::PixelFormat::ATC_INTERPOLATED_ALPHA:
-            return "ATC_INTERPOLATED_ALPHA";
             
         default:
             CCASSERT(false , "unrecognized pixel format");

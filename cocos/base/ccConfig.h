@@ -262,24 +262,6 @@ THE SOFTWARE.
 #define CC_USE_CULLING 0
 #endif
 
-/** Support PNG or not. If your application don't use png format picture, you can undefine this macro to save package size.
- */
-#ifndef CC_USE_PNG
-#define CC_USE_PNG  1
-#endif // CC_USE_PNG
-
-/** Support JPEG or not. If your application don't use jpeg format picture, you can undefine this macro to save package size.
- */
-#ifndef CC_USE_JPEG
-#define CC_USE_JPEG  1
-#endif // CC_USE_JPEG
-
-/** Support TIFF or not. If your application don't use TIFF format picture, you can undefine this macro to save package size.
- */
-#ifndef CC_USE_TIFF
-#define CC_USE_TIFF  1
-#endif // CC_USE_TIFF
-
 /** @def CC_CONSTRUCTOR_ACCESS
  * Indicate the init functions access modifier. If value equals to protected, then these functions are protected.
  * If value equals to public, these functions are public,
@@ -329,14 +311,6 @@ THE SOFTWARE.
 
 #ifndef CC_FILEUTILS_APPLE_ENABLE_OBJC
 #define CC_FILEUTILS_APPLE_ENABLE_OBJC  1
-#endif
-
-/** @def CC_ENABLE_PREMULTIPLIED_ALPHA
- * If enabled, all textures will be preprocessed to multiply its rgb components
- * by its alpha component.
- */
-#ifndef CC_ENABLE_PREMULTIPLIED_ALPHA
-# define CC_ENABLE_PREMULTIPLIED_ALPHA 1
 #endif
 
 /** @def CC_STRIP_FPS

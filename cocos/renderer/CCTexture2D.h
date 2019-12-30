@@ -93,28 +93,6 @@ public:
         RGBA4444,
         //! 16-bit textures: RGB5A1
         RGB5A1,
-        //! 4-bit PVRTC-compressed texture: PVRTC4
-        PVRTC4,
-        //! 4-bit PVRTC-compressed texture: PVRTC4 (has alpha channel)
-        PVRTC4A,
-        //! 2-bit PVRTC-compressed texture: PVRTC2
-        PVRTC2,
-        //! 2-bit PVRTC-compressed texture: PVRTC2 (has alpha channel)
-        PVRTC2A,
-        //! ETC-compressed texture: ETC
-        ETC,
-        //! S3TC-compressed texture: S3TC_Dxt1
-        S3TC_DXT1,
-        //! S3TC-compressed texture: S3TC_Dxt3
-        S3TC_DXT3,
-        //! S3TC-compressed texture: S3TC_Dxt5
-        S3TC_DXT5,
-        //! ATITC-compressed texture: ATC_RGB
-        ATC_RGB,
-        //! ATITC-compressed texture: ATC_EXPLICIT_ALPHA
-        ATC_EXPLICIT_ALPHA,
-        //! ATITC-compressed texture: ATC_INTERPOLATED_ALPHA
-        ATC_INTERPOLATED_ALPHA,
         //! Default texture format: AUTO
         DEFAULT = AUTO,
         
@@ -169,8 +147,6 @@ public:
      - If the image is an RGBA (with Alpha) then the default pixel format will be used (it can be a 8-bit, 16-bit or 32-bit texture)
      - If the image is an RGB (without Alpha) then: If the default pixel format is RGBA8888 then a RGBA8888 (32-bit) will be used. Otherwise a RGB565 (16-bit texture) will be used.
 
-     This parameter is not valid for PVR / PVR.CCZ images.
-
      @since v0.8
      */
     static void setDefaultAlphaPixelFormat(Texture2D::PixelFormat format);
@@ -180,20 +156,6 @@ public:
      */
     static Texture2D::PixelFormat getDefaultAlphaPixelFormat();
     CC_DEPRECATED_ATTRIBUTE static Texture2D::PixelFormat defaultAlphaPixelFormat() { return Texture2D::getDefaultAlphaPixelFormat(); };
-
-    /** Treats (or not) PVR files as if they have alpha premultiplied.
-     
-     @param haveAlphaPremultiplied 
-     Since it is impossible to know at runtime if the PVR images have the alpha channel premultiplied, it is
-     possible load them as if they have (or not) the alpha channel premultiplied.
-
-     By default it is disabled.
-     
-     deprecated, please use Image::setPVRImagesHavePremultipliedAlpha() instead.
-
-     @since v0.99.5
-     */
-    CC_DEPRECATED_ATTRIBUTE static void PVRImagesHavePremultipliedAlpha(bool haveAlphaPremultiplied);
     
 public:
     /**

@@ -60,25 +60,6 @@ class Image;
 
 namespace utils
 {
-    /** Capture the entire screen.
-     * To ensure the snapshot is applied after everything is updated and rendered in the current frame,
-     * we need to wrap the operation with a custom command which is then inserted into the tail of the render queue.
-     * @param afterCaptured specify the callback function which will be invoked after the snapshot is done.
-     * @param filename specify a filename where the snapshot is stored. This parameter can be either an absolute path or a simple
-     * base filename ("hello.png" etc.), don't use a relative path containing directory names.("mydir/hello.png" etc.).
-     * @since v3.2
-     */
-    CC_DLL void  captureScreen(const std::function<void(bool, const std::string&)>& afterCaptured, const std::string& filename);
-
-    /** Capture a specific Node.
-    * @param startNode specify the snapshot Node. It should be cocos2d::Scene
-    * @param scale
-    * @returns: return a Image, then can call saveToFile to save the image as "xxx.png or xxx.jpg".
-    * @since v3.11
-    * !!! remark: Caller is responsible for releasing it by calling delete.
-    */
-    CC_DLL Image* captureNode(Node* startNode, float scale = 1.0f);
-    
     /** Find children by name, it will return all child that has the same name.
      * It supports c++ 11 regular expression. It is  a helper function of `Node::enumerateChildren()`.
      * You can refer to `Node::enumerateChildren()` for detail information.

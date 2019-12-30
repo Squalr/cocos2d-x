@@ -7,7 +7,6 @@ set(COCOS_RENDERER_HEADER
     renderer/ccShaders.h
     renderer/CCGLProgramStateCache.h
     renderer/CCRenderCommand.h
-    renderer/CCTextureCube.h
     renderer/CCGLProgram.h
     renderer/CCGLProgramCache.h
     renderer/CCTextureAtlas.h
@@ -48,7 +47,6 @@ set(COCOS_RENDERER_SRC
     renderer/CCTexture2D.cpp
     renderer/CCTextureAtlas.cpp
     renderer/CCTextureCache.cpp
-    renderer/CCTextureCube.cpp
     renderer/CCTrianglesCommand.cpp
     renderer/CCVertexIndexBuffer.cpp
     renderer/CCVertexIndexData.cpp

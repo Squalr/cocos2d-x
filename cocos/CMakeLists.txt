@@ -116,10 +116,6 @@ target_link_libraries(cocos2d
 # Definitions
 target_compile_definitions(cocos2d
     PRIVATE
-        CC_USE_JPEG=$<BOOL:${BUILD_JPEG_SUPPORT}>
-        CC_USE_PNG=$<BOOL:${BUILD_PNG_SUPPORT}>
-        CC_USE_TIFF=$<BOOL:${BUILD_TIFF_SUPPORT}>
-
         $<$<BOOL:${USE_SYSTEM_MINIZIP}>:MINIZIP_FROM_SYSTEM>
 
         $<$<PLATFORM_ID:Windows>:MPG123_DEF_SSIZE_T>

@@ -10,10 +10,8 @@ elseif(LINUX)
 endif()
 
 set(COCOS_BASE_HEADER
-    base/pvr.h
     base/CCValue.h
     base/CCEventListenerMouse.h
-    base/atitc.h
     base/utlist.h
     base/CCData.h
     base/ccMacros.h
@@ -22,8 +20,6 @@ set(COCOS_BASE_HEADER
     base/CCController.h
     base/base64.h
     base/CCEventListenerController.h
-    base/s3tc.h
-    base/etc1.h
     base/CCGameController.h
     base/CCEvent.h
     base/ccTypes.h
@@ -31,7 +27,6 @@ set(COCOS_BASE_HEADER
     base/ccRandom.h
     base/CCRef.h
     base/CCProfiling.h
-    base/ObjectFactory.h
     base/CCProperties.h
     base/CCVector.h
     base/CCEventCustom.h
@@ -62,7 +57,6 @@ set(COCOS_BASE_HEADER
     base/CCEventFocus.h
     base/CCConfiguration.h
     base/CCProtocols.h
-    base/TGAlib.h
     base/CCEventMouse.h
     base/CCIMEDelegate.h
     base/CCNS.h
@@ -104,14 +98,11 @@ set(COCOS_BASE_SRC
     base/CCRef.cpp
     base/CCScheduler.cpp
     base/CCValue.cpp
-    base/ObjectFactory.cpp
     base/CCStencilStateManager.cpp
-    base/TGAlib.cpp
     base/ZipUtils.cpp
     base/allocator/CCAllocatorDiagnostics.cpp
     base/allocator/CCAllocatorGlobal.cpp
     base/allocator/CCAllocatorGlobalNewDelete.cpp
-    base/atitc.cpp
     base/base64.cpp
     base/ccCArray.cpp
     base/ccFPSImages.c
@@ -119,9 +110,6 @@ set(COCOS_BASE_SRC
     base/ccTypes.cpp
     base/ccUTF8.cpp
     base/ccUtils.cpp
-    base/etc1.cpp
-    base/pvr.cpp
-    base/s3tc.cpp
     ${COCOS_BASE_SPECIFIC_SRC}
 
     )

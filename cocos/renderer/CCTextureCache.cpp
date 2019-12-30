@@ -293,14 +293,7 @@ void TextureCache::loadImage()
 
         // load image
         asyncStruct->loadSuccess = asyncStruct->image.initWithImageFileThreadSafe(asyncStruct->filename);
-
-        // ETC1 ALPHA supports.
-        if (asyncStruct->loadSuccess && asyncStruct->image.getFileType() == Image::Format::ETC && !s_etc1AlphaFileSuffix.empty())
-        { // check whether alpha texture exists & load it
-            auto alphaFile = asyncStruct->filename + s_etc1AlphaFileSuffix;
-            if (FileUtils::getInstance()->isFileExist(alphaFile))
-                asyncStruct->imageAlpha.initWithImageFileThreadSafe(alphaFile);
-        }
+        
         // push the asyncStruct to response queue
         _responseMutex.lock();
         _responseQueue.push_back(asyncStruct);
@@ -362,14 +355,6 @@ void TextureCache::addImageAsyncCallBack(float /*dt*/)
                 texture->retain();
 
                 texture->autorelease();
-                // ETC1 ALPHA supports.
-                if (asyncStruct->imageAlpha.getFileType() == Image::Format::ETC) {
-                    auto alphaTexture = new(std::nothrow) Texture2D();
-                    if(alphaTexture != nullptr && alphaTexture->initWithImage(&asyncStruct->imageAlpha, asyncStruct->pixelFormat)) {
-                        texture->setAlphaTexture(alphaTexture);
-                    }
-                    CC_SAFE_RELEASE(alphaTexture);
-                }
             }
             else {
                 texture = nullptr;
@@ -413,7 +398,7 @@ Texture2D * TextureCache::addImage(const std::string &path)
 
     if (!texture)
     {
-        // all images are handled by UIImage except PVR extension that is handled by our own handler
+        // all images are handled by UIImage
         do
         {
             image = new (std::nothrow) Image();
@@ -432,21 +417,6 @@ Texture2D * TextureCache::addImage(const std::string &path)
 #endif
                 // texture already retained, no need to re-retain it
                 _textures.emplace(fullpath, texture);
-
-                //-- ANDROID ETC1 ALPHA SUPPORTS.
-                std::string alphaFullPath = path + s_etc1AlphaFileSuffix;
-                if (image->getFileType() == Image::Format::ETC && !s_etc1AlphaFileSuffix.empty() && FileUtils::getInstance()->isFileExist(alphaFullPath))
-                {
-                    Image alphaImage;
-                    if (alphaImage.initWithImageFile(alphaFullPath))
-                    {
-                        Texture2D *pAlphaTexture = new(std::nothrow) Texture2D;
-                        if(pAlphaTexture != nullptr && pAlphaTexture->initWithImage(&alphaImage)) {
-                            texture->setAlphaTexture(pAlphaTexture);
-                        }
-                        CC_SAFE_RELEASE(pAlphaTexture);
-                    }
-                }
 
                 //parse 9-patch info
                 this->parseNinePatchImage(image, texture, path);

@@ -31,10 +31,6 @@ THE SOFTWARE.
 #include "base/CCRef.h"
 #include "renderer/CCTexture2D.h"
 
-#if CC_USE_WIC
-#include "platform/winrt/WICImageLoader-winrt.h"
-#endif
-
 // premultiply alpha, or the effect will wrong when want to use other pixel format in Texture2D,
 // such as RGB888, RGB5A1
 #define CC_RGB_PREMULTIPLY_ALPHA(vr, vg, vb, va) \
@@ -77,22 +73,10 @@ public:
     /** Supported formats for Image */
     enum class Format
     {
-        //! JPEG
-        JPG,
         //! PNG
         PNG,
-        //! TIFF
+        //! PNG
         TIFF,
-        //! PVR
-        PVR,
-        //! ETC
-        ETC,
-        //! S3TC
-        S3TC,
-        //! ATITC
-        ATITC,
-        //! TGA
-        TGA,
         //! Raw Data
         RAW_DATA,
         //! Unknown format
@@ -105,14 +89,6 @@ public:
      *  @param enabled (default: true)
      */
     static void setPNGPremultipliedAlphaEnabled(bool enabled) { PNG_PREMULTIPLIED_ALPHA_ENABLED = enabled; }
-    
-    /** treats (or not) PVR files as if they have alpha premultiplied.
-     Since it is impossible to know at runtime if the PVR images have the alpha channel premultiplied, it is
-     possible load them as if they have (or not) the alpha channel premultiplied.
-     
-     By default it is disabled.
-     */
-    static void setPVRImagesHavePremultipliedAlpha(bool haveAlphaPremultiplied);
 
     /**
     @brief Load the image from the specified path.
@@ -151,33 +127,9 @@ public:
     bool                     hasAlpha();
     bool                     isCompressed();
 
-
-    /**
-     @brief    Save Image data to the specified file, with specified format.
-     @param    filePath        the file's absolute path, including file suffix.
-     @param    isToRGB        whether the image is saved as RGB format.
-     */
-    bool saveToFile(const std::string &filename, bool isToRGB = true);
-
 protected:
-#if CC_USE_WIC
-    bool encodeWithWIC(const std::string& filePath, bool isToRGB, GUID containerFormat);
-    bool decodeWithWIC(const unsigned char *data, ssize_t dataLen);
-#endif
-    bool initWithJpgData(const unsigned char *  data, ssize_t dataLen);
     bool initWithPngData(const unsigned char * data, ssize_t dataLen);
     bool initWithTiffData(const unsigned char * data, ssize_t dataLen);
-    bool initWithPVRData(const unsigned char * data, ssize_t dataLen);
-    bool initWithPVRv2Data(const unsigned char * data, ssize_t dataLen);
-    bool initWithPVRv3Data(const unsigned char * data, ssize_t dataLen);
-    bool initWithETCData(const unsigned char * data, ssize_t dataLen);
-    bool initWithS3TCData(const unsigned char * data, ssize_t dataLen);
-    bool initWithATITCData(const unsigned char *data, ssize_t dataLen);
-    typedef struct sImageTGA tImageTGA;
-    bool initWithTGAData(tImageTGA* tgaData);
-
-    bool saveImageToPNG(const std::string& filePath, bool isToRGB = true);
-    bool saveImageToJPG(const std::string& filePath);
     
     void premultipliedAlpha();
     
@@ -221,12 +173,7 @@ protected:
     
     Format detectFormat(const unsigned char * data, ssize_t dataLen);
     bool isPng(const unsigned char * data, ssize_t dataLen);
-    bool isJpg(const unsigned char * data, ssize_t dataLen);
     bool isTiff(const unsigned char * data, ssize_t dataLen);
-    bool isPvr(const unsigned char * data, ssize_t dataLen);
-    bool isEtc(const unsigned char * data, ssize_t dataLen);
-    bool isS3TC(const unsigned char * data,ssize_t dataLen);
-    bool isATITC(const unsigned char *data, ssize_t dataLen);
 };
 
 // end of platform group

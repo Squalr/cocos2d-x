@@ -36,7 +36,6 @@ NS_CC_BEGIN
 
 class CameraBackgroundColorBrush;
 class CameraBackgroundDepthBrush;
-class CameraBackgroundSkyBoxBrush;
 
 class GLProgramState;
 class Camera;
@@ -49,14 +48,13 @@ class CC_DLL CameraBackgroundBrush : public Ref
 {
 public:
     /**
-     * Brush types. There are 4 types of brush. See CameraBackgroundDepthBrush, CameraBackgroundColorBrush, CameraBackgroundSkyBoxBrush for more information.
+     * Brush types. There are 3 types of brush. See CameraBackgroundDepthBrush, CameraBackgroundColorBrush for more information.
      */
     enum class BrushType
     {
         NONE, //none brush
         DEPTH, // depth brush. See CameraBackgroundDepthBrush
         COLOR, // color brush. See CameraBackgroundColorBrush
-        SKYBOX, // skybox brush. See CameraBackgroundSkyBoxBrush
     };
     
     /**
@@ -85,20 +83,7 @@ public:
      * @return Created brush
      */
     static CameraBackgroundColorBrush* createColorBrush(const Color4F& color, float depth);
-    
-    
-    /** Creates a Skybox brush with 6 textures.
-     @param positive_x texture for the right side of the texture cube face.
-     @param negative_x texture for the up side of the texture cube face.
-     @param positive_y texture for the top side of the texture cube face
-     @param negative_y texture for the bottom side of the texture cube face
-     @param positive_z texture for the forward side of the texture cube face.
-     @param negative_z texture for the rear side of the texture cube face.
-     @return  A new brush inited with given parameters.
-     */
-    static CameraBackgroundSkyBoxBrush* createSkyboxBrush(const std::string& positive_x, const std::string& negative_x,
-                                                          const std::string& positive_y, const std::string& negative_y,
-                                                          const std::string& positive_z, const std::string& negative_z);
+
     /**
      * draw the background
      */
@@ -202,77 +187,6 @@ CC_CONSTRUCTOR_ACCESS:
     
 protected:
     Color4F _color;
-};
-
-class TextureCube;
-class GLProgramState;
-class EventListenerCustom;
-
-/**
- * Skybox brush clear buffer with a skybox
- */
-class CC_DLL CameraBackgroundSkyBoxBrush : public CameraBackgroundBrush
-{
-public:
-    /**
-     * Get brush type. Should be BrushType::SKYBOX
-     * @return brush type
-     */
-    virtual BrushType getBrushType() const override { return BrushType::SKYBOX; }
-    
-    /** Creates a Skybox brush with 6 textures.
-     @param positive_x texture for the right side of the texture cube face.
-     @param negative_x texture for the up side of the texture cube face.
-     @param positive_y texture for the top side of the texture cube face
-     @param negative_y texture for the bottom side of the texture cube face
-     @param positive_z texture for the forward side of the texture cube face.
-     @param negative_z texture for the rear side of the texture cube face.
-     @return  A new brush inited with given parameters.
-     */
-    static CameraBackgroundSkyBoxBrush* create(const std::string& positive_x, const std::string& negative_x,
-                                        const std::string& positive_y, const std::string& negative_y,
-                                        const std::string& positive_z, const std::string& negative_z);
-    
-    /** Creates a Skybox brush with 6 textures.
-     */
-    static CameraBackgroundSkyBoxBrush* create();
-    /**
-     * Set skybox texture 
-     * @param texture Skybox texture
-     */
-    void setTexture(TextureCube*  texture);
-    
-    /**
-     * Draw background
-     */
-    virtual void drawBackground(Camera* camera) override;
-
-    bool isActived() const;
-    void setActived(bool actived);
-    virtual void setTextureValid(bool valid);
-    virtual bool isValid()override;
-
-CC_CONSTRUCTOR_ACCESS :
-    CameraBackgroundSkyBoxBrush();
-    virtual ~CameraBackgroundSkyBoxBrush();
-    
-    /**
-     * init Skybox.
-     */
-    virtual bool init() override;
-    
-protected:
-    void initBuffer();
-    
-    GLuint      _vao;
-    GLuint      _vertexBuffer;
-    GLuint      _indexBuffer;
-    
-    TextureCube*  _texture;
-
-private:
-    bool _actived;
-    bool _textureValid;
 };
 
 NS_CC_END

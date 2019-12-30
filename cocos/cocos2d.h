@@ -108,7 +108,6 @@ THE SOFTWARE.
 #include "2d/CCFontFNT.h"
 #include "2d/CCLabel.h"
 #include "2d/CCLabelAtlas.h"
-#include "2d/CCLabelTTF.h"
 #include "2d/CCLayer.h"
 #include "2d/CCNode.h"
 #include "2d/CCParticleBatchNode.h"
@@ -146,7 +145,6 @@ THE SOFTWARE.
 #include "renderer/CCRenderer.h"
 #include "renderer/CCTechnique.h"
 #include "renderer/CCTexture2D.h"
-#include "renderer/CCTextureCube.h"
 #include "renderer/CCTextureCache.h"
 #include "renderer/CCTrianglesCommand.h"
 #include "renderer/CCVertexIndexBuffer.h"
@@ -212,7 +210,6 @@ THE SOFTWARE.
 #include "2d/CCParallaxNode.h"
 #include "2d/CCTMXObjectGroup.h"
 #include "2d/CCTMXXMLParser.h"
-#include "2d/CCTileMapAtlas.h"
 #include "2d/CCFastTMXLayer.h"
 #include "2d/CCFastTMXTiledMap.h"
 

@@ -80,19 +80,6 @@ public:
      */
 	int getMaxTextureSize() const;
 
-    /** OpenGL Max Modelview Stack Depth.
-     *
-     * @return The OpenGL Max Modelview Stack Depth.
-     */
-	int getMaxModelviewStackDepth() const;
-
-    /** Returns the maximum texture units.
-     *
-     * @return The maximum texture units.
-     * @since v2.0.0
-     */
-	int getMaxTextureUnits() const;
-
     /** Whether or not the GPU supports NPOT (Non Power Of Two) textures.
      OpenGL ES 2.0 already supports NPOT (iOS).
      * 
@@ -101,64 +88,12 @@ public:
      */
 	bool supportsNPOT() const;
 
-    /** Whether or not PVR Texture Compressed is supported.
-     *
-     * @return Is true if supports PVR Texture Compressed.
-     */
-	bool supportsPVRTC() const;
-    
-    /** Whether or not ETC Texture Compressed is supported.
-     * 
-     *
-     * @return Is true if supports ETC Texture Compressed.
-     */
-    bool supportsETC() const;
-    
-    /** Whether or not S3TC Texture Compressed is supported.
-     *
-     * @return Is true if supports S3TC Texture Compressed.
-     */
-    bool supportsS3TC() const;
-    
-    /** Whether or not ATITC Texture Compressed is supported.
-     *
-     * @return Is true if supports ATITC Texture Compressed.
-     */
-    bool supportsATITC() const;
-    
-    /** Whether or not BGRA8888 textures are supported.
-     *
-     * @return Is true if supports BGRA8888 textures.
-     * @since v0.99.2
-     */
-	bool supportsBGRA8888() const;
-
-    /** Whether or not glDiscardFramebufferEXT is supported.
-     * @return Is true if supports glDiscardFramebufferEXT.
-     * @since v0.99.2
-     */
-	bool supportsDiscardFramebuffer() const;
-
     /** Whether or not shareable VAOs are supported.
      *
      * @return Is true if supports shareable VAOs.
      * @since v2.0.0
      */
 	bool supportsShareableVAO() const;
-
-    /** Whether or not OES_depth24 is supported.
-     *
-     * @return Is true if supports OES_depth24.
-     * @since v2.0.0
-     */
-    bool supportsOESDepth24() const;
-    
-    /** Whether or not OES_Packed_depth_stencil is supported.
-     *
-     * @return Is true if supports OES_Packed_depth_stencil.
-     * @since v2.0.0
-     */
-    bool supportsOESPackedDepthStencil() const;
 
     /** Whether or not glMapBuffer() is supported.
      *
@@ -169,7 +104,6 @@ public:
      * @since v3.13
      */
     bool supportsMapBuffer() const;
-
     
     /** Max support directional light in shader, for Sprite3D.
      *
@@ -245,21 +179,10 @@ private:
     
 protected:
     GLint           _maxTextureSize;
-    GLint           _maxModelviewStackDepth;
-    bool            _supportsPVRTC;
-    bool            _supportsETC1;
-    bool            _supportsS3TC;
-    bool            _supportsATITC;
     bool            _supportsNPOT;
-    bool            _supportsBGRA8888;
-    bool            _supportsDiscardFramebuffer;
     bool            _supportsShareableVAO;
-    bool            _supportsOESMapBuffer;
-    bool            _supportsOESDepth24;
-    bool            _supportsOESPackedDepthStencil;
     
     GLint           _maxSamplesAllowed;
-    GLint           _maxTextureUnits;
     char *          _glExtensions;
     int             _maxDirLightInShader; //max support directional light in shader
     int             _maxPointLightInShader; // max support point light in shader

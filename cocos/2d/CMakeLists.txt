@@ -12,7 +12,6 @@ set(COCOS_2D_HEADER
     2d/CCSpriteFrameCache.h
     2d/CCLayer.h
     2d/CCActionCamera.h
-    2d/CCLabelTTF.h
     2d/CCParticleExamples.h
     2d/CCSprite.h
     2d/CCNode.h
@@ -53,7 +52,6 @@ set(COCOS_2D_HEADER
     2d/CCAction.h
     2d/CCFontCharMap.h
     2d/CCParticleSystem.h
-    2d/CCTileMapAtlas.h
     2d/CCActionManager.h
     2d/CCDrawNode.h
     2d/CCCamera.h
@@ -95,7 +93,6 @@ set(COCOS_2D_SRC
     2d/CCLabelAtlas.cpp
     2d/CCLabel.cpp
     2d/CCLabelTextFormatter.cpp
-    2d/CCLabelTTF.cpp
     2d/CCLayer.cpp
     2d/CCLight.cpp
     2d/CCNode.cpp
@@ -113,7 +110,6 @@ set(COCOS_2D_SRC
     2d/CCAutoPolygon.cpp
     ../external/clipper/clipper.cpp
     2d/CCTextFieldTTF.cpp
-    2d/CCTileMapAtlas.cpp
     2d/CCTMXObjectGroup.cpp
     2d/CCTMXXMLParser.cpp
     2d/CCTweenFunction.cpp
