@@ -24,17 +24,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
+#include "CCFileUtils-win32.h"
+
 #include "platform/CCPlatformConfig.h"
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 
-#include "platform/win32/CCFileUtils-win32.h"
-#include "platform/win32/CCUtils-win32.h"
-#include "platform/CCCommon.h"
-#include "tinydir/tinydir.h"
 #include <Shlobj.h>
 #include <cstdlib>
 #include <regex>
 #include <sstream>
+
+#include "base/CCConsole.h"
+#include "platform/win32/CCUtils-win32.h"
+#include "platform/CCCommon.h"
+#include "tinydir/tinydir.h"
 
 using namespace std;
 

@@ -25,6 +25,7 @@
 
 #include "physics/CCPhysicsWorld.h"
 #if CC_USE_PHYSICS
+
 #include <algorithm>
 #include <climits>
 
@@ -34,18 +35,19 @@
     #include <execution>
 #endif
 
-#include "chipmunk/chipmunk_private.h"
+#include "2d/CCDrawNode.h"
+#include "2d/CCScene.h"
+#include "base/CCConsole.h"
+#include "base/CCDirector.h"
+#include "base/CCEventDispatcher.h"
+#include "base/CCEventCustom.h"
 #include "physics/CCPhysicsBody.h"
 #include "physics/CCPhysicsShape.h"
 #include "physics/CCPhysicsContact.h"
 #include "physics/CCPhysicsJoint.h"
 #include "physics/CCPhysicsHelper.h"
 
-#include "2d/CCDrawNode.h"
-#include "2d/CCScene.h"
-#include "base/CCDirector.h"
-#include "base/CCEventDispatcher.h"
-#include "base/CCEventCustom.h"
+#include "chipmunk/chipmunk_private.h"
 
 NS_CC_BEGIN
 const float PHYSICS_INFINITY = FLT_MAX;

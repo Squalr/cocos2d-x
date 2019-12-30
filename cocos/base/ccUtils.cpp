@@ -29,18 +29,18 @@ THE SOFTWARE.
 #include <cmath>
 #include <stdlib.h>
 
+#include "2d/CCSprite.h"
+#include "2d/CCRenderTexture.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/CCAsyncTaskPool.h"
 #include "base/CCEventDispatcher.h"
 #include "base/base64.h"
+#include "platform/CCImage.h"
+#include "platform/CCFileUtils.h"
 #include "renderer/CCCustomCommand.h"
 #include "renderer/CCRenderer.h"
 #include "renderer/CCTextureCache.h"
-
-#include "platform/CCImage.h"
-#include "platform/CCFileUtils.h"
-#include "2d/CCSprite.h"
-#include "2d/CCRenderTexture.h"
 
 NS_CC_BEGIN
 

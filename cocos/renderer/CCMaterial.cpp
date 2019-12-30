@@ -28,6 +28,10 @@
  - Qt3D: http://qt-project.org/
  ****************************************************************************/
 
+#include "base/CCConsole.h"
+#include "base/CCDirector.h"
+#include "base/CCProperties.h"
+#include "platform/CCFileUtils.h"
 #include "renderer/CCMaterial.h"
 #include "renderer/CCTechnique.h"
 #include "renderer/CCPass.h"
@@ -35,9 +39,6 @@
 #include "renderer/CCTexture2D.h"
 #include "renderer/CCGLProgram.h"
 #include "renderer/CCGLProgramState.h"
-#include "base/CCProperties.h"
-#include "base/CCDirector.h"
-#include "platform/CCFileUtils.h"
 
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)

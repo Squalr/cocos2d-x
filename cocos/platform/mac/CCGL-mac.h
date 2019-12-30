@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define __PLATFORM_MAC_CCGL_H__
 
 #include "platform/CCPlatformConfig.h"
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
 
 #include <OpenGL/gl.h>

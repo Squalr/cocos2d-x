@@ -23,10 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "renderer/CCGLProgramStateCache.h"
-
-#include "renderer/CCGLProgramState.h"
+#include "base/CCConsole.h"
 #include "renderer/CCGLProgram.h"
+#include "renderer/CCGLProgramState.h"
+#include "renderer/CCGLProgramStateCache.h"
 
 
 NS_CC_BEGIN

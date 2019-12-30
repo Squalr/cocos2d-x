@@ -34,6 +34,7 @@ THE SOFTWARE.
 
 #include "2d/CCActionEase.h"
 #include "2d/CCTweenFunction.h"
+#include "base/CCConsole.h"
 
 NS_CC_BEGIN
 

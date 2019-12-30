@@ -27,11 +27,12 @@ THE SOFTWARE.
 ****************************************************************************/
 
 #include "2d/CCAtlasNode.h"
-#include "renderer/CCTextureAtlas.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
-#include "renderer/CCTextureCache.h"
-#include "renderer/CCRenderer.h"
 #include "renderer/CCGLProgram.h"
+#include "renderer/CCRenderer.h"
+#include "renderer/CCTextureAtlas.h"
+#include "renderer/CCTextureCache.h"
 
 NS_CC_BEGIN
 

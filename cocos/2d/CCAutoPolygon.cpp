@@ -26,13 +26,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "2d/CCAutoPolygon.h"
-#include "poly2tri/poly2tri.h"
-#include "base/CCDirector.h"
-#include "renderer/CCTextureCache.h"
-#include "clipper/clipper.hpp"
+#include "CCAutoPolygon.h"
+
 #include <algorithm>
 #include <math.h>
+
+#include "base/CCConsole.h"
+#include "base/CCDirector.h"
+#include "renderer/CCTextureCache.h"
+
+#include "clipper/clipper.hpp"
+#include "poly2tri/poly2tri.h"
 
 USING_NS_CC;
 

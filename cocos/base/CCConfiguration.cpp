@@ -26,10 +26,11 @@ THE SOFTWARE.
 ****************************************************************************/
 
 #include "base/CCConfiguration.h"
-#include "platform/CCFileUtils.h"
-#include "base/CCEventCustom.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
+#include "base/CCEventCustom.h"
 #include "base/CCEventDispatcher.h"
+#include "platform/CCFileUtils.h"
 
 NS_CC_BEGIN
 

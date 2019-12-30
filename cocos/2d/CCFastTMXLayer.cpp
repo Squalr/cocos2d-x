@@ -39,13 +39,14 @@ THE SOFTWARE.
 #include "2d/CCFastTMXTiledMap.h"
 #include "2d/CCSprite.h"
 #include "2d/CCCamera.h"
-#include "renderer/CCTextureCache.h"
-#include "renderer/CCGLProgramCache.h"
-#include "renderer/ccGLStateCache.h"
-#include "renderer/CCRenderer.h"
-#include "renderer/CCVertexIndexBuffer.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/ccUTF8.h"
+#include "renderer/CCGLProgramCache.h"
+#include "renderer/ccGLStateCache.h"
+#include "renderer/CCTextureCache.h"
+#include "renderer/CCRenderer.h"
+#include "renderer/CCVertexIndexBuffer.h"
 
 NS_CC_BEGIN
 namespace cocos_experimental {

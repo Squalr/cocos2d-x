@@ -23,11 +23,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "renderer/CCVertexIndexBuffer.h"
-#include "base/CCEventType.h"
-#include "base/CCEventListenerCustom.h"
-#include "base/CCEventDispatcher.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
+#include "base/CCEventDispatcher.h"
+#include "base/CCEventListenerCustom.h"
+#include "base/CCEventType.h"
+#include "renderer/CCVertexIndexBuffer.h"
 
 NS_CC_BEGIN
 

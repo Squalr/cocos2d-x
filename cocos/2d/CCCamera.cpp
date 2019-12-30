@@ -27,15 +27,16 @@
  ****************************************************************************/
 #include "2d/CCCamera.h"
 #include "2d/CCCameraBackgroundBrush.h"
-#include "base/CCDirector.h"
-#include "platform/CCGLView.h"
 #include "2d/CCScene.h"
-#include "renderer/CCRenderer.h"
-#include "renderer/CCQuadCommand.h"
+#include "base/CCConsole.h"
+#include "base/CCDirector.h"
+#include "renderer/CCFrameBuffer.h"
 #include "renderer/CCGLProgramCache.h"
 #include "renderer/ccGLStateCache.h"
-#include "renderer/CCFrameBuffer.h"
+#include "platform/CCGLView.h"
+#include "renderer/CCRenderer.h"
 #include "renderer/CCRenderState.h"
+#include "renderer/CCQuadCommand.h"
 
 NS_CC_BEGIN
 

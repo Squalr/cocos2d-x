@@ -26,10 +26,11 @@ THE SOFTWARE.
 
 #include "2d/CCTextFieldTTF.h"
 
-#include "base/CCDirector.h"
-#include "platform/CCFileUtils.h"
-#include "base/ccUTF8.h"
 #include "2d/CCSprite.h"
+#include "base/CCConsole.h"
+#include "base/CCDirector.h"
+#include "base/ccUTF8.h"
+#include "platform/CCFileUtils.h"
 
 NS_CC_BEGIN
 

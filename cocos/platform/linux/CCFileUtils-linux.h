@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define __CC_FILEUTILS_LINUX_H__
 
 #include "platform/CCPlatformConfig.h"
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 
 #include "platform/CCFileUtils.h"

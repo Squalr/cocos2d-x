@@ -24,8 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "base/CCStencilStateManager.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
+#include "base/CCStencilStateManager.h"
 #include "renderer/CCGLProgramCache.h"
 #include "renderer/ccGLStateCache.h"
 #include "renderer/CCRenderer.h"

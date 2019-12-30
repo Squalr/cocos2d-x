@@ -33,6 +33,7 @@ THE SOFTWARE.
 #include <alloca.h>
 #endif
 
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/ccUTF8.h"
 #include "renderer/ccGLStateCache.h"

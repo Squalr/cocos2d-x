@@ -35,14 +35,15 @@ THE SOFTWARE.
 
 #include "2d/CCSprite.h"
 #include "2d/CCAutoPolygon.h"
-#include "platform/CCFileUtils.h"
+#include "base/CCConsole.h"
+#include "base/CCDirector.h"
 #include "base/CCNS.h"
 #include "base/ccMacros.h"
+#include "base/CCNinePatchImageParser.h"
 #include "base/ccUTF8.h"
-#include "base/CCDirector.h"
+#include "platform/CCFileUtils.h"
 #include "renderer/CCTexture2D.h"
 #include "renderer/CCTextureCache.h"
-#include "base/CCNinePatchImageParser.h"
 
 using namespace std;
 

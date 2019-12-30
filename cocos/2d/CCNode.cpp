@@ -33,14 +33,15 @@ THE SOFTWARE.
 #include <string>
 #include <regex>
 
-#include "base/CCDirector.h"
-#include "base/CCScheduler.h"
-#include "base/CCEventDispatcher.h"
-#include "base/ccUTF8.h"
 #include "2d/CCCamera.h"
 #include "2d/CCActionManager.h"
 #include "2d/CCScene.h"
 #include "2d/CCComponent.h"
+#include "base/CCConsole.h"
+#include "base/CCDirector.h"
+#include "base/CCScheduler.h"
+#include "base/CCEventDispatcher.h"
+#include "base/ccUTF8.h"
 #include "renderer/CCGLProgram.h"
 #include "renderer/CCGLProgramState.h"
 #include "renderer/CCMaterial.h"

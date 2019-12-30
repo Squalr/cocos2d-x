@@ -22,9 +22,10 @@
 #include "math/Mat4.h"
 
 #include <cmath>
+#include "base/CCConsole.h"
+#include "base/ccMacros.h"
 #include "math/Quaternion.h"
 #include "math/MathUtil.h"
-#include "base/ccMacros.h"
 
 NS_CC_MATH_BEGIN
 

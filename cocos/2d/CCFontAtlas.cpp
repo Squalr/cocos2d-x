@@ -24,16 +24,19 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "2d/CCFontAtlas.h"
+
 #if CC_TARGET_PLATFORM != CC_PLATFORM_WIN32
 #include <iconv.h>
 #endif
+
+#include "2d/CCFontAtlas.h"
 #include "2d/CCFontFreeType.h"
-#include "base/ccUTF8.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
-#include "base/CCEventListenerCustom.h"
 #include "base/CCEventDispatcher.h"
+#include "base/CCEventListenerCustom.h"
 #include "base/CCEventType.h"
+#include "base/ccUTF8.h"
 
 NS_CC_BEGIN
 

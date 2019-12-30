@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 #include <stack>
 
+#include "base/CCConsole.h"
 #include "base/CCData.h"
 #include "base/ccMacros.h"
 #include "base/CCDirector.h"

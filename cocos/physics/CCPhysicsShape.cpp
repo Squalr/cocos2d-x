@@ -30,12 +30,13 @@
 #include <cmath>
 #include <unordered_map>
 
-#include "chipmunk/chipmunk.h"
-#include "chipmunk/chipmunk_unsafe.h"
-
+#include "base/CCConsole.h"
 #include "physics/CCPhysicsBody.h"
 #include "physics/CCPhysicsWorld.h"
 #include "physics/CCPhysicsHelper.h"
+
+#include "chipmunk/chipmunk.h"
+#include "chipmunk/chipmunk_unsafe.h"
 
 NS_CC_BEGIN
 extern const float PHYSICS_INFINITY;

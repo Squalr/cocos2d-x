@@ -33,16 +33,15 @@ THE SOFTWARE.
 #include <cctype>
 #include <list>
 
-#include "renderer/CCTexture2D.h"
-#include "base/ccMacros.h"
-#include "base/ccUTF8.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
-#include "base/CCScheduler.h"
-#include "platform/CCFileUtils.h"
-#include "base/ccUtils.h"
+#include "base/ccMacros.h"
 #include "base/CCNinePatchImageParser.h"
-
-
+#include "base/CCScheduler.h"
+#include "base/ccUTF8.h"
+#include "base/ccUtils.h"
+#include "platform/CCFileUtils.h"
+#include "renderer/CCTexture2D.h"
 
 using namespace std;
 

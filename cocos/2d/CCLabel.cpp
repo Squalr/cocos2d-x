@@ -28,22 +28,23 @@
 
 #include <algorithm>
 
+#include "2d/CCCamera.h"
+#include "2d/CCDrawNode.h"
 #include "2d/CCFont.h"
 #include "2d/CCFontAtlasCache.h"
 #include "2d/CCFontAtlas.h"
+#include "2d/CCFontFNT.h"
 #include "2d/CCSprite.h"
 #include "2d/CCSpriteBatchNode.h"
-#include "2d/CCDrawNode.h"
-#include "2d/CCCamera.h"
-#include "base/ccUTF8.h"
-#include "platform/CCFileUtils.h"
-#include "renderer/CCRenderer.h"
-#include "renderer/ccGLStateCache.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/CCEventListenerCustom.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventCustom.h"
-#include "2d/CCFontFNT.h"
+#include "base/ccUTF8.h"
+#include "platform/CCFileUtils.h"
+#include "renderer/CCRenderer.h"
+#include "renderer/ccGLStateCache.h"
 
 NS_CC_BEGIN
 

@@ -31,6 +31,7 @@
 #include "unzip.h"
 #endif
 
+#include "base/CCConsole.h"
 #include "base/ZipUtils.h"
 
 #include <zlib.h>

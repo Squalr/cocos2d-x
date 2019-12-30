@@ -25,15 +25,16 @@
 
 #include <string.h>
 
-#include "platform/CCPlatformMacros.h"
-#include "platform/CCFileUtils.h"
+#include "base/CCConsole.h"
+#include "base/CCData.h"
+#include "base/ccUTF8.h"
 #include "math/Vec2.h"
 #include "math/Vec3.h"
 #include "math/Vec4.h"
 #include "math/Mat4.h"
 #include "math/Quaternion.h"
-#include "base/ccUTF8.h"
-#include "base/CCData.h"
+#include "platform/CCPlatformMacros.h"
+#include "platform/CCFileUtils.h"
 
 USING_NS_CC;
 

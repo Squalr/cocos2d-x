@@ -26,6 +26,7 @@
 #pragma once
 
 #include "platform/CCPlatformConfig.h"
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
 
 #include <OpenAL/al.h>

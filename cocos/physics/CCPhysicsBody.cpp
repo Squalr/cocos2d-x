@@ -31,6 +31,7 @@
 
 #include "chipmunk/chipmunk_private.h"
 
+#include "base/CCConsole.h"
 #include "2d/CCScene.h"
 #include "physics/CCPhysicsShape.h"
 #include "physics/CCPhysicsJoint.h"

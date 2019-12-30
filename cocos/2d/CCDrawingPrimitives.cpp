@@ -37,12 +37,12 @@ THE SOFTWARE.
  *
  */
 
-#include "2d/CCDrawingPrimitives.h"
-
 #include <string.h>
 #include <cmath>
 
 #include "2d/CCActionCatmullRom.h"
+#include "2d/CCDrawingPrimitives.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "renderer/ccGLStateCache.h"
 #include "renderer/CCGLProgramCache.h"

@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "2d/CCAction.h"
 #include "2d/CCActionInterval.h"
 #include "2d/CCNode.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/ccUTF8.h"
 

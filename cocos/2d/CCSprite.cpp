@@ -30,16 +30,17 @@ THE SOFTWARE.
 
 #include <algorithm>
 
-#include "2d/CCSpriteBatchNode.h"
 #include "2d/CCAnimationCache.h"
+#include "2d/CCCamera.h"
+#include "2d/CCSpriteBatchNode.h"
 #include "2d/CCSpriteFrame.h"
 #include "2d/CCSpriteFrameCache.h"
-#include "renderer/CCTextureCache.h"
-#include "renderer/CCTexture2D.h"
-#include "renderer/CCRenderer.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/ccUTF8.h"
-#include "2d/CCCamera.h"
+#include "renderer/CCRenderer.h"
+#include "renderer/CCTextureCache.h"
+#include "renderer/CCTexture2D.h"
 
 NS_CC_BEGIN
 

@@ -29,15 +29,16 @@ THE SOFTWARE.
 #include <cmath>
 #include <unordered_map>
 
-#include "platform/CCApplication.h"
+#include "2d/CCCamera.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventKeyboard.h"
 #include "base/CCEventMouse.h"
 #include "base/CCIMEDispatcher.h"
-#include "base/ccUtils.h"
 #include "base/ccUTF8.h"
-#include "2d/CCCamera.h"
+#include "base/ccUtils.h"
+#include "platform/CCApplication.h"
 
 NS_CC_BEGIN
 

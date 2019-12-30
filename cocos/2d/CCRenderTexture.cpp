@@ -27,15 +27,16 @@ THE SOFTWARE.
 
 #include "2d/CCRenderTexture.h"
 
-#include "base/ccUtils.h"
-#include "platform/CCFileUtils.h"
-#include "base/CCEventType.h"
+#include "2d/CCCamera.h"
+#include "base/CCConsole.h"
 #include "base/CCConfiguration.h"
 #include "base/CCDirector.h"
-#include "base/CCEventListenerCustom.h"
 #include "base/CCEventDispatcher.h"
+#include "base/CCEventListenerCustom.h"
+#include "base/CCEventType.h"
+#include "base/ccUtils.h"
+#include "platform/CCFileUtils.h"
 #include "renderer/CCRenderer.h"
-#include "2d/CCCamera.h"
 #include "renderer/CCTextureCache.h"
 
 NS_CC_BEGIN

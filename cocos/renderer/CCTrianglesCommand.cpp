@@ -23,13 +23,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "renderer/CCTrianglesCommand.h"
-#include "renderer/ccGLStateCache.h"
-#include "renderer/CCGLProgram.h"
-#include "renderer/CCGLProgramState.h"
-#include "xxhash.h"
+#include "base/CCConsole.h"
 #include "renderer/CCRenderer.h"
 #include "renderer/CCTexture2D.h"
+#include "renderer/CCTrianglesCommand.h"
+#include "renderer/CCGLProgram.h"
+#include "renderer/CCGLProgramState.h"
+#include "renderer/ccGLStateCache.h"
+
+#include "xxhash.h"
 
 NS_CC_BEGIN
 

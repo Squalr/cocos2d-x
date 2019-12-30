@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define __CC_STD_C_H__
 
 #include "platform/CCPlatformConfig.h"
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 
 #include <BaseTsd.h>
@@ -99,18 +100,11 @@ typedef SSIZE_T ssize_t;
 #endif
 // Structure timeval has define in winsock.h, include windows.h for it.
 #include <Windows.h>
+#include <Winsock2.h>
 
 #ifndef __MINGW32__
 
-#include <WinSock2.h>
-
 NS_CC_BEGIN
-
-struct timezone
-{
-    int tz_minuteswest;
-    int tz_dsttime;
-};
 
 int CC_DLL gettimeofday(struct timeval *, struct timezone *);
 

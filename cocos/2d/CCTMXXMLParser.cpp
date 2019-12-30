@@ -27,12 +27,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "2d/CCTMXXMLParser.h"
-#include <unordered_map>
+#include "CCTMXXMLParser.h"
+
 #include <sstream>
-#include "base/ZipUtils.h"
+#include <unordered_map>
+
+#include "base/CCConsole.h"
 #include "base/base64.h"
 #include "base/CCDirector.h"
+#include "base/ZipUtils.h"
 #include "platform/CCFileUtils.h"
 
 using namespace std;

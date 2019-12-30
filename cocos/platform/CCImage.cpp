@@ -30,8 +30,9 @@ THE SOFTWARE.
 #include <string>
 #include <ctype.h>
 
-#include "base/CCData.h"
 #include "base/ccConfig.h" // CC_USE_JPEG, CC_USE_TIFF
+#include "base/CCConsole.h"
+#include "base/CCData.h"
 
 extern "C"
 {

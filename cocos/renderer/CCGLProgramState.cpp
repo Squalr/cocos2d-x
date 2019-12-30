@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include "renderer/CCGLProgramCache.h"
 #include "renderer/ccGLStateCache.h"
 #include "renderer/CCTexture2D.h"
+#include "base/CCConsole.h"
 #include "base/CCEventCustom.h"
 #include "base/CCEventListenerCustom.h"
 #include "base/CCEventType.h"

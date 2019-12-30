@@ -26,6 +26,8 @@ THE SOFTWARE.
 ****************************************************************************/
 #include "base/CCProfiling.h"
 
+#include "base/CCConsole.h"
+
 using namespace std;
 
 NS_CC_BEGIN

@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define __CC_APPLICATION_WIN32_H__
 
 #include "platform/CCPlatformConfig.h"
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 
 #include "platform/CCStdC.h"

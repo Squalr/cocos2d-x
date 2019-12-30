@@ -24,10 +24,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 #include "base/ccMacros.h"
-#include "platform/CCPlatformMacros.h"
-#include "platform/win32/CCUtils-win32.h"
 
 #include <sstream>
+
+#include "base/CCConsole.h"
+#include "platform/CCPlatformMacros.h"
+#include "platform/win32/CCUtils-win32.h"
 
 NS_CC_BEGIN
 

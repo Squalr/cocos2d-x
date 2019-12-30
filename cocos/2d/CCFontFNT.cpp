@@ -28,6 +28,7 @@
 #include "2d/CCFontAtlas.h"
 #include "platform/CCFileUtils.h"
 #include "base/CCConfiguration.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/CCMap.h"
 #include "base/ccUTF8.h"

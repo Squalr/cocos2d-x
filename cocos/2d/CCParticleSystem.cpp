@@ -48,12 +48,13 @@ THE SOFTWARE.
 #include <string>
 
 #include "2d/CCParticleBatchNode.h"
-#include "renderer/CCTextureAtlas.h"
+#include "base/CCConsole.h"
 #include "base/base64.h"
 #include "base/ZipUtils.h"
 #include "base/CCDirector.h"
 #include "base/CCProfiling.h"
 #include "base/ccUTF8.h"
+#include "renderer/CCTextureAtlas.h"
 #include "renderer/CCTextureCache.h"
 #include "platform/CCFileUtils.h"
 

@@ -27,6 +27,14 @@
 
 #include <algorithm>
 
+#include "2d/CCCamera.h"
+#include "2d/CCScene.h"
+#include "base/CCConfiguration.h"
+#include "base/CCConsole.h"
+#include "base/CCDirector.h"
+#include "base/CCEventDispatcher.h"
+#include "base/CCEventListenerCustom.h"
+#include "base/CCEventType.h"
 #include "renderer/CCTrianglesCommand.h"
 #include "renderer/CCBatchCommand.h"
 #include "renderer/CCCustomCommand.h"
@@ -38,14 +46,6 @@
 #include "renderer/CCPass.h"
 #include "renderer/CCRenderState.h"
 #include "renderer/ccGLStateCache.h"
-
-#include "base/CCConfiguration.h"
-#include "base/CCDirector.h"
-#include "base/CCEventDispatcher.h"
-#include "base/CCEventListenerCustom.h"
-#include "base/CCEventType.h"
-#include "2d/CCCamera.h"
-#include "2d/CCScene.h"
 
 NS_CC_BEGIN
 

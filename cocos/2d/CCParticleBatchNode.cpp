@@ -32,12 +32,13 @@
 #include "2d/CCParticleBatchNode.h"
 #include "2d/CCGrid.h"
 #include "2d/CCParticleSystem.h"
+#include "base/CCConsole.h"
+#include "base/CCProfiling.h"
+#include "base/ccUTF8.h"
 #include "renderer/CCTextureCache.h"
 #include "renderer/CCQuadCommand.h"
 #include "renderer/CCRenderer.h"
 #include "renderer/CCTextureAtlas.h"
-#include "base/CCProfiling.h"
-#include "base/ccUTF8.h"
 
 NS_CC_BEGIN
 

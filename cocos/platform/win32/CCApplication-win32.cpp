@@ -25,12 +25,15 @@ THE SOFTWARE.
 ****************************************************************************/
 
 #include "platform/CCPlatformConfig.h"
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 
-#include "platform/CCApplication.h"
-#include "base/CCDirector.h"
 #include <algorithm>
+
+#include "base/CCDirector.h"
+#include "platform/CCApplication.h"
 #include "platform/CCFileUtils.h"
+
 #include <shellapi.h>
 #include <WinVer.h>
 /**

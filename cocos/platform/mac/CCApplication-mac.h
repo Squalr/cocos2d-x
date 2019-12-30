@@ -28,6 +28,7 @@ THE SOFTWARE.
 #define __CC_APPLICATION_MAC_H__
 
 #include "platform/CCPlatformConfig.h"
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
 
 #include "platform/CCCommon.h"

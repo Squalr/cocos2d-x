@@ -26,11 +26,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "base/CCScheduler.h"
-#include "base/ccMacros.h"
-#include "base/CCDirector.h"
-#include "base/utlist.h"
 #include "base/ccCArray.h"
+#include "base/CCConsole.h"
+#include "base/CCDirector.h"
+#include "base/ccMacros.h"
+#include "base/CCScheduler.h"
+#include "base/utlist.h"
 
 NS_CC_BEGIN
 

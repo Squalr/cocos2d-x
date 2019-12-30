@@ -26,40 +26,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-// cocos2d includes
-#include "base/CCDirector.h"
+#include "CCDirector.h"
 
-// standard includes
 #include <string>
 
+#include "2d/CCActionManager.h"
+#include "2d/CCCamera.h"
 #include "2d/CCDrawingPrimitives.h"
 #include "2d/CCSpriteFrameCache.h"
-#include "platform/CCFileUtils.h"
-
-#include "2d/CCActionManager.h"
 #include "2d/CCFontFNT.h"
 #include "2d/CCFontAtlasCache.h"
 #include "2d/CCAnimationCache.h"
 #include "2d/CCFontFreeType.h"
 #include "2d/CCLabelAtlas.h"
-#include "renderer/CCGLProgramCache.h"
-#include "renderer/CCGLProgramStateCache.h"
-#include "renderer/CCTextureCache.h"
-#include "renderer/ccGLStateCache.h"
-#include "renderer/CCRenderer.h"
-#include "renderer/CCRenderState.h"
-#include "renderer/CCFrameBuffer.h"
-#include "2d/CCCamera.h"
-#include "base/ccFPSImages.h"
-#include "base/CCScheduler.h"
-#include "base/ccMacros.h"
-#include "base/CCEventDispatcher.h"
-#include "base/CCEventCustom.h"
+#include "base/CCAsyncTaskPool.h"
 #include "base/CCAutoreleasePool.h"
 #include "base/CCConfiguration.h"
-#include "base/CCAsyncTaskPool.h"
+#include "base/CCConsole.h"
+#include "base/CCEventDispatcher.h"
+#include "base/CCEventCustom.h"
+#include "base/ccFPSImages.h"
+#include "base/ccMacros.h"
+#include "base/CCScheduler.h"
 #include "base/ObjectFactory.h"
 #include "platform/CCApplication.h"
+#include "platform/CCFileUtils.h"
+#include "renderer/CCFrameBuffer.h"
+#include "renderer/CCGLProgramCache.h"
+#include "renderer/CCGLProgramStateCache.h"
+#include "renderer/ccGLStateCache.h"
+#include "renderer/CCTextureCache.h"
+#include "renderer/CCRenderer.h"
+#include "renderer/CCRenderState.h"
 
 /**
  Position of the FPS

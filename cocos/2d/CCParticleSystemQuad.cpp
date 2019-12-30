@@ -34,15 +34,16 @@ THE SOFTWARE.
 
 #include "2d/CCSpriteFrame.h"
 #include "2d/CCParticleBatchNode.h"
-#include "renderer/CCTextureAtlas.h"
-#include "renderer/ccGLStateCache.h"
-#include "renderer/CCRenderer.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/CCEventType.h"
 #include "base/CCConfiguration.h"
 #include "base/CCEventListenerCustom.h"
 #include "base/CCEventDispatcher.h"
 #include "base/ccUTF8.h"
+#include "renderer/CCTextureAtlas.h"
+#include "renderer/ccGLStateCache.h"
+#include "renderer/CCRenderer.h"
 
 #if __GNUC__ || __clang__
     // #include <execution>

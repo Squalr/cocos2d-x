@@ -27,16 +27,18 @@ THE SOFTWARE.
 ****************************************************************************/
 
 #include <stdarg.h>
+
 #include "2d/CCLayer.h"
-#include "platform/CCDevice.h"
-#include "renderer/CCRenderer.h"
-#include "renderer/ccGLStateCache.h"
-#include "renderer/CCGLProgramState.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventKeyboard.h"
 #include "base/CCEventListenerKeyboard.h"
 #include "base/ccUTF8.h"
+#include "platform/CCDevice.h"
+#include "renderer/CCRenderer.h"
+#include "renderer/CCGLProgramState.h"
+#include "renderer/ccGLStateCache.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 #include "platform/desktop/CCGLViewImpl-desktop.h"

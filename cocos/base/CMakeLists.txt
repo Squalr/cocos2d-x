@@ -18,6 +18,7 @@ set(COCOS_BASE_HEADER
     base/CCData.h
     base/ccMacros.h
     base/CCEventListenerKeyboard.h
+    base/CCConsole.h
     base/CCController.h
     base/base64.h
     base/CCEventListenerController.h
@@ -78,6 +79,7 @@ set(COCOS_BASE_SRC
     base/CCAsyncTaskPool.cpp
     base/CCAutoreleasePool.cpp
     base/CCConfiguration.cpp
+    base/CCConsole.cpp
     base/CCController.cpp
     base/CCData.cpp
     base/CCNinePatchImageParser.cpp

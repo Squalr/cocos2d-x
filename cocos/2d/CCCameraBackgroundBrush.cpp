@@ -23,11 +23,13 @@
  THE SOFTWARE.
 
  ****************************************************************************/
+
 #include "2d/CCCameraBackgroundBrush.h"
 #include "2d/CCCamera.h"
-#include "base/ccMacros.h"
+#include "base/CCConsole.h"
 #include "base/CCConfiguration.h"
 #include "base/CCDirector.h"
+#include "base/ccMacros.h"
 #include "renderer/ccGLStateCache.h"
 #include "renderer/CCGLProgram.h"
 #include "renderer/CCGLProgramCache.h"

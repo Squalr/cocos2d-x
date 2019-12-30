@@ -23,20 +23,22 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "platform/CCPlatformConfig.h"
-
-#include "audio/include/AudioEngine.h"
 #include <condition_variable>
 #include <queue>
-#include "platform/CCFileUtils.h"
+
+#include "audio/include/AudioEngine.h"
+#include "base/CCConsole.h"
 #include "base/ccUtils.h"
+#include "base/CCConsole.h"
+#include "platform/CCFileUtils.h"
+#include "platform/CCPlatformConfig.h"
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
-#include "audio/mac/AudioEngine-inl.h"
+    #include "audio/mac/AudioEngine-inl.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-#include "audio/win32/AudioEngine-win32.h"
+    #include "audio/win32/AudioEngine-win32.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-#include "audio/linux/AudioEngine-linux.h"
+    #include "audio/linux/AudioEngine-linux.h"
 #endif
 
 #define TIME_DELAY_PRECISION 0.0001

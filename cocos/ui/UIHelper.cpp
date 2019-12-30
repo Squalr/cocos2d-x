@@ -23,10 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "ui/UIHelper.h"
-#include "ui/UIWidget.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/ccUTF8.h"
+#include "ui/UIHelper.h"
+#include "ui/UIWidget.h"
 
 NS_CC_BEGIN
 

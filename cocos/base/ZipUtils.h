@@ -29,6 +29,7 @@ THE SOFTWARE.
 /// @cond DO_NOT_SHOW
 
 #include <string>
+
 #include "platform/CCPlatformConfig.h"
 #include "platform/CCPlatformMacros.h"
 #include "platform/CCPlatformDefine.h"
