@@ -24,12 +24,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+#include "CCFontAtlas.h"
 
 #if CC_TARGET_PLATFORM != CC_PLATFORM_WIN32
 #include <iconv.h>
 #endif
 
-#include "2d/CCFontAtlas.h"
 #include "2d/CCFontFreeType.h"
 #include "base/CCConsole.h"
 #include "base/CCDirector.h"

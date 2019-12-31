@@ -35,6 +35,7 @@ THE SOFTWARE.
 #include <string>
 #include <stack>
 
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "platform/CCFileUtils.h"
 #include "platform/CCSAXParser.h"
