@@ -187,6 +187,8 @@ void PhysicsWorldCallback::queryPointFunc(cpShape *shape, cpVect /*point*/, cpFl
     PhysicsWorldCallback::continues = info->func(*info->world, *physicsShape, info->data);
 }
 
+Vec2 _drawOffset = Vec2::ZERO;
+
 static inline cpSpaceDebugColor RGBAColor(float r, float g, float b, float a){
     cpSpaceDebugColor color = {r, g, b, a};
     return color;
@@ -203,7 +205,7 @@ static void DrawCircle(cpVect p, cpFloat /*a*/, cpFloat r, cpSpaceDebugColor out
     const Color4F outlineColor(outline.r, outline.g, outline.b, outline.a);
     DrawNode* drawNode = static_cast<DrawNode*>(data);
     float radius = PhysicsHelper::cpfloat2float(r);
-    Vec2 centre = PhysicsHelper::cpv2point(p);
+    Vec2 centre = PhysicsHelper::cpv2point(p) - _drawOffset;
     
     static const int CIRCLE_SEG_NUM = 12;
     Vec2 seg[CIRCLE_SEG_NUM] = {};
@@ -221,8 +223,8 @@ static void DrawFatSegment(cpVect a, cpVect b, cpFloat r, cpSpaceDebugColor outl
 {
     const Color4F outlineColor(outline.r, outline.g, outline.b, outline.a);
     DrawNode* drawNode = static_cast<DrawNode*>(data);
-    drawNode->drawSegment(PhysicsHelper::cpv2point(a),
-                          PhysicsHelper::cpv2point(b),
+    drawNode->drawSegment(PhysicsHelper::cpv2point(a) - _drawOffset,
+                          PhysicsHelper::cpv2point(b) - _drawOffset,
                           PhysicsHelper::cpfloat2float(r==0 ? 1 : r), outlineColor);
 }
 
@@ -239,7 +241,7 @@ static void DrawPolygon(int count, const cpVect *verts, cpFloat /*r*/, cpSpaceDe
     int num = count;
     Vec2* seg = new (std::nothrow) Vec2[num];
     for(int i=0;i<num;++i)
-        seg[i] = PhysicsHelper::cpv2point(verts[i]);
+        seg[i] = PhysicsHelper::cpv2point(verts[i]) - _drawOffset;
     
     drawNode->drawPolygon(seg, num, fillColor, 1.0f, outlineColor);
     
@@ -250,7 +252,7 @@ static void DrawDot(cpFloat /*size*/, cpVect pos, cpSpaceDebugColor color, cpDat
 {
     const Color4F dotColor(color.r, color.g, color.b, color.a);
     DrawNode* drawNode = static_cast<DrawNode*>(data);
-    drawNode->drawDot(PhysicsHelper::cpv2point(pos), 2, dotColor);
+    drawNode->drawDot(PhysicsHelper::cpv2point(pos) - _drawOffset, 2, dotColor);
 }
 
 static cpSpaceDebugColor ColorForShape(cpShape *shape, cpDataPointer /*data*/)
@@ -272,6 +274,38 @@ static cpSpaceDebugColor ColorForShape(cpShape *shape, cpDataPointer /*data*/)
     }
 }
 
+void PhysicsWorld::debugDrawBody(PhysicsBody* physicsBody, DrawNode* drawTarget, Vec2 drawOffset)
+{
+    cpSpaceDebugDrawOptions drawOptions = {
+        DrawCircle,
+        DrawSegment,
+        DrawFatSegment,
+        DrawPolygon,
+        DrawDot,
+        
+        (cpSpaceDebugDrawFlags)(PhysicsWorld::DEBUGDRAW_ALL),
+        
+        {1.0f, 0.0f, 0.0f, 1.0f},
+        ColorForShape,
+        {0.0f, 0.75f, 0.0f, 1.0f},
+        {0.0f, 0.0f, 1.0f, 1.0f},
+        drawTarget,
+    };
+
+    _drawOffset = drawOffset;
+
+    for (auto shape : physicsBody->getShapes())
+    {
+        for (auto cpShape : shape->_cpShapes)
+        {
+            if (cpShape->space)
+            {
+                cpSpaceDebugDrawShape(cpShape, &drawOptions);
+            }
+        }
+    }
+}
+
 
 void PhysicsWorld::debugDraw()
 {
@@ -281,25 +315,27 @@ void PhysicsWorld::debugDraw()
         _debugDraw->retain();
         Director::getInstance()->getRunningScene()->addChild(_debugDraw);
     }
-    
-    cpSpaceDebugDrawOptions drawOptions = {
-        DrawCircle,
-        DrawSegment,
-        DrawFatSegment,
-        DrawPolygon,
-        DrawDot,
-        
-        (cpSpaceDebugDrawFlags)(_debugDrawMask),
-        
-        {1.0f, 0.0f, 0.0f, 1.0f},
-        ColorForShape,
-        {0.0f, 0.75f, 0.0f, 1.0f},
-        {0.0f, 0.0f, 1.0f, 1.0f},
-        _debugDraw,
-    };
+
     if (_debugDraw)
     {
         _debugDraw->clear();
+    
+        cpSpaceDebugDrawOptions drawOptions = {
+            DrawCircle,
+            DrawSegment,
+            DrawFatSegment,
+            DrawPolygon,
+            DrawDot,
+            
+            (cpSpaceDebugDrawFlags)(_debugDrawMask),
+            
+            {1.0f, 0.0f, 0.0f, 1.0f},
+            ColorForShape,
+            {0.0f, 0.75f, 0.0f, 1.0f},
+            {0.0f, 0.0f, 1.0f, 1.0f},
+            _debugDraw,
+        };
+        
         cpSpaceDebugDraw(_cpSpace, &drawOptions);
     }
 }

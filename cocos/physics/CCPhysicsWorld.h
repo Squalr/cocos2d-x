@@ -345,6 +345,8 @@ public:
      * @param   delta   A float number.
      */
     void step(float delta);
+
+    static void debugDrawBody(PhysicsBody* physicsBody, DrawNode* drawTarget, Vec2 drawOffset);
     
 protected:
     static PhysicsWorld* construct(Scene* scene);

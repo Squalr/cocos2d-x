@@ -314,6 +314,9 @@ typedef struct cpSpaceDebugDrawOptions {
 /// Debug draw the current state of the space using the supplied drawing options.
 CP_EXPORT void cpSpaceDebugDraw(cpSpace *space, cpSpaceDebugDrawOptions *options);
 
+/// Debug draw the current state of the space using the supplied drawing options.
+CP_EXPORT void cpSpaceDebugDrawShape(cpShape *shape, cpSpaceDebugDrawOptions *options);
+
 #endif
 
 /// @}
