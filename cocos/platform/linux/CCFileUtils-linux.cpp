@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "platform/linux/CCFileUtils-linux.h"
 #include "platform/linux/CCApplication-linux.h"
 #include "platform/CCCommon.h"
+#include "base/CCConsole.h"
 #include "base/ccMacros.h"
 #include "base/ccUTF8.h"
 #include <unistd.h>

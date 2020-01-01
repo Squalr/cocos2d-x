@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 
+#include "base/CCConsole.h"
 #include "platform/CCCommon.h"
 #include "platform/linux/CCStdC-linux.h"
 

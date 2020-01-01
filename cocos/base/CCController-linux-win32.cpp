@@ -28,11 +28,13 @@ THE SOFTWARE.
 #include "base/CCController.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+
 #include <functional>
-#include "base/ccMacros.h"
+#include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/CCScheduler.h"
 #include "base/CCEventController.h"
+#include "base/ccMacros.h"
 
 #include <GLFW/glfw3.h>
 
