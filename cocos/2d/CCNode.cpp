@@ -708,16 +708,6 @@ void Node::setUserData(void *userData)
 
 void Node::setUserObject(Ref* userObject)
 {
-#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-    auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
-    if (sEngine)
-    {
-        if (userObject)
-            sEngine->retainScriptObject(this, userObject);
-        if (_userObject)
-            sEngine->releaseScriptObject(this, _userObject);
-    }
-#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
     CC_SAFE_RETAIN(userObject);
     CC_SAFE_RELEASE(_userObject);
     _userObject = userObject;
@@ -1060,13 +1050,6 @@ void Node::addChildInsert(Node *child, int index, bool isReentry)
 		this->childrenAlloc();
 	}
 
-#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-	auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
-	if (sEngine)
-	{
-		sEngine->retainScriptObject(this, child);
-	}
-#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
     _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 	_reorderChildDirty = true;
 	_children.insert(std::min(index, (int)_children.size()), child);
@@ -1254,13 +1237,7 @@ void Node::removeAllChildrenWithCleanup(bool cleanup)
         {
             child->cleanup();
         }
-#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-        auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
-        if (sEngine)
-        {
-            sEngine->releaseScriptObject(this, child);
-        }
-#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
+
         // set parent nil at the end
         child->setParent(nullptr);
     }
@@ -1292,14 +1269,7 @@ void Node::detachChild(Node *child, ssize_t childIndex, bool doCleanup)
     {
         child->cleanup();
     }
-    
-#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-    auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
-    if (sEngine)
-    {
-        sEngine->releaseScriptObject(this, child);
-    }
-#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
+
     // set parent nil at the end
     child->setParent(nullptr);
 
@@ -1316,14 +1286,7 @@ void Node::insertChild(Node* child, int z)
 	}
     
     _physicsDirty = true;
-
-#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-    auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
-    if (sEngine)
-    {
-        sEngine->retainScriptObject(this, child);
-    }
-#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
+    
     _selfFlags |= FLAGS_TRANSFORM_DIRTY;
     _reorderChildDirty = true;
     _children.pushBack(child);
@@ -1402,6 +1365,8 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
     this->draw(renderer, _modelViewTransform, parentFlags);
 
     const int size = _children.size();
+
+    this->sortAllChildren();
 
     for (int index = 0; index < size; index++)
     {

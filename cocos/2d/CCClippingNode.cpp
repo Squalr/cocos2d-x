@@ -172,6 +172,8 @@ void ClippingNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32
 
     const int size = _children.size();
 
+    sortAllChildren();
+
     for (int index = 0; index < size; index++)
     {
         _children[index]->visit(renderer, _modelViewTransform, parentFlags);
@@ -200,17 +202,6 @@ void ClippingNode::setStencil(Node *stencil)
     //early out if the stencil is already set
     if (_stencil == stencil)
         return;
-    
-#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-    auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
-    if (sEngine)
-    {
-        if (_stencil)
-            sEngine->releaseScriptObject(this, _stencil);
-        if (stencil)
-            sEngine->retainScriptObject(this, stencil);
-    }
-#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
     
     //cleanup current stencil
     if(_stencil != nullptr && _stencil->isRunning())
