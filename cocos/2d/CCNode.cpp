@@ -500,6 +500,16 @@ void Node::getPosition(float* x, float* y) const
     *y = _position.y;
 }
 
+Vec2* Node::getPositionPtr()
+{
+    return &_position;
+}
+
+float* Node::getPositionZPtr()
+{
+    return &_positionZ;
+}
+
 void Node::setPosition(float x, float y)
 {
     if (_position.x == x && _position.y == y)
