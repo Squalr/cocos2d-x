@@ -360,6 +360,10 @@ public:
      */
     virtual const Vec2& getPosition() const;
 
+    Vec2* getPositionPtr();
+    
+    float* getPositionZPtr();
+
     /** Returns the normalized position.
      * 
      * @return The normalized position.
@@ -1926,9 +1930,10 @@ protected:
     float _scaleX;                  ///< scaling factor on x-axis
     float _scaleY;                  ///< scaling factor on y-axis
     float _scaleZ;                  ///< scaling factor on z-axis
-
+    
     Vec2 _position;                 ///< position of the node
     float _positionZ;               ///< OpenGL real Z position
+
     Vec2 _normalizedPosition;
     bool _usingNormalizedPosition;
     bool _normalizedPositionDirty;
