@@ -23,7 +23,7 @@
 
 #ifndef CP_SPACE_DISABLE_DEBUG_API
 
-static void
+void
 cpSpaceDebugDrawShape(cpShape *shape, cpSpaceDebugDrawOptions *options)
 {
 	cpBody *body = shape->body;
