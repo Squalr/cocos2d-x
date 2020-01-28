@@ -1340,39 +1340,23 @@ void Node::visit()
     visit(renderer, parentTransform, true);
 }
 
-uint32_t Node::processParentFlags(const Mat4& parentTransform, uint32_t parentFlags)
-{
-    parentFlags |= _selfFlags;
-    
-    if(parentFlags & FLAGS_DIRTY_MASK)
-    {
-        _modelViewTransform = parentTransform * getNodeToParentTransform();
-    }
-
-    _selfFlags = 0;
-
-    return parentFlags;
-}
-
 void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
+    _selfFlags |= parentFlags;
+
     // quick return if not visible. children won't be drawn.
     if (!_visible || (_displayedOpacity == 0 && _cascadeOpacityEnabled))
     {
         return;
     }
     
-    parentFlags |= _selfFlags;
-    
-    if(parentFlags & FLAGS_DIRTY_MASK)
+    if(_selfFlags & FLAGS_DIRTY_MASK)
     {
         _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
 
-    _selfFlags = 0;
-
     // self draw
-    this->draw(renderer, _modelViewTransform, parentFlags);
+    this->draw(renderer, _modelViewTransform, _selfFlags);
 
     const int size = _children.size();
 
@@ -1380,8 +1364,10 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
 
     for (int index = 0; index < size; index++)
     {
-        _children[index]->visit(renderer, _modelViewTransform, parentFlags);
+        _children[index]->visit(renderer, _modelViewTransform, _selfFlags);
     }
+
+    _selfFlags = 0;
 }
 
 void Node::onEnter()

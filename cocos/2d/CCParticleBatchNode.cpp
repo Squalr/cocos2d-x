@@ -116,6 +116,8 @@ bool ParticleBatchNode::initWithFile(const std::string& fileImage, int capacity)
 // Don't call visit on it's children
 void ParticleBatchNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
+    _selfFlags |= parentFlags;
+
     // CAREFUL:
     // This visit is almost identical to Node#visit
     // with the exception that it doesn't call visit on it's children
@@ -127,17 +129,15 @@ void ParticleBatchNode::visit(Renderer *renderer, const Mat4 &parentTransform, u
     {
         return;
     }
-
-    parentFlags |= _selfFlags;
     
-    if(parentFlags & FLAGS_DIRTY_MASK)
+    if(_selfFlags & FLAGS_DIRTY_MASK)
     {
         _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
 
-    _selfFlags = 0;
+    draw(renderer, _modelViewTransform, _selfFlags);
 
-    draw(renderer, _modelViewTransform, parentFlags);
+    _selfFlags = 0;
 }
 
 // override addChild:

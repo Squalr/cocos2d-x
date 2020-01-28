@@ -143,17 +143,15 @@ void ClippingNode::onExit()
 
 void ClippingNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
+    _selfFlags |= parentFlags;
+
     if (!_visible || !hasContent() || (_displayedOpacity == 0 && _cascadeOpacityEnabled))
         return;
     
-    parentFlags |= _selfFlags;
-    
-    if(parentFlags & FLAGS_DIRTY_MASK)
+    if(_selfFlags & FLAGS_DIRTY_MASK)
     {
         _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
-
-    _selfFlags = 0;
 
     this->setContentSize(_stencil == nullptr ? Size::ZERO : _stencil->getContentSize());
 
@@ -161,14 +159,14 @@ void ClippingNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32
     _beforeVisitCmd.func = CC_CALLBACK_0(StencilStateManager::onBeforeVisit, _stencilStateManager);
     renderer->addCommand(&_beforeVisitCmd);
     
-    _stencil->visit(renderer, _modelViewTransform, parentFlags);
+    _stencil->visit(renderer, _modelViewTransform, _selfFlags);
 
     _afterDrawStencilCmd.init(_globalZOrder);
     _afterDrawStencilCmd.func = CC_CALLBACK_0(StencilStateManager::onAfterDrawStencil, _stencilStateManager);
     renderer->addCommand(&_afterDrawStencilCmd);
     
     // self draw
-    this->draw(renderer, _modelViewTransform, parentFlags);
+    this->draw(renderer, _modelViewTransform, _selfFlags);
 
     const int size = _children.size();
 
@@ -176,12 +174,14 @@ void ClippingNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32
 
     for (int index = 0; index < size; index++)
     {
-        _children[index]->visit(renderer, _modelViewTransform, parentFlags);
+        _children[index]->visit(renderer, _modelViewTransform, _selfFlags);
     }
 
     _afterVisitCmd.init(_globalZOrder);
     _afterVisitCmd.func = CC_CALLBACK_0(StencilStateManager::onAfterVisit, _stencilStateManager);
     renderer->addCommand(&_afterVisitCmd);
+
+    _selfFlags = 0;
 }
 
 void ClippingNode::setCameraMask(unsigned short mask, bool applyChildren)

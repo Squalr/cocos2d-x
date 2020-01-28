@@ -141,6 +141,8 @@ void SpriteBatchNode::visit(Renderer *renderer, const Mat4 &parentTransform, uin
 {
     CC_PROFILER_START_CATEGORY(kProfilerCategoryBatchSprite, "CCSpriteBatchNode - visit");
 
+    _selfFlags |= parentFlags;
+
     // CAREFUL:
     // This visit is almost identical to CocosNode#visit
     // with the exception that it doesn't call visit on it's children
@@ -152,17 +154,15 @@ void SpriteBatchNode::visit(Renderer *renderer, const Mat4 &parentTransform, uin
     {
         return;
     }
-
-    parentFlags |= _selfFlags;
     
-    if(parentFlags & FLAGS_DIRTY_MASK)
+    if(_selfFlags & FLAGS_DIRTY_MASK)
     {
         _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
 
-    _selfFlags = 0;
-
     draw(renderer, _modelViewTransform, _selfFlags);
+
+    _selfFlags = 0;
 }
 
 void SpriteBatchNode::addChild(Node *child, int zOrder, int tag)

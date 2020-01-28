@@ -1625,6 +1625,8 @@ void Label::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 
 void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
+    _selfFlags |= parentFlags;
+
     if (! _visible || (_utf8Text.empty() && _children.empty()) )
     {
         return;
@@ -1635,16 +1637,12 @@ void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t pare
         updateContent();
     }
     
-    parentFlags |= _selfFlags;
-    
-    if(parentFlags & FLAGS_DIRTY_MASK)
+    if(_selfFlags & FLAGS_DIRTY_MASK)
     {
         _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
 
-    _selfFlags = 0;
-
-    if (_shadowEnabled && (_shadowDirty || (parentFlags & FLAGS_DIRTY_MASK)) && !_utf8Text.empty())
+    if (_shadowEnabled && (_shadowDirty || (_selfFlags & FLAGS_DIRTY_MASK)) && !_utf8Text.empty())
     {
         _position.x += _shadowOffset.width;
         _position.y += _shadowOffset.height;
@@ -1660,12 +1658,14 @@ void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t pare
     }
 
     // self draw
-    this->drawSelf(true, renderer, parentFlags);
+    this->drawSelf(true, renderer, _selfFlags);
 
     for (int index = 0; index < _children.size(); index++)
     {
-        _children[index]->visit(renderer, _modelViewTransform, parentFlags);
+        _children[index]->visit(renderer, _modelViewTransform, _selfFlags);
     }
+
+    _selfFlags = 0;
 }
 
 void Label::drawSelf(bool visibleByCamera, Renderer* renderer, uint32_t flags)

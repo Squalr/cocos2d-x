@@ -427,6 +427,8 @@ void RenderTexture::clearStencil(int stencilValue)
 
 void RenderTexture::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
+    _selfFlags |= parentFlags;
+
     // override visit.
     // Don't call visit on its children
     if (!_visible)
@@ -434,17 +436,15 @@ void RenderTexture::visit(Renderer *renderer, const Mat4 &parentTransform, uint3
         return;
     }
     
-    parentFlags |= _selfFlags;
-    
-    if(parentFlags & FLAGS_DIRTY_MASK)
+    if(_selfFlags & FLAGS_DIRTY_MASK)
     {
         _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
 
-    _selfFlags = 0;
+    _sprite->visit(renderer, _modelViewTransform, _selfFlags);
+    draw(renderer, _modelViewTransform, _selfFlags);
 
-    _sprite->visit(renderer, _modelViewTransform, parentFlags);
-    draw(renderer, _modelViewTransform, parentFlags);
+    _selfFlags = 0;
 }
 
 /* get buffer as Image */
