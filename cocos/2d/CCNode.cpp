@@ -1387,6 +1387,8 @@ void Node::onEnter()
 
 	_isTransitionFinished = false;
 
+    sortAllChildren();
+
 	for (const auto &child : _children)
 		child->onEnter();
 
