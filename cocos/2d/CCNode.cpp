@@ -73,6 +73,7 @@ Node::Node()
 , _positionZ(0.0f)
 , _usingNormalizedPosition(false)
 , _normalizedPositionDirty(false)
+, _selfFlags(FLAGS_DIRTY_MASK)
 , _skewX(0.0f)
 , _skewY(0.0f)
 , _contentSize(Size::ZERO)
@@ -283,6 +284,12 @@ float Node::getRotation() const
 {
     CCASSERT(_rotationZ_X == _rotationZ_Y, "CCNode#rotation. RotationX != RotationY. Don't know which one to return");
     return _rotationZ_X;
+}
+
+void Node::makeDirty()
+{
+    _transformDirty = _inverseDirty = true;
+    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
 
 /// rotation setter
