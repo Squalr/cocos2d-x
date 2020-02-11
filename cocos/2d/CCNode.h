@@ -584,7 +584,7 @@ public:
      */
     virtual bool isVisible() const;
 
-    void makeDirty();
+    virtual void makeDirty();
 
     /**
      * Sets the rotation (angle) of the node in degrees.

@@ -70,6 +70,7 @@ Node::Node()
 , _scaleX(1.0f)
 , _scaleY(1.0f)
 , _scaleZ(1.0f)
+, _position(Vec2::ZERO)
 , _positionZ(0.0f)
 , _usingNormalizedPosition(false)
 , _normalizedPositionDirty(false)
@@ -290,6 +291,7 @@ void Node::makeDirty()
 {
     _transformDirty = _inverseDirty = true;
     _selfFlags |= FLAGS_TRANSFORM_DIRTY;
+    _selfFlags |= FLAGS_CONTENT_SIZE_DIRTY;
 }
 
 /// rotation setter
