@@ -712,11 +712,6 @@ public:
      */
     void setEmissionRate(float rate) { _emissionRate = rate; }
 
-    bool isUpdateWhileNotVisibleDisabled() const { return _isUpdateWhileNotVisibleDisabled; }
-
-    void setUpdateWhileNotVisibleDisabled(bool isUpdateWhileNotVisibleDisabled) { _isUpdateWhileNotVisibleDisabled = isUpdateWhileNotVisibleDisabled; }
-    
-
     /** Gets the maximum particles of the system.
      *
      * @return The maximum particles of the system.
@@ -776,6 +771,9 @@ public:
     
     void setSourcePositionCompatible(bool sourcePositionCompatible) { _sourcePositionCompatible = sourcePositionCompatible; }
     bool isSourcePositionCompatible() const { return _sourcePositionCompatible; }
+
+    bool canUpdate() { return _canUpdate; }
+    void toggleCanUpdate(bool canUpdate) { _canUpdate = canUpdate; }
     
 CC_CONSTRUCTOR_ACCESS:
     /**
@@ -914,7 +912,7 @@ protected:
     // Number of allocated particles
     int _allocatedParticles;
 
-    bool _isUpdateWhileNotVisibleDisabled;
+    bool _canUpdate;
 
     /** Is the emitter active */
     bool _isActive;

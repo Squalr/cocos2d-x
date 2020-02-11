@@ -42,7 +42,7 @@ THE SOFTWARE.
     #define CCASSERT(cond, msg)
 #endif
 
-#if __GNUC__ || __clang__
+#if __GNUC__ || __clang__ || _MSC_VER
     #define TRY_PARALLELIZE(begin, end, body) std::for_each(        \
           begin,                                                    \
           end,                                                      \
