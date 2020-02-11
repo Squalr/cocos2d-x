@@ -12,7 +12,6 @@ set(COCOS_2D_HEADER
     2d/CCSpriteFrameCache.h
     2d/CCLayer.h
     2d/CCActionCamera.h
-    2d/CCParticleExamples.h
     2d/CCSprite.h
     2d/CCNode.h
     2d/CCComponentContainer.h
@@ -98,7 +97,6 @@ set(COCOS_2D_SRC
     2d/CCNode.cpp
     2d/CCParallaxNode.cpp
     2d/CCParticleBatchNode.cpp
-    2d/CCParticleExamples.cpp
     2d/CCParticleSystem.cpp
     2d/CCParticleSystemQuad.cpp
     2d/CCRenderTexture.cpp

@@ -111,7 +111,6 @@ THE SOFTWARE.
 #include "2d/CCLayer.h"
 #include "2d/CCNode.h"
 #include "2d/CCParticleBatchNode.h"
-#include "2d/CCParticleExamples.h"
 #include "2d/CCParticleSystem.h"
 #include "2d/CCParticleSystemQuad.h"
 #include "2d/CCRenderTexture.h"
