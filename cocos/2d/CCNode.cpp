@@ -98,7 +98,6 @@ Node::Node()
 , _running(false)
 , _paused(false)
 , _visible(true)
-, _physicsDirty(true)
 , _ignoreAnchorPointForPosition(false)
 , _reorderChildDirty(false)
 , _isTransitionFinished(false)
@@ -110,9 +109,6 @@ Node::Node()
 , _cascadeColorEnabled(false)
 , _cascadeOpacityEnabled(true)
 , _cameraMask(1)
-#if CC_USE_PHYSICS
-, _physicsBody(nullptr)
-#endif
 , _anchorPoint(0, 0)
 , _onEnterCallback(nullptr)
 , _onExitCallback(nullptr)
@@ -1164,8 +1160,6 @@ void Node::removeFromParentAndCleanup(bool cleanup)
 
 void Node::removeChildNoExit(Node* child)
 {
-    _physicsDirty = true;
-
     // explicit nil handling
     if (_children.empty() || child == nullptr)
     {
@@ -1238,8 +1232,6 @@ void Node::removeAllChildren()
 
 void Node::removeAllChildrenWithCleanup(bool cleanup)
 {
-    _physicsDirty = true;
-
     // not using detachChild improves speed here
     for (const auto& child : _children)
     {
@@ -1271,8 +1263,6 @@ void Node::detachChild(Node *child, ssize_t childIndex, bool doCleanup)
 		return;
 	}
 
-    _physicsDirty = true;
-
     // IMPORTANT:
     //  -1st do onExit
     //  -2nd cleanup
@@ -1303,8 +1293,6 @@ void Node::insertChild(Node* child, int z)
 	{
 		return;
 	}
-    
-    _physicsDirty = true;
     
     _selfFlags |= FLAGS_TRANSFORM_DIRTY;
     _reorderChildDirty = true;

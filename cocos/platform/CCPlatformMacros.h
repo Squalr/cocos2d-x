@@ -224,13 +224,6 @@ private: varType varName; public: virtual inline varType get##funName(void) cons
 #define CCLOGWARN(...) __CCLOGWITHFUNCTION(__VA_ARGS__)
 #endif // COCOS2D_DEBUG
 
-/** Lua engine debug */
-#if !defined(COCOS2D_DEBUG) || COCOS2D_DEBUG == 0 || CC_LUA_ENGINE_DEBUG == 0
-#define LUALOG(...)
-#else
-#define LUALOG(format, ...)     cocos2d::log(format, ##__VA_ARGS__)
-#endif // Lua engine debug
-
 //  end of debug group
 /// @}
 

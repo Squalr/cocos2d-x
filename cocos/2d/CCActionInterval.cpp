@@ -929,20 +929,6 @@ void RotateTo::update(float time)
         }
         else
         {
-#if CC_USE_PHYSICS
-            if (_startAngle.x == _startAngle.y && _diffAngle.x == _diffAngle.y)
-            {
-                _target->setRotation(_startAngle.x + _diffAngle.x * time);
-            }
-            else
-            {
-                _target->setRotationSkewX(_startAngle.x + _diffAngle.x * time);
-                _target->setRotationSkewY(_startAngle.y + _diffAngle.y * time);
-            }
-#else
-            _target->setRotationSkewX(_startAngle.x + _diffAngle.x * time);
-            _target->setRotationSkewY(_startAngle.y + _diffAngle.y * time);
-#endif // CC_USE_PHYSICS
         }
     }
 }
@@ -1078,20 +1064,6 @@ void RotateBy::update(float time)
         }
         else
         {
-#if CC_USE_PHYSICS
-            if (_startAngle.x == _startAngle.y && _deltaAngle.x == _deltaAngle.y)
-            {
-                _target->setRotation(_startAngle.x + _deltaAngle.x * time);
-            }
-            else
-            {
-                _target->setRotationSkewX(_startAngle.x + _deltaAngle.x * time);
-                _target->setRotationSkewY(_startAngle.y + _deltaAngle.y * time);
-            }
-#else
-            _target->setRotationSkewX(_startAngle.x + _deltaAngle.x * time);
-            _target->setRotationSkewY(_startAngle.y + _deltaAngle.y * time);
-#endif // CC_USE_PHYSICS
         }
     }
 }

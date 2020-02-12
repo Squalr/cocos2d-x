@@ -29,7 +29,6 @@
 
 include(2d/CMakeLists.txt)
 include(platform/CMakeLists.txt)
-include(physics/CMakeLists.txt)
 include(math/CMakeLists.txt)
 include(renderer/CMakeLists.txt)
 include(base/CMakeLists.txt)

@@ -39,9 +39,6 @@ class BaseLight;
 class Renderer;
 class EventListenerCustom;
 class EventCustom;
-#if CC_USE_PHYSICS
-class PhysicsWorld;
-#endif
 
 /**
  * @addtogroup _2d
@@ -148,40 +145,7 @@ protected:
     
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Scene);
-    
-#if (CC_USE_PHYSICS)
-public:
-    
-#if CC_USE_PHYSICS
-    /** Get the physics world of the scene.
-     * @return The physics world of the scene.
-     * @js NA
-     */
-    PhysicsWorld* getPhysicsWorld() const { return _physicsWorld; }
-#endif
-    
-    /** Create a scene with physics.
-     * @return An autoreleased Scene object with physics.
-     * @js NA
-     */
-    static Scene *createWithPhysics();
-    
-CC_CONSTRUCTOR_ACCESS:
-    bool initWithPhysics();
-    
-protected:
-    void addChildToPhysicsWorld(Node* child);
 
-#if CC_USE_PHYSICS
-    PhysicsWorld* _physicsWorld;
-#endif
-
-#endif // (CC_USE_PHYSICS)
-
-#if (CC_USE_PHYSICS)
-public:
-    void stepPhysicsAndNavigation(float deltaTime);
-#endif
 };
 
 // end of _2d group

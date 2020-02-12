@@ -247,16 +247,6 @@ THE SOFTWARE.
 #define CC_ENABLE_PROFILERS 0
 #endif
 
-/** Enable Lua engine debug log. */
-#ifndef CC_LUA_ENGINE_DEBUG
-#define CC_LUA_ENGINE_DEBUG 0
-#endif
-
-/** Use physics integration API. */
-#ifndef CC_USE_PHYSICS
-#define CC_USE_PHYSICS 1
-#endif
-
 /** Use culling or not. */
 #ifndef CC_USE_CULLING
 #define CC_USE_CULLING 0

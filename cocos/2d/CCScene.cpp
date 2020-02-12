@@ -35,17 +35,10 @@ THE SOFTWARE.
 #include "renderer/CCRenderer.h"
 #include "renderer/CCFrameBuffer.h"
 
-#if CC_USE_PHYSICS
-#include "physics/CCPhysicsWorld.h"
-#endif
-
 NS_CC_BEGIN
 
 Scene::Scene()
 {
-#if CC_USE_PHYSICS
-    _physicsWorld = nullptr;
-#endif
     _ignoreAnchorPointForPosition = true;
     setAnchorPoint(Vec2(0.5f, 0.5f));
     
@@ -65,10 +58,6 @@ Scene::~Scene()
 {
     Director::getInstance()->getEventDispatcher()->removeEventListener(_event);
     CC_SAFE_RELEASE(_event);
-    
-#if CC_USE_PHYSICS
-    delete _physicsWorld;
-#endif
 }
 
 bool Scene::init()
@@ -213,54 +202,5 @@ void Scene::removeAllChildren()
         _defaultCamera->release();
     }
 }
-
-#if (CC_USE_PHYSICS)
-
-Scene* Scene::createWithPhysics()
-{
-    Scene *ret = new (std::nothrow) Scene();
-    if (ret && ret->initWithPhysics())
-    {
-        ret->autorelease();
-        return ret;
-    }
-    else
-    {
-        CC_SAFE_DELETE(ret);
-        return nullptr;
-    }
-}
-
-bool Scene::initWithPhysics()
-{
-#if CC_USE_PHYSICS
-    _physicsWorld = PhysicsWorld::construct(this);
-#endif
-
-    bool ret = false;
-    do
-    {
-        Director * director;
-        CC_BREAK_IF( ! (director = Director::getInstance()) );
-
-        this->setContentSize(director->getWinSize());
-
-        // success
-        ret = true;
-    } while (0);
-    return ret;
-}
-
-#endif
-
-#if (CC_USE_PHYSICS)
-void Scene::stepPhysicsAndNavigation(float deltaTime)
-{
-#if CC_USE_PHYSICS
-    if (_physicsWorld && _physicsWorld->isAutoStep())
-        _physicsWorld->update(deltaTime);
-#endif
-}
-#endif
 
 NS_CC_END
