@@ -929,6 +929,8 @@ void RotateTo::update(float time)
         }
         else
         {
+            _target->setRotationSkewX(_startAngle.x + _diffAngle.x * time);	
+            _target->setRotationSkewY(_startAngle.y + _diffAngle.y * time);
         }
     }
 }
@@ -1063,7 +1065,9 @@ void RotateBy::update(float time)
             _target->setRotation3D(v);
         }
         else
-        {
+        {	
+            _target->setRotationSkewX(_startAngle.x + _deltaAngle.x * time);	
+            _target->setRotationSkewY(_startAngle.y + _deltaAngle.y * time);
         }
     }
 }
