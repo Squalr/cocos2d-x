@@ -324,6 +324,11 @@ public:
     int getStringLength();
 
     /**
+     * Return length of string.
+     */
+    int getUnicodeStringLength();
+
+    /**
      * Sets the text color of Label.
      *
      * The text color is different from the color of Node.

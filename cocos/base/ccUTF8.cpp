@@ -148,6 +148,33 @@ bool isUnicodeSpace(char32_t ch)
     ||  ch == 0x205F || ch == 0x3000;
 }
 
+bool isUnicodeCombine(char32_t ch)
+{
+    return (ch >= 0x300 && ch <= 0x36F)
+        || (ch >= 0x483 && ch <= 0x7F3)
+        || (ch >= 0x135F && ch <= 0x135F)
+        || (ch >= 0x1A7F && ch <= 0x1A7F)
+        || (ch >= 0x1B6B && ch <= 0x1B73)
+        || (ch >= 0x1DC0 && ch <= 0x1DE6)
+        || (ch >= 0x1DFD && ch <= 0x1DFF)
+        || (ch >= 0x20D0 && ch <= 0x20F0)
+        || (ch >= 0x2CEF && ch <= 0x2CF1)
+        || (ch >= 0x2DE0 && ch <= 0x2DFF)
+        || (ch >= 0x3099 && ch <= 0x309A)
+        || (ch >= 0xA66F && ch <= 0xA672)
+        || (ch >= 0xA67C && ch <= 0xA67D)
+        || (ch >= 0xA6F0 && ch <= 0xA6F1)
+        || (ch >= 0xA8E0 && ch <= 0xA8F1)
+        || (ch >= 0xFE20 && ch <= 0xFE26)
+        || (ch >= 0x101FD && ch <= 0x101FD)
+        || (ch >= 0x1D165 && ch <= 0x1D169)
+        || (ch >= 0x1D16D && ch <= 0x1D172)
+        || (ch >= 0x1D17B && ch <= 0x1D182)
+        || (ch >= 0x1D185 && ch <= 0x1D18B)
+        || (ch >= 0x1D1AA && ch <= 0x1D1AD)
+        || (ch >= 0x1D242 && ch <= 0x1D244);
+}
+
 bool isCJKUnicode(char32_t ch)
 {
     return (ch >= 0x4E00 && ch <= 0x9FBF)   // CJK Unified Ideographs

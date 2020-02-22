@@ -1708,63 +1708,133 @@ void Label::setSystemFontSize(float fontSize)
 ///// PROTOCOL STUFF
 Sprite* Label::getLetter(int letterIndex, bool applyCursorOffset)
 {
-    Sprite* letter = nullptr;
-    do
+    if (_systemFontDirty || _currentLabelType == LabelType::STRING_TEXTURE)
     {
-        if (_systemFontDirty || _currentLabelType == LabelType::STRING_TEXTURE)
+        return nullptr;
+    }
+
+    auto contentDirty = _contentDirty;
+
+    if (contentDirty)
+    {
+        updateContent();
+    }
+
+    if (!(_textSprite == nullptr && letterIndex < _lengthOfString))
+    {
+        return nullptr;
+    }
+
+    const auto &letterInfo = _lettersInfo[letterIndex];
+
+    if (!letterInfo.valid || letterInfo.atlasIndex < 0)
+    {
+        return nullptr;
+    }
+
+    Sprite* letter = nullptr;
+
+    if (_letters.find(letterIndex) != _letters.end())
+    {
+        letter = _letters[letterIndex];
+    }
+
+    if (letter == nullptr)
+    {
+        const auto& letterDef = _fontAtlas->_letterDefinitions[letterInfo.utf32Char];
+        auto textureID = letterDef.textureID;
+        Rect uvRect;
+        uvRect.size.height = letterDef.height;
+        uvRect.size.width = letterDef.width;
+        uvRect.origin.x = letterDef.U;
+        uvRect.origin.y = letterDef.V;
+
+        if (letterDef.width <= 0.f || letterDef.height <= 0.f)
         {
-            break;
+            return LabelLetter::create();
         }
 
-        auto contentDirty = _contentDirty;
-        if (contentDirty)
+        letter = LabelLetter::createWithTexture(_fontAtlas->getTexture(textureID), uvRect);
+        letter->setTextureAtlas(_batchNodes.at(textureID)->getTextureAtlas());
+        letter->setAtlasIndex(letterInfo.atlasIndex);
+
+        int preceedingNormalLetterCount = 0;
+
+        for (int seekIndex = letterIndex; seekIndex >= 0; seekIndex--)
         {
-            updateContent();
+            const auto &letterInfoSeek = _lettersInfo[seekIndex];
+
+            preceedingNormalLetterCount += StringUtils::isUnicodeCombine(letterInfoSeek.utf32Char) ? 0 : 1;
         }
 
-        if (_textSprite == nullptr && letterIndex < _lengthOfString)
+        // Tag letters with their index
+        letter->setTag(preceedingNormalLetterCount);
+
+        float px = 0.0f;
+        float py = 0.0f;
+
+        if (!StringUtils::isUnicodeCombine(letterInfo.utf32Char))
         {
-            const auto &letterInfo = _lettersInfo[letterIndex];
-            if (!letterInfo.valid || letterInfo.atlasIndex<0)
+            px = letterInfo.positionX + (applyCursorOffset ? 0.0f : uvRect.size.width / 2.0f) + _linesOffsetX[letterInfo.lineIndex];
+            py = letterInfo.positionY - uvRect.size.height / 2.0f + _letterOffsetY;
+        }
+        else
+        {
+            int seekIndex = letterIndex;
+            bool isPositive = ((_lettersInfo[seekIndex].positionY + _letterOffsetY / 2.0f) >= 0.0f);
+            bool isPrioNormalLetter = true;
+            
+            do
             {
-                break;
-            }
+                const auto &letterInfoSeek = _lettersInfo[seekIndex];
+                float offset = letterInfoSeek.positionY + _letterOffsetY / 2.0f;
+                const auto& letterDefSeek = _fontAtlas->_letterDefinitions[letterInfoSeek.utf32Char];
 
-            if (_letters.find(letterIndex) != _letters.end())
-            {
-                letter = _letters[letterIndex];
-            }
+                isPrioNormalLetter = (seekIndex <= 0 || !StringUtils::isUnicodeCombine(_lettersInfo[seekIndex - 1].utf32Char));
 
-            if (letter == nullptr)
-            {
-                auto& letterDef = _fontAtlas->_letterDefinitions[letterInfo.utf32Char];
-                auto textureID = letterDef.textureID;
-                Rect uvRect;
-                uvRect.size.height = letterDef.height;
-                uvRect.size.width = letterDef.width;
-                uvRect.origin.x = letterDef.U;
-                uvRect.origin.y = letterDef.V;
-
-                if (letterDef.width <= 0.f || letterDef.height <= 0.f)
+                if ((isPositive && offset >= 0.0f) || (!isPositive && offset <= 0.0f))
                 {
-                    letter = LabelLetter::create();
+                    if (!isPrioNormalLetter)
+                    {
+                        offset += (isPositive ? -letterDefSeek.height / 2.0f : letterDefSeek.height / 2.0f);
+                    }
+
+                    py += offset;
                 }
-                else
+
+                if (--seekIndex < 0)
                 {
-                    letter = LabelLetter::createWithTexture(_fontAtlas->getTexture(textureID), uvRect);
-                    letter->setTextureAtlas(_batchNodes.at(textureID)->getTextureAtlas());
-                    letter->setAtlasIndex(letterInfo.atlasIndex);
-                    auto px = letterInfo.positionX + (applyCursorOffset ? 0.0f : uvRect.size.width / 2) + _linesOffsetX[letterInfo.lineIndex];
-                    auto py = letterInfo.positionY - uvRect.size.height / 2 + _letterOffsetY;
-                    letter->setPosition(px, py);
-                    letter->setOpacity(_realOpacity);
+                    break;
                 }
-                
-                addChild(letter);
-                _letters[letterIndex] = letter;
+
+            } while (StringUtils::isUnicodeCombine(_lettersInfo[seekIndex].utf32Char));
+
+            if (seekIndex >= 0)
+            {
+                const auto &letterInfoSeek = _lettersInfo[seekIndex];
+                const auto& letterDefSeek = _fontAtlas->_letterDefinitions[letterInfoSeek.utf32Char];
+                Rect uvRectSeek;
+                uvRectSeek.size.height = letterDefSeek.height;
+                uvRectSeek.size.width = letterDefSeek.width;
+                uvRectSeek.origin.x = letterDefSeek.U;
+                uvRectSeek.origin.y = letterDefSeek.V;
+
+                px += letterInfoSeek.positionX + (applyCursorOffset ? 0.0f : uvRectSeek.size.width / 2) + _linesOffsetX[letterInfoSeek.lineIndex];
+                py += letterInfoSeek.positionY - uvRectSeek.size.height / 2 + _letterOffsetY;
+            }
+            else
+            {
+                px += letterInfo.positionX + (applyCursorOffset ? 0.0f : uvRect.size.width / 2) + _linesOffsetX[letterInfo.lineIndex];
+                py += letterInfo.positionY - uvRect.size.height / 2 + _letterOffsetY;
             }
         }
-    } while (false);
+
+        letter->setPosition(px, py);
+        letter->setOpacity(_realOpacity);
+        
+        addChild(letter);
+        _letters[letterIndex] = letter;
+    }
 
     return letter;
 }
@@ -1864,6 +1934,21 @@ int Label::getStringLength()
 {
     _lengthOfString = static_cast<int>(_utf32Text.length());
     return _lengthOfString;
+}
+
+int Label::getUnicodeStringLength()
+{
+    int totalLength = this->getStringLength();
+    int unicodeLength = 0;
+
+    for (int letterIndex = 0; letterIndex < totalLength; letterIndex++)
+    {
+        const auto &letterInfo = _lettersInfo[letterIndex];
+
+        unicodeLength += StringUtils::isUnicodeCombine(letterInfo.utf32Char) ? 0 : 1;
+    }
+
+    return unicodeLength;
 }
 
 // RGBA protocol

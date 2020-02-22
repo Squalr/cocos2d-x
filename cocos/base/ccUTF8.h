@@ -139,6 +139,16 @@ CC_DLL void trimUTF32Vector(std::vector<char32_t>& str);
 CC_DLL bool isUnicodeSpace(char32_t ch);
 
 /**
+ *  @brief Whether the character is a combine character.
+ *  @param ch    The unicode character.
+ *  @returns     Whether the character is a white space character.
+ *
+ *  @see http://en.wikipedia.org/wiki/Whitespace_character#Unicode
+ *
+ */
+CC_DLL bool isUnicodeCombine(char32_t ch);
+
+/**
  *  @brief Whether the character is a Chinese/Japanese/Korean character.
  *  @param ch    The unicode character.
  *  @returns     Whether the character is a Chinese character.
