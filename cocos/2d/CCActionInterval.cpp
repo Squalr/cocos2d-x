@@ -2547,8 +2547,8 @@ void Animate::update(float t)
     }
 
     // Figure out the intended index from the elapsed time
-    int currentIndex = int(t / _splitTime);
-    int previousIndex = int(_previousT / _splitTime);
+    int currentIndex = std::round(t / _splitTime);
+    int previousIndex = std::round(_previousT / _splitTime);
 
     // Progress frame if onto a new frame index
     if(currentIndex != previousIndex)
