@@ -173,6 +173,10 @@ public:
                                    const Color3B& outlineColor = Color3B::WHITE, int outlineSize = -1,
                                    const Color3B& shadowColor = Color3B::BLACK, const cocos2d::Size& shadowOffset = Size(2.0, -2.0), int shadowBlurRadius = 0,
                                    const Color3B& glowColor = Color3B::WHITE);
+
+                                   
+    int getNewlineCount() { return _newlineCount; }
+    
 protected:
     std::string _text;
     std::string _fontName;
@@ -185,6 +189,7 @@ protected:
     cocos2d::Size _shadowOffset;            /*!< shadow effect offset value */
     int _shadowBlurRadius;                  /*!< the shadow effect blur radius */
     Color3B _glowColor;                     /*!< attributes of glow tag */
+    int _newlineCount;
     friend class RichText;
 };
     
@@ -554,6 +559,8 @@ public:
      */
     void setOpenUrlHandler(const OpenUrlHandler& handleOpenUrl);
 
+    int getNewlineCount();
+
 CC_CONSTRUCTOR_ACCESS:
     virtual bool init() override;
 
@@ -564,7 +571,7 @@ protected:
 
     virtual void initRenderer() override;
     void pushToContainer(Node* renderer);
-    void handleTextRenderer(const std::string& text, const std::string& fontName, float fontSize, const Color3B& color,
+    void handleTextRenderer(RichElementText* elmtText, const std::string& text, const std::string& fontName, float fontSize, const Color3B& color,
                             GLubyte opacity, uint32_t flags, const std::string& url = "",
                             const Color3B& outlineColor = Color3B::WHITE, int outlineSize = -1,
                             const Color3B& shadowColor = Color3B::BLACK, const cocos2d::Size& shadowOffset = Size(2.0, -2.0), int shadowBlurRadius = 0,

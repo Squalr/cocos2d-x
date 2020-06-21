@@ -135,6 +135,7 @@ bool RichElementText::init(int tag, const Color3B &color, GLubyte opacity, const
         _shadowOffset = shadowOffset;
         _shadowBlurRadius = shadowBlurRadius;
         _glowColor = glowColor;
+        _newlineCount = 0;
         return true;
     }
     return false;
@@ -1441,7 +1442,8 @@ void RichText::formatText()
                     case RichElement::Type::TEXT:
                     {
                         RichElementText* elmtText = static_cast<RichElementText*>(element);
-                        handleTextRenderer(elmtText->_text, elmtText->_fontName, elmtText->_fontSize, elmtText->_color,
+                        elmtText->_newlineCount = 0;
+                        handleTextRenderer(elmtText, elmtText->_text, elmtText->_fontName, elmtText->_fontSize, elmtText->_color,
                                            elmtText->_opacity, elmtText->_flags, elmtText->_url,
                                            elmtText->_outlineColor, elmtText->_outlineSize,
                                            elmtText->_shadowColor, elmtText->_shadowOffset, elmtText->_shadowBlurRadius,
@@ -1586,7 +1588,7 @@ int RichText::findSplitPositionForChar(cocos2d::Label* label, const std::string&
     return leftLength;
 }
 
-void RichText::handleTextRenderer(const std::string& text, const std::string& fontName, float fontSize, const Color3B &color,
+void RichText::handleTextRenderer(RichElementText* elmtText, const std::string& text, const std::string& fontName, float fontSize, const Color3B &color,
                                   GLubyte opacity, uint32_t flags, const std::string& url,
                                   const Color3B& outlineColor, int outlineSize,
                                   const Color3B& shadowColor, const cocos2d::Size& shadowOffset, int shadowBlurRadius,
@@ -1680,8 +1682,9 @@ void RichText::handleTextRenderer(const std::string& text, const std::string& fo
             }
         }
 
+        elmtText->_newlineCount++;
         addNewLine();
-        handleTextRenderer(cutWords, fontName, fontSize, color, opacity, flags, url,
+        handleTextRenderer(elmtText, cutWords, fontName, fontSize, color, opacity, flags, url,
             outlineColor, outlineSize,
             shadowColor, shadowOffset, shadowBlurRadius,
             glowColor);
