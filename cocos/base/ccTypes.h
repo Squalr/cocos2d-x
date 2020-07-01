@@ -73,6 +73,7 @@ struct CC_DLL Color3B
     GLubyte g;
     GLubyte b;
 
+    static const Color3B TRANSPARENT_WHITE;
     static const Color3B WHITE;
     static const Color3B YELLOW;
     static const Color3B BLUE;
@@ -116,6 +117,7 @@ struct CC_DLL Color4B
     GLubyte b;
     GLubyte a;
 
+    static const Color4B TRANSPARENT_WHITE;
     static const Color4B WHITE;
     static const Color4B YELLOW;
     static const Color4B BLUE;
@@ -157,6 +159,7 @@ struct CC_DLL Color4F
     GLfloat b;
     GLfloat a;
 
+    static const Color4F TRANSPARENT_WHITE;
     static const Color4F WHITE;
     static const Color4F YELLOW;
     static const Color4F BLUE;
