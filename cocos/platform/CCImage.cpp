@@ -127,11 +127,7 @@ namespace
 
 Texture2D::PixelFormat getDevicePixelFormat(Texture2D::PixelFormat format)
 {
-    switch (format)
-    {
-        default:
-            return format;
-    }
+    return format;
 }
 
 //////////////////////////////////////////////////////////////////////////

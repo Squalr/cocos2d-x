@@ -709,7 +709,7 @@ void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
                 int newCursorPos = nextRowStart + newOffset;
 
 				// Rare edge case correction
-				if (_cursorPosition == newCursorPos && newCursorPos + 1 < _charCount)
+				if (_cursorPosition == newCursorPos && newCursorPos + 1 < int(_charCount))
 				{
 					newCursorPos++;
 				}
