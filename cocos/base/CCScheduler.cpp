@@ -222,9 +222,7 @@ const int Scheduler::PRIORITY_NON_SYSTEM_MIN = PRIORITY_SYSTEM + 1;
 
 Scheduler::Scheduler(void)
 : _timeScale(1.0f)
-, _updatesNegList(nullptr)
-, _updates0List(nullptr)
-, _updatesPosList(nullptr)
+, _updatesList(nullptr)
 , _hashForUpdates(nullptr)
 , _hashForTimers(nullptr)
 , _currentTarget(nullptr)
@@ -455,19 +453,7 @@ void Scheduler::schedulePerFrame(const ccSchedulerFunc& callback, void *target, 
 
     // most of the updates are going to be 0, that's way there
     // is an special list for updates with priority 0
-    if (priority == 0)
-    {
-        appendIn(&_updates0List, callback, target, paused);
-    }
-    else if (priority < 0)
-    {
-        priorityIn(&_updatesNegList, callback, target, priority, paused);
-    }
-    else
-    {
-        // priority > 0
-        priorityIn(&_updatesPosList, callback, target, priority, paused);
-    }
+    appendIn(&_updatesList, callback, target, paused);
 }
 
 bool Scheduler::isScheduled(const std::string& key, const void *target) const
@@ -544,46 +530,6 @@ void Scheduler::unscheduleAll(void)
 
 void Scheduler::unscheduleAllWithMinPriority(int minPriority)
 {
-    // Custom Selectors
-    tHashTimerEntry *element = nullptr;
-    tHashTimerEntry *nextElement = nullptr;
-    for (element = _hashForTimers; element != nullptr;)
-    {
-        // element may be removed in unscheduleAllSelectorsForTarget
-        nextElement = (tHashTimerEntry *)element->hh.next;
-        unscheduleAllForTarget(element->target);
-
-        element = nextElement;
-    }
-
-    // Updates selectors
-    tListEntry *entry, *tmp;
-    if(minPriority < 0)
-    {
-        DL_FOREACH_SAFE(_updatesNegList, entry, tmp)
-        {
-            if(entry->priority >= minPriority)
-            {
-                unscheduleUpdate(entry->target);
-            }
-        }
-    }
-
-    if(minPriority <= 0)
-    {
-        DL_FOREACH_SAFE(_updates0List, entry, tmp)
-        {
-            unscheduleUpdate(entry->target);
-        }
-    }
-
-    DL_FOREACH_SAFE(_updatesPosList, entry, tmp)
-    {
-        if(entry->priority >= minPriority)
-        {
-            unscheduleUpdate(entry->target);
-        }
-    }
 }
 
 void Scheduler::unscheduleAllForTarget(void *target)
@@ -696,49 +642,7 @@ std::set<void*> Scheduler::pauseAllTargets()
 
 std::set<void*> Scheduler::pauseAllTargetsWithMinPriority(int minPriority)
 {
-    std::set<void*> idsWithSelectors;
-
-    // Custom Selectors
-    for(tHashTimerEntry *element = _hashForTimers; element != nullptr;
-        element = (tHashTimerEntry*)element->hh.next)
-    {
-        element->paused = true;
-        idsWithSelectors.insert(element->target);
-    }
-
-    // Updates selectors
-    tListEntry *entry, *tmp;
-    if(minPriority < 0)
-    {
-        DL_FOREACH_SAFE( _updatesNegList, entry, tmp ) 
-        {
-            if(entry->priority >= minPriority)
-            {
-                entry->paused = true;
-                idsWithSelectors.insert(entry->target);
-            }
-        }
-    }
-
-    if(minPriority <= 0)
-    {
-        DL_FOREACH_SAFE( _updates0List, entry, tmp )
-        {
-            entry->paused = true;
-            idsWithSelectors.insert(entry->target);
-        }
-    }
-
-    DL_FOREACH_SAFE( _updatesPosList, entry, tmp ) 
-    {
-        if(entry->priority >= minPriority) 
-        {
-            entry->paused = true;
-            idsWithSelectors.insert(entry->target);
-        }
-    }
-
-    return idsWithSelectors;
+    return std::set<void*>();
 }
 
 void Scheduler::resumeTargets(const std::set<void*>& targetsToResume)
@@ -777,26 +681,8 @@ void Scheduler::update(float dt)
     // Iterate over all the Updates' selectors
     tListEntry *entry, *tmp;
 
-    // updates with priority < 0
-    DL_FOREACH_SAFE(_updatesNegList, entry, tmp)
-    {
-        if ((! entry->paused) && (! entry->markedForDeletion))
-        {
-            entry->callback(dt);
-        }
-    }
-
     // updates with priority == 0
-    DL_FOREACH_SAFE(_updates0List, entry, tmp)
-    {
-        if ((! entry->paused) && (! entry->markedForDeletion))
-        {
-            entry->callback(dt);
-        }
-    }
-
-    // updates with priority > 0
-    DL_FOREACH_SAFE(_updatesPosList, entry, tmp)
+    DL_FOREACH_SAFE(_updatesList, entry, tmp)
     {
         if ((! entry->paused) && (! entry->markedForDeletion))
         {
