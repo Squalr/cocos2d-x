@@ -463,7 +463,7 @@ void Camera::applyFrameBufferObject()
 
 void Camera::applyViewport()
 {
-    glGetIntegerv(GL_VIEWPORT, _oldViewport);
+    // glGetIntegerv(GL_VIEWPORT, _oldViewport);
 
     if(nullptr == _fbo)
     {

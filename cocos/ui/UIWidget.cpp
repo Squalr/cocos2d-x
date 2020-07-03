@@ -118,10 +118,12 @@ void Widget::FocusNavigationController::addKeyboardEventListener()
 {
     if (nullptr == _keyboardListener)
     {
+        /*
         _keyboardListener = EventListenerKeyboard::create();
         _keyboardListener->onKeyReleased = CC_CALLBACK_2(Widget::FocusNavigationController::onKeypadKeyPressed, this);
         EventDispatcher* dispatcher = Director::getInstance()->getEventDispatcher();
         dispatcher->addEventListenerWithFixedPriority(_keyboardListener, _keyboardEventPriority);
+        */
     }
 }
 

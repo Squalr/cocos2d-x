@@ -155,17 +155,6 @@ protected:
      */
     const ListenerID& getListenerID() const { return _listenerID; }
 
-    /** Sets the fixed priority for this listener
-     *  @note This method is only used for `fixed priority listeners`, it needs to access a non-zero value.
-     *  0 is reserved for scene graph priority listeners
-     */
-    void setFixedPriority(int fixedPriority) { _fixedPriority = fixedPriority; }
-
-    /** Gets the fixed priority of this listener
-     *  @return 0 if it's a scene graph priority listener, non-zero for fixed priority listener
-     */
-    int getFixedPriority() const { return _fixedPriority; }
-
     /** Sets the node associated with this listener */
     void setAssociatedNode(Node* node) { _node = node; }
 

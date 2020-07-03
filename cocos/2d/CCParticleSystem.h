@@ -993,6 +993,7 @@ protected:
     bool _sourcePositionCompatible;
 
     static Vector<ParticleSystem*> __allInstances;
+    static std::map<std::string, ValueMap> DictCache;
     
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(ParticleSystem);

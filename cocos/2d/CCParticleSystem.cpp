@@ -195,6 +195,7 @@ void ParticleData::release()
 }
 
 Vector<ParticleSystem*> ParticleSystem::__allInstances;
+std::map<std::string, ValueMap> ParticleSystem::DictCache = std::map<std::string, ValueMap>();
 float ParticleSystem::__totalParticleCountFactor = 1.0f;
 
 ParticleSystem::ParticleSystem()
@@ -295,21 +296,27 @@ bool ParticleSystem::init()
 bool ParticleSystem::initWithFile(const std::string& plistFile)
 {
     bool ret = false;
+    
     _plistFile = FileUtils::getInstance()->fullPathForFilename(plistFile);
-    ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(_plistFile);
 
-    CCASSERT( !dict.empty(), "Particles: file not found");
+    if (ParticleSystem::DictCache.find(plistFile) == ParticleSystem::DictCache.end())
+    {
+        ParticleSystem::DictCache[plistFile] = FileUtils::getInstance()->getValueMapFromFile(_plistFile);
+
+        CCASSERT( !dict.empty(), "Particles: file not found");
+    }
     
     // FIXME: compute path from a path, should define a function somewhere to do it
     string listFilePath = plistFile;
+    
     if (listFilePath.find('/') != string::npos)
     {
         listFilePath = listFilePath.substr(0, listFilePath.rfind('/') + 1);
-        ret = this->initWithDictionary(dict, listFilePath);
+        ret = this->initWithDictionary(ParticleSystem::DictCache[plistFile], listFilePath);
     }
     else
     {
-        ret = this->initWithDictionary(dict, "");
+        ret = this->initWithDictionary(ParticleSystem::DictCache[plistFile], "");
     }
     
     return ret;

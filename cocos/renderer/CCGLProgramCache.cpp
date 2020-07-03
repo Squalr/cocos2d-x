@@ -133,7 +133,7 @@ bool GLProgramCache::init()
         reloadDefaultGLProgramsRelativeToLights();
     });
     
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, -1);
+    // Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, -1);
     
     return true;
 }

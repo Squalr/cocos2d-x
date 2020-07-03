@@ -72,22 +72,6 @@ public:
      */
     void addEventListenerWithSceneGraphPriority(EventListener* listener, Node* node);
 
-    /** Adds a event listener for a specified event with the fixed priority.
-     *  @param listener The listener of a specified event.
-     *  @param fixedPriority The fixed priority of the listener.
-     *  @note A lower priority will be called before the ones that have a higher value.
-     *        0 priority is forbidden for fixed priority since it's used for scene graph based priority.
-     */
-    void addEventListenerWithFixedPriority(EventListener* listener, int fixedPriority);
-
-    /** Adds a Custom event listener.
-     It will use a fixed priority of 1.
-     * @param eventName A given name of the event.
-     * @param callback A given callback method that associated the event name.
-     * @return the generated event. Needed in order to remove the event from the dispatcher
-     */
-    EventListenerCustom* addCustomEventListener(const std::string &eventName, const std::function<void(EventCustom*)>& callback);
-
     /////////////////////////////////////////////
     
     // Removes event listener
@@ -147,13 +131,6 @@ public:
     void resumeEventListenersForTarget(Node* target, bool recursive = false);
     
     /////////////////////////////////////////////
-    
-    /** Sets listener's priority with fixed value.
-     * 
-     * @param listener A given listener.
-     * @param fixedPriority The fixed priority value.
-     */
-    void setPriority(EventListener* listener, int fixedPriority);
 
     /** Whether to enable dispatching events.
      *
@@ -230,16 +207,13 @@ protected:
         
         void push_back(EventListener* item);
         void clearSceneGraphListeners();
-        void clearFixedListeners();
         void clear();
         
-        std::vector<EventListener*>* getFixedPriorityListeners() const { return _fixedListeners; }
-        std::vector<EventListener*>* getSceneGraphPriorityListeners() const { return _sceneGraphListeners; }
+        std::set<EventListener*>* getSceneGraphPriorityListeners() const { return _sceneGraphListeners; }
         ssize_t getGt0Index() const { return _gt0Index; }
         void setGt0Index(ssize_t index) { _gt0Index = index; }
     private:
-        std::vector<EventListener*>* _fixedListeners;
-        std::vector<EventListener*>* _sceneGraphListeners;
+        std::set<EventListener*>* _sceneGraphListeners;
         ssize_t _gt0Index;
     };
     
@@ -264,14 +238,18 @@ protected:
     /** Removes all listeners with the same event listener ID */
     void removeEventListenersForListenerID(const EventListener::ListenerID& listenerID);
     
+    /**
+     *
+     */
+    bool removeListenerInVector(std::set<EventListener*>* listeners, EventListener* listener);
+        
+    void removeAllListenersInVector(std::set<EventListener*>* listenerVector);
+    
     /** Sort event listener */
     void sortEventListeners(const EventListener::ListenerID& listenerID);
     
     /** Sorts the listeners of specified type by scene graph priority */
     void sortEventListenersOfSceneGraphPriority(const EventListener::ListenerID& listenerID, Node* rootNode);
-    
-    /** Sorts the listeners of specified type by fixed priority */
-    void sortEventListenersOfFixedPriority(const EventListener::ListenerID& listenerID);
     
     /** Updates all listeners
      *  1) Removes all listener items that have been marked as 'removed' when dispatching event.
@@ -304,9 +282,8 @@ protected:
     enum class DirtyFlag
     {
         NONE = 0,
-        FIXED_PRIORITY = 1 << 0,
-        SCENE_GRAPH_PRIORITY = 1 << 1,
-        ALL = FIXED_PRIORITY | SCENE_GRAPH_PRIORITY
+        SCENE_GRAPH_PRIORITY = 1 << 0,
+        ALL = SCENE_GRAPH_PRIORITY
     };
     
     /** Sets the dirty flag for a specified listener ID */
