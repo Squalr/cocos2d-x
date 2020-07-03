@@ -57,8 +57,10 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+    /*
     Director::getInstance()->getEventDispatcher()->removeEventListener(_event);
     CC_SAFE_RELEASE(_event);
+    */
 }
 
 bool Scene::init()

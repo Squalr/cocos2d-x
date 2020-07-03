@@ -435,11 +435,12 @@ void Renderer::processRenderCommand(RenderCommand* command)
 
 void Renderer::visitRenderQueue(RenderQueue& queue)
 {
-    queue.saveRenderState();
+    // queue.saveRenderState();
     
     //
     //Process Global-Z < 0 Objects
     //
+    /*
     const auto& zNegQueue = queue.getSubQueue(RenderQueue::QUEUE_GROUP::GLOBALZ_NEG);
     auto queueSize = queue.getSubQueueSize(RenderQueue::QUEUE_GROUP::GLOBALZ_NEG);
 
@@ -473,10 +474,12 @@ void Renderer::visitRenderQueue(RenderQueue& queue)
 
         flush();
     }
+    */
     
     //
     //Process Opaque Object
     //
+    /*
     const auto& opaqueQueue = queue.getSubQueue(RenderQueue::QUEUE_GROUP::OPAQUE_3D);
     queueSize = queue.getSubQueueSize(RenderQueue::QUEUE_GROUP::OPAQUE_3D);
 
@@ -499,10 +502,12 @@ void Renderer::visitRenderQueue(RenderQueue& queue)
 
         flush();
     }
+    */
     
     //
     //Process 3D Transparent object
     //
+    /*
     const auto& transQueue = queue.getSubQueue(RenderQueue::QUEUE_GROUP::TRANSPARENT_3D);
     queueSize = queue.getSubQueueSize(RenderQueue::QUEUE_GROUP::TRANSPARENT_3D);
 
@@ -525,12 +530,13 @@ void Renderer::visitRenderQueue(RenderQueue& queue)
 
         flush();
     }
+    */
     
     //
     //Process Global-Z = 0 Queue
     //
     const auto& zZeroQueue = queue.getSubQueue(RenderQueue::QUEUE_GROUP::GLOBALZ_ZERO);
-    queueSize = queue.getSubQueueSize(RenderQueue::QUEUE_GROUP::GLOBALZ_ZERO);
+    auto queueSize = queue.getSubQueueSize(RenderQueue::QUEUE_GROUP::GLOBALZ_ZERO);
     
     if (queueSize > 0)
     {
@@ -568,6 +574,7 @@ void Renderer::visitRenderQueue(RenderQueue& queue)
     //
     //Process Global-Z > 0 Queue
     //
+    /*
     const auto& zPosQueue = queue.getSubQueue(RenderQueue::QUEUE_GROUP::GLOBALZ_POS);
     queueSize = queue.getSubQueueSize(RenderQueue::QUEUE_GROUP::GLOBALZ_POS);
 
@@ -603,8 +610,9 @@ void Renderer::visitRenderQueue(RenderQueue& queue)
         
         flush();
     }
-    
-    queue.restoreRenderState();
+    */
+
+    // queue.restoreRenderState();
 }
 
 void Renderer::render()
