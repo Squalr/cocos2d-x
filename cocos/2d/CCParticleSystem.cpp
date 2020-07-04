@@ -303,7 +303,7 @@ bool ParticleSystem::initWithFile(const std::string& plistFile)
     {
         ParticleSystem::DictCache[plistFile] = FileUtils::getInstance()->getValueMapFromFile(_plistFile);
 
-        CCASSERT( !dict.empty(), "Particles: file not found");
+        CCASSERT( !ParticleSystem::DictCache[plistFile].empty(), "Particles: file not found");
     }
     
     // FIXME: compute path from a path, should define a function somewhere to do it
