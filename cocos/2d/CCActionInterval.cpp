@@ -352,15 +352,21 @@ void Sequence::update(float t)
         if( _last == -1 )
         {
             // action[0] was skipped, execute it.
-            _actions[0]->startWithTarget(_target);
-            _actions[0]->update(1.0f);
-            _actions[0]->stop();
+            if (_actions[0] != nullptr)
+            {
+                _actions[0]->startWithTarget(_target);
+                _actions[0]->update(1.0f);
+                _actions[0]->stop();
+            }
         }
         else if( _last == 0 )
         {
             // switching to action 1. stop action 0.
-            _actions[0]->update(1.0f);
-            _actions[0]->stop();
+            if (_actions[0] != nullptr)
+            {
+                _actions[0]->update(1.0f);
+                _actions[0]->stop();
+            }
         }
     }
     else if(found==0 && _last==1 )
@@ -369,21 +375,28 @@ void Sequence::update(float t)
         // FIXME: Bug. this case doesn't contemplate when _last==-1, found=0 and in "reverse mode"
         // since it will require a hack to know if an action is on reverse mode or not.
         // "step" should be overridden, and the "reverseMode" value propagated to inner Sequences.
-        _actions[1]->update(0);
-        _actions[1]->stop();
+        if (_actions[1] != nullptr)
+        {
+            _actions[1]->update(0);
+            _actions[1]->stop();
+        }
     }
     // Last action found and it is done.
-    if( found == _last && _actions[found]->isDone() )
+    if( found == _last && (_actions[found] == nullptr || _actions[found]->isDone() ))
     {
         return;
     }
 
-    // Last action found and it is done
-    if( found != _last )
+    if (_actions[found] != nullptr)
     {
-        _actions[found]->startWithTarget(_target);
+        // Last action found and it is done
+        if( found != _last )
+        {
+            _actions[found]->startWithTarget(_target);
+        }
+        _actions[found]->update(new_t);
     }
-    _actions[found]->update(new_t);
+    
     _last = found;
 }
 
