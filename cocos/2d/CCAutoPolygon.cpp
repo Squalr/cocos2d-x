@@ -623,7 +623,7 @@ TrianglesCommand::Triangles AutoPolygon::triangulate(const std::vector<Vec2>& po
             if(found)
             {
                 //if we found the same vertex, don't add to verts, but use the same vertex with indices
-                indices.push_back(j);
+                indices.push_back((unsigned short)j);
                 idx++;
             }
             else

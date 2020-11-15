@@ -66,12 +66,13 @@ target_compile_features(cocos2d PUBLIC cxx_std_17 c_std_99)
 # PIC, Unity Build
 set_target_properties(cocos2d PROPERTIES
     POSITION_INDEPENDENT_CODE ON
-    UNITY_BUILD ON
+    # UNITY_BUILD ON
+    # UNITY_BUILD_BATCH_SIZE 20
 )
 
-target_precompile_headers(cocos2d PUBLIC
-  "$<$<COMPILE_LANGUAGE:CXX>:precheader.h>"
-)
+# target_precompile_headers(cocos2d PUBLIC
+#   "$<$<COMPILE_LANGUAGE:CXX>:precheader.h>"
+# )
 
 # Include Interface
 target_include_directories(cocos2d
