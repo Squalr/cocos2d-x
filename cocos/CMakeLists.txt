@@ -60,10 +60,17 @@ add_library(cocos2d STATIC
 
 add_library(cocos2d::cocos2d ALIAS cocos2d)
 
-# C++11 and PIC
-target_compile_features(cocos2d PUBLIC cxx_std_11 c_std_99)
+# C++17
+target_compile_features(cocos2d PUBLIC cxx_std_17 c_std_99)
+
+# PIC, Unity Build
 set_target_properties(cocos2d PROPERTIES
     POSITION_INDEPENDENT_CODE ON
+    UNITY_BUILD ON
+)
+
+target_precompile_headers(cocos2d PUBLIC
+  "$<$<COMPILE_LANGUAGE:CXX>:precheader.h>"
 )
 
 # Include Interface

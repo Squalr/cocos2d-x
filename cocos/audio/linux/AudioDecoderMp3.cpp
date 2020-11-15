@@ -33,17 +33,17 @@
 
 namespace cocos2d { namespace cocos_experimental {
 
-    static bool __mp3Inited = false;
+    static bool __mp3InitedLinux = false;
 
     bool AudioDecoderMp3::lazyInit()
     {
         bool ret = true;
-        if (!__mp3Inited)
+        if (!__mp3InitedLinux)
         {
             int error = mpg123_init();
             if (error == MPG123_OK)
             {
-                __mp3Inited = true;
+                __mp3InitedLinux = true;
             }
             else
             {
@@ -56,10 +56,10 @@ namespace cocos2d { namespace cocos_experimental {
 
     void AudioDecoderMp3::destroy()
     {
-        if (__mp3Inited)
+        if (__mp3InitedLinux)
         {
             mpg123_exit();
-            __mp3Inited = false;
+            __mp3InitedLinux = false;
         }
     }
 

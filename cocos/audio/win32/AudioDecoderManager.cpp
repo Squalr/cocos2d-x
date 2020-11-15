@@ -33,8 +33,6 @@ THE SOFTWARE.
 
 namespace cocos2d { namespace cocos_experimental {
 
-static bool __mp3Inited = false;
-
 bool AudioDecoderManager::init()
 {
     return true;

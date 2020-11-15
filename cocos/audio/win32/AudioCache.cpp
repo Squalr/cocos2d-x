@@ -45,7 +45,7 @@
 #endif
 
 namespace {
-unsigned int __idIndex = 0;
+unsigned int __idIndexWindowsCache = 0;
 }
 
 #define INVALID_AL_BUFFER_ID 0xFFFFFFFF
@@ -64,7 +64,7 @@ AudioCache::AudioCache()
 , _queBufferFrames(0)
 , _state(State::INITIAL)
 , _isDestroyed(std::make_shared<bool>(false))
-, _id(++__idIndex)
+, _id(++__idIndexWindowsCache)
 , _isLoadingFinished(false)
 , _isSkipReadDataTask(false)
 {

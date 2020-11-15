@@ -46,7 +46,7 @@
 #endif
 
 namespace {
-unsigned int __idIndex = 0;
+unsigned int __idIndexMacCache = 0;
 }
 
 #define INVALID_AL_BUFFER_ID 0xFFFFFFFF

@@ -45,7 +45,7 @@ using namespace cocos2d;
 using namespace cocos2d::cocos_experimental;
 
 namespace {
-unsigned int __idIndex = 0;
+unsigned int __idIndexLinuxPlayer = 0;
 }
 
 AudioPlayer::AudioPlayer()
@@ -59,7 +59,7 @@ AudioPlayer::AudioPlayer()
 , _rotateBufferThread(nullptr)
 , _timeDirty(false)
 , _isRotateThreadExited(false)
-, _id(++__idIndex)
+, _id(++__idIndexLinuxPlayer)
 {
     memset(_bufferIds, 0, sizeof(_bufferIds));
 }
