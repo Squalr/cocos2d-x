@@ -3,8 +3,6 @@
 // this will speed-up build a lot
 #pragma once
 
-#include "cocos2d.h"
-
 // types
 #include <limits>
 #include <string>
@@ -29,3 +27,5 @@
 #include <algorithm>
 #include <utility>
 #include <tuple>
+
+// #include "cocos2d.h"

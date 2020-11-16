@@ -102,12 +102,12 @@ public:
      */
     Rect parseCapInset()const;
 private:
-    enum class Direction
+    enum class NinePatchDirection
     {
-        HORIZONTAL,
-        VERTICAL
+        NP_HORIZONTAL,
+        NP_VERTICAL
     };
-    int getPixelOriginOffset(Direction direction)const;
+    int getPixelOriginOffset(NinePatchDirection direction)const;
     Vec2 parseHorizontalMargin()const;
     Vec2 parseVerticalMargin()const;
     int getFrameWidth()const;

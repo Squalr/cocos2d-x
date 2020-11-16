@@ -45,15 +45,6 @@ set(COCOS_BASE_HEADER
     base/ZipUtils.h
     base/CCMap.h
     base/ccUTF8.h
-    base/allocator/CCAllocatorBase.h
-    base/allocator/CCAllocatorDiagnostics.h
-    base/allocator/CCAllocatorMacros.h
-    base/allocator/CCAllocatorMutex.h
-    base/allocator/CCAllocatorStrategyGlobalSmallBlock.h
-    base/allocator/CCAllocatorStrategyDefault.h
-    base/allocator/CCAllocatorStrategyPool.h
-    base/allocator/CCAllocatorGlobal.h
-    base/allocator/CCAllocatorStrategyFixedBlock.h
     base/CCEventFocus.h
     base/CCConfiguration.h
     base/CCProtocols.h
@@ -100,9 +91,6 @@ set(COCOS_BASE_SRC
     base/CCValue.cpp
     base/CCStencilStateManager.cpp
     base/ZipUtils.cpp
-    base/allocator/CCAllocatorDiagnostics.cpp
-    base/allocator/CCAllocatorGlobal.cpp
-    base/allocator/CCAllocatorGlobalNewDelete.cpp
     base/base64.cpp
     base/ccCArray.cpp
     base/ccFPSImages.c

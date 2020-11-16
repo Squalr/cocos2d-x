@@ -79,13 +79,13 @@ int NinePatchImageParser::getFrameWidth()const
     return _imageFrame.size.width;
 }
 
-int NinePatchImageParser::getPixelOriginOffset(Direction direction)const
+int NinePatchImageParser::getPixelOriginOffset(NinePatchDirection direction)const
 {
     int imageWidth = _image->getWidth();
     int frameWidth = this->getFrameWidth();
     
     int topLineLeftOffset = (int)_imageFrame.origin.y * imageWidth * 4 + (int)_imageFrame.origin.x * 4;
-    if(direction == Direction::HORIZONTAL)
+    if(direction == NinePatchDirection::NP_HORIZONTAL)
     {
         return topLineLeftOffset;
     }
@@ -106,7 +106,7 @@ Vec2 NinePatchImageParser::parseHorizontalMargin()const
 {
     unsigned char* data = _image->getData();
     
-    data = data + this->getPixelOriginOffset(Direction::HORIZONTAL);
+    data = data + this->getPixelOriginOffset(NinePatchDirection::NP_HORIZONTAL);
     unsigned char lastPixel = *(data + 3);
     int x1 = 0;
     int x2 = 0;
@@ -140,7 +140,7 @@ Vec2 NinePatchImageParser::parseVerticalMargin()const
     int y1 = 0;
     int y2 = 0;
     
-    data = data + this->getPixelOriginOffset(Direction::VERTICAL);
+    data = data + this->getPixelOriginOffset(NinePatchDirection::NP_VERTICAL);
     unsigned char lastPixel = *(data + 3);
     
     int length = (int)(_imageFrame.origin.y + this->getFrameHeight());
