@@ -467,7 +467,6 @@ Console::Console()
 , _sendDebugStrings(false)
 , _bindAddress("")
 {
-    createCommandAllocator();
     createCommandConfig();
     createCommandDebugMsg();
     createCommandDirector();
@@ -905,12 +904,6 @@ void Console::addClient()
 // create commands
 //
 
-void Console::createCommandAllocator()
-{
-    addCommand({"allocator", "Display allocator diagnostics for all allocators. Args: [-h | help | ]",
-        CC_CALLBACK_2(Console::commandAllocator, this)});
-}
-
 void Console::createCommandConfig()
 {
     addCommand({"config", "Print the Configuration object. Args: [-h | help | ]",
@@ -1008,16 +1001,6 @@ void Console::createCommandVersion()
 //
 // commands
 //
-
-void Console::commandAllocator(int fd, const std::string& /*args*/)
-{
-#if CC_ENABLE_ALLOCATOR_DIAGNOSTICS
-    auto info = allocator::AllocatorDiagnostics::instance()->diagnostics();
-    Console::Utility::mydprintf(fd, info.c_str());
-#else
-    Console::Utility::mydprintf(fd, "allocator diagnostics not available. CC_ENABLE_ALLOCATOR_DIAGNOSTICS must be set to 1 in ccConfig.h\n");
-#endif
-}
 
 void Console::commandConfig(int fd, const std::string& /*args*/)
 {

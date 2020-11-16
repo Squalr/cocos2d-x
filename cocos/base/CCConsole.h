@@ -213,7 +213,6 @@ protected:
     void addClient();
     
     // create a map of command.
-    void createCommandAllocator();
     void createCommandConfig();
     void createCommandDebugMsg();
     void createCommandDirector();
@@ -229,7 +228,6 @@ protected:
     void createCommandVersion();
 
     // Add commands here
-    void commandAllocator(int fd, const std::string& args);
     void commandConfig(int fd, const std::string& args);
     void commandDebugMsg(int fd, const std::string& args);
     void commandDebugMsgSubCommandOnOff(int fd, const std::string& args);
