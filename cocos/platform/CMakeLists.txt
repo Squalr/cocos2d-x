@@ -131,6 +131,7 @@ endif()
 
 set(COCOS_PLATFORM_INCLUDE_PATHS
     ${PROJECT_SOURCE_DIR}/external
+    ${PROJECT_SOURCE_DIR}/external/clipper
     ${PROJECT_SOURCE_DIR}/external/ConvertUTF
     ${PROJECT_SOURCE_DIR}/external/edtaa3func
     ${PROJECT_SOURCE_DIR}/external/poly2tri
@@ -165,6 +166,7 @@ set(COCOS_PLATFORM_SRC
     platform/CCFileUtils.cpp
     platform/CCImage.cpp
     ../external/edtaa3func/edtaa3func.cpp
+    ../external/clipper/clipper.cpp
     ../external/ConvertUTF/ConvertUTFWrapper.cpp
     ../external/ConvertUTF/ConvertUTF.c
     ../external/poly2tri/common/shapes.cc

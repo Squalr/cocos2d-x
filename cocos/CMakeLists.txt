@@ -102,14 +102,9 @@ target_link_libraries(cocos2d
         GLEW::GLEW
         Freetype::Freetype
         tinyxml2::tinyxml2
-        RapidJSON::RapidJSON
-        xxhash::xxhash
         cereal
         MPG123::MPG123
         Vorbis::File
-
-        # internal dependencies
-        clipper::clipper
 
         # required platform dependencies
         $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>

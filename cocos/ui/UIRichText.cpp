@@ -44,43 +44,6 @@
 USING_NS_CC;
 using namespace cocos2d::ui;
 
-class ListenerComponent : public Component
-{
-public:
-    static const std::string COMPONENT_NAME;    /*!< component name */
-
-    static ListenerComponent* create(Node* parent, const std::string& url, const RichText::OpenUrlHandler handleOpenUrl = nullptr)
-    {
-        auto component = new (std::nothrow) ListenerComponent(parent, url, handleOpenUrl);
-        component->autorelease();
-        return component;
-    }
-
-    explicit ListenerComponent(Node* parent, const std::string& url, const RichText::OpenUrlHandler handleOpenUrl)
-    : _parent(parent)
-    , _url(url)
-    , _handleOpenUrl(handleOpenUrl)
-    {
-        setName(ListenerComponent::COMPONENT_NAME);
-    }
-
-    virtual ~ListenerComponent()
-    {
-    }
-    
-    void setOpenUrlHandler(const RichText::OpenUrlHandler& handleOpenUrl)
-    {
-        _handleOpenUrl = handleOpenUrl;
-    }
-
-private:
-    Node* _parent;      // weak ref.
-    std::string _url;
-    RichText::OpenUrlHandler _handleOpenUrl;
-    EventDispatcher* _eventDispatcher;  // weak ref.
-};
-const std::string ListenerComponent::COMPONENT_NAME("cocos2d_ui_UIRichText_ListenerComponent");
-
 bool RichElement::init(int tag, const Color3B &color, GLubyte opacity)
 {
     _tag = tag;
@@ -1368,9 +1331,6 @@ void RichText::formatText()
                             label->enableUnderline();
                         if (elmtText->_flags & RichElementText::STRIKETHROUGH_FLAG)
                             label->enableStrikethrough();
-                        if (elmtText->_flags & RichElementText::URL_FLAG)
-                            label->addComponent(ListenerComponent::create(label, elmtText->_url,
-                                                                          std::bind(&RichText::openUrl, this, std::placeholders::_1)));
                         if (elmtText->_flags & RichElementText::OUTLINE_FLAG) {
                             label->enableOutline(Color4B(elmtText->_outlineColor), elmtText->_outlineSize);
                         }
@@ -1402,9 +1362,6 @@ void RichText::formatText()
                                 elementRenderer->setScaleY(elmtImage->_height / currentSize.height);
                             elementRenderer->setContentSize(Size(currentSize.width * elementRenderer->getScaleX(),
                                                                  currentSize.height * elementRenderer->getScaleY()));
-                            elementRenderer->addComponent(ListenerComponent::create(elementRenderer,
-                                                                                    elmtImage->_url,
-                                                                                    std::bind(&RichText::openUrl, this, std::placeholders::_1)));
                         }
                         break;
                     }
@@ -1612,8 +1569,6 @@ void RichText::handleTextRenderer(RichElementText* elmtText, const std::string& 
         textRenderer->enableUnderline();
     if (flags & RichElementText::STRIKETHROUGH_FLAG)
         textRenderer->enableStrikethrough();
-    if (flags & RichElementText::URL_FLAG)
-        textRenderer->addComponent(ListenerComponent::create(textRenderer, url, std::bind(&RichText::openUrl, this, std::placeholders::_1)));
     if (flags & RichElementText::OUTLINE_FLAG) {
         textRenderer->enableOutline(Color4B(outlineColor), outlineSize);
     }
@@ -1666,10 +1621,6 @@ void RichText::handleTextRenderer(RichElementText* elmtText, const std::string& 
                     leftRenderer->enableUnderline();
                 if (flags & RichElementText::STRIKETHROUGH_FLAG)
                     leftRenderer->enableStrikethrough();
-                if (flags & RichElementText::URL_FLAG)
-                    leftRenderer->addComponent(ListenerComponent::create(leftRenderer,
-                        url,
-                        std::bind(&RichText::openUrl, this, std::placeholders::_1)));
                 if (flags & RichElementText::OUTLINE_FLAG) {
                     leftRenderer->enableOutline(Color4B(outlineColor), outlineSize);
                 }
@@ -1711,9 +1662,6 @@ void RichText::handleImageRenderer(const std::string& filePath, const Color3B &/
                                              currentSize.height * imageRenderer->getScaleY()));
         imageRenderer->setScale(1.f, 1.f);
         handleCustomRenderer(imageRenderer);
-        imageRenderer->addComponent(ListenerComponent::create(imageRenderer,
-                                                              url,
-                                                              std::bind(&RichText::openUrl, this, std::placeholders::_1)));
     }
 }
 

@@ -36,7 +36,6 @@ THE SOFTWARE.
 #include "2d/CCCamera.h"
 #include "2d/CCActionManager.h"
 #include "2d/CCScene.h"
-#include "2d/CCComponent.h"
 #include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/CCScheduler.h"
@@ -101,7 +100,6 @@ Node::Node()
 , _ignoreAnchorPointForPosition(false)
 , _reorderChildDirty(false)
 , _isTransitionFinished(false)
-, _componentContainer(nullptr)
 , _displayedOpacity(255)
 , _realOpacity(255)
 , _displayedColor(Color3B::WHITE)
@@ -156,10 +154,6 @@ Node::~Node()
     {
         child->_parent = nullptr;
     }
-
-    removeAllComponents();
-    
-    CC_SAFE_DELETE(_componentContainer);
     
     stopAllActions();
     unscheduleAllCallbacks();
@@ -1375,20 +1369,19 @@ void Node::onEnter()
 	}
 
 	if (_onEnterCallback)
+    {
 		_onEnterCallback();
-
-	if (_componentContainer && !_componentContainer->isEmpty())
-	{
-		_componentContainer->onEnter();
-	}
+    }
 
 	_isTransitionFinished = false;
 
     sortAllChildren();
 
 	for (const auto &child : _children)
+    {
 		child->onEnter();
-
+    }
+    
 	this->resume();
 
 	_running = true;
@@ -1399,14 +1392,6 @@ void Node::onReenter()
 	if (!_running)
 	{
 		++__attachedNodeCount;
-	}
-
-	// if (_onEnterCallback)
-	// 	_onEnterCallback();
-
-	if (_componentContainer && !_componentContainer->isEmpty())
-	{
-		// _componentContainer->onEnter();
 	}
 
 	// _isTransitionFinished = false;
@@ -1447,20 +1432,19 @@ void Node::onExit()
     }
     
     if (_onExitCallback)
-        _onExitCallback();
-    
-    if (_componentContainer && !_componentContainer->isEmpty())
     {
-        _componentContainer->onExit();
+        _onExitCallback();
     }
-    
+
     // Zac: Disabled this. Why pause on exit? Just dispose it. This causes dumb bugs.
     // this->pause();
     
     _running = false;
     
-    for( const auto &child: _children)
+    for(const auto &child: _children)
+    {
         child->onExit();
+    }
 }
 
 void Node::setEventDispatcher(EventDispatcher* dispatcher)
@@ -1682,10 +1666,6 @@ void Node::pauseSchedulerAndActions()
 // override me
 void Node::update(float fDelta)
 {
-    if (_componentContainer && !_componentContainer->isEmpty())
-    {
-        _componentContainer->visit(fDelta);
-    }
 }
 
 // MARK: coordinates
@@ -1971,52 +1951,6 @@ void Node::updateTransform()
     // Recursively iterate over children
     for( const auto &child: _children)
         child->updateTransform();
-}
-
-// MARK: components
-
-Component* Node::getComponent(const std::string& name)
-{
-    if (_componentContainer)
-        return _componentContainer->get(name);
-    
-    return nullptr;
-}
-
-bool Node::addComponent(Component *component)
-{
-    // lazy alloc
-    if (!_componentContainer)
-        _componentContainer = new (std::nothrow) ComponentContainer(this);
-    
-    // should enable schedule update, then all components can receive this call back
-    scheduleUpdate();
-    
-    return _componentContainer->add(component);
-}
-
-bool Node::removeComponent(const std::string& name)
-{
-    if (_componentContainer)
-        return _componentContainer->remove(name);
-    
-    return false;
-}
-
-bool Node::removeComponent(Component *component)
-{
-    if (_componentContainer)
-    {
-        return _componentContainer->remove(component);
-    }
-    
-    return false;
-}
-
-void Node::removeAllComponents()
-{
-    if (_componentContainer)
-        _componentContainer->removeAll();
 }
 
 // MARK: Opacity and Color

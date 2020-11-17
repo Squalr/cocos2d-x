@@ -39,7 +39,6 @@ THE SOFTWARE.
 #include "base/CCDirector.h"
 #include "base/CCNS.h"
 #include "base/ccMacros.h"
-#include "base/CCNinePatchImageParser.h"
 #include "base/ccUTF8.h"
 #include "platform/CCFileUtils.h"
 #include "renderer/CCTexture2D.h"
@@ -175,7 +174,7 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Textu
 
     auto textureFileName = Director::getInstance()->getTextureCache()->getTextureFilePath(texture);
     Image* image = nullptr;
-    NinePatchImageParser parser;
+
     for (auto& iter : framesDict)
     {
         ValueMap& frameDict = iter.second.asValueMap();
@@ -281,17 +280,7 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Textu
                 spriteFrame->setAnchorPoint(PointFromString(frameDict["anchor"].asString()));
             }
         }
-
-        bool flag = NinePatchImageParser::isNinePatchImage(spriteFrameName);
-        if(flag)
-        {
-            if (image == nullptr) {
-                image = new (std::nothrow) Image();
-                image->initWithImageFile(textureFileName);
-            }
-            parser.setSpriteFrameInfo(image, spriteFrame->getRectInPixels(), spriteFrame->isRotated());
-            texture->addSpriteFrameCapInset(spriteFrame, parser.parseCapInset());
-        }
+        
         // add sprite frame
         _spriteFrames.insert(spriteFrameName, spriteFrame);
     }

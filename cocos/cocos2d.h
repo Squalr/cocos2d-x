@@ -119,8 +119,6 @@ THE SOFTWARE.
 // 2d utils
 #include "2d/CCCamera.h"
 #include "2d/CCCameraBackgroundBrush.h"
-#include "2d/CCGrabber.h"
-#include "2d/CCGrid.h"
 #include "2d/CCLight.h"
 
 // include
@@ -135,8 +133,6 @@ THE SOFTWARE.
 #include "renderer/CCGroupCommand.h"
 #include "renderer/CCMaterial.h"
 #include "renderer/CCPass.h"
-#include "renderer/CCPrimitive.h"
-#include "renderer/CCPrimitiveCommand.h"
 #include "renderer/CCQuadCommand.h"
 #include "renderer/CCRenderCommand.h"
 #include "renderer/CCRenderCommandPool.h"
@@ -204,10 +200,6 @@ THE SOFTWARE.
 #include "2d/CCTMXXMLParser.h"
 #include "2d/CCFastTMXLayer.h"
 #include "2d/CCFastTMXTiledMap.h"
-
-// component
-#include "2d/CCComponent.h"
-#include "2d/CCComponentContainer.h"
 
 NS_CC_BEGIN
 

@@ -39,7 +39,6 @@
 #include "renderer/CCBatchCommand.h"
 #include "renderer/CCCustomCommand.h"
 #include "renderer/CCGroupCommand.h"
-#include "renderer/CCPrimitiveCommand.h"
 #include "renderer/CCGLProgramCache.h"
 #include "renderer/CCMaterial.h"
 #include "renderer/CCTechnique.h"
@@ -417,14 +416,6 @@ void Renderer::processRenderCommand(RenderCommand* command)
             cmd->execute();
             break;
         }
-        case RenderCommand::Type::PRIMITIVE_COMMAND:
-        {
-            flush();
-            auto cmd = static_cast<PrimitiveCommand*>(command);
-            CCGL_DEBUG_INSERT_EVENT_MARKER("RENDERER_PRIMITIVE_COMMAND");
-            cmd->execute();
-            break;
-        }
         default:
         {
             CCLOGERROR("Unknown commands in renderQueue");
@@ -796,7 +787,7 @@ void Renderer::drawBatchedTriangles()
     else
     {
         // Client Side Arrays
-#define kQuadSize sizeof(_verts[0])
+        #define kQuadSize sizeof(_verts[0])
         glBindBuffer(GL_ARRAY_BUFFER, _buffersVBO[0]);
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(_verts[0]) * _filledVertex , _verts, GL_DYNAMIC_DRAW);

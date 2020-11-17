@@ -3,18 +3,17 @@ include_directories(
         ../external/poly2tri
         ../external/poly2tri/common
         ../external/poly2tri/sweep
+        ../external/clipper
 )
 
 set(COCOS_2D_HEADER
 
     2d/CCActionTween.h
-    2d/CCGrid.h
     2d/CCSpriteFrameCache.h
     2d/CCLayer.h
     2d/CCActionCamera.h
     2d/CCSprite.h
     2d/CCNode.h
-    2d/CCComponentContainer.h
     2d/CCTweenFunction.h
     2d/CCLight.h
     2d/CCAutoPolygon.h
@@ -26,7 +25,6 @@ set(COCOS_2D_HEADER
     2d/CCTMXXMLParser.h
     2d/CCActionInstant.h
     2d/CCLabel.h
-    2d/CCComponent.h
     2d/CCLabelAtlas.h
     2d/CCActionCatmullRom.h
     2d/CCDrawingPrimitives.h
@@ -55,7 +53,6 @@ set(COCOS_2D_HEADER
     2d/CCDrawNode.h
     2d/CCCamera.h
     2d/CCParallaxNode.h
-    2d/CCGrabber.h
 
     )
 
@@ -75,8 +72,6 @@ set(COCOS_2D_SRC
     2d/CCCamera.cpp
     2d/CCCameraBackgroundBrush.cpp
     2d/CCClippingNode.cpp
-    2d/CCComponentContainer.cpp
-    2d/CCComponent.cpp
     2d/CCDrawingPrimitives.cpp
     2d/CCDrawNode.cpp
     2d/CCFastTMXLayer.cpp
@@ -87,8 +82,6 @@ set(COCOS_2D_SRC
     2d/CCFont.cpp
     2d/CCFontFNT.cpp
     2d/CCFontFreeType.cpp
-    2d/CCGrabber.cpp
-    2d/CCGrid.cpp
     2d/CCLabelAtlas.cpp
     2d/CCLabel.cpp
     2d/CCLabelTextFormatter.cpp
@@ -106,7 +99,6 @@ set(COCOS_2D_SRC
     2d/CCSpriteFrameCache.cpp
     2d/CCSpriteFrame.cpp
     2d/CCAutoPolygon.cpp
-    ../external/clipper/clipper.cpp
     2d/CCTextFieldTTF.cpp
     2d/CCTMXObjectGroup.cpp
     2d/CCTMXXMLParser.cpp

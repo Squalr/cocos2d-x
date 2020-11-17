@@ -39,8 +39,6 @@
 #include "base/ccTypes.h"
 #include "2d/CCNode.h"
 
-#include <xxhash.h>
-
 NS_CC_BEGIN
 
 

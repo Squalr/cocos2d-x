@@ -31,8 +31,6 @@
 #include "renderer/CCGLProgramState.h"
 #include "renderer/ccGLStateCache.h"
 
-#include "xxhash.h"
-
 NS_CC_BEGIN
 
 TrianglesCommand::TrianglesCommand()
@@ -96,23 +94,15 @@ void TrianglesCommand::generateMaterialID()
     // we safely can when the same glProgramState is being used then they share those states
     // if they don't have the same glProgramState, they might still have the same
     // uniforms/values and glProgram, but it would be too expensive to check the uniforms.
-    struct {
-        void* glProgramState;
-        GLuint textureId;
-        GLenum blendSrc;
-        GLenum blendDst;
-    } hashMe;
+    uint32_t seed = uint32_t(_glProgramState);
+    seed ^= _textureID + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    seed ^= _blendType.src + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    seed ^= _blendType.dst + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 
-    // NOTE: Initialize hashMe struct to make the value of padding bytes be filled with zero.
-    // It's important since XXH32 below will also consider the padding bytes which probably 
-    // are set to random values by different compilers.
-    memset(&hashMe, 0, sizeof(hashMe)); 
-
-    hashMe.textureId = _textureID;
-    hashMe.blendSrc = _blendType.src;
-    hashMe.blendDst = _blendType.dst;
-    hashMe.glProgramState = _glProgramState;
-    _materialID = XXH32((const void*)&hashMe, sizeof(hashMe), 0);
+    // ZAC: Replaced XXHash with some jank StackOverflow algorithm. Y'all really gonna link another library for this?
+    // Plus, XXHash is designed for speed, and we don't need that here.
+    // _materialID = XXH32((const void*)&hashMe, sizeof(hashMe), 0);
+    _materialID = seed;
 }
 
 void TrianglesCommand::useMaterial() const

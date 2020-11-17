@@ -39,7 +39,6 @@ THE SOFTWARE.
 #include "base/ccMacros.h"
 #include "base/CCConfiguration.h"
 #include "base/CCDirector.h"
-#include "base/CCNinePatchImageParser.h"
 #include "base/ccUTF8.h"
 #include "base/ccUtils.h"
 #include "platform/CCDevice.h"
