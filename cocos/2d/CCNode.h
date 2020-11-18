@@ -74,7 +74,7 @@ class EventListener;
  The most common Node objects are: Scene, Layer, Sprite, Menu, Label.
 
  The main features of a Node are:
- - They can contain other Node objects (`addChild`, `getChildByTag`, `removeChild`, etc)
+ - They can contain other Node objects (`addChild`, `removeChild`, etc)
  - They can schedule periodic callback (`schedule`, `unschedule`, etc)
  - They can execute actions (`runAction`, `stopAction`, etc)
 
@@ -458,56 +458,6 @@ public:
     CC_DEPRECATED_ATTRIBUTE virtual float getVertexZ() const { return getPositionZ(); }
 
     /**
-     * Changes the X skew angle of the node in degrees.
-     *
-     * The difference between `setRotationalSkew()` and `setSkew()` is that the first one simulate Flash's skew functionality
-     * while the second one uses the real skew function.
-     *
-     * This angle describes the shear distortion in the X direction.
-     * Thus, it is the angle between the Y coordinate and the left edge of the shape
-     * The default skewX angle is 0. Positive values distort the node in a CW direction.
-     *
-     * @param skewX The X skew angle of the node in degrees.
-     *
-     * @warning The physics body doesn't support this.
-     */
-    virtual void setSkewX(float skewX);
-    /**
-     * Returns the X skew angle of the node in degrees.
-     *
-     * @see `setSkewX(float)`
-     *
-     * @return The X skew angle of the node in degrees.
-     */
-    virtual float getSkewX() const;
-
-
-    /**
-     * Changes the Y skew angle of the node in degrees.
-     *
-     * The difference between `setRotationalSkew()` and `setSkew()` is that the first one simulate Flash's skew functionality
-     * while the second one uses the real skew function.
-     *
-     * This angle describes the shear distortion in the Y direction.
-     * Thus, it is the angle between the X coordinate and the bottom edge of the shape.
-     * The default skewY angle is 0. Positive values distort the node in a CCW direction.
-     *
-     * @param skewY    The Y skew angle of the node in degrees.
-     *
-     * @warning The physics body doesn't support this.
-     */
-    virtual void setSkewY(float skewY);
-    /**
-     * Returns the Y skew angle of the node in degrees.
-     *
-     * @see `setSkewY(float)`
-     *
-     * @return The Y skew angle of the node in degrees.
-     */
-    virtual float getSkewY() const;
-
-
-    /**
      * Sets the anchor point in percent.
      *
      * anchorPoint is the point around which all transformations and positioning manipulations take place.
@@ -520,6 +470,7 @@ public:
      * @param anchorPoint   The anchor point of node.
      */
     virtual void setAnchorPoint(const Vec2& anchorPoint);
+
     /**
      * Returns the anchor point in percent.
      *
@@ -528,6 +479,7 @@ public:
      * @return The anchor point of node.
      */
     virtual const Vec2& getAnchorPoint() const;
+
     /**
      * Returns the anchorPoint in absolute pixels.
      *
@@ -538,7 +490,6 @@ public:
      */
     virtual const Vec2& getAnchorPointInPoints() const;
 
-
     /**
      * Sets the untransformed size of the node.
      *
@@ -548,6 +499,7 @@ public:
      * @param contentSize   The untransformed size of the node.
      */
     virtual void setContentSize(const Size& contentSize);
+
     /**
      * Returns the untransformed size of the node.
      *
@@ -557,7 +509,6 @@ public:
      */
     virtual const Size& getContentSize() const;
 
-
     /**
      * Sets whether the node is visible.
      *
@@ -566,6 +517,7 @@ public:
      * @param visible   true if the node is visible, false if the node is hidden.
      */
     virtual void setVisible(bool visible);
+
     /**
      * Determines if the node is visible.
      *
@@ -594,24 +546,6 @@ public:
      * @return The rotation of the node in degrees.
      */
     virtual float getRotation() const;
-
-    /**
-     * Sets the rotation (X,Y,Z) in degrees.
-     * Useful for 3d rotations.
-     *
-     * @warning The physics body doesn't support this.
-     *
-     * @param rotation The rotation of the node in 3d.
-     * @js NA
-     */
-    virtual void setRotation3D(const Vec3& rotation);
-    /**
-     * Returns the rotation (X,Y,Z) in degrees.
-     * 
-     * @return The rotation of the node in 3d.
-     * @js NA
-     */
-    virtual Vec3 getRotation3D() const;
     
     /**
      * Set rotation by quaternion. You should make sure the quaternion is normalized.
@@ -629,62 +563,6 @@ public:
      * @js NA
      */
     virtual Quaternion getRotationQuat() const;
-
-    /**
-     * Sets the X rotation (angle) of the node in degrees which performs a horizontal rotational skew.
-     *
-     * The difference between `setRotationalSkew()` and `setSkew()` is that the first one simulate Flash's skew functionality,
-     * while the second one uses the real skew function.
-     *
-     * 0 is the default rotation angle.
-     * Positive values rotate node clockwise, and negative values for anti-clockwise.
-     *
-     * @param rotationX    The X rotation in degrees which performs a horizontal rotational skew.
-     *
-     * @warning The physics body doesn't support this.
-     * @js setRotationX
-     */
-    virtual void setRotationSkewX(float rotationX);
-    CC_DEPRECATED_ATTRIBUTE virtual void setRotationX(float rotationX) { return setRotationSkewX(rotationX); }
-
-    /**
-     * Gets the X rotation (angle) of the node in degrees which performs a horizontal rotation skew.
-     *
-     * @see `setRotationSkewX(float)`
-     *
-     * @return The X rotation in degrees.
-     * @js getRotationX 
-     */
-    virtual float getRotationSkewX() const;
-    CC_DEPRECATED_ATTRIBUTE virtual float getRotationX() const { return getRotationSkewX(); }
-
-    /**
-     * Sets the Y rotation (angle) of the node in degrees which performs a vertical rotational skew.
-     *
-     * The difference between `setRotationalSkew()` and `setSkew()` is that the first one simulate Flash's skew functionality,
-     * while the second one uses the real skew function.
-     *
-     * 0 is the default rotation angle.
-     * Positive values rotate node clockwise, and negative values for anti-clockwise.
-     *
-     * @param rotationY    The Y rotation in degrees.
-     *
-     * @warning The physics body doesn't support this.
-     * @js setRotationY
-     */
-    virtual void setRotationSkewY(float rotationY);
-    CC_DEPRECATED_ATTRIBUTE virtual void setRotationY(float rotationY) { return setRotationSkewY(rotationY); }
-
-    /**
-     * Gets the Y rotation (angle) of the node in degrees which performs a vertical rotational skew.
-     *
-     * @see `setRotationSkewY(float)`
-     *
-     * @return The Y rotation in degrees.
-     * @js getRotationY
-     */
-    virtual float getRotationSkewY() const;
-    CC_DEPRECATED_ATTRIBUTE virtual float getRotationY() const { return getRotationSkewY(); }
 
     /** @deprecated No longer needed
     * @lua NA
@@ -754,18 +632,7 @@ public:
      * @param localZOrder    Z order for drawing priority. Please refer to `setLocalZOrder(int)`.
      */
     virtual void addChild(Node * child, int localZOrder);
-    /**
-     * Adds a child to the container with z order and tag.
-     *
-     * If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
-     *
-     * @param child         A child node.
-     * @param localZOrder   Z order for drawing priority. Please refer to `setLocalZOrder(int)`.
-     * @param tag           An integer to identify the node easily. Please refer to `setTag(int)`.
-     * 
-     * Please use `addChild(Node* child, int localZOrder, const std::string &name)` instead.
-     */
-     virtual void addChild(Node* child, int localZOrder, int tag);
+
     /**
      * Adds a child to the container with z order and tag
      *
@@ -777,46 +644,7 @@ public:
      *
      */
     virtual void addChild(Node* child, int localZOrder, const std::string &name);
-    /**
-     * Gets a child from the container with its tag.
-     *
-     * @param tag   An identifier to find the child node.
-     *
-     * @return a Node object whose tag equals to the input parameter.
-     *
-     * Please use `getChildByName()` instead.
-     */
-     virtual Node * getChildByTag(int tag) const;
-    
-     /**
-     * Gets a child from the container with its tag that can be cast to Type T.
-     *
-     * @param tag   An identifier to find the child node.
-     *
-     * @return a Node with the given tag that can be cast to Type T.
-    */
-    template <typename T>
-    T getChildByTag(int tag) const { return static_cast<T>(getChildByTag(tag)); }
-    
-    /**
-     * Gets a child from the container with its name.
-     *
-     * @param name   An identifier to find the child node.
-     *
-     * @return a Node object whose name equals to the input parameter.
-     *
-     * @since v3.2
-     */
-    virtual Node* getChildByName(const std::string& name) const;
-    /**
-     * Gets a child from the container with its name that can be cast to Type T.
-     *
-     * @param name   An identifier to find the child node.
-     *
-     * @return a Node with the given name that can be cast to Type T.
-    */
-    template <typename T>
-    T getChildByName(const std::string& name) const { return static_cast<T>(getChildByName(name)); }
+
     /** Search the children of the receiving node to perform processing for nodes which share a name.
      *
      * @param name The name to search for, supports c++11 regular expression.
@@ -905,22 +733,6 @@ public:
     virtual void removeChild(Node* child, bool cleanup = true);
 
     /**
-     * Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter.
-     *
-     * @param tag       An integer number that identifies a child node.
-     * @param cleanup   True if all running actions and callbacks on the child node will be cleanup, false otherwise.
-     *
-     * Please use `removeChildByName` instead.
-     */
-     virtual void removeChildByTag(int tag, bool cleanup = true);
-    /**
-     * Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter.
-     *
-     * @param name       A string that identifies a child node.
-     * @param cleanup   True if all running actions and callbacks on the child node will be cleanup, false otherwise.
-     */
-    virtual void removeChildByName(const std::string &name, bool cleanup = true);
-    /**
      * Removes all children from the container with a cleanup.
      *
      * @see `removeAllChildrenWithCleanup(bool)`
@@ -960,42 +772,12 @@ public:
         std::sort(std::begin(nodes), std::end(nodes), [](_T* n1, _T* n2) {
             return (n1->_localZOrder == n2->_localZOrder && n1->_orderOfArrival < n2->_orderOfArrival) || n1->_localZOrder < n2->_localZOrder;
         });
-        /*
-        static_assert(std::is_base_of<Node, _T>::value, "Node::sortNodes: Only accept derived of Node!");
-#if CC_64BITS
-        std::sort(std::begin(nodes), std::end(nodes), [](_T* n1, _T* n2) {
-            return (n1->_localZOrder$Arrival < n2->_localZOrder$Arrival);
-        });
-#else
-        std::sort(std::begin(nodes), std::end(nodes), [](_T* n1, _T* n2) {
-            return (n1->_localZOrder == n2->_localZOrder && n1->_orderOfArrival < n2->_orderOfArrival) || n1->_localZOrder < n2->_localZOrder;
-        });
-#endif*/
     }
 
     /// @} end of Children and Parent
     
     /// @{
     /// @name Tag & User data
-
-    /**
-     * Returns a tag that is used to identify the node easily.
-     *
-     * @return An integer that identifies the node.
-     *
-     * Please use `getTag()` instead.
-     */
-     virtual int getTag() const;
-    /**
-     * Changes the tag that is used to identify the node easily.
-     *
-     * Please refer to getTag for the sample code.
-     *
-     * @param tag   A integer that identifies the node.
-     *
-     * Please use `setName()` instead.
-     */
-     virtual void setTag(int tag);
     
     /** Returns a string that is used to identify the node.
      * @return A string that identifies the node.
@@ -1003,6 +785,7 @@ public:
      * @since v3.2
      */
     virtual const std::string& getName() const;
+
     /** Changes the name that is used to identify the node easily.
      * @param name A string that identifies the node.
      *
@@ -1010,7 +793,6 @@ public:
      */
     virtual void setName(const std::string& name);
 
-    
     /**
      * Returns a custom user data pointer.
      *
@@ -1020,6 +802,7 @@ public:
      * @lua NA
      */
     virtual void* getUserData() { return _userData; }
+
     /**
     * @lua NA
     */
@@ -1046,6 +829,7 @@ public:
      * @lua NA
      */
     virtual Ref* getUserObject() { return _userObject; }
+
     /**
     * @lua NA
     */
@@ -1278,36 +1062,6 @@ public:
     void stopAction(Action* action);
 
     /**
-     * Removes an action from the running action list by its tag.
-     *
-     * @param tag   A tag that indicates the action to be removed.
-     */
-    void stopActionByTag(int tag);
-    
-    /**
-     * Removes all actions from the running action list by its tag.
-     *
-     * @param tag   A tag that indicates the action to be removed.
-     */
-    void stopAllActionsByTag(int tag);
-
-    /**
-     * Removes all actions from the running action list by its flags.
-     *
-     * @param flags   A flag field that removes actions based on bitwise AND.
-     */
-    void stopActionsByFlags(unsigned int flags);
-
-    /**
-     * Gets an action from the running action list by its tag.
-     *
-     * @see `setTag(int)`, `getTag()`.
-     *
-     * @return The action object with the given tag.
-     */
-    Action* getActionByTag(int tag);
-
-    /**
      * Returns the numbers of actions that are running plus the ones that are schedule to run (actions in actionsToAdd and actions arrays).
      *
      * Composable actions are counted as 1 action. Example:
@@ -1317,22 +1071,6 @@ public:
      * @return The number of actions that are running plus the ones that are schedule to run.
      */
     ssize_t getNumberOfRunningActions() const;
-
-    /**
-     * Returns the numbers of actions that are running plus the ones that are
-     * schedule to run (actions in actionsToAdd and actions arrays) with a
-     * specific tag.
-     *
-     * Composable actions are counted as 1 action. Example:
-     *    If you are running 1 Sequence of 7 actions, it will return 1.
-     *    If you are running 7 Sequences of 2 actions, it will return 7.
-     *
-     * @param  tag The tag that will be searched.
-     *
-     * @return The number of actions that are running plus the
-     *         ones that are schedule to run with specific tag.
-     */
-    ssize_t getNumberOfRunningActionsByTag(int tag) const;
 
 
     /** @deprecated Use getNumberOfRunningActions() instead */
@@ -1777,47 +1515,6 @@ public:
      * @return A boolean value, true indicates that opacity will modify color; false otherwise.
      */
     virtual bool isOpacityModifyRGB() const;
-
-    /**
-     * Set the callback of event onEnter.
-     * @param callback A std::function<void()> callback.
-     */
-    void setOnEnterCallback(const std::function<void()>& callback) { _onEnterCallback = callback; }
-    /**
-     * Get the callback of event onEnter.
-     * @return A std:function<void()> callback.
-     */
-    const std::function<void()>& getOnEnterCallback() const { return _onEnterCallback; }
-    /**
-     * Set the callback of event onExit.
-     * @param callback A std::function<void()> callback.
-     */
-    void setOnExitCallback(const std::function<void()>& callback) { _onExitCallback = callback; }
-    /**
-     * Get the callback of event onExit.
-     * @return A std::function<void()>.
-     */
-    const std::function<void()>& getOnExitCallback() const { return _onExitCallback; }
-    /**
-     * Set the callback of event EnterTransitionDidFinish.
-     * @param callback A std::function<void()> callback.
-     */
-    void setonEnterTransitionDidFinishCallback(const std::function<void()>& callback) { _onEnterTransitionDidFinishCallback = callback; }
-    /**
-     * Get the callback of event EnterTransitionDidFinish.
-     * @return std::function<void()>
-     */
-    const std::function<void()>& getonEnterTransitionDidFinishCallback() const { return _onEnterTransitionDidFinishCallback; }
-    /**
-     * Set the callback of event ExitTransitionDidStart.
-     * @param callback A std::function<void()> callback.
-     */
-    void setonExitTransitionDidStartCallback(const std::function<void()>& callback) { _onExitTransitionDidStartCallback = callback; }
-    /**
-     * Get the callback of event ExitTransitionDidStart.
-     * @return std::function<void()>
-     */
-    const std::function<void()>& getonExitTransitionDidStartCallback() const { return _onExitTransitionDidStartCallback; }
     
     /**
      * get & set camera mask, the node is visible by the camera whose camera flag & node's camera mask is true
@@ -1860,22 +1557,15 @@ protected:
     bool doEnumerate(std::string name, std::function<bool (Node *)> callback) const;
     bool doEnumerateRecursive(const Node* node, const std::string &name, std::function<bool (Node *)> callback) const;
     
-    // update quaternion from Rotation3D
+    // update quaternion from Rotation
     void updateRotationQuat();
-    // update Rotation3D from quaternion
-    void updateRotation3D();
     
 private:
-    void addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag, bool isReentry = false);
+    void addChildHelper(Node* child, int localZOrder, const std::string &name, bool isReentry = false);
     
 protected:
 
     float _rotationX;               ///< rotation on the X-axis
-    float _rotationY;               ///< rotation on the Y-axis
-
-    // rotation Z is decomposed in 2 to simulate Skew for Flash animations
-    float _rotationZ_X;             ///< rotation angle on Z-axis, component X
-    float _rotationZ_Y;             ///< rotation angle on Z-axis, component Y
     
     Quaternion _rotationQuat;       ///rotation using quaternion, if _rotationZ_X == _rotationZ_Y, _rotationQuat = RotationZ_X * RotationY * RotationX, else _rotationQuat = RotationY * RotationX
 
@@ -1889,9 +1579,6 @@ protected:
     Vec2 _normalizedPosition;
     bool _usingNormalizedPosition;
     bool _normalizedPositionDirty;
-
-    float _skewX;                   ///< skew angle on x-axis
-    float _skewY;                   ///< skew angle on y-axis
 
     Vec2 _anchorPointInPoints;      ///< anchor point in points
     Vec2 _anchorPoint;              ///< anchor point normalized (NOT in points)
@@ -1934,10 +1621,8 @@ protected:
     Vector<Node*> _children;        ///< array of children nodes
     Node *_parent;                  ///< weak reference to parent node
     Director* _director;            //cached director pointer to improve rendering performance
-    int _tag;                       ///< a tag. Can be any number you assigned just to identify this node
     
     std::string _name;              ///<a string label, an user defined string to identify this node
-    size_t _hashOfName;             ///<hash value of _name, used for speed in getChildByName
 
     void *_userData;                ///< A user assigned void pointer, Can be point to any cpp object
     Ref *_userObject;               ///< A user assigned Object

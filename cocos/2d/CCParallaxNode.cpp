@@ -86,7 +86,7 @@ ParallaxNode * ParallaxNode::create()
     return ret;
 }
 
-void ParallaxNode::addChild(Node* /*child*/, int /*zOrder*/, int /*tag*/)
+void ParallaxNode::addChild(Node* /*child*/, int /*zOrder*/)
 {
     CCASSERT(0,"ParallaxNode: use addChild:z:parallaxRatio:positionOffset instead");
 }

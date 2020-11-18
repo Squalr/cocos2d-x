@@ -132,7 +132,7 @@ void Layer::setKeypadEnabled(bool enabled)
 
 std::string Layer::getDescription() const
 {
-    return StringUtils::format("<Layer | Tag = %d>", _tag);
+    return StringUtils::format("<Layer | Tag = %d>", -1);
 }
 
 __LayerRGBA::__LayerRGBA()
@@ -323,7 +323,7 @@ void LayerColor::onDraw(const Mat4& transform, uint32_t /*flags*/)
 
 std::string LayerColor::getDescription() const
 {
-    return StringUtils::format("<LayerColor | Tag = %d>", _tag);
+    return StringUtils::format("<LayerColor | Tag = %d>", -1);
 }
 
 //
@@ -530,7 +530,7 @@ void LayerGradient::setCompressedInterpolation(bool compress)
 
 std::string LayerGradient::getDescription() const
 {
-    return StringUtils::format("<LayerGradient | Tag = %d>", _tag);
+    return StringUtils::format("<LayerGradient | Tag = %d>", -1);
 }
 
 /**
@@ -918,7 +918,7 @@ void LayerMultiplex::switchToAndReleaseMe(int n)
 
 std::string LayerMultiplex::getDescription() const
 {
-    return StringUtils::format("<LayerMultiplex | Tag = %d, Layers = %d", _tag, static_cast<int>(_children.size()));
+    return StringUtils::format("<LayerMultiplex | Tag = %d, Layers = %d", -1, static_cast<int>(_children.size()));
 }
 
 NS_CC_END

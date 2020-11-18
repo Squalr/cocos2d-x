@@ -107,7 +107,7 @@ Scene* Scene::createWithSize(const Size& size)
 
 std::string Scene::getDescription() const
 {
-    return StringUtils::format("<Scene | tag = %d>", _tag);
+    return StringUtils::format("<Scene | tag = %d>", -1);
 }
 
 void Scene::onProjectionChanged(EventCustom* /*event*/)

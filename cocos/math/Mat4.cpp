@@ -343,6 +343,21 @@ void Mat4::createRotation(const Vec3& axis, float angle, Mat4* dst)
     dst->m[15] = 1.0f;
 }
 
+void Mat4::createRotation(float angle, Mat4* dst)
+{
+    GP_ASSERT(dst);
+
+    memcpy(dst, &IDENTITY, MATRIX_SIZE);
+
+    float c = std::cos(angle);
+    float s = std::sin(angle);
+
+    dst->m[5]  = c;
+    dst->m[6]  = -s;
+    dst->m[9]  = s;
+    dst->m[10] = c;
+}
+
 void Mat4::createRotationX(float angle, Mat4* dst)
 {
     GP_ASSERT(dst);

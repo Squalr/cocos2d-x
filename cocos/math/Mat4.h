@@ -328,6 +328,14 @@ public:
      * @param angle The angle of rotation (in radians).
      * @param dst A matrix to store the result in.
      */
+    static void createRotation(float angle, Mat4* dst);
+
+    /**
+     * Creates a matrix describing a rotation around the x-axis.
+     *
+     * @param angle The angle of rotation (in radians).
+     * @param dst A matrix to store the result in.
+     */
     static void createRotationX(float angle, Mat4* dst);
 
     /**

@@ -187,7 +187,7 @@ void TMXTiledMap::buildWithMapInfo(TMXMapInfo* mapInfo)
                 idx++;
                 continue;
             }
-            addChild(child, idx, idx);
+            addChild(child, idx);
             
             // update content size with the max size
             const Size& childSize = child->getContentSize();
@@ -259,7 +259,7 @@ Value TMXTiledMap::getPropertiesForGID(int GID) const
 
 std::string TMXTiledMap::getDescription() const
 {
-    return StringUtils::format("<FastTMXTiledMap | Tag = %d, Layers = %d", _tag, static_cast<int>(_children.size()));
+    return StringUtils::format("<FastTMXTiledMap | Tag = %d, Layers = %d", -1, static_cast<int>(_children.size()));
 }
 
 } //end of namespace cocos_experimental

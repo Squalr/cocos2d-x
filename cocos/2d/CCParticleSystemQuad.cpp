@@ -681,6 +681,6 @@ ParticleSystemQuad * ParticleSystemQuad::create() {
 
 std::string ParticleSystemQuad::getDescription() const
 {
-    return StringUtils::format("<ParticleSystemQuad | Tag = %d, Total Particles = %d>", _tag, _totalParticles);
+    return StringUtils::format("<ParticleSystemQuad | Tag = %d, Total Particles = %d>", -1, _totalParticles);
 }
 NS_CC_END

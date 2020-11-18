@@ -534,7 +534,7 @@ void Label::reset()
         _underlineNode = nullptr;
     }
     _strikethroughEnabled = false;
-    setRotationSkewX(0);        // reverse italics
+    setRotation(0.0f);        // reverse italics
 }
 
 //  ETC1 ALPHA supports, for LabelType::BMFONT & LabelType::CHARMAP
@@ -1153,7 +1153,7 @@ void Label::enableShadow(const Color4B& shadowColor /* = Color4B::BLACK */,
 
 void Label::enableItalics()
 {
-    setRotationSkewX(12);
+    // Disabled
 }
 
 void Label::enableBold()
@@ -1227,7 +1227,7 @@ void Label::disableEffect(LabelEffect effect)
             }
             break;
         case cocos2d::LabelEffect::ITALICS:
-            setRotationSkewX(0);
+            setRotation(0.0f);
             break;
         case cocos2d::LabelEffect::BOLD:
             if (_boldEnabled) {
@@ -1768,7 +1768,7 @@ Sprite* Label::getLetter(int letterIndex, bool applyCursorOffset)
         }
 
         // Tag letters with their index
-        letter->setTag(preceedingNormalLetterCount);
+        letter->setSpriteTag(preceedingNormalLetterCount);
 
         float px = 0.0f;
         float py = 0.0f;
@@ -2068,7 +2068,7 @@ void Label::updateColor()
 std::string Label::getDescription() const
 {
     char tmp[50];
-    sprintf(tmp, "<Label | Tag = %d, Label = >", _tag);
+    sprintf(tmp, "<Label | Tag = %d, Label = >", -1);
     std::string ret = tmp;
     ret += _utf8Text;
 

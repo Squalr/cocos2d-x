@@ -207,7 +207,7 @@ bool Camera::initDefault()
         {
             initOrthographic(size.width, size.height, -1024, 1024);
             setPosition3D(Vec3(0.0f, 0.0f, 0.0f));
-            setRotation3D(Vec3(0.f, 0.f, 0.f));
+            setRotation(0.0f);
             break;
         }
         case Director::Projection::_3D:
@@ -217,7 +217,7 @@ bool Camera::initDefault()
 			const float farPlaneDepth = 65535.0f;
             float zeye = Director::getInstance()->getZEye();
             initPerspective(60, (GLfloat)size.width / size.height, 10, farPlaneDepth /*zeye + size.height / 2.0f*/);
-            Vec3 eye(size.width/2, size.height/2.0f, zeye), center(size.width/2, size.height/2, 0.0f), up(0.0f, 1.0f, 0.0f);
+            Vec3 eye(size.width / 2.0f, size.height / 2.0f, zeye), center(size.width / 2.0f, size.height/2.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
             setPosition3D(eye);
             lookAt(center, up);
             break;

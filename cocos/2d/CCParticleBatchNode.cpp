@@ -141,14 +141,14 @@ void ParticleBatchNode::visit(Renderer *renderer, const Mat4 &parentTransform, u
 }
 
 // override addChild:
-void ParticleBatchNode::addChild(Node * aChild, int zOrder, int tag)
+void ParticleBatchNode::addChild(Node * aChild, int zOrder)
 {
     CCASSERT( aChild != nullptr, "Argument must be non-nullptr");
     CCASSERT( dynamic_cast<ParticleSystem*>(aChild) != nullptr, "CCParticleBatchNode only supports QuadParticleSystems as children");
     ParticleSystem* child = static_cast<ParticleSystem*>(aChild);
     CCASSERT( child->getTexture()->getName() == _textureAtlas->getTexture()->getName(), "CCParticleSystem is not using the same texture id");
     
-    addChildByTagOrName(child, zOrder, tag, "", true);
+    addChildByTagOrName(child, zOrder, "");
 }
 
 void ParticleBatchNode::addChild(Node * aChild, int zOrder, const std::string &name)
@@ -158,10 +158,10 @@ void ParticleBatchNode::addChild(Node * aChild, int zOrder, const std::string &n
     ParticleSystem* child = static_cast<ParticleSystem*>(aChild);
     CCASSERT( child->getTexture()->getName() == _textureAtlas->getTexture()->getName(), "CCParticleSystem is not using the same texture id");
    
-    addChildByTagOrName(child, zOrder, 0, name, false);
+    addChildByTagOrName(child, zOrder, name);
 }
 
-void ParticleBatchNode::addChildByTagOrName(ParticleSystem* child, int zOrder, int tag, const std::string &name, bool setTag)
+void ParticleBatchNode::addChildByTagOrName(ParticleSystem* child, int zOrder, const std::string &name)
 {
     // If this is the 1st children, then copy blending function
     if (_children.empty())
@@ -173,10 +173,7 @@ void ParticleBatchNode::addChildByTagOrName(ParticleSystem* child, int zOrder, i
     
     //no lazy sorting, so don't call super addChild, call helper instead
     int pos = 0;
-    if (setTag)
-        pos = addChildHelper(child, zOrder, tag, "", true);
-    else
-        pos = addChildHelper(child, zOrder, 0, name, false);
+    pos = addChildHelper(child, zOrder, name);
     
     //get new atlasIndex
     int atlasIndex = 0;
@@ -201,7 +198,7 @@ void ParticleBatchNode::addChildByTagOrName(ParticleSystem* child, int zOrder, i
 // FIXME: research whether lazy sorting + freeing current quads and calloc a new block with size of capacity would be faster
 // FIXME: or possibly using vertexZ for reordering, that would be fastest
 // this helper is almost equivalent to Node's addChild, but doesn't make use of the lazy sorting
-int ParticleBatchNode::addChildHelper(ParticleSystem* child, int z, int aTag, const std::string &name, bool setTag)
+int ParticleBatchNode::addChildHelper(ParticleSystem* child, int z, const std::string &name)
 {
     CCASSERT( child != nullptr, "Argument must be non-nil");
     CCASSERT( child->getParent() == nullptr, "child already added. It can't be added again");
@@ -213,10 +210,7 @@ int ParticleBatchNode::addChildHelper(ParticleSystem* child, int z, int aTag, co
 
     _children.insert(pos, child);
 
-    if (setTag)
-        child->setTag(aTag);
-    else
-        child->setName(name);
+    child->setName(name);
     
     child->setLocalZOrder(z);
 

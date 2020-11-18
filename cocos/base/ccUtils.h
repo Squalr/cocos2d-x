@@ -111,21 +111,6 @@ namespace utils
     */
     CC_DLL Sprite* createSpriteFromBase64(const char* base64String);
 
-
-    /**
-     * Find a child by name recursively
-
-     * @return  Returns found node or nullptr
-     */
-    CC_DLL Node*  findChild(Node* levelRoot, const std::string& name);
-
-    /**
-     * Find a child by tag recursively
-
-     * @return Returns found node or nullptr
-     */
-    CC_DLL Node*  findChild(Node* levelRoot, int tag);
-
     /**
      * Find a child by name recursively
 

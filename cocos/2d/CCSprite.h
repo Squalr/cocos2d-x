@@ -378,6 +378,18 @@ public:
     void setAtlasIndex(ssize_t atlasIndex) { _atlasIndex = atlasIndex; }
 
     /**
+     * 
+     */
+    ssize_t getSpriteTag() const { return _spriteTag; }
+
+    /**
+     * Sets the index used on the TextureAtlas.
+     *
+     * @warning Don't modify this value unless you know what you are doing.
+     */
+    void setSpriteTag(uint32_t spriteTag) { _spriteTag = spriteTag; }
+
+    /**
      * Returns the rect of the Sprite in points.
      */
     const Rect& getTextureRect() const { return _rect; }
@@ -518,15 +530,11 @@ public:
     virtual void setPosition(const Vec2& pos) override;
     virtual void setPosition(float x, float y) override;
     virtual void setRotation(float rotation) override;
-    virtual void setRotationSkewX(float rotationX) override;
-    virtual void setRotationSkewY(float rotationY) override;
-    virtual void setSkewX(float sx) override;
-    virtual void setSkewY(float sy) override;
     virtual void removeChild(Node* child, bool cleanup) override;
     virtual void removeAllChildrenWithCleanup(bool cleanup) override;
     virtual void reorderChild(Node *child, int zOrder) override;
     using Node::addChild;
-    virtual void addChild(Node *child, int zOrder, int tag) override;
+    virtual void addChild(Node *child, int zOrder) override;
     virtual void addChild(Node *child, int zOrder, const std::string &name) override;
     virtual void sortAllChildren() override;
     virtual void setScale(float scale) override;
@@ -671,6 +679,7 @@ protected:
     TextureAtlas*       _textureAtlas;      /// SpriteBatchNode texture atlas (weak reference)
     ssize_t             _atlasIndex;        /// Absolute (real) Index on the SpriteSheet
     SpriteBatchNode*    _batchNode;         /// Used batch node (weak reference)
+    uint32_t            _spriteTag;
 
     bool                _dirty;             /// Whether the sprite needs to be updated
     bool                _recursiveDirty;    /// Whether all of the sprite's children needs to be updated

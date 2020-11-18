@@ -194,7 +194,6 @@ public:
     virtual void visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags) override;
     
     using Node::addChild;
-    virtual void addChild(Node * child, int zOrder, int tag) override;
     virtual void addChild(Node * child, int zOrder, const std::string &name) override;
     virtual void reorderChild(Node *child, int zOrder) override;
         
@@ -218,10 +217,6 @@ public:
      * For example: a tile map (TMXMap) or a label with lots of characters (LabelBMFont).
      */
     void insertQuadFromSprite(Sprite *sprite, ssize_t index);
-    /* This is the opposite of "addQuadFromSprite.
-     * It add the sprite to the children and descendants array, but it doesn't update add it to the texture atlas
-     */
-    SpriteBatchNode * addSpriteWithoutQuad(Sprite *child, int z, int aTag);
 
     /** reserves capacity for the batch node.
      If the current capacity is bigger, nothing happens.

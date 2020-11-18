@@ -405,16 +405,6 @@ class CC_DLL RotateTo : public ActionInterval
 {
 public:
     /** 
-     * Creates the action with separate rotation angles.
-     *
-     * @param duration Duration time, in seconds.
-     * @param dstAngleX In degreesCW.
-     * @param dstAngleY In degreesCW.
-     * @return An autoreleased RotateTo object.
-     */
-    static RotateTo* create(float duration, float dstAngleX, float dstAngleY);
-
-    /** 
      * Creates the action.
      *
      * @param duration Duration time, in seconds.
@@ -422,14 +412,6 @@ public:
      * @return An autoreleased RotateTo object.
      */
     static RotateTo* create(float duration, float dstAngle);
-
-    /** 
-     * Creates the action with 3D rotation angles.
-     * @param duration Duration time, in seconds.
-     * @param dstAngle3D A Vec3 angle.
-     * @return An autoreleased RotateTo object.
-     */
-    static RotateTo* create(float duration, const Vec3& dstAngle3D);
 
     //
     // Overrides
@@ -452,7 +434,7 @@ CC_CONSTRUCTOR_ACCESS:
      * @param dstAngleX in degreesCW
      * @param dstAngleY in degreesCW
      */
-    bool initWithDuration(float duration, float dstAngleX, float dstAngleY);
+    bool initWithDuration(float duration, float dstAngle);
     /**
      * initializes the action
      * @param duration in seconds
@@ -466,10 +448,9 @@ CC_CONSTRUCTOR_ACCESS:
     void calculateAngles(float &startAngle, float &diffAngle, float dstAngle);
     
 protected:
-    bool _is3D;
-    Vec3 _dstAngle;
-    Vec3 _startAngle;
-    Vec3 _diffAngle;
+    float _dstAngle;
+    float _startAngle;
+    float _diffAngle;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(RotateTo);
@@ -489,23 +470,6 @@ public:
      * @return An autoreleased RotateBy object.
      */
     static RotateBy* create(float duration, float deltaAngle);
-    /**
-     * Creates the action with separate rotation angles.
-     *
-     * @param duration Duration time, in seconds.
-     * @param deltaAngleZ_X In degreesCW.
-     * @param deltaAngleZ_Y In degreesCW.
-     * @return An autoreleased RotateBy object.
-     * @warning The physics body contained in Node doesn't support rotate with different x and y angle.
-     */
-    static RotateBy* create(float duration, float deltaAngleZ_X, float deltaAngleZ_Y);
-    /** Creates the action with 3D rotation angles.
-     *
-     * @param duration Duration time, in seconds.
-     * @param deltaAngle3D A Vec3 angle.
-     * @return An autoreleased RotateBy object.
-     */
-    static RotateBy* create(float duration, const Vec3& deltaAngle3D);
 
     //
     // Override
@@ -524,18 +488,10 @@ CC_CONSTRUCTOR_ACCESS:
 
     /** initializes the action */
     bool initWithDuration(float duration, float deltaAngle);
-    /** 
-     * @warning The physics body contained in Node doesn't support rotate with different x and y angle.
-     * @param deltaAngleZ_X in degreesCW
-     * @param deltaAngleZ_Y in degreesCW
-     */
-    bool initWithDuration(float duration, float deltaAngleZ_X, float deltaAngleZ_Y);
-    bool initWithDuration(float duration, const Vec3& deltaAngle3D);
     
 protected:
-    bool _is3D;
-    Vec3 _deltaAngle;
-    Vec3 _startAngle;
+    float _deltaAngle;
+    float _startAngle;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(RotateBy);
@@ -648,90 +604,6 @@ protected:
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(MoveTo);
-};
-
-/** @class SkewTo
- * @brief Skews a Node object to given angles by modifying it's skewX and skewY attributes
-@since v1.0
-*/
-class CC_DLL SkewTo : public ActionInterval
-{
-public:
-    /** 
-     * Creates the action.
-     * @param t Duration time, in seconds.
-     * @param sx Skew x angle.
-     * @param sy Skew y angle.
-     * @return An autoreleased SkewTo object.
-     */
-    static SkewTo* create(float t, float sx, float sy);
-
-    //
-    // Overrides
-    //
-    virtual SkewTo* clone() const override;
-    virtual SkewTo* reverse() const override;
-    virtual void startWithTarget(Node *target) override;
-    /**
-     * @param time In seconds.
-     */
-    virtual void update(float time) override;
-    
-CC_CONSTRUCTOR_ACCESS:
-    SkewTo();
-    virtual ~SkewTo() {}
-    /**
-     * @param t In seconds.
-     */
-    bool initWithDuration(float t, float sx, float sy);
-
-protected:
-    float _skewX;
-    float _skewY;
-    float _startSkewX;
-    float _startSkewY;
-    float _endSkewX;
-    float _endSkewY;
-    float _deltaX;
-    float _deltaY;
-
-private:
-    CC_DISALLOW_COPY_AND_ASSIGN(SkewTo);
-};
-
-/** @class SkewBy
-* @brief Skews a Node object by skewX and skewY degrees.
-@since v1.0
-*/
-class CC_DLL SkewBy : public SkewTo
-{
-public:
-    /** 
-     * Creates the action.
-     * @param t Duration time, in seconds.
-     * @param deltaSkewX Skew x delta angle.
-     * @param deltaSkewY Skew y delta angle.
-     * @return An autoreleased SkewBy object.
-     */
-    static SkewBy* create(float t, float deltaSkewX, float deltaSkewY);
-
-    //
-    // Overrides
-    //
-    virtual void startWithTarget(Node *target) override;
-    virtual SkewBy* clone() const  override;
-    virtual SkewBy* reverse() const override;
-    
-CC_CONSTRUCTOR_ACCESS:
-    SkewBy() {}
-    virtual ~SkewBy() {}
-    /**
-     * @param t In seconds.
-     */
-    bool initWithDuration(float t, float sx, float sy);
-
-private:
-    CC_DISALLOW_COPY_AND_ASSIGN(SkewBy);
 };
 
 /** @class ResizeTo

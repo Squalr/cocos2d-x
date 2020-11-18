@@ -63,9 +63,6 @@ int Node::__attachedNodeCount = 0;
 
 Node::Node()
 : _rotationX(0.0f)
-, _rotationY(0.0f)
-, _rotationZ_X(0.0f)
-, _rotationZ_Y(0.0f)
 , _scaleX(1.0f)
 , _scaleY(1.0f)
 , _scaleZ(1.0f)
@@ -74,8 +71,6 @@ Node::Node()
 , _usingNormalizedPosition(false)
 , _normalizedPositionDirty(false)
 , _selfFlags(FLAGS_DIRTY_MASK)
-, _skewX(0.0f)
-, _skewY(0.0f)
 , _contentSize(Size::ZERO)
 , _transformDirty(true)
 , _inverseDirty(true)
@@ -87,9 +82,7 @@ Node::Node()
 , _globalZOrder(0)
 , _parent(nullptr)
 // "whole screen" objects. like Scenes and Layers, should set _ignoreAnchorPointForPosition to true
-, _tag(Node::INVALID_TAG)
 , _name("")
-, _hashOfName(0)
 // userData is always inited as nil
 , _userData(nullptr)
 , _userObject(nullptr)
@@ -108,10 +101,6 @@ Node::Node()
 , _cascadeOpacityEnabled(true)
 , _cameraMask(1)
 , _anchorPoint(0, 0)
-, _onEnterCallback(nullptr)
-, _onExitCallback(nullptr)
-, _onEnterTransitionDidFinishCallback(nullptr)
-, _onExitTransitionDidStartCallback(nullptr)
 {
     // set default scheduler and actionManager
     _director = Director::getInstance();
@@ -141,8 +130,6 @@ Node * Node::create()
 
 Node::~Node()
 {
-    CCLOGINFO( "deallocing Node: %p - tag: %i", this, _tag );
-
     // User object has to be released before others, since userObject may have a weak reference of this node
     // It may invoke `node->stopAllActions();` while `_actionManager` is null if the next line is after `CC_SAFE_RELEASE_NULL(_actionManager)`.
     CC_SAFE_RELEASE_NULL(_userObject);
@@ -200,47 +187,18 @@ void Node::cleanup()
 
 std::string Node::getDescription() const
 {
-    return StringUtils::format("<Node | Tag = %d", _tag);
-}
-
-// MARK: getters / setters
-
-float Node::getSkewX() const
-{
-    return _skewX;
-}
-
-void Node::setSkewX(float skewX)
-{
-    if (_skewX == skewX)
-        return;
-    
-    _skewX = skewX;
-    _transformDirty = _inverseDirty = true;
-    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
-}
-
-float Node::getSkewY() const
-{
-    return _skewY;
-}
-
-void Node::setSkewY(float skewY)
-{
-    if (_skewY == skewY)
-        return;
-    
-    _skewY = skewY;
-    _transformDirty = _inverseDirty = true;
-    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
+    return "Node";
 }
 
 void Node::setLocalZOrder(std::int32_t z)
 {
     if (getLocalZOrder() == z)
+    {
         return;
-    
+    }
+
     _setLocalZOrder(z);
+
     if (_parent)
     {
         _parent->reorderChild(this, z);
@@ -273,8 +231,7 @@ void Node::setGlobalZOrder(float globalZOrder)
 /// rotation getter
 float Node::getRotation() const
 {
-    CCASSERT(_rotationZ_X == _rotationZ_Y, "CCNode#rotation. RotationX != RotationY. Don't know which one to return");
-    return _rotationZ_X;
+    return _rotationX;
 }
 
 void Node::makeDirty()
@@ -287,46 +244,14 @@ void Node::makeDirty()
 /// rotation setter
 void Node::setRotation(float rotation)
 {
-    if (_rotationZ_X == rotation)
+    if (_rotationX == rotation)
         return;
     
-    _rotationZ_X = _rotationZ_Y = rotation;
+    _rotationX = rotation;
     _transformDirty = _inverseDirty = true;
     _selfFlags |= FLAGS_TRANSFORM_DIRTY;
     
     updateRotationQuat();
-}
-
-float Node::getRotationSkewX() const
-{
-    return _rotationZ_X;
-}
-
-void Node::setRotation3D(const Vec3& rotation)
-{
-    if (_rotationX == rotation.x &&
-        _rotationY == rotation.y &&
-        _rotationZ_X == rotation.z)
-        return;
-    
-    _transformDirty = _inverseDirty = true;
-    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
-
-    _rotationX = rotation.x;
-    _rotationY = rotation.y;
-
-    // rotation Z is decomposed in 2 to simulate Skew for Flash animations
-    _rotationZ_Y = _rotationZ_X = rotation.z;
-    
-    updateRotationQuat();
-}
-
-Vec3 Node::getRotation3D() const
-{
-    // rotation Z is decomposed in 2 to simulate Skew for Flash animations
-    CCASSERT(_rotationZ_X == _rotationZ_Y, "_rotationZ_X != _rotationZ_Y");
-
-    return Vec3(_rotationX,_rotationY,_rotationZ_X);
 }
 
 void Node::updateRotationQuat()
@@ -334,33 +259,24 @@ void Node::updateRotationQuat()
     // convert Euler angle to quaternion
     // when _rotationZ_X == _rotationZ_Y, _rotationQuat = RotationZ_X * RotationY * RotationX
     // when _rotationZ_X != _rotationZ_Y, _rotationQuat = RotationY * RotationX
-    float halfRadx = CC_DEGREES_TO_RADIANS(_rotationX / 2.f), halfRady = CC_DEGREES_TO_RADIANS(_rotationY / 2.f), halfRadz = _rotationZ_X == _rotationZ_Y ? -CC_DEGREES_TO_RADIANS(_rotationZ_X / 2.f) : 0;
-    float coshalfRadx = cosf(halfRadx), sinhalfRadx = sinf(halfRadx), coshalfRady = cosf(halfRady), sinhalfRady = sinf(halfRady), coshalfRadz = cosf(halfRadz), sinhalfRadz = sinf(halfRadz);
+    float halfRadx = CC_DEGREES_TO_RADIANS(_rotationX / 2.f);
+    float halfRady = CC_DEGREES_TO_RADIANS(_rotationX / 2.f);
+    float halfRadz = -CC_DEGREES_TO_RADIANS(_rotationX / 2.f);
+    float coshalfRadx = cosf(halfRadx);
+    float sinhalfRadx = sinf(halfRadx);
+    float coshalfRady = cosf(halfRady);
+    float sinhalfRady = sinf(halfRady);
+    float coshalfRadz = cosf(halfRadz);
+    float sinhalfRadz = sinf(halfRadz);
     _rotationQuat.x = sinhalfRadx * coshalfRady * coshalfRadz - coshalfRadx * sinhalfRady * sinhalfRadz;
     _rotationQuat.y = coshalfRadx * sinhalfRady * coshalfRadz + sinhalfRadx * coshalfRady * sinhalfRadz;
     _rotationQuat.z = coshalfRadx * coshalfRady * sinhalfRadz - sinhalfRadx * sinhalfRady * coshalfRadz;
     _rotationQuat.w = coshalfRadx * coshalfRady * coshalfRadz + sinhalfRadx * sinhalfRady * sinhalfRadz;
 }
 
-void Node::updateRotation3D()
-{
-    //convert quaternion to Euler angle
-    float x = _rotationQuat.x, y = _rotationQuat.y, z = _rotationQuat.z, w = _rotationQuat.w;
-    _rotationX = atan2f(2.f * (w * x + y * z), 1.f - 2.f * (x * x + y * y));
-    float sy = 2.f * (w * y - z * x);
-    sy = clampf(sy, -1, 1);
-    _rotationY = asinf(sy);
-    _rotationZ_X = atan2f(2.f * (w * z + x * y), 1.f - 2.f * (y * y + z * z));
-    
-    _rotationX = CC_RADIANS_TO_DEGREES(_rotationX);
-    _rotationY = CC_RADIANS_TO_DEGREES(_rotationY);
-    _rotationZ_X = _rotationZ_Y = -CC_RADIANS_TO_DEGREES(_rotationZ_X);
-}
-
 void Node::setRotationQuat(const Quaternion& quat)
 {
     _rotationQuat = quat;
-    updateRotation3D();
     _transformDirty = _inverseDirty = true;
     _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 }
@@ -368,35 +284,6 @@ void Node::setRotationQuat(const Quaternion& quat)
 Quaternion Node::getRotationQuat() const
 {
     return _rotationQuat;
-}
-
-void Node::setRotationSkewX(float rotationX)
-{
-    if (_rotationZ_X == rotationX)
-        return;
-    
-    _rotationZ_X = rotationX;
-    _transformDirty = _inverseDirty = true;
-    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
-    
-    updateRotationQuat();
-}
-
-float Node::getRotationSkewY() const
-{
-    return _rotationZ_Y;
-}
-
-void Node::setRotationSkewY(float rotationY)
-{
-    if (_rotationZ_Y == rotationY)
-        return;
-    
-    _rotationZ_Y = rotationY;
-    _transformDirty = _inverseDirty = true;
-    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
-    
-    updateRotationQuat();
 }
 
 /// scale getter
@@ -685,18 +572,6 @@ void Node::setIgnoreAnchorPointForPosition(bool newValue)
     }
 }
 
-/// tag getter
-int Node::getTag() const
-{
-    return _tag;
-}
-
-/// tag setter
-void Node::setTag(int tag)
-{
-    _tag = tag ;
-}
-
 const std::string& Node::getName() const
 {
     return _name;
@@ -705,8 +580,6 @@ const std::string& Node::getName() const
 void Node::setName(const std::string& name)
 {
     _name = name;
-    std::hash<std::string> h;
-    _hashOfName = h(name);
 }
 
 /// userData setter
@@ -789,34 +662,6 @@ Rect Node::getBoundingBoxNoTransform() const
 void Node::childrenAlloc()
 {
     _children.reserve(4);
-}
-
-Node* Node::getChildByTag(int tag) const
-{
-    CCASSERT(tag != Node::INVALID_TAG, "Invalid tag");
-
-    for (const auto child : _children)
-    {
-        if(child && child->_tag == tag)
-            return child;
-    }
-    return nullptr;
-}
-
-Node* Node::getChildByName(const std::string& name) const
-{
-    CCASSERT(!name.empty(), "Invalid name");
-    
-    std::hash<std::string> h;
-    size_t hash = h(name);
-    
-    for (const auto& child : _children)
-    {
-        // Different strings may have the same hash code, but can use it to compare first for speed
-        if(child->_hashOfName == hash && child->_name.compare(name) == 0)
-            return child;
-    }
-    return nullptr;
 }
 
 void Node::enumerateChildren(const std::string &name, std::function<bool (Node *)> callback) const
@@ -934,24 +779,6 @@ bool Node::doEnumerate(std::string name, std::function<bool (Node *)> callback) 
     return ret;
 }
 
-/* "add" logic MUST only be on this method
-* If a class want's to extend the 'addChild' behavior it only needs
-* to override this method
-*/
-void Node::addChild(Node *child, int localZOrder, int tag)
-{
-	CCASSERT(child != nullptr, "Argument must be non-nil");
-
-	if (child == nullptr)
-	{
-		return;
-	}
-
-	CCASSERT(child->_parent == nullptr, "child already added. It can't be added again");
-
-	addChildHelper(child, localZOrder, tag, "", true);
-}
-
 void Node::addChild(Node* child, int localZOrder, const std::string &name)
 {
     CCASSERT(child != nullptr, "Argument must be non-nil");
@@ -963,10 +790,10 @@ void Node::addChild(Node* child, int localZOrder, const std::string &name)
 
     CCASSERT(child->_parent == nullptr, "child already added. It can't be added again");
     
-    addChildHelper(child, localZOrder, INVALID_TAG, name, false);
+    addChildHelper(child, localZOrder, name);
 }
 
-void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag, bool isReentry)
+void Node::addChildHelper(Node* child, int localZOrder, const std::string &name, bool isReentry)
 {
 	if (child == nullptr)
 	{
@@ -995,10 +822,7 @@ void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::stri
     
     this->insertChild(child, localZOrder);
     
-    if (setTag)
-        child->setTag(tag);
-    else
-        child->setName(name);
+    child->setName(name);
     
     child->setParent(this);
 
@@ -1136,7 +960,7 @@ void Node::addChildAsReentry(Node *child)
 
 	CCASSERT(child->_parent == nullptr, "child already added. It can't be added again");
 
-	addChildHelper(child, child->getLocalZOrder(), INVALID_TAG, child->_name, false, true);
+	addChildHelper(child, child->getLocalZOrder(), child->_name, true);
 }
 
 void Node::removeFromParent()
@@ -1185,38 +1009,6 @@ void Node::removeChild(Node* child, bool cleanup /* = true */)
     ssize_t index = _children.getIndex(child);
     if( index != CC_INVALID_INDEX )
         this->detachChild( child, index, cleanup );
-}
-
-void Node::removeChildByTag(int tag, bool cleanup/* = true */)
-{
-    CCASSERT( tag != Node::INVALID_TAG, "Invalid tag");
-
-    Node *child = this->getChildByTag(tag);
-
-    if (child == nullptr)
-    {
-        CCLOG("cocos2d: removeChildByTag(tag = %d): child not found!", tag);
-    }
-    else
-    {
-        this->removeChild(child, cleanup);
-    }
-}
-
-void Node::removeChildByName(const std::string &name, bool cleanup)
-{
-    CCASSERT(!name.empty(), "Invalid name");
-    
-    Node *child = this->getChildByName(name);
-    
-    if (child == nullptr)
-    {
-        CCLOG("cocos2d: removeChildByName(name = %s): child not found!", name.c_str());
-    }
-    else
-    {
-        this->removeChild(child, cleanup);
-    }
 }
 
 void Node::removeAllChildren()
@@ -1368,11 +1160,6 @@ void Node::onEnter()
 		++__attachedNodeCount;
 	}
 
-	if (_onEnterCallback)
-    {
-		_onEnterCallback();
-    }
-
 	_isTransitionFinished = false;
 
     sortAllChildren();
@@ -1407,9 +1194,6 @@ void Node::onReenter()
 
 void Node::onEnterTransitionDidFinish()
 {
-    if (_onEnterTransitionDidFinishCallback)
-        _onEnterTransitionDidFinishCallback();
-
     _isTransitionFinished = true;
     for( const auto &child: _children)
         child->onEnterTransitionDidFinish();
@@ -1417,9 +1201,6 @@ void Node::onEnterTransitionDidFinish()
 
 void Node::onExitTransitionDidStart()
 {
-    if (_onExitTransitionDidStartCallback)
-        _onExitTransitionDidStartCallback();
-    
     for( const auto &child: _children)
         child->onExitTransitionDidStart();
 }
@@ -1429,11 +1210,6 @@ void Node::onExit()
     if (_running)
     {
         --__attachedNodeCount;
-    }
-    
-    if (_onExitCallback)
-    {
-        _onExitCallback();
     }
 
     // Zac: Disabled this. Why pause on exit? Just dispose it. This causes dumb bugs.
@@ -1488,42 +1264,10 @@ void Node::stopAction(Action* action)
     _actionManager->removeAction(action);
 }
 
-void Node::stopActionByTag(int tag)
-{
-    CCASSERT( tag != Action::INVALID_TAG, "Invalid tag");
-    _actionManager->removeActionByTag(tag, this);
-}
-
-void Node::stopAllActionsByTag(int tag)
-{
-    CCASSERT( tag != Action::INVALID_TAG, "Invalid tag");
-    _actionManager->removeAllActionsByTag(tag, this);
-}
-
-void Node::stopActionsByFlags(unsigned int flags)
-{
-    if (flags > 0)
-    {
-        _actionManager->removeActionsByFlags(flags, this);
-    }
-}
-
-Action * Node::getActionByTag(int tag)
-{
-    CCASSERT( tag != Action::INVALID_TAG, "Invalid tag");
-    return _actionManager->getActionByTag(tag, this);
-}
-
 ssize_t Node::getNumberOfRunningActions() const
 {
     return _actionManager->getNumberOfRunningActionsInTarget(this);
 }
-
-ssize_t Node::getNumberOfRunningActionsByTag(int tag) const
-{
-    return _actionManager->getNumberOfRunningActionsInTargetByTag(this, tag);
-}
-
 
 // MARK: Callbacks
 
@@ -1696,7 +1440,9 @@ AffineTransform Node::getNodeToParentAffineTransform(Node* ancestor) const
     AffineTransform t(this->getNodeToParentAffineTransform());
 
     for (Node *p = _parent; p != nullptr && p != ancestor; p = p->getParent())
+    {
         t = AffineTransformConcat(t, p->getNodeToParentAffineTransform());
+    }
 
     return t;
 }
@@ -1714,72 +1460,30 @@ const Mat4& Node::getNodeToParentTransform() const
             x += _anchorPointInPoints.x;
             y += _anchorPointInPoints.y;
         }
-        
-        bool needsSkewMatrix = ( _skewX || _skewY );
 
         // Build Transform Matrix = translation * rotation * scale
         Mat4 translation;
         //move to anchor point first, then rotate
         Mat4::createTranslation(x, y, z, &translation);
         
-        Mat4::createRotation(_rotationQuat, &_transform);
-        
-        if (_rotationZ_X != _rotationZ_Y)
-        {
-            // Rotation values
-            // Change rotation code to handle X and Y
-            // If we skew with the exact same value for both x and y then we're simply just rotating
-            float radiansX = -CC_DEGREES_TO_RADIANS(_rotationZ_X);
-            float radiansY = -CC_DEGREES_TO_RADIANS(_rotationZ_Y);
-            float cx = cosf(radiansX);
-            float sx = sinf(radiansX);
-            float cy = cosf(radiansY);
-            float sy = sinf(radiansY);
-            
-            float m0 = _transform.m[0], m1 = _transform.m[1], m4 = _transform.m[4], m5 = _transform.m[5], m8 = _transform.m[8], m9 = _transform.m[9];
-            _transform.m[0] = cy * m0 - sx * m1, _transform.m[4] = cy * m4 - sx * m5, _transform.m[8] = cy * m8 - sx * m9;
-            _transform.m[1] = sy * m0 + cx * m1, _transform.m[5] = sy * m4 + cx * m5, _transform.m[9] = sy * m8 + cx * m9;
-        }
+        // Mat4::createRotation(this->_rotationX, &_transform);
+
         _transform = translation * _transform;
 
-        if (_scaleX != 1.f)
-        {
-            _transform.m[0] *= _scaleX, _transform.m[1] *= _scaleX, _transform.m[2] *= _scaleX;
-        }
-        if (_scaleY != 1.f)
-        {
-            _transform.m[4] *= _scaleY, _transform.m[5] *= _scaleY, _transform.m[6] *= _scaleY;
-        }
-        if (_scaleZ != 1.f)
-        {
-            _transform.m[8] *= _scaleZ, _transform.m[9] *= _scaleZ, _transform.m[10] *= _scaleZ;
-        }
-        
-        // FIXME:: Try to inline skew
-        // If skew is needed, apply skew and then anchor point
-        if (needsSkewMatrix)
-        {
-            float skewMatArray[16] =
-            {
-                1, (float)tanf(CC_DEGREES_TO_RADIANS(_skewY)), 0, 0,
-                (float)tanf(CC_DEGREES_TO_RADIANS(_skewX)), 1, 0, 0,
-                0,  0,  1, 0,
-                0,  0,  0, 1
-            };
-            Mat4 skewMatrix(skewMatArray);
-            
-            _transform = _transform * skewMatrix;
-        }
+        _transform.m[0] *= _scaleX;
+        _transform.m[1] *= _scaleX;
+        _transform.m[2] *= _scaleX;
+        _transform.m[4] *= _scaleY;
+        _transform.m[5] *= _scaleY;
+        _transform.m[6] *= _scaleY;
+        _transform.m[8] *= _scaleZ;
+        _transform.m[9] *= _scaleZ;
+        _transform.m[10] *= _scaleZ;
 
         // adjust anchor point
-        if (!_anchorPointInPoints.isZero())
-        {
-            // FIXME:: Argh, Mat4 needs a "translate" method.
-            // FIXME:: Although this is faster than multiplying a vec4 * mat4
-            _transform.m[12] += _transform.m[0] * -_anchorPointInPoints.x + _transform.m[4] * -_anchorPointInPoints.y;
-            _transform.m[13] += _transform.m[1] * -_anchorPointInPoints.x + _transform.m[5] * -_anchorPointInPoints.y;
-            _transform.m[14] += _transform.m[2] * -_anchorPointInPoints.x + _transform.m[6] * -_anchorPointInPoints.y;
-        }
+        _transform.m[12] += _transform.m[0] * -_anchorPointInPoints.x + _transform.m[4] * -_anchorPointInPoints.y;
+        _transform.m[13] += _transform.m[1] * -_anchorPointInPoints.x + _transform.m[5] * -_anchorPointInPoints.y;
+        _transform.m[14] += _transform.m[2] * -_anchorPointInPoints.x + _transform.m[6] * -_anchorPointInPoints.y;
     }
 
     if (_additionalTransform)
@@ -1811,8 +1515,10 @@ void Node::setNodeToParentTransform(const Mat4& transform)
     _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 
     if (_additionalTransform)
+    {
         // _additionalTransform[1] has a copy of lastest transform
         _additionalTransform[1] = transform;
+    }
 }
 
 void Node::setAdditionalTransform(const AffineTransform& additionalTransform)
@@ -1889,7 +1595,6 @@ Mat4 Node::getWorldToNodeTransform() const
 {
     return getNodeToWorldTransform().getInversed();
 }
-
 
 Vec2 Node::convertToNodeSpace(const Vec2& worldPoint) const
 {

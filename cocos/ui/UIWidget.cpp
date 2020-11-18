@@ -863,7 +863,6 @@ void Widget::copyProperties(Widget *widget)
     setVisible(widget->isVisible());
     setBright(widget->isBright());
     setLocalZOrder(widget->getLocalZOrder());
-    setTag(widget->getTag());
     setName(widget->getName());
     setActionTag(widget->getActionTag());
     _ignoreSize = widget->_ignoreSize;
@@ -878,8 +877,6 @@ void Widget::copyProperties(Widget *widget)
     setScaleX(widget->getScaleX());
     setScaleY(widget->getScaleY());
     setRotation(widget->getRotation());
-    setRotationSkewX(widget->getRotationSkewX());
-    setRotationSkewY(widget->getRotationSkewY());
     setFlippedX(widget->isFlippedX());
     setFlippedY(widget->isFlippedY());
     setColor(widget->getColor());

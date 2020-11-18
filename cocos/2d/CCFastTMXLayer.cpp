@@ -632,7 +632,7 @@ Sprite* TMXLayer::getTileAt(const Vec2& tileCoordinate)
 				tile->setPosition(p);
 				tile->setPositionZ((float)getVertexZForPos(tileCoordinate));
 				tile->setOpacity(this->getOpacity());
-				tile->setTag(index);
+				// tile->setTag(index);
 				this->addChild(tile, index);
 				_spriteContainer.insert(std::pair<int, std::pair<Sprite*, int> >(index, std::pair<Sprite*, int>(tile, gid)));
 
@@ -739,7 +739,7 @@ void TMXLayer::setFlaggedTileGIDByIndex(int index, uint32_t gid)
 
 void TMXLayer::removeChild(Node* node, bool cleanup)
 {
-    int tag = node->getTag();
+    int tag = 0; // node->getTag();
     auto it = _spriteContainer.find(tag);
     if (it != _spriteContainer.end() && it->second.first == node)
     {
@@ -922,7 +922,7 @@ void TMXLayer::setupTileSprite(Sprite* sprite, const Vec2& pos, uint32_t gid)
 
 std::string TMXLayer::getDescription() const
 {
-    return StringUtils::format("<FastTMXLayer | tag = %d, size = %d,%d>", _tag, (int)_mapTileSize.width, (int)_mapTileSize.height);
+    return StringUtils::format("<FastTMXLayer | tag = %d, size = %d,%d>", -1, (int)_mapTileSize.width, (int)_mapTileSize.height);
 }
 
 } //end of namespace cocos_experimental

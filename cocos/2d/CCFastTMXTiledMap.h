@@ -77,7 +77,6 @@ class TMXLayer;
  * Each layer is created using an FastTMXLayer (subclass of SpriteBatchNode). If you have 5 layers, then 5 FastTMXLayer will be created,
  * unless the layer visibility is off. In that case, the layer won't be created at all.
  * You can obtain the layers (FastTMXLayer objects) at runtime by:
- * - map->getChildByTag(tag_number);  // 0=1st layer, 1=2nd layer, 2=3rd layer, etc...
  * - map->getLayer(name_of_the_layer);
 
  * Each object group is created using a TMXObjectGroup which is a subclass of MutableArray.

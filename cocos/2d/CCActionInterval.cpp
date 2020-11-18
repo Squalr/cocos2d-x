@@ -808,66 +808,25 @@ Spawn* Spawn::reverse() const
 RotateTo* RotateTo::create(float duration, float dstAngle)
 {
     RotateTo* rotateTo = new (std::nothrow) RotateTo();
-    if (rotateTo && rotateTo->initWithDuration(duration, dstAngle, dstAngle))
+    if (rotateTo && rotateTo->initWithDuration(duration, dstAngle))
     {
         rotateTo->autorelease();
         return rotateTo;
     }
     
-    delete rotateTo;
-    return nullptr;
-}
-
-RotateTo* RotateTo::create(float duration, float dstAngleX, float dstAngleY)
-{
-    RotateTo* rotateTo = new (std::nothrow) RotateTo();
-    if (rotateTo && rotateTo->initWithDuration(duration, dstAngleX, dstAngleY))
-    {
-        rotateTo->autorelease();
-        return rotateTo;
-    }
-    
-    delete rotateTo;
-    return nullptr;
-}
-
-RotateTo* RotateTo::create(float duration, const Vec3& dstAngle3D)
-{
-    RotateTo* rotateTo = new (std::nothrow) RotateTo();
-    if(rotateTo && rotateTo->initWithDuration(duration, dstAngle3D))
-    {
-        rotateTo->autorelease();
-        return rotateTo;
-    }
-
     delete rotateTo;
     return nullptr;
 }
 
 RotateTo::RotateTo()
-: _is3D(false)
 {
 }
 
-bool RotateTo::initWithDuration(float duration, float dstAngleX, float dstAngleY)
+bool RotateTo::initWithDuration(float duration, float dstAngle)
 {
     if (ActionInterval::initWithDuration(duration))
     {
-        _dstAngle.x = dstAngleX;
-        _dstAngle.y = dstAngleY;
-        
-        return true;
-    }
-    
-    return false;
-}
-
-bool RotateTo::initWithDuration(float duration, const Vec3& dstAngle3D)
-{
-    if (ActionInterval::initWithDuration(duration))
-    {
-        _dstAngle = dstAngle3D;
-        _is3D = true;
+        _dstAngle = dstAngle;
         
         return true;
     }
@@ -879,10 +838,7 @@ RotateTo* RotateTo::clone() const
 {
     // no copy constructor
     auto a = new (std::nothrow) RotateTo();
-    if(_is3D)
-       a->initWithDuration(_duration, _dstAngle);
-    else
-        a->initWithDuration(_duration, _dstAngle.x, _dstAngle.y);
+    a->initWithDuration(_duration, _dstAngle);
     a->autorelease();
     return a;
 }
@@ -913,38 +869,16 @@ void RotateTo::startWithTarget(Node *target)
 {
     ActionInterval::startWithTarget(target);
     
-    if (_is3D)
-    {
-        _startAngle = _target->getRotation3D();
-    }
-    else
-    {
-        _startAngle.x = _target->getRotationSkewX();
-        _startAngle.y = _target->getRotationSkewY();
-    }
+    _startAngle = _target->getRotation();
 
-    calculateAngles(_startAngle.x, _diffAngle.x, _dstAngle.x);
-    calculateAngles(_startAngle.y, _diffAngle.y, _dstAngle.y);
-    calculateAngles(_startAngle.z, _diffAngle.z, _dstAngle.z);
+    calculateAngles(_startAngle, _diffAngle, _dstAngle);
 }
 
 void RotateTo::update(float time)
 {
     if (_target)
     {
-        if(_is3D)
-        {
-            _target->setRotation3D(Vec3(
-                _startAngle.x + _diffAngle.x * time,
-                _startAngle.y + _diffAngle.y * time,
-                _startAngle.z + _diffAngle.z * time
-            ));
-        }
-        else
-        {
-            _target->setRotationSkewX(_startAngle.x + _diffAngle.x * time);	
-            _target->setRotationSkewY(_startAngle.y + _diffAngle.y * time);
-        }
+        _target->setRotation(_startAngle + _diffAngle * time);
     }
 }
 
@@ -971,34 +905,7 @@ RotateBy* RotateBy::create(float duration, float deltaAngle)
     return nullptr;
 }
 
-RotateBy* RotateBy::create(float duration, float deltaAngleX, float deltaAngleY)
-{
-    RotateBy *rotateBy = new (std::nothrow) RotateBy();
-    if (rotateBy && rotateBy->initWithDuration(duration, deltaAngleX, deltaAngleY))
-    {
-        rotateBy->autorelease();
-        return rotateBy;
-    }
-
-    delete rotateBy;
-    return nullptr;
-}
-
-RotateBy* RotateBy::create(float duration, const Vec3& deltaAngle3D)
-{
-    RotateBy *rotateBy = new (std::nothrow) RotateBy();
-    if(rotateBy && rotateBy->initWithDuration(duration, deltaAngle3D))
-    {
-        rotateBy->autorelease();
-        return rotateBy;
-    }
-
-    delete rotateBy;
-    return nullptr;
-}
-
 RotateBy::RotateBy()
-: _is3D(false)
 {
 }
 
@@ -1006,31 +913,7 @@ bool RotateBy::initWithDuration(float duration, float deltaAngle)
 {
     if (ActionInterval::initWithDuration(duration))
     {
-        _deltaAngle.x = _deltaAngle.y = deltaAngle;
-        return true;
-    }
-
-    return false;
-}
-
-bool RotateBy::initWithDuration(float duration, float deltaAngleX, float deltaAngleY)
-{
-    if (ActionInterval::initWithDuration(duration))
-    {
-        _deltaAngle.x = deltaAngleX;
-        _deltaAngle.y = deltaAngleY;
-        return true;
-    }
-    
-    return false;
-}
-
-bool RotateBy::initWithDuration(float duration, const Vec3& deltaAngle3D)
-{
-    if (ActionInterval::initWithDuration(duration))
-    {
-        _deltaAngle = deltaAngle3D;
-        _is3D = true;
+        _deltaAngle = deltaAngle;
         return true;
     }
 
@@ -1042,10 +925,7 @@ RotateBy* RotateBy::clone() const
 {
     // no copy constructor
     auto a = new (std::nothrow) RotateBy();
-    if(_is3D)
-        a->initWithDuration(_duration, _deltaAngle);
-    else
-        a->initWithDuration(_duration, _deltaAngle.x, _deltaAngle.y);
+    a->initWithDuration(_duration, _deltaAngle);
     a->autorelease();
     return a;
 }
@@ -1053,15 +933,7 @@ RotateBy* RotateBy::clone() const
 void RotateBy::startWithTarget(Node *target)
 {
     ActionInterval::startWithTarget(target);
-    if(_is3D)
-    {
-        _startAngle = target->getRotation3D();
-    }
-    else
-    {
-        _startAngle.x = target->getRotationSkewX();
-        _startAngle.y = target->getRotationSkewY();
-    }
+    _startAngle = target->getRotation();
 }
 
 void RotateBy::update(float time)
@@ -1069,36 +941,13 @@ void RotateBy::update(float time)
     // FIXME: shall I add % 360
     if (_target)
     {
-        if(_is3D)
-        {
-            Vec3 v;
-            v.x = _startAngle.x + _deltaAngle.x * time;
-            v.y = _startAngle.y + _deltaAngle.y * time;
-            v.z = _startAngle.z + _deltaAngle.z * time;
-            _target->setRotation3D(v);
-        }
-        else
-        {	
-            _target->setRotationSkewX(_startAngle.x + _deltaAngle.x * time);	
-            _target->setRotationSkewY(_startAngle.y + _deltaAngle.y * time);
-        }
+        _target->setRotation(_startAngle + _deltaAngle * time);	
     }
 }
 
 RotateBy* RotateBy::reverse() const
 {
-    if(_is3D)
-    {
-        Vec3 v;
-        v.x = - _deltaAngle.x;
-        v.y = - _deltaAngle.y;
-        v.z = - _deltaAngle.z;
-        return RotateBy::create(_duration, v);
-    }
-    else
-    {
-        return RotateBy::create(_duration, -_deltaAngle.x, -_deltaAngle.y);
-    }
+    return RotateBy::create(_duration, -_deltaAngle);
 }
 
 //
@@ -1234,167 +1083,6 @@ MoveTo* MoveTo::reverse() const
 {
     CCASSERT(false, "reverse() not supported in MoveTo");
     return nullptr;
-}
-
-//
-// SkewTo
-//
-SkewTo* SkewTo::create(float t, float sx, float sy)
-{
-    SkewTo *skewTo = new (std::nothrow) SkewTo();
-    if (skewTo && skewTo->initWithDuration(t, sx, sy))
-    {
-        skewTo->autorelease();
-        return skewTo;
-    }
-
-    delete skewTo;
-    return nullptr;
-}
-
-bool SkewTo::initWithDuration(float t, float sx, float sy)
-{
-    bool bRet = false;
-
-    if (ActionInterval::initWithDuration(t))
-    {
-        _endSkewX = sx;
-        _endSkewY = sy;
-
-        bRet = true;
-    }
-
-    return bRet;
-}
-
-SkewTo* SkewTo::clone() const
-{
-    // no copy constructor
-    return SkewTo::create(_duration, _endSkewX, _endSkewY);
-}
-
-SkewTo* SkewTo::reverse() const
-{
-    CCASSERT(false, "reverse() not supported in SkewTo");
-    return nullptr;
-}
-
-void SkewTo::startWithTarget(Node *target)
-{
-    ActionInterval::startWithTarget(target);
-
-    _startSkewX = target->getSkewX();
-
-    if (_startSkewX > 0)
-    {
-        _startSkewX = fmodf(_startSkewX, 180.f);
-    }
-    else
-    {
-        _startSkewX = fmodf(_startSkewX, -180.f);
-    }
-
-    _deltaX = _endSkewX - _startSkewX;
-
-    if (_deltaX > 180)
-    {
-        _deltaX -= 360;
-    }
-    if (_deltaX < -180)
-    {
-        _deltaX += 360;
-    }
-
-    _startSkewY = target->getSkewY();
-
-    if (_startSkewY > 0)
-    {
-        _startSkewY = fmodf(_startSkewY, 360.f);
-    }
-    else
-    {
-        _startSkewY = fmodf(_startSkewY, -360.f);
-    }
-
-    _deltaY = _endSkewY - _startSkewY;
-
-    if (_deltaY > 180)
-    {
-        _deltaY -= 360;
-    }
-    if (_deltaY < -180)
-    {
-        _deltaY += 360;
-    }
-}
-
-void SkewTo::update(float t)
-{
-    _target->setSkewX(_startSkewX + _deltaX * t);
-    _target->setSkewY(_startSkewY + _deltaY * t);
-}
-
-SkewTo::SkewTo()
-: _skewX(0.0)
-, _skewY(0.0)
-, _startSkewX(0.0)
-, _startSkewY(0.0)
-, _endSkewX(0.0)
-, _endSkewY(0.0)
-, _deltaX(0.0)
-, _deltaY(0.0)
-{
-}
-
-//
-// SkewBy
-//
-SkewBy* SkewBy::create(float t, float sx, float sy)
-{
-    SkewBy *skewBy = new (std::nothrow) SkewBy();
-    if (skewBy && skewBy->initWithDuration(t, sx, sy))
-    {
-        skewBy->autorelease();
-        return  skewBy;
-    }
-
-    delete skewBy;
-    return nullptr;
-}
-
-SkewBy * SkewBy::clone() const
-{
-    // no copy constructor
-    return SkewBy::create(_duration, _skewX, _skewY);
-}
-
-bool SkewBy::initWithDuration(float t, float deltaSkewX, float deltaSkewY)
-{
-    bool ret = false;
-
-    if (SkewTo::initWithDuration(t, deltaSkewX, deltaSkewY))
-    {
-        _skewX = deltaSkewX;
-        _skewY = deltaSkewY;
-
-        ret = true;
-    }
-
-    return ret;
-}
-
-void SkewBy::startWithTarget(Node *target)
-{
-    SkewTo::startWithTarget(target);
-    _deltaX = _skewX;
-    _deltaY = _skewY;
-    _endSkewX = _startSkewX + _deltaX;
-    _endSkewY = _startSkewY + _deltaY;
-}
-
-SkewBy* SkewBy::reverse() const
-{
-    return SkewBy::create(_duration, -_skewX, -_skewY);
 }
 
 ResizeTo* ResizeTo::create(float duration, const cocos2d::Size& final_size)

@@ -1172,7 +1172,7 @@ void Sprite::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 
 // MARK: visit, draw, transform
 
-void Sprite::addChild(Node *child, int zOrder, int tag)
+void Sprite::addChild(Node *child, int zOrder)
 {
     CCASSERT(child != nullptr, "Argument must be non-nullptr");
     if (child == nullptr)
@@ -1194,7 +1194,7 @@ void Sprite::addChild(Node *child, int zOrder, int tag)
         }
     }
     //CCNode already sets isReorderChildDirty_ so this needs to be after batchNode check
-    Node::addChild(child, zOrder, tag);
+    Node::addChild(child, zOrder);
 }
 
 void Sprite::addChild(Node *child, int zOrder, const std::string &name)
@@ -1339,30 +1339,6 @@ void Sprite::setRotation(float rotation)
 {
     Node::setRotation(rotation);
 
-    SET_DIRTY_RECURSIVELY();
-}
-
-void Sprite::setRotationSkewX(float fRotationX)
-{
-    Node::setRotationSkewX(fRotationX);
-    SET_DIRTY_RECURSIVELY();
-}
-
-void Sprite::setRotationSkewY(float fRotationY)
-{
-    Node::setRotationSkewY(fRotationY);
-    SET_DIRTY_RECURSIVELY();
-}
-
-void Sprite::setSkewX(float sx)
-{
-    Node::setSkewX(sx);
-    SET_DIRTY_RECURSIVELY();
-}
-
-void Sprite::setSkewY(float sy)
-{
-    Node::setSkewY(sy);
     SET_DIRTY_RECURSIVELY();
 }
 
@@ -1779,7 +1755,7 @@ std::string Sprite::getDescription() const
         texture_id = _batchNode->getTextureAtlas()->getTexture()->getName();
     else
         texture_id = _texture->getName();
-    return StringUtils::format("<Sprite | Tag = %d, TextureID = %d>", _tag, texture_id );
+    return StringUtils::format("<Sprite | Tag = %d, TextureID = %d>", -1, texture_id );
 }
 
 const PolygonInfo& Sprite::getPolygonInfo() const
