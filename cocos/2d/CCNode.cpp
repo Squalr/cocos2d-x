@@ -74,8 +74,6 @@ Node::Node()
 , _contentSize(Size::ZERO)
 , _transformDirty(true)
 , _inverseDirty(true)
-, _additionalTransform(nullptr)
-, _additionalTransformDirty(false)
 // children (lazy allocs)
 // lazy alloc
 , _localZOrder$Arrival(0LL)
@@ -155,8 +153,6 @@ Node::~Node()
 
     // CCASSERT(!_running, "Node still marked as running on node destruction! Was base class onExit() called in derived class onExit() implementations?");
     CC_SAFE_RELEASE(_eventDispatcher);
-
-    delete[] _additionalTransform;
 }
 
 bool Node::init()
@@ -260,7 +256,7 @@ void Node::updateRotationQuat()
     float halfRadz = -CC_DEGREES_TO_RADIANS(_rotationX / 2.0f);
     float coshalfRadz = cosf(halfRadz);
     float sinhalfRadz = sinf(halfRadz);
-    
+
     _rotationQuat.x = 0.0f;
     _rotationQuat.y = 0.0f;
     _rotationQuat.z = sinhalfRadz;
@@ -1481,24 +1477,7 @@ const Mat4& Node::getNodeToParentTransform() const
         _transform.m[14] += _transform.m[2] * -_anchorPointInPoints.x + _transform.m[6] * -_anchorPointInPoints.y;
     }
 
-    if (_additionalTransform)
-    {
-        // This is needed to support both Node::setNodeToParentTransform() and Node::setAdditionalTransform()
-        // at the same time. The scenario is this:
-        // at some point setNodeToParentTransform() is called.
-        // and later setAdditionalTransform() is called every time. And since _transform
-        // is being overwritten everyframe, _additionalTransform[1] is used to have a copy
-        // of the last "_transform without _additionalTransform"
-        if (_transformDirty)
-            _additionalTransform[1] = _transform;
-
-        if (_selfFlags & FLAGS_TRANSFORM_DIRTY)
-        {
-            _transform = _additionalTransform[1] * _additionalTransform[0];
-        }
-    }
-
-    _transformDirty = _additionalTransformDirty = false;
+    _transformDirty = false;
 
     return _transform;
 }
@@ -1508,47 +1487,6 @@ void Node::setNodeToParentTransform(const Mat4& transform)
     _transform = transform;
     _transformDirty = false;
     _selfFlags |= FLAGS_TRANSFORM_DIRTY;
-
-    if (_additionalTransform)
-    {
-        // _additionalTransform[1] has a copy of lastest transform
-        _additionalTransform[1] = transform;
-    }
-}
-
-void Node::setAdditionalTransform(const AffineTransform& additionalTransform)
-{
-    Mat4 tmp;
-    CGAffineToGL(additionalTransform, tmp.m);
-    setAdditionalTransform(&tmp);
-}
-
-void Node::setAdditionalTransform(const Mat4* additionalTransform)
-{
-    if (additionalTransform == nullptr)
-    {
-        if(_additionalTransform)  _transform = _additionalTransform[1];
-        delete[] _additionalTransform;
-        _additionalTransform = nullptr;
-    }
-    else
-    {
-        if (!_additionalTransform) {
-            _additionalTransform = new Mat4[2];
-
-            // _additionalTransform[1] is used as a backup for _transform
-            _additionalTransform[1] = _transform;
-        }
-
-        _additionalTransform[0] = *additionalTransform;
-    }
-    _additionalTransformDirty = _inverseDirty = true;
-    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
-}
-
-void Node::setAdditionalTransform(const Mat4& additionalTransform)
-{
-    setAdditionalTransform(&additionalTransform);
 }
 
 AffineTransform Node::getParentToNodeAffineTransform() const
