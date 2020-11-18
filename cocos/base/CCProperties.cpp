@@ -541,7 +541,7 @@ void Properties::resolveInheritance(const char* id)
                 // Copy data from the parent into the child.
                 derived->_properties = parent->_properties;
                 derived->_namespaces = std::vector<Properties*>();
-                std::vector<Properties*>::const_iterator itt;
+                
                 for (const auto space: parent->_namespaces)
                 {
                     derived->_namespaces.push_back(new (std::nothrow) Properties(*space));

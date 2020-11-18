@@ -123,7 +123,7 @@ AudioCache::AudioCache()
 , _queBufferFrames(0)
 , _state(State::INITIAL)
 , _isDestroyed(std::make_shared<bool>(false))
-, _id(++__idIndex)
+, _id(++__idIndexMacCache)
 , _isLoadingFinished(false)
 , _isSkipReadDataTask(false)
 {

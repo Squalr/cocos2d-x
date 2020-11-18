@@ -477,7 +477,7 @@ bool Value::operator== (const Value& v) const
 /// Convert value to a specified type
 unsigned char Value::asByte() const
 {
-    if (_type == Type::VECTOR && _type == Type::MAP && _type == Type::INT_KEY_MAP)
+    if (_type == Type::VECTOR || _type == Type::MAP || _type == Type::INT_KEY_MAP)
     {
         return 0;
     }
@@ -524,7 +524,7 @@ unsigned char Value::asByte() const
 
 int Value::asInt() const
 {
-    if (_type == Type::VECTOR && _type == Type::MAP && _type == Type::INT_KEY_MAP)
+    if (_type == Type::VECTOR || _type == Type::MAP || _type == Type::INT_KEY_MAP)
     {
         return 0;
     }
@@ -573,7 +573,7 @@ int Value::asInt() const
 
 unsigned int Value::asUnsignedInt() const
 {
-    if (_type == Type::VECTOR && _type == Type::MAP && _type == Type::INT_KEY_MAP)
+    if (_type == Type::VECTOR || _type == Type::MAP || _type == Type::INT_KEY_MAP)
     {
         return 0;
     }
@@ -622,7 +622,7 @@ unsigned int Value::asUnsignedInt() const
 
 float Value::asFloat() const
 {
-    if (_type == Type::VECTOR && _type == Type::MAP && _type == Type::INT_KEY_MAP)
+    if (_type == Type::VECTOR || _type == Type::MAP || _type == Type::INT_KEY_MAP)
     {
         return 0.0f;
     }
@@ -669,7 +669,7 @@ float Value::asFloat() const
 
 double Value::asDouble() const
 {
-    if (_type == Type::VECTOR && _type == Type::MAP && _type == Type::INT_KEY_MAP)
+    if (_type == Type::VECTOR || _type == Type::MAP || _type == Type::INT_KEY_MAP)
     {
         return 0.0;
     }
@@ -716,7 +716,7 @@ double Value::asDouble() const
 
 bool Value::asBool() const
 {
-    if (_type == Type::VECTOR && _type == Type::MAP && _type == Type::INT_KEY_MAP)
+    if (_type == Type::VECTOR || _type == Type::MAP || _type == Type::INT_KEY_MAP)
     {
         return false;
     }
@@ -778,7 +778,7 @@ void* Value::asPointer() const
 
 std::string Value::asString() const
 {
-    if (_type == Type::VECTOR && _type == Type::MAP && _type == Type::INT_KEY_MAP)
+    if (_type == Type::VECTOR || _type == Type::MAP || _type == Type::INT_KEY_MAP)
     {
         return "";
     }

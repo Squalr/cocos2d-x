@@ -43,7 +43,6 @@ THE SOFTWARE.
 #include "cereal/types/vector.hpp"
 #include "cereal/types/memory.hpp"
 #include "cereal/archives/binary.hpp"
-#include "cereal/archives/json.hpp"
 
 #include <tinyxml2.h>
 #ifdef MINIZIP_FROM_SYSTEM

@@ -94,7 +94,11 @@ void TrianglesCommand::generateMaterialID()
     // we safely can when the same glProgramState is being used then they share those states
     // if they don't have the same glProgramState, they might still have the same
     // uniforms/values and glProgram, but it would be too expensive to check the uniforms.
+    #if (_WIN64 || (__GNUC__ && (__x86_64__ || __ppc64__)))
+    uint32_t seed = uint32_t(uint64_t(_glProgramState)) ^ uint32_t(uint64_t(_glProgramState) >> 32);
+    #else
     uint32_t seed = uint32_t(_glProgramState);
+    #endif
     seed ^= _textureID + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     seed ^= _blendType.src + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     seed ^= _blendType.dst + 0x9e3779b9 + (seed << 6) + (seed >> 2);
