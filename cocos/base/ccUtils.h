@@ -60,17 +60,6 @@ class Image;
 
 namespace utils
 {
-    /** Find children by name, it will return all child that has the same name.
-     * It supports c++ 11 regular expression. It is  a helper function of `Node::enumerateChildren()`.
-     * You can refer to `Node::enumerateChildren()` for detail information.
-     *
-     * @param node The node to find
-     * @param name The name to search for, it supports c++ 11 expression
-     * @return Array of Nodes that matches the name
-     * @since v3.2
-     */
-    CC_DLL std::vector<Node*>  findChildren(const Node &node, const std::string &name);
-    
     /** Same to ::atof, but strip the string, remain 7 numbers after '.' before call atof.
      * Why we need this? Because in android c++_static, atof ( and std::atof ) is unsupported for numbers have long decimal part and contain
      * several numbers can approximate to 1 ( like 90.099998474121094 ), it will return inf. This function is used to fix this bug.
@@ -110,28 +99,6 @@ namespace utils
     * @return Returns an instance of sprite
     */
     CC_DLL Sprite* createSpriteFromBase64(const char* base64String);
-
-    /**
-     * Find a child by name recursively
-
-     * @return  Returns found node or nullptr with specified type 'T'
-     */
-    template<typename T> inline
-    T findChild(Node* levelRoot, const std::string& name)
-    {
-        return dynamic_cast<T>(findChild(levelRoot, name));
-    }
-
-    /**
-     * Find a child by tag recursively
-
-     * @return  Returns found node or nullptr with specified type 'T'
-     */
-    template<typename T> inline
-    T findChild(Node* levelRoot, int tag)
-    {
-        return dynamic_cast<T>(findChild(levelRoot, tag));
-    }
 
     /**
     @brief Converts language iso 639-1 code to LanguageType enum.

@@ -57,18 +57,6 @@ int ccNextPOT(int x)
 
 namespace utils
 {
-std::vector<Node*> findChildren(const Node &node, const std::string &name)
-{
-    std::vector<Node*> vec;
-    
-    node.enumerateChildren(name, [&vec](Node* nodeFound) -> bool {
-        vec.push_back(nodeFound);
-        return false;
-    });
-
-    return vec;
-}
-
 #define MAX_ITOA_BUFFER_SIZE 256
 double atof(const char* str)
 {

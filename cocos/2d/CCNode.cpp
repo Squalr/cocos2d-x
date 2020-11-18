@@ -257,21 +257,14 @@ void Node::setRotation(float rotation)
 void Node::updateRotationQuat()
 {
     // convert Euler angle to quaternion
-    // when _rotationZ_X == _rotationZ_Y, _rotationQuat = RotationZ_X * RotationY * RotationX
-    // when _rotationZ_X != _rotationZ_Y, _rotationQuat = RotationY * RotationX
-    float halfRadx = CC_DEGREES_TO_RADIANS(_rotationX / 2.f);
-    float halfRady = CC_DEGREES_TO_RADIANS(_rotationX / 2.f);
-    float halfRadz = -CC_DEGREES_TO_RADIANS(_rotationX / 2.f);
-    float coshalfRadx = cosf(halfRadx);
-    float sinhalfRadx = sinf(halfRadx);
-    float coshalfRady = cosf(halfRady);
-    float sinhalfRady = sinf(halfRady);
+    float halfRadz = -CC_DEGREES_TO_RADIANS(_rotationX / 2.0f);
     float coshalfRadz = cosf(halfRadz);
     float sinhalfRadz = sinf(halfRadz);
-    _rotationQuat.x = sinhalfRadx * coshalfRady * coshalfRadz - coshalfRadx * sinhalfRady * sinhalfRadz;
-    _rotationQuat.y = coshalfRadx * sinhalfRady * coshalfRadz + sinhalfRadx * coshalfRady * sinhalfRadz;
-    _rotationQuat.z = coshalfRadx * coshalfRady * sinhalfRadz - sinhalfRadx * sinhalfRady * coshalfRadz;
-    _rotationQuat.w = coshalfRadx * coshalfRady * coshalfRadz + sinhalfRadx * sinhalfRady * sinhalfRadz;
+    
+    _rotationQuat.x = 0.0f;
+    _rotationQuat.y = 0.0f;
+    _rotationQuat.z = sinhalfRadz;
+    _rotationQuat.w = coshalfRadz;
 }
 
 void Node::setRotationQuat(const Quaternion& quat)
@@ -1465,8 +1458,10 @@ const Mat4& Node::getNodeToParentTransform() const
         Mat4 translation;
         //move to anchor point first, then rotate
         Mat4::createTranslation(x, y, z, &translation);
-        
-        // Mat4::createRotation(this->_rotationX, &_transform);
+
+        Mat4::createRotation(_rotationQuat, &_transform);
+
+        // _transform = Mat4::IDENTITY;
 
         _transform = translation * _transform;
 
@@ -1476,9 +1471,9 @@ const Mat4& Node::getNodeToParentTransform() const
         _transform.m[4] *= _scaleY;
         _transform.m[5] *= _scaleY;
         _transform.m[6] *= _scaleY;
-        _transform.m[8] *= _scaleZ;
-        _transform.m[9] *= _scaleZ;
-        _transform.m[10] *= _scaleZ;
+        // _transform.m[8] *= _scaleZ;
+        // _transform.m[9] *= _scaleZ;
+        // _transform.m[10] *= _scaleZ;
 
         // adjust anchor point
         _transform.m[12] += _transform.m[0] * -_anchorPointInPoints.x + _transform.m[4] * -_anchorPointInPoints.y;
