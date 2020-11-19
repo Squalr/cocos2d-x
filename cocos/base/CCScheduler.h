@@ -111,7 +111,7 @@ You should not use system timer for your game logic. Instead, use this class.
 
 There are 2 different types of callbacks (selectors):
 
-- update selector: the 'update' selector will be called every frame. You can customize the priority.
+- update selector: the 'update' selector will be called every frame.
 - custom selector: A custom selector will be called every frame, or with a custom interval of time
 
 The 'custom selectors' should be avoided when possible. It is faster, and consumes less memory to use the 'update selector'.
@@ -120,20 +120,6 @@ The 'custom selectors' should be avoided when possible. It is faster, and consum
 class CC_DLL Scheduler : public Ref
 {
 public:
-    /** Priority level reserved for system services. 
-     * @lua NA
-     * @js NA
-     */
-    static const int PRIORITY_SYSTEM;
-    
-    /** Minimum priority level for user scheduling. 
-     * Priority level of user scheduling should bigger then this value.
-     *
-     * @lua NA
-     * @js NA
-     */
-    static const int PRIORITY_NON_SYSTEM_MIN;
-    
     /**
      * Constructor
      *
@@ -201,18 +187,17 @@ public:
      */
     void schedule(const std::function<void(float)>& callback, void *target, float interval, bool paused, const std::string& key);
     
-    /** Schedules the 'update' selector for a given target with a given priority.
+    /** Schedules the 'update' selector for a given target.
      The 'update' selector will be called every frame.
-     The lower the priority, the earlier it is called.
      @since v3.0
      @lua NA
      */
     template <class T>
-    void scheduleUpdate(T *target, int priority, bool paused)
+    void scheduleUpdate(T *target, bool paused)
     {
         this->schedulePerFrame([target](float dt){
             target->update(dt);
-        }, target, priority, paused);
+        }, target, paused);
     }
 
     /////////////////////////////////////
@@ -246,14 +231,6 @@ public:
      @since v0.99.3
      */
     void unscheduleAll();
-    
-    /** Unschedules all selectors from all targets with a minimum priority.
-     You should only call this with `PRIORITY_NON_SYSTEM_MIN` or higher.
-     @param minPriority The minimum priority of selector to be unscheduled. Which means, all selectors which
-            priority is higher than minPriority will be unscheduled.
-     @since v2.0.0
-     */
-    void unscheduleAllWithMinPriority(int minPriority);
     
     /////////////////////////////////////
     
@@ -293,27 +270,6 @@ public:
      */
     bool isTargetPaused(void *target);
 
-    /** Pause all selectors from all targets.
-      You should NEVER call this method, unless you know what you are doing.
-     @since v2.0.0
-      */
-    std::set<void*> pauseAllTargets();
-
-    /** Pause all selectors from all targets with a minimum priority.
-      You should only call this with PRIORITY_NON_SYSTEM_MIN or higher.
-      @param minPriority The minimum priority of selector to be paused. Which means, all selectors which
-            priority is higher than minPriority will be paused.
-      @since v2.0.0
-      */
-    std::set<void*> pauseAllTargetsWithMinPriority(int minPriority);
-
-    /** Resume selectors on a set of targets.
-     This can be useful for undoing a call to pauseAllSelectors.
-     @param targetsToResume The set of targets to be resumed.
-     @since v2.0.0
-      */
-    void resumeTargets(const std::set<void*>& targetsToResume);
-
     /** Calls a function on the cocos2d thread. Useful when you need to call a cocos2d function from another thread.
      This function is thread safe.
      @param function The function to be run in cocos2d thread.
@@ -331,49 +287,26 @@ public:
      */
     void removeAllFunctionsToBePerformedInCocosThread();
     
-    /////////////////////////////////////
-    
-    /** Schedules the 'update' selector for a given target with a given priority.
-     The 'update' selector will be called every frame.
-     The lower the priority, the earlier it is called.
-     @deprecated Please use 'Scheduler::scheduleUpdate' instead.
-     @since v0.99.3
-     */
-    template <class T>
-    CC_DEPRECATED_ATTRIBUTE void scheduleUpdateForTarget(T* target, int priority, bool paused) { scheduleUpdate(target, priority, paused); };
-    
-    /** Unschedules the update selector for a given target
-     @deprecated Please use 'Scheduler::unscheduleUpdate' instead.
-     @since v0.99.3
-     */
-    CC_DEPRECATED_ATTRIBUTE void unscheduleUpdateForTarget(Ref *target) { return unscheduleUpdate(target); };
-    
 protected:
     
-    /** Schedules the 'callback' function for a given target with a given priority.
+    /** Schedules the 'callback' function for a given target.
      The 'callback' selector will be called every frame.
-     The lower the priority, the earlier it is called.
      @note This method is only for internal use.
      @since v3.0
      @js _schedulePerFrame
      */
-    void schedulePerFrame(const std::function<void(float)>& callback, void *target, int priority, bool paused);
+    void schedulePerFrame(const std::function<void(float)>& callback, void *target, bool paused);
     
     void removeHashElement(struct _hashSelectorEntry *element);
     void removeUpdateFromHash(struct _listEntry *entry);
 
     // update specific
 
-    void priorityIn(struct _listEntry **list, const std::function<void(float)>& callback, void *target, int priority, bool paused);
     void appendIn(struct _listEntry **list, const std::function<void(float)>& callback, void *target, bool paused);
-
-
+    
     float _timeScale;
 
-    //
-    // "updates with priority" stuff
-    //
-    struct _listEntry *_updatesList;            // list priority == 0
+    struct _listEntry *_updatesList;
     struct _hashUpdateEntry *_hashForUpdates; // hash used to fetch quickly the list entries for pause,delete,etc
     std::vector<struct _listEntry *> _updateDeleteVector; // the vector holds list entries that needs to be deleted after update
 

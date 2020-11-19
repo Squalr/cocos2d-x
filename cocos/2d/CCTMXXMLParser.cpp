@@ -385,7 +385,7 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
         s.height = attributeDict["height"].asFloat();
         layer->_layerSize = s;
 
-        Value& visibleValue = attributeDict["visible"];
+        // Value& visibleValue = attributeDict["visible"];
         // Zac: Just always mark the layer as visible -- I see layer visibility as more of an editor feature than something to be reflected ingame
         layer->_visible = true; // visibleValue.isNull() ? true : visibleValue.asBool();
 

@@ -730,7 +730,7 @@ void ParticleSystem::onEnter()
     Node::onEnter();
     
     // update after action in run!
-    this->scheduleUpdateWithPriority(1);
+    this->scheduleUpdate();
 
     __allInstances.pushBack(this);
 }

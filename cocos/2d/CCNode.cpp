@@ -1278,19 +1278,7 @@ bool Node::isScheduled(const std::string &key) const
 
 void Node::scheduleUpdate()
 {
-    scheduleUpdateWithPriority(0);
-}
-
-void Node::scheduleUpdateWithPriority(int priority)
-{
-    _scheduler->scheduleUpdate(this, priority, !_running);
-}
-
-void Node::scheduleUpdateWithPriorityLua(int nHandler, int priority)
-{
-    unscheduleUpdate();
-    
-    _scheduler->scheduleUpdate(this, priority, !_running);
+    _scheduler->scheduleUpdate(this, !_running);
 }
 
 void Node::unscheduleUpdate()

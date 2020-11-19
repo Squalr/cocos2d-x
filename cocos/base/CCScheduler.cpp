@@ -37,13 +37,11 @@ NS_CC_BEGIN
 
 // data structures
 
-// A list double-linked list used for "updates with priority"
 typedef struct _listEntry
 {
     struct _listEntry           *prev, *next;
     std::function<void(float)>  callback;
     void                        *target;
-    int                         priority;
     bool                        paused;
     bool                        markedForDeletion; // selector will no longer be called and entry will be removed at end of the next tick
 } tListEntry;
@@ -184,12 +182,6 @@ void TimerTargetCallback::cancel()
 
 // implementation of Scheduler
 
-// Priority level reserved for system services.
-const int Scheduler::PRIORITY_SYSTEM = INT_MIN;
-
-// Minimum priority level for user scheduling.
-const int Scheduler::PRIORITY_NON_SYSTEM_MIN = PRIORITY_SYSTEM + 1;
-
 Scheduler::Scheduler(void)
 : _timeScale(1.0f)
 , _updatesList(nullptr)
@@ -323,64 +315,6 @@ void Scheduler::unschedule(const std::string &key, void *target)
     }
 }
 
-void Scheduler::priorityIn(tListEntry **list, const std::function<void(float)>& callback, void *target, int priority, bool paused)
-{
-    tListEntry *listElement = new (std::nothrow) tListEntry();
-
-    listElement->callback = callback;
-    listElement->target = target;
-    listElement->priority = priority;
-    listElement->paused = paused;
-    listElement->next = listElement->prev = nullptr;
-    listElement->markedForDeletion = false;
-
-    // empty list ?
-    if (! *list)
-    {
-        DL_APPEND(*list, listElement);
-    }
-    else
-    {
-        bool added = false;
-
-        for (tListEntry *element = *list; element; element = element->next)
-        {
-            if (priority < element->priority)
-            {
-                if (element == *list)
-                {
-                    DL_PREPEND(*list, listElement);
-                }
-                else
-                {
-                    listElement->next = element;
-                    listElement->prev = element->prev;
-
-                    element->prev->next = listElement;
-                    element->prev = listElement;
-                }
-
-                added = true;
-                break;
-            }
-        }
-
-        // Not added? priority has the higher value. Append it.
-        if (! added)
-        {
-            DL_APPEND(*list, listElement);
-        }
-    }
-
-    // update hash entry for quick access
-    tHashUpdateEntry *hashElement = (tHashUpdateEntry *)calloc(sizeof(*hashElement), 1);
-    hashElement->target = target;
-    hashElement->list = list;
-    hashElement->entry = listElement;
-    memset(&hashElement->hh, 0, sizeof(hashElement->hh));
-    HASH_ADD_PTR(_hashForUpdates, target, hashElement);
-}
-
 void Scheduler::appendIn(_listEntry **list, const std::function<void(float)>& callback, void *target, bool paused)
 {
     tListEntry *listElement = new (std::nothrow) tListEntry();
@@ -388,7 +322,6 @@ void Scheduler::appendIn(_listEntry **list, const std::function<void(float)>& ca
     listElement->callback = callback;
     listElement->target = target;
     listElement->paused = paused;
-    listElement->priority = 0;
     listElement->markedForDeletion = false;
 
     DL_APPEND(*list, listElement);
@@ -402,27 +335,16 @@ void Scheduler::appendIn(_listEntry **list, const std::function<void(float)>& ca
     HASH_ADD_PTR(_hashForUpdates, target, hashElement);
 }
 
-void Scheduler::schedulePerFrame(const std::function<void(float)>& callback, void *target, int priority, bool paused)
+void Scheduler::schedulePerFrame(const std::function<void(float)>& callback, void *target, bool paused)
 {
     tHashUpdateEntry *hashElement = nullptr;
     HASH_FIND_PTR(_hashForUpdates, &target, hashElement);
+
     if (hashElement)
     {
-        // change priority: should unschedule it first
-        if (hashElement->entry->priority != priority)
-        {
-            unscheduleUpdate(target);
-        }
-        else
-        {
-            // don't add it again
-            // CCLOG("warning: don't update it again");
-            return;
-        }
+        return;
     }
 
-    // most of the updates are going to be 0, that's way there
-    // is an special list for updates with priority 0
     appendIn(&_updatesList, callback, target, paused);
 }
 
@@ -467,7 +389,9 @@ void Scheduler::removeUpdateFromHash(struct _listEntry *entry)
         // list entry
         DL_DELETE(*element->list, element->entry);
         if (!_updateHashLocked)
+        {
             CC_SAFE_DELETE(element->entry);
+        }
         else
         {
             element->entry->markedForDeletion = true;
@@ -489,16 +413,14 @@ void Scheduler::unscheduleUpdate(void *target)
 
     tHashUpdateEntry *element = nullptr;
     HASH_FIND_PTR(_hashForUpdates, &target, element);
+
     if (element)
+    {
         this->removeUpdateFromHash(element->entry);
+    }
 }
 
 void Scheduler::unscheduleAll(void)
-{
-    unscheduleAllWithMinPriority(PRIORITY_SYSTEM);
-}
-
-void Scheduler::unscheduleAllWithMinPriority(int minPriority)
 {
 }
 
@@ -605,23 +527,6 @@ bool Scheduler::isTargetPaused(void *target)
     return false;  // should never get here
 }
 
-std::set<void*> Scheduler::pauseAllTargets()
-{
-    return pauseAllTargetsWithMinPriority(PRIORITY_SYSTEM);
-}
-
-std::set<void*> Scheduler::pauseAllTargetsWithMinPriority(int minPriority)
-{
-    return std::set<void*>();
-}
-
-void Scheduler::resumeTargets(const std::set<void*>& targetsToResume)
-{
-    for(const auto &obj : targetsToResume) {
-        this->resumeTarget(obj);
-    }
-}
-
 void Scheduler::performFunctionInCocosThread(std::function<void ()> function)
 {
     std::lock_guard<std::mutex> lock(_performMutex);
@@ -651,10 +556,9 @@ void Scheduler::update(float dt)
     // Iterate over all the Updates' selectors
     tListEntry *entry, *tmp;
 
-    // updates with priority == 0
     DL_FOREACH_SAFE(_updatesList, entry, tmp)
     {
-        if ((! entry->paused) && (! entry->markedForDeletion))
+        if (!entry->paused && !entry->markedForDeletion)
         {
             entry->callback(dt);
         }
@@ -666,15 +570,13 @@ void Scheduler::update(float dt)
         _currentTarget = elt;
         _currentTargetSalvaged = false;
 
-        if (! _currentTarget->paused)
+        if (!_currentTarget->paused)
         {
             // The 'timers' array may change while inside this loop
             for (elt->timerIndex = 0; elt->timerIndex < elt->timers->num; ++(elt->timerIndex))
             {
                 elt->currentTimer = (Timer*)(elt->timers->arr[elt->timerIndex]);
-                CCASSERT
-                  ( !elt->currentTimer->isAborted(),
-                    "An aborted timer should not be updated" );
+                CCASSERT(!elt->currentTimer->isAborted(), "An aborted timer should not be updated");
 
                 elt->currentTimer->update(dt);
 
@@ -702,8 +604,10 @@ void Scheduler::update(float dt)
     }
  
     // delete all updates that are removed in update
-    for (auto &e : _updateDeleteVector)
-        delete e;
+    for (auto& next : _updateDeleteVector)
+    {
+        delete next;
+    }
 
     _updateDeleteVector.clear();
 
@@ -716,13 +620,15 @@ void Scheduler::update(float dt)
 
     // Testing size is faster than locking / unlocking.
     // And almost never there will be functions scheduled to be called.
-    if( !_functionsToPerform.empty() ) {
+    if(!_functionsToPerform.empty())
+    {
         _performMutex.lock();
         // fixed #4123: Save the callback functions, they must be invoked after '_performMutex.unlock()', otherwise if new functions are added in callback, it will cause thread deadlock.
         auto temp = std::move(_functionsToPerform);
         _performMutex.unlock();
         
-        for (const auto &function : temp) {
+        for (const auto &function : temp)
+        {
             function();
         }
     }

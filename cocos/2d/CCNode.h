@@ -898,15 +898,6 @@ public:
      */
     virtual bool isRunning() const;
 
-    /**
-     * Schedules for lua script.
-     * @js NA
-     *
-     * @param handler The key to search lua function.
-     * @param priority A given priority value.
-     */
-    void scheduleUpdateWithPriorityLua(int handler, int priority);
-
     /// @}  end Script Bindings
 
 
@@ -1117,18 +1108,6 @@ public:
      * @lua NA
      */
     void scheduleUpdate(void);
-
-    /**
-     * Schedules the "update" method with a custom priority.
-     *
-     * This selector will be called every frame.
-     * Scheduled methods with a lower priority will be called before the ones that have a higher value.
-     * Only one "update" selector could be scheduled per node (You can't have 2 'update' selectors).
-     * @lua NA
-     *
-     * @param priority A given priority value.
-     */
-    void scheduleUpdateWithPriority(int priority);
 
     /*
      * Unschedules the "update" method.
