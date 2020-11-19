@@ -39,7 +39,6 @@ NS_CC_BEGIN
 
 typedef struct _listEntry
 {
-    struct _listEntry           *prev, *next;
     std::function<void(float)>  callback;
     void                        *target;
     bool                        paused;
@@ -185,7 +184,6 @@ void TimerTargetCallback::cancel()
 Scheduler::Scheduler(void)
 : _timeScale(1.0f)
 , _updatesList(nullptr)
-, _hashForUpdates(nullptr)
 , _hashForTimers(nullptr)
 , _currentTarget(nullptr)
 , _currentTargetSalvaged(false)
@@ -315,8 +313,13 @@ void Scheduler::unschedule(const std::string &key, void *target)
     }
 }
 
-void Scheduler::appendIn(_listEntry **list, const std::function<void(float)>& callback, void *target, bool paused)
+void Scheduler::schedulePerFrame(const std::function<void(float)>& callback, void *target, bool paused)
 {
+    if (this->taskTable.find(target) != this->taskTable.end())
+    {
+        return;
+    }
+
     tListEntry *listElement = new (std::nothrow) tListEntry();
 
     listElement->callback = callback;
@@ -324,28 +327,7 @@ void Scheduler::appendIn(_listEntry **list, const std::function<void(float)>& ca
     listElement->paused = paused;
     listElement->markedForDeletion = false;
 
-    DL_APPEND(*list, listElement);
-
-    // update hash entry for quicker access
-    tHashUpdateEntry *hashElement = (tHashUpdateEntry *)calloc(sizeof(*hashElement), 1);
-    hashElement->target = target;
-    hashElement->list = list;
-    hashElement->entry = listElement;
-    memset(&hashElement->hh, 0, sizeof(hashElement->hh));
-    HASH_ADD_PTR(_hashForUpdates, target, hashElement);
-}
-
-void Scheduler::schedulePerFrame(const std::function<void(float)>& callback, void *target, bool paused)
-{
-    tHashUpdateEntry *hashElement = nullptr;
-    HASH_FIND_PTR(_hashForUpdates, &target, hashElement);
-
-    if (hashElement)
-    {
-        return;
-    }
-
-    appendIn(&_updatesList, callback, target, paused);
+    this->taskTable[target] = listElement;
 }
 
 bool Scheduler::isScheduled(const std::string& key, const void *target) const
@@ -379,48 +361,26 @@ bool Scheduler::isScheduled(const std::string& key, const void *target) const
     return false;
 }
 
-void Scheduler::removeUpdateFromHash(struct _listEntry *entry)
+void Scheduler::unscheduleUpdate(void* target)
 {
-    tHashUpdateEntry *element = nullptr;
-
-    HASH_FIND_PTR(_hashForUpdates, &entry->target, element);
-    if (element)
+    if (this->taskTable.find(target) != this->taskTable.end())
     {
-        // list entry
-        DL_DELETE(*element->list, element->entry);
-        if (!_updateHashLocked)
+        auto& element = this->taskTable[target];
+
+        if (_updateHashLocked)
         {
-            CC_SAFE_DELETE(element->entry);
+            element->markedForDeletion = true;
+            scheduledDeletionTable.push_back(target);
         }
         else
         {
-            element->entry->markedForDeletion = true;
-            _updateDeleteVector.push_back(element->entry);
+            delete(this->taskTable[target]);
+            this->taskTable.erase(target);
         }
-
-        // hash entry
-        HASH_DEL(_hashForUpdates, element);
-        free(element);
     }
 }
 
-void Scheduler::unscheduleUpdate(void *target)
-{
-    if (target == nullptr)
-    {
-        return;
-    }
-
-    tHashUpdateEntry *element = nullptr;
-    HASH_FIND_PTR(_hashForUpdates, &target, element);
-
-    if (element)
-    {
-        this->removeUpdateFromHash(element->entry);
-    }
-}
-
-void Scheduler::unscheduleAll(void)
+void Scheduler::unscheduleAll()
 {
 }
 
@@ -473,12 +433,9 @@ void Scheduler::resumeTarget(void *target)
     }
 
     // update selector
-    tHashUpdateEntry *elementUpdate = nullptr;
-    HASH_FIND_PTR(_hashForUpdates, &target, elementUpdate);
-    if (elementUpdate)
+    if (this->taskTable.find(target) != this->taskTable.end())
     {
-        CCASSERT(elementUpdate->entry != nullptr, "elementUpdate's entry can't be nullptr!");
-        elementUpdate->entry->paused = false;
+        this->taskTable[target]->paused = false;
     }
 }
 
@@ -495,12 +452,9 @@ void Scheduler::pauseTarget(void *target)
     }
 
     // update selector
-    tHashUpdateEntry *elementUpdate = nullptr;
-    HASH_FIND_PTR(_hashForUpdates, &target, elementUpdate);
-    if (elementUpdate)
+    if (this->taskTable.find(target) != this->taskTable.end())
     {
-        CCASSERT(elementUpdate->entry != nullptr, "elementUpdate's entry can't be nullptr!");
-        elementUpdate->entry->paused = true;
+        this->taskTable[target]->paused = true;
     }
 }
 
@@ -517,11 +471,9 @@ bool Scheduler::isTargetPaused(void *target)
     }
     
     // We should check update selectors if target does not have custom selectors
-    tHashUpdateEntry *elementUpdate = nullptr;
-    HASH_FIND_PTR(_hashForUpdates, &target, elementUpdate);
-    if ( elementUpdate )
+    if (this->taskTable.find(target) != this->taskTable.end())
     {
-        return elementUpdate->entry->paused;
+        return this->taskTable[target]->paused;
     }
     
     return false;  // should never get here
@@ -553,14 +505,11 @@ void Scheduler::update(float dt)
     // Selector callbacks
     //
 
-    // Iterate over all the Updates' selectors
-    tListEntry *entry, *tmp;
-
-    DL_FOREACH_SAFE(_updatesList, entry, tmp)
+    for (const auto&[key, task] : this->taskTable)
     {
-        if (!entry->paused && !entry->markedForDeletion)
+        if (!task->paused && !task->markedForDeletion)
         {
-            entry->callback(dt);
+            task->callback(dt);
         }
     }
 
@@ -604,12 +553,13 @@ void Scheduler::update(float dt)
     }
  
     // delete all updates that are removed in update
-    for (auto& next : _updateDeleteVector)
+    for (auto& target : scheduledDeletionTable)
     {
-        delete next;
+        delete(this->taskTable[target]);
+        this->taskTable.erase(target);
     }
 
-    _updateDeleteVector.clear();
+    scheduledDeletionTable.clear();
 
     _updateHashLocked = false;
     _currentTarget = nullptr;

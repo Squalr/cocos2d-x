@@ -29,9 +29,12 @@ THE SOFTWARE.
 #ifndef __CCSCHEDULER_H__
 #define __CCSCHEDULER_H__
 
+#include <list>
 #include <functional>
+#include <map>
 #include <mutex>
 #include <set>
+#include <vector>
 
 #include "base/CCRef.h"
 #include "base/CCVector.h"
@@ -298,17 +301,16 @@ protected:
     void schedulePerFrame(const std::function<void(float)>& callback, void *target, bool paused);
     
     void removeHashElement(struct _hashSelectorEntry *element);
-    void removeUpdateFromHash(struct _listEntry *entry);
 
     // update specific
 
-    void appendIn(struct _listEntry **list, const std::function<void(float)>& callback, void *target, bool paused);
-    
     float _timeScale;
 
     struct _listEntry *_updatesList;
-    struct _hashUpdateEntry *_hashForUpdates; // hash used to fetch quickly the list entries for pause,delete,etc
-    std::vector<struct _listEntry *> _updateDeleteVector; // the vector holds list entries that needs to be deleted after update
+
+    std::list<struct _listEntry*> taskList;
+    std::map<void*, struct _listEntry*> taskTable;  // hash used to fetch quickly the list entries for pause, delete, etc
+    std::vector<void*> scheduledDeletionTable;      // the vector holds list entries that needs to be deleted after update
 
     // Used for "selectors with interval"
     struct _hashSelectorEntry *_hashForTimers;
