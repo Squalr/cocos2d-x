@@ -30,7 +30,6 @@ set(COCOS_BASE_HEADER
     base/CCVector.h
     base/CCEventCustom.h
     base/CCEventKeyboard.h
-    base/CCNinePatchImageParser.h
     base/CCEventListenerCustom.h
     base/CCEventDispatcher.h
     base/uthash.h
@@ -40,7 +39,6 @@ set(COCOS_BASE_HEADER
     base/CCDirector.h
     base/CCEventListenerFocus.h
     base/ccConfig.h
-    base/ccFPSImages.h
     base/ZipUtils.h
     base/CCMap.h
     base/ccUTF8.h
@@ -66,7 +64,6 @@ set(COCOS_BASE_SRC
     base/CCConsole.cpp
     base/CCController.cpp
     base/CCData.cpp
-    base/CCNinePatchImageParser.cpp
     base/CCDirector.cpp
     base/CCEvent.cpp
     base/CCEventController.cpp
@@ -91,11 +88,9 @@ set(COCOS_BASE_SRC
     base/ZipUtils.cpp
     base/base64.cpp
     base/ccCArray.cpp
-    base/ccFPSImages.c
     base/ccRandom.cpp
     base/ccTypes.cpp
     base/ccUTF8.cpp
     base/ccUtils.cpp
     ${COCOS_BASE_SPECIFIC_SRC}
-
     )

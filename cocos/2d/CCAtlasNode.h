@@ -116,9 +116,6 @@ protected:
     void updateBlendFunc();
     void updateOpacityModifyRGB();
 
-    friend class Director;
-    void setIgnoreContentScaleFactor(bool bIgnoreContentScaleFactor);
-
     /** Chars per row. */
     int    _itemsPerRow;
     /** Chars per column. */
@@ -140,8 +137,6 @@ protected:
     ssize_t _quadsToDraw;
     /** Color uniform. */
     GLint    _uniformColor;
-    /** This variable is only used for LabelAtlas FPS display. So plz don't modify its value. */
-    bool _ignoreContentScaleFactor;
     /** Quad command. */
     QuadCommand _quadCommand;
 

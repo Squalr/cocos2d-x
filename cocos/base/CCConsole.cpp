@@ -472,7 +472,6 @@ Console::Console()
     createCommandDirector();
     createCommandExit();
     createCommandFileUtils();
-    createCommandFps();
     createCommandHelp();
     createCommandProjection();
     createCommandResolution();
@@ -946,13 +945,6 @@ void Console::createCommandFileUtils()
         CC_CALLBACK_2(Console::commandFileUtilsSubCommandFlush, this)});
 }
 
-void Console::createCommandFps()
-{
-    addCommand({"fps", "Turn on / off the FPS. Args: [-h | help | on | off | ]", CC_CALLBACK_2(Console::commandFps, this)});
-    addSubCommand("fps", {"on", "Display the FPS on the bottom-left corner.", CC_CALLBACK_2(Console::commandFpsSubCommandOnOff, this)});
-    addSubCommand("fps", {"off", "Hide the FPS on the bottom-left corner.", CC_CALLBACK_2(Console::commandFpsSubCommandOnOff, this)});
-}
-
 void Console::createCommandHelp()
 {
     addCommand({"help", "Print this message. Args: [ ]", CC_CALLBACK_2(Console::commandHelp, this)});
@@ -1077,19 +1069,6 @@ void Console::commandFileUtils(int fd, const std::string& /*args*/)
 void Console::commandFileUtilsSubCommandFlush(int /*fd*/, const std::string& /*args*/)
 {
     FileUtils::getInstance()->purgeCachedEntries();
-}
-
-void Console::commandFps(int fd, const std::string& /*args*/)
-{
-    Console::Utility::mydprintf(fd, "FPS is: %s\n", Director::getInstance()->isDisplayStats() ? "on" : "off");
-}
-
-void Console::commandFpsSubCommandOnOff(int /*fd*/, const std::string& args)
-{
-    bool state = (args.compare("on") == 0);
-    Director *dir = Director::getInstance();
-    Scheduler *sched = dir->getScheduler();
-    sched->performFunctionInCocosThread( std::bind(&Director::setDisplayStats, dir, state));
 }
 
 void Console::commandHelp(int fd, const std::string& /*args*/)

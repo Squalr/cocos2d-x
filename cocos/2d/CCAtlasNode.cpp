@@ -49,7 +49,6 @@ AtlasNode::AtlasNode()
 , _isOpacityModifyRGB(false)
 , _quadsToDraw(0)
 , _uniformColor(0)
-, _ignoreContentScaleFactor(false)
 {
 }
 
@@ -116,12 +115,6 @@ bool AtlasNode::initWithTexture(Texture2D* texture, int tileWidth, int tileHeigh
 void AtlasNode::calculateMaxItems()
 {
     Size s = _textureAtlas->getTexture()->getContentSize();
-    
-    if (_ignoreContentScaleFactor)
-    {
-        s = _textureAtlas->getTexture()->getContentSizeInPixels();
-    }
-    
     _itemsPerColumn = (int)(s.height / _itemHeight);
     _itemsPerRow = (int)(s.width / _itemWidth);
 }
@@ -190,11 +183,6 @@ bool AtlasNode::isOpacityModifyRGB() const
 void AtlasNode::updateOpacityModifyRGB()
 {
     _isOpacityModifyRGB = _textureAtlas->getTexture()->hasPremultipliedAlpha();
-}
-
-void AtlasNode::setIgnoreContentScaleFactor(bool ignoreContentScaleFactor)
-{
-    _ignoreContentScaleFactor = ignoreContentScaleFactor;
 }
 
 // AtlasNode - CocosNodeTexture protocol

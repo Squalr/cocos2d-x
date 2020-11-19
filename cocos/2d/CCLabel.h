@@ -188,55 +188,6 @@ public:
     static Label* createWithTTF(const TTFConfig& ttfConfig, const std::string& text, 
         TextHAlignment hAlignment = TextHAlignment::LEFT, int maxLineWidth = 0);
 
-    /**
-    * Allocates and initializes a Label, with a bitmap font file.
-    *
-    * @param bmfontPath A bitmap font file, it's a FNT format.
-    * @param text The initial text.
-    * @param hAlignment Text horizontal alignment.
-    * @param maxLineWidth The max line width.
-    * @param imageOffset
-    *
-    * @return An automatically released Label object.
-    * @see setBMFontFilePath setMaxLineWidth
-    */
-    static Label* createWithBMFont(const std::string& bmfontPath, const std::string& text,
-        const TextHAlignment& hAlignment = TextHAlignment::LEFT, int maxLineWidth = 0,
-        const Vec2& imageOffset = Vec2::ZERO);
-
-    /**
-    * Allocates and initializes a Label, with char map configuration.
-    *
-    * @param charMapFile A char map file, it's a PNG format.
-    * @param itemWidth The width in points of each element.
-    * @param itemHeight The height in points of each element.
-    * @param startCharMap The starting char of the char map.
-    *
-    * @return An automatically released Label object.
-    */
-    static Label * createWithCharMap(const std::string& charMapFile, int itemWidth, int itemHeight, int startCharMap);
-
-    /**
-    * Allocates and initializes a Label, with char map configuration.
-    *
-    * @param texture A pointer to an existing Texture2D object.
-    * @param itemWidth The width in points of each element.
-    * @param itemHeight The height in points of each element.
-    * @param startCharMap The starting char of the char map.
-    *
-    * @return An automatically released Label object.
-    */
-    static Label * createWithCharMap(Texture2D* texture, int itemWidth, int itemHeight, int startCharMap);
-
-    /**
-    * Allocates and initializes a Label, with char map configuration.
-    *
-    * @param plistFile A configuration file of char map.
-    *
-    * @return An automatically released Label object.
-    */
-    static Label * createWithCharMap(const std::string& plistFile);
-
     //  end of creators group
     /// @}
 
@@ -254,33 +205,6 @@ public:
      * @see `TTFConfig`
      */
     virtual const TTFConfig& getTTFConfig() const { return _fontConfig;}
-
-    /** Sets a new bitmap font to Label */
-    virtual bool setBMFontFilePath(const std::string& bmfontFilePath, const Vec2& imageOffset = Vec2::ZERO, float fontSize = 0);
-
-    /** Returns the bitmap font used by the Label.*/
-    const std::string& getBMFontFilePath() const { return _bmFontPath;}
-
-    /**
-     * Sets a new char map configuration to Label.
-     *
-     * @see `createWithCharMap(const std::string&,int,int,int)`
-     */
-    virtual bool setCharMap(const std::string& charMapFile, int itemWidth, int itemHeight, int startCharMap);
-
-    /**
-     * Sets a new char map configuration to Label.
-     *
-     * @see `createWithCharMap(Texture2D*,int,int,int)`
-     */
-    virtual bool setCharMap(Texture2D* texture, int itemWidth, int itemHeight, int startCharMap);
-
-    /**
-     * Sets a new char map configuration to Label.
-     *
-     * @see `createWithCharMap(const std::string&)`
-     */
-    virtual bool setCharMap(const std::string& plistFile);
 
     /**
      * Sets a new system font to Label.
@@ -462,20 +386,6 @@ public:
      */
     void setMaxLineWidth(float maxLineWidth);
     float getMaxLineWidth() { return _maxLineWidth; }
-    /**
-     * Change font size of label type BMFONT
-     * Note: This function only scale the BMFONT letter to mimic the font size change effect.
-     *
-     * @param fontSize The desired font size in float.
-     */
-    void setBMFontSize(float fontSize);
-
-    /**
-     * Return the user define BMFont size.
-     *
-     * @return The BMFont size in float value.
-     */
-    float getBMFontSize()const;
 
     /**
      * Toggle wrap option of the label.
@@ -492,7 +402,7 @@ public:
     bool isWrapEnabled()const;
 
     /**
-     * Change the label's Overflow type, currently only TTF and BMFont support all the valid Overflow type.
+     * Change the label's Overflow type, currently only TTF supports all the valid Overflow type.
      * Char Map font supports all the Overflow type except for SHRINK, because we can't measure it's font size.
      * System font only support Overflow::Normal and Overflow::RESIZE_HEIGHT.
      *
@@ -640,8 +550,6 @@ protected:
 
     enum class LabelType {
         TTF,
-        BMFONT,
-        CHARMAP,
         STRING_TEXTURE
     };
 
@@ -676,10 +584,8 @@ protected:
     void createShadowSpriteForSystemFont(const FontDefinition& fontDef);
 
     virtual void updateShaderProgram();
-    void updateBMFontScale();
     void scaleFontSizeDown(float fontSize);
     bool setTTFConfigInternal(const TTFConfig& ttfConfig);
-    void setBMFontSizeInternal(float fontSize);
     bool isHorizontalClamped(float letterPositionX, int lineIndex);
     void restoreFontSize();
     void updateLetterSpriteScale(Sprite* sprite);
@@ -698,7 +604,6 @@ protected:
     std::string _utf8Text;
     int _numberOfLines;
 
-    std::string _bmFontPath;
     TTFConfig _fontConfig;
     float _outlineSize;
 
@@ -779,8 +684,6 @@ protected:
 #endif
 
     bool _enableWrap;
-    float _bmFontSize;
-    float _bmfontScale;
     Overflow _overflow;
     float _originalFontSize;
 

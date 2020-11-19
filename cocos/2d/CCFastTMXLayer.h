@@ -42,7 +42,6 @@ class TMXLayerInfo;
 class TMXTilesetInfo;
 class Texture2D;
 class Sprite;
-struct _ccCArray;
 
 namespace cocos_experimental {
 

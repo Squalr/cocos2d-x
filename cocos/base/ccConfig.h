@@ -79,7 +79,6 @@ THE SOFTWARE.
 
  * Affected nodes:
  * - Sprite / SpriteBatchNode and subclasses: LabelBMFont, TMXTiledMap.
- * - LabelAtlas.
  * - QuadParticleSystem.
  * - TileMap.
 
@@ -218,15 +217,6 @@ THE SOFTWARE.
 #define CC_LABELBMFONT_DEBUG_DRAW 0
 #endif
 
-/** @def CC_LABELATLAS_DEBUG_DRAW
- * If enabled, all subclasses of LabeltAtlas will draw a bounding box
- * Useful for debugging purposes only. It is recommended to leave it disabled.
- * To enable set it to a value different than 0. Disabled by default.
- */
-#ifndef CC_LABELATLAS_DEBUG_DRAW
-#define CC_LABELATLAS_DEBUG_DRAW 0
-#endif
-
 /** @def CC_NODE_DEBUG_VERIFY_EVENT_LISTENERS
  * If enabled (in conjunction with assertion macros) will verify on Node destruction that the node being destroyed has no event
  * listeners still associated with it in the event dispatcher. This can be used to track down problems where the event dispatch
@@ -291,13 +281,6 @@ THE SOFTWARE.
 
 #ifndef CC_FILEUTILS_APPLE_ENABLE_OBJC
 #define CC_FILEUTILS_APPLE_ENABLE_OBJC  1
-#endif
-
-/** @def CC_STRIP_FPS
- * Whether to strip FPS related data and functions, such as cc_fps_images_png
- */
-#ifndef CC_STRIP_FPS
-#define CC_STRIP_FPS 0
 #endif
 
 #endif // __CCCONFIG_H__

@@ -30,7 +30,6 @@
 #include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "2d/CCFontAtlas.h"
-#include "2d/CCFontFNT.h"
 
 NS_CC_BEGIN
 
@@ -92,7 +91,7 @@ int Label::getFirstWordLen(const std::u32string& utf32Text, int startIndex, int 
     if (!_fontAtlas->getLetterDefinitionForChar(character, letterDef)) {
         return len;
     }
-    auto nextLetterX = letterDef.xAdvance * _bmfontScale + _additionalKerning;
+    auto nextLetterX = letterDef.xAdvance + _additionalKerning;
 
     auto contentScaleFactor = CC_CONTENT_SCALE_FACTOR();
     for (int index = startIndex + 1; index < textLen; ++index)
@@ -103,14 +102,14 @@ int Label::getFirstWordLen(const std::u32string& utf32Text, int startIndex, int 
             break;
         }
 
-        auto letterX = (nextLetterX + letterDef.offsetX * _bmfontScale) / contentScaleFactor;
-        if (_maxLineWidth > 0.f && letterX + letterDef.width * _bmfontScale > _maxLineWidth
+        auto letterX = (nextLetterX + letterDef.offsetX) / contentScaleFactor;
+        if (_maxLineWidth > 0.f && letterX + letterDef.width > _maxLineWidth
             && !StringUtils::isUnicodeSpace(character))
         {
             return len;
         }
 
-        nextLetterX += letterDef.xAdvance * _bmfontScale + _additionalKerning;
+        nextLetterX += letterDef.xAdvance + _additionalKerning;
 
         if (character == (char16_t)TextFormatter::NewLine
             || StringUtils::isUnicodeSpace(character)
@@ -122,18 +121,6 @@ int Label::getFirstWordLen(const std::u32string& utf32Text, int startIndex, int 
     }
 
     return len;
-}
-
-void Label::updateBMFontScale()
-{
-    auto font = _fontAtlas->getFont();
-    if (_currentLabelType == LabelType::BMFONT) {
-        FontFNT *bmFont = (FontFNT*)font;
-        float originalFontSize = bmFont->getOriginalFontSize();
-        _bmfontScale = _bmFontSize * CC_CONTENT_SCALE_FACTOR() / originalFontSize;
-    }else{
-        _bmfontScale = 1.0f;
-    }
 }
 
 bool Label::multilineTextWrap(const std::function<int(const std::u32string&, int, int)>& nextTokenLen)
@@ -153,8 +140,6 @@ bool Label::multilineTextWrap(const std::function<int(const std::u32string&, int
     Vec2 letterPosition;
     bool nextChangeSize = true;
 
-    this->updateBMFontScale();
-
     for (int index = 0; index < textLen; )
     {
         auto character = _utf32Text[index];
@@ -164,7 +149,7 @@ bool Label::multilineTextWrap(const std::function<int(const std::u32string&, int
             letterRight = 0.f;
             lineIndex++;
             nextTokenX = 0.f;
-            nextTokenY -= _lineHeight*_bmfontScale + lineSpacing;
+            nextTokenY -= _lineHeight + lineSpacing;
             recordPlaceholderInfo(index, character);
             index++;
             continue;
@@ -199,15 +184,15 @@ bool Label::multilineTextWrap(const std::function<int(const std::u32string&, int
                 continue;
             }
 
-            auto letterX = (nextLetterX + letterDef.offsetX * _bmfontScale) / contentScaleFactor;
-            if (_enableWrap && _maxLineWidth > 0.f && nextTokenX > 0.f && letterX + letterDef.width * _bmfontScale > _maxLineWidth
+            auto letterX = (nextLetterX + letterDef.offsetX) / contentScaleFactor;
+            if (_enableWrap && _maxLineWidth > 0.f && nextTokenX > 0.f && letterX + letterDef.width > _maxLineWidth
                 && !StringUtils::isUnicodeSpace(character) && nextChangeSize)
             {
                 _linesWidth.push_back(letterRight);
                 letterRight = 0.f;
                 lineIndex++;
                 nextTokenX = 0.f;
-                nextTokenY -= (_lineHeight*_bmfontScale + lineSpacing);
+                nextTokenY -= (_lineHeight + lineSpacing);
                 newLine = true;
                 break;
             }
@@ -215,14 +200,14 @@ bool Label::multilineTextWrap(const std::function<int(const std::u32string&, int
             {
                 letterPosition.x = letterX;
             }
-            letterPosition.y = (nextTokenY - letterDef.offsetY * _bmfontScale) / contentScaleFactor;
+            letterPosition.y = (nextTokenY - letterDef.offsetY) / contentScaleFactor;
             recordLetterInfo(letterPosition, character, letterIndex, lineIndex);
 
             if (nextChangeSize)
             {
                 if (_horizontalKernings && letterIndex < textLen - 1)
                     nextLetterX += _horizontalKernings[letterIndex + 1];
-                nextLetterX += letterDef.xAdvance * _bmfontScale + _additionalKerning;
+                nextLetterX += letterDef.xAdvance + _additionalKerning;
 
                     tokenRight = nextLetterX / contentScaleFactor;
                 }
@@ -230,8 +215,8 @@ bool Label::multilineTextWrap(const std::function<int(const std::u32string&, int
 
             if (tokenHighestY < letterPosition.y)
                 tokenHighestY = letterPosition.y;
-            if (tokenLowestY > letterPosition.y - letterDef.height * _bmfontScale)
-                tokenLowestY = letterPosition.y - letterDef.height * _bmfontScale;
+            if (tokenLowestY > letterPosition.y - letterDef.height)
+                tokenLowestY = letterPosition.y - letterDef.height;
         }
 
         if (newLine)
@@ -254,7 +239,7 @@ bool Label::multilineTextWrap(const std::function<int(const std::u32string&, int
     _linesWidth.push_back(letterRight);
 
     _numberOfLines = lineIndex + 1;
-    _textDesiredHeight = (_numberOfLines * _lineHeight * _bmfontScale) / contentScaleFactor;
+    _textDesiredHeight = (_numberOfLines * _lineHeight) / contentScaleFactor;
     if (_numberOfLines > 1)
         _textDesiredHeight += (_numberOfLines - 1) * _lineSpacing;
     Size contentSize(_labelWidth, _labelHeight);
@@ -305,7 +290,7 @@ bool Label::isHorizontalClamp()
         {
             auto& letterDef = _fontAtlas->_letterDefinitions[_lettersInfo[ctr].utf32Char];
 
-            auto px = _lettersInfo[ctr].positionX + letterDef.width/2 * _bmfontScale;
+            auto px = _lettersInfo[ctr].positionX + letterDef.width/2;
             auto lineIndex = _lettersInfo[ctr].lineIndex;
 
             if(_labelWidth > 0.f){

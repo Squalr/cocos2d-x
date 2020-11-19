@@ -33,7 +33,6 @@
 #include "2d/CCFont.h"
 #include "2d/CCFontAtlasCache.h"
 #include "2d/CCFontAtlas.h"
-#include "2d/CCFontFNT.h"
 #include "2d/CCSprite.h"
 #include "2d/CCSpriteBatchNode.h"
 #include "base/CCConsole.h"
@@ -239,82 +238,6 @@ Label* Label::createWithTTF(const TTFConfig& ttfConfig, const std::string& text,
     return nullptr;
 }
 
-Label* Label::createWithBMFont(const std::string& bmfontFilePath, const std::string& text,const TextHAlignment& hAlignment /* = TextHAlignment::LEFT */, int maxLineWidth /* = 0 */, const Vec2& imageOffset /* = Vec2::ZERO */)
-{
-    auto ret = new (std::nothrow) Label(hAlignment);
-
-    if (ret && ret->setBMFontFilePath(bmfontFilePath,imageOffset))
-    {
-        ret->setMaxLineWidth(maxLineWidth);
-        ret->setString(text);
-        ret->autorelease();
-
-        return ret;
-    }
-    
-    delete ret;
-    return nullptr;
-}
-
-Label* Label::createWithCharMap(const std::string& plistFile)
-{
-    auto ret = new (std::nothrow) Label();
-
-    if (ret && ret->setCharMap(plistFile))
-    {
-        ret->autorelease();
-        return ret;
-    }
-
-    delete ret;
-    return nullptr;
-}
-
-Label* Label::createWithCharMap(Texture2D* texture, int itemWidth, int itemHeight, int startCharMap)
-{
-    auto ret = new (std::nothrow) Label();
-
-    if (ret && ret->setCharMap(texture,itemWidth,itemHeight,startCharMap))
-    {
-        ret->autorelease();
-        return ret;
-    }
-
-    delete ret;
-    return nullptr;
-}
-
-Label* Label::createWithCharMap(const std::string& charMapFile, int itemWidth, int itemHeight, int startCharMap)
-{
-    auto ret = new (std::nothrow) Label();
-
-    if (ret && ret->setCharMap(charMapFile,itemWidth,itemHeight,startCharMap))
-    {
-        ret->autorelease();
-        return ret;
-    }
-
-    delete ret;
-    return nullptr;
-}
-
-bool Label::setCharMap(const std::string& plistFile)
-{
-    auto newAtlas = FontAtlasCache::getFontAtlasCharMap(plistFile);
-
-    if (!newAtlas)
-    {
-        reset();
-        return false;
-    }
-
-    _currentLabelType = LabelType::CHARMAP;
-    setFontAtlas(newAtlas);
-
-    return true;
-}
-
-
 bool Label::initWithTTF(const std::string& text,
                         const std::string& fontFilePath, float fontSize,
                         const Size& dimensions,
@@ -342,38 +265,6 @@ bool Label::initWithTTF(const TTFConfig& ttfConfig, const std::string& text, Tex
         return true;
     }
     return false;
-}
-
-bool Label::setCharMap(Texture2D* texture, int itemWidth, int itemHeight, int startCharMap)
-{
-    auto newAtlas = FontAtlasCache::getFontAtlasCharMap(texture,itemWidth,itemHeight,startCharMap);
-
-    if (!newAtlas)
-    {
-        reset();
-        return false;
-    }
-
-    _currentLabelType = LabelType::CHARMAP;
-    setFontAtlas(newAtlas);
-
-    return true;
-}
-
-bool Label::setCharMap(const std::string& charMapFile, int itemWidth, int itemHeight, int startCharMap)
-{
-    auto newAtlas = FontAtlasCache::getFontAtlasCharMap(charMapFile,itemWidth,itemHeight,startCharMap);
-
-    if (!newAtlas)
-    {
-        reset();
-        return false;
-    }
-
-    _currentLabelType = LabelType::CHARMAP;
-    setFontAtlas(newAtlas);
-
-    return true;
 }
 
 Label::Label(TextHAlignment hAlignment /* = TextHAlignment::LEFT */, 
@@ -480,7 +371,6 @@ void Label::reset()
     TTFConfig temp;
     _fontConfig = temp;
     _outlineSize = 0.f;
-    _bmFontPath = "";
     _systemFontDirty = false;
     _systemFont = "Helvetica";
     _systemFontSize = 12;
@@ -523,8 +413,6 @@ void Label::reset()
     _isOpacityModifyRGB = false;
     _insideBounds = true;
     _enableWrap = true;
-    _bmFontSize = -1;
-    _bmfontScale = 1.0f;
     _overflow = Overflow::NONE;
     _originalFontSize = 0.0f;
     _boldEnabled = false;
@@ -537,7 +425,7 @@ void Label::reset()
     setRotation(0.0f);        // reverse italics
 }
 
-//  ETC1 ALPHA supports, for LabelType::BMFONT & LabelType::CHARMAP
+//  ETC1 ALPHA supports
 static Texture2D* _getTexture(Label* label)
 {
     auto fontAtlas = label->getFontAtlas();
@@ -637,37 +525,6 @@ bool Label::setTTFConfig(const TTFConfig& ttfConfig)
     return setTTFConfigInternal(ttfConfig);
 }
 
-bool Label::setBMFontFilePath(const std::string& bmfontFilePath, const Vec2& imageOffset, float fontSize)
-{
-    FontAtlas *newAtlas = FontAtlasCache::getFontAtlasFNT(bmfontFilePath,imageOffset);
-    
-    if (!newAtlas)
-    {
-        reset();
-        return false;
-    }
-
-    //assign the default fontSize
-    if (std::abs(fontSize) < FLT_EPSILON) {
-        FontFNT *bmFont = (FontFNT*)newAtlas->getFont();
-        if (bmFont) {
-            float originalFontSize = bmFont->getOriginalFontSize();
-            _bmFontSize = originalFontSize / CC_CONTENT_SCALE_FACTOR();
-        }
-    }
-
-    if(fontSize > 0.0f){
-        _bmFontSize = fontSize;
-    }
-
-    _bmFontPath = bmfontFilePath;
-
-    _currentLabelType = LabelType::BMFONT;
-    setFontAtlas(newAtlas);
-
-    return true;
-}
-
 void Label::setString(const std::string& text)
 {
     if (text.compare(_utf8Text))
@@ -732,8 +589,6 @@ void Label::restoreFontSize()
         auto ttfConfig = this->getTTFConfig();
         ttfConfig.fontSize = _originalFontSize;
         this->setTTFConfigInternal(ttfConfig);
-    }else if(_currentLabelType == LabelType::BMFONT){
-        this->setBMFontSizeInternal(_originalFontSize);
     }else if(_currentLabelType == LabelType::STRING_TEXTURE){
         this->setSystemFontSize(_originalFontSize);
     }
@@ -933,14 +788,14 @@ bool Label::updateQuads()
                     _reusedRect.size.height -= clipTop;
                     py -= clipTop;
                 }
-                if (py - letterDef.height * _bmfontScale < _tailoredBottomY)
+                if (py - letterDef.height < _tailoredBottomY)
                 {
                     _reusedRect.size.height = (py < _tailoredBottomY) ? 0.f : (py - _tailoredBottomY);
                 }
             }
 
             auto lineIndex = _lettersInfo[ctr].lineIndex;
-            auto px = _lettersInfo[ctr].positionX + letterDef.width/2 * _bmfontScale + _linesOffsetX[lineIndex];
+            auto px = _lettersInfo[ctr].positionX + letterDef.width/2 + _linesOffsetX[lineIndex];
 
             if(_labelWidth > 0.f){
                 if (this->isHorizontalClamped(px, lineIndex)) {
@@ -1019,14 +874,6 @@ bool Label::setTTFConfigInternal(const TTFConfig& ttfConfig)
     return true;
 }
 
-void Label::setBMFontSizeInternal(float fontSize)
-{
-    if(_currentLabelType == LabelType::BMFONT){
-        this->setBMFontFilePath(_bmFontPath, Vec2::ZERO, fontSize);
-        _contentDirty = true;
-    }
-}
-
 void Label::scaleFontSizeDown(float fontSize)
 {
     bool shouldUpdateContent = true;
@@ -1034,12 +881,6 @@ void Label::scaleFontSizeDown(float fontSize)
         auto ttfConfig = this->getTTFConfig();
         ttfConfig.fontSize = fontSize;
         this->setTTFConfigInternal(ttfConfig);
-    }else if(_currentLabelType == LabelType::BMFONT){
-        if (std::abs(fontSize) < FLT_EPSILON) {
-            fontSize = 0.1f;
-            shouldUpdateContent = false;
-        }
-        this->setBMFontSizeInternal(fontSize);
     }else if (_currentLabelType == LabelType::STRING_TEXTURE){
         this->setSystemFontSize(fontSize);
     }
@@ -1144,11 +985,6 @@ void Label::enableShadow(const Color4B& shadowColor /* = Color4B::BLACK */,
     _shadowColor4F.g = shadowColor.g / 255.0f;
     _shadowColor4F.b = shadowColor.b / 255.0f;
     _shadowColor4F.a = shadowColor.a / 255.0f;
-
-    if (_currentLabelType == LabelType::BMFONT || _currentLabelType == LabelType::CHARMAP)
-    {
-        setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(_shadowEnabled ? GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR : GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP, _getTexture(this)));
-    }
 }
 
 void Label::enableItalics()
@@ -1462,17 +1298,6 @@ void Label::updateContent()
 #endif
 }
 
-void Label::setBMFontSize(float fontSize)
-{
-    this->setBMFontSizeInternal(fontSize);
-    _originalFontSize = fontSize;
-}
-
-float Label::getBMFontSize()const
-{
-    return _bmFontSize;
-}
-
 void Label::onDrawShadow(GLProgram* glProgram, const Color4F& shadowColor)
 {
     if (_currentLabelType == LabelType::TTF)
@@ -1600,26 +1425,10 @@ void Label::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
     if (_insideBounds)
 #endif
     {
-        if (!_shadowEnabled && (_currentLabelType == LabelType::BMFONT || _currentLabelType == LabelType::CHARMAP))
-        {
-            for (auto&& it : _letters)
-            {
-                it.second->updateTransform();
-            }
-            // ETC1 ALPHA supports for BMFONT & CHARMAP
-            auto textureAtlas = _batchNodes.at(0)->getTextureAtlas();
-            auto texture = textureAtlas->getTexture();
-            _quadCommand.init(_globalZOrder, texture, getGLProgramState(), 
-                _blendFunc, textureAtlas->getQuads(), textureAtlas->getTotalQuads(), transform, flags);
-            renderer->addCommand(&_quadCommand);
-        }
-        else
-        {
-            _customCommand.init(_globalZOrder, transform, flags);
-            _customCommand.func = CC_CALLBACK_0(Label::onDraw, this, transform, transformUpdated);
+        _customCommand.init(_globalZOrder, transform, flags);
+        _customCommand.func = CC_CALLBACK_0(Label::onDraw, this, transform, transformUpdated);
 
-            renderer->addCommand(&_customCommand);
-        }
+        renderer->addCommand(&_customCommand);
     }
 }
 
@@ -1853,7 +1662,7 @@ void Label::setLineHeight(float height)
 float Label::getLineHeight() const
 {
     CCASSERT(_currentLabelType != LabelType::STRING_TEXTURE, "Not supported system font!");
-    return _textSprite ? 0.0f : _lineHeight * _bmfontScale;
+    return _textSprite ? 0.0f : _lineHeight;
 }
 
 void Label::setLineSpacing(float height)
@@ -2201,9 +2010,7 @@ void Label::setGlobalZOrder(float globalZOrder)
 float Label::getRenderingFontSize()const
 {
     float fontSize;
-    if (_currentLabelType == LabelType::BMFONT) {
-        fontSize = _bmFontSize;
-    }else if(_currentLabelType == LabelType::TTF){
+    if(_currentLabelType == LabelType::TTF){
         fontSize = this->getTTFConfig().fontSize;
     }else if(_currentLabelType == LabelType::STRING_TEXTURE){
         fontSize = _systemFontSize;
@@ -2236,12 +2043,6 @@ void Label::setOverflow(Overflow overflow)
     if(_overflow == overflow){
         return;
     }
-    
-    if (_currentLabelType == LabelType::CHARMAP) {
-        if (overflow == Overflow::SHRINK) {
-            return;
-        }
-    }
 
     if(overflow == Overflow::RESIZE_HEIGHT){
         this->setDimensions(_labelDimensions.width,0);
@@ -2269,21 +2070,7 @@ Label::Overflow Label::getOverflow()const
 
 void Label::updateLetterSpriteScale(Sprite* sprite)
 {
-    if (_currentLabelType == LabelType::BMFONT && _bmFontSize > 0)
-    {
-        sprite->setScale(_bmfontScale);
-    }
-    else
-    {
-        if (std::abs(_bmFontSize) < FLT_EPSILON)
-        {
-            sprite->setScale(0);
-        }
-        else
-        {
-            sprite->setScale(1.0);
-        }
-    }
+    sprite->setScale(1.0f);
 }
 
 NS_CC_END

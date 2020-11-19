@@ -218,7 +218,6 @@ protected:
     void createCommandDirector();
     void createCommandExit();
     void createCommandFileUtils();
-    void createCommandFps();
     void createCommandHelp();
     void createCommandProjection();
     void createCommandResolution();
@@ -239,8 +238,6 @@ protected:
     void commandExit(int fd, const std::string& args);
     void commandFileUtils(int fd, const std::string& args);
     void commandFileUtilsSubCommandFlush(int fd, const std::string& args);
-    void commandFps(int fd, const std::string& args);
-    void commandFpsSubCommandOnOff(int fd, const std::string& args);
     void commandHelp(int fd, const std::string& args);
     void commandProjection(int fd, const std::string& args);
     void commandProjectionSubCommand2d(int fd, const std::string& args);
