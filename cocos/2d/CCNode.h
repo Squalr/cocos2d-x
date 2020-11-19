@@ -1098,17 +1098,6 @@ public:
     virtual Scheduler* getScheduler() { return _scheduler; }
     virtual const Scheduler* getScheduler() const { return _scheduler; }
 
-
-    /**
-     * Checks whether a selector is scheduled.
-     *
-     * @param selector      A function selector
-     * @return Whether the function selector is scheduled.
-     * @js NA
-     * @lua NA
-     */
-    bool isScheduled(SEL_SCHEDULE selector) const;
-
     /**
      * Checks whether a lambda function is scheduled.
      *
@@ -1148,45 +1137,6 @@ public:
     void unscheduleUpdate(void);
 
     /**
-     * Schedules a custom selector.
-     *
-     * If the selector is already scheduled, then the interval parameter will be updated without scheduling it again.
-     @code
-     // firstly, implement a schedule function
-     void MyNode::TickMe(float dt);
-     // wrap this function into a selector via schedule_selector macro.
-     this->schedule(CC_SCHEDULE_SELECTOR(MyNode::TickMe), 0, 0, 0);
-     @endcode
-     *
-     * @param selector  The SEL_SCHEDULE selector to be scheduled.
-     * @param interval  Tick interval in seconds. 0 means tick every frame. If interval = 0, it's recommended to use scheduleUpdate() instead.
-     * @param repeat    The selector will be executed (repeat + 1) times, you can use CC_REPEAT_FOREVER for tick infinitely.
-     * @param delay     The amount of time that the first tick will wait before execution.
-     * @lua NA
-     */
-    void schedule(SEL_SCHEDULE selector, float interval, unsigned int repeat, float delay);
-
-    /**
-     * Schedules a custom selector with an interval time in seconds.
-     * @see `schedule(SEL_SCHEDULE, float, unsigned int, float)`
-     *
-     * @param selector      The SEL_SCHEDULE selector to be scheduled.
-     * @param interval      Callback interval time in seconds. 0 means tick every frame,
-     * @lua NA
-     */
-    void schedule(SEL_SCHEDULE selector, float interval);
-
-    /**
-     * Schedules a selector that runs only once, with a delay of 0 or larger
-     * @see `schedule(SEL_SCHEDULE, float, unsigned int, float)`
-     *
-     * @param selector      The SEL_SCHEDULE selector to be scheduled.
-     * @param delay         The amount of time that the first tick will wait before execution.
-     * @lua NA
-     */
-    void scheduleOnce(SEL_SCHEDULE selector, float delay);
-
-    /**
      * Schedules a lambda function that runs only once, with a delay of 0 or larger
      *
      * @param callback      The lambda function to be scheduled.
@@ -1195,15 +1145,6 @@ public:
      * @lua NA
      */
     void scheduleOnce(const std::function<void(float)>& callback, float delay, const std::string &key);
-
-    /**
-     * Schedules a custom selector, the scheduled selector will be ticked every frame.
-     * @see schedule(SEL_SCHEDULE, float, unsigned int, float)
-     *
-     * @param selector      A function wrapped as a selector
-     * @lua NA
-     */
-    void schedule(SEL_SCHEDULE selector);
 
     /**
      * Schedules a lambda function. The scheduled lambda function will be called every frame.
@@ -1235,15 +1176,6 @@ public:
      * @lua NA
      */
     void schedule(const std::function<void(float)>& callback, float interval, unsigned int repeat, float delay, const std::string &key);
-
-    /**
-     * Unschedules a custom selector.
-     * @see `schedule(SEL_SCHEDULE, float, unsigned int, float)`
-     *
-     * @param selector      A function wrapped as a selector.
-     * @lua NA
-     */
-    void unschedule(SEL_SCHEDULE selector);
 
     /**
      * Unschedules a lambda function.

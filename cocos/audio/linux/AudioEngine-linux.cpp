@@ -200,9 +200,10 @@ int AudioEngineImpl::play2d(const std::string &filePath ,bool loop ,float volume
 
     audioCache->addPlayCallback(std::bind(&AudioEngineImpl::_play2d,this,audioCache,_currentAudioID));
 
-    if (_lazyInitLoop) {
+    if (_lazyInitLoop)
+    {
         _lazyInitLoop = false;
-        _scheduler->schedule(CC_SCHEDULE_SELECTOR(AudioEngineImpl::update), this, 0.05f, false);
+        _scheduler->schedule(std::bind(&AudioEngineImpl::update, this, std::placeholders::_1), this, 0.05f, false, "UPDATE_AUDIO");
     }
 
     return _currentAudioID++;
@@ -451,9 +452,10 @@ void AudioEngineImpl::update(float dt)
         }
     }
 
-    if(_audioPlayers.empty()){
+    if(_audioPlayers.empty())
+    {
         _lazyInitLoop = true;
-        _scheduler->unschedule(CC_SCHEDULE_SELECTOR(AudioEngineImpl::update), this);
+        _scheduler->unschedule("UPDATE_AUDIO", this);
     }
 }
 

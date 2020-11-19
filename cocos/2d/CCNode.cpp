@@ -1271,11 +1271,6 @@ void Node::setScheduler(Scheduler* scheduler)
     }
 }
 
-bool Node::isScheduled(SEL_SCHEDULE selector) const
-{
-    return _scheduler->isScheduled(selector, this);
-}
-
 bool Node::isScheduled(const std::string &key) const
 {
     return _scheduler->isScheduled(key, this);
@@ -1303,24 +1298,6 @@ void Node::unscheduleUpdate()
     _scheduler->unscheduleUpdate(this);
 }
 
-void Node::schedule(SEL_SCHEDULE selector)
-{
-    this->schedule(selector, 0.0f, CC_REPEAT_FOREVER, 0.0f);
-}
-
-void Node::schedule(SEL_SCHEDULE selector, float interval)
-{
-    this->schedule(selector, interval, CC_REPEAT_FOREVER, 0.0f);
-}
-
-void Node::schedule(SEL_SCHEDULE selector, float interval, unsigned int repeat, float delay)
-{
-    CCASSERT( selector, "Argument must be non-nil");
-    CCASSERT( interval >=0, "Argument must be positive");
-
-    _scheduler->schedule(selector, this, interval , repeat, delay, !_running);
-}
-
 void Node::schedule(const std::function<void(float)> &callback, const std::string &key)
 {
     _scheduler->schedule(callback, this, 0, !_running, key);
@@ -1336,23 +1313,9 @@ void Node::schedule(const std::function<void(float)>& callback, float interval, 
     _scheduler->schedule(callback, this, interval, repeat, delay, !_running, key);
 }
 
-void Node::scheduleOnce(SEL_SCHEDULE selector, float delay)
-{
-    this->schedule(selector, 0.0f, 0, delay);
-}
-
 void Node::scheduleOnce(const std::function<void(float)> &callback, float delay, const std::string &key)
 {
     _scheduler->schedule(callback, this, 0, 0, delay, !_running, key);
-}
-
-void Node::unschedule(SEL_SCHEDULE selector)
-{
-    // explicit null handling
-    if (selector == nullptr)
-        return;
-    
-    _scheduler->unschedule(selector, this);
 }
 
 void Node::unschedule(const std::string &key)
