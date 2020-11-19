@@ -15,7 +15,6 @@ set(COCOS_2D_HEADER
     2d/CCSprite.h
     2d/CCNode.h
     2d/CCTweenFunction.h
-    2d/CCLight.h
     2d/CCAutoPolygon.h
     2d/CCFontAtlas.h
     2d/CCAtlasNode.h
@@ -86,7 +85,6 @@ set(COCOS_2D_SRC
     2d/CCLabel.cpp
     2d/CCLabelTextFormatter.cpp
     2d/CCLayer.cpp
-    2d/CCLight.cpp
     2d/CCNode.cpp
     2d/CCParallaxNode.cpp
     2d/CCParticleBatchNode.cpp

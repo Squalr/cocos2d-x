@@ -119,7 +119,6 @@ THE SOFTWARE.
 // 2d utils
 #include "2d/CCCamera.h"
 #include "2d/CCCameraBackgroundBrush.h"
-#include "2d/CCLight.h"
 
 // include
 #include "base/CCProtocols.h"
