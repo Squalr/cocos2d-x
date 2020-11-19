@@ -48,7 +48,6 @@ THE SOFTWARE.
 #include "base/CCIMEDispatcher.h"
 #include "base/CCMap.h"
 #include "base/CCNS.h"
-#include "base/CCProfiling.h"
 #include "base/CCProperties.h"
 #include "base/CCRef.h"
 #include "base/CCRefPtr.h"
@@ -91,7 +90,6 @@ THE SOFTWARE.
 
 // actions
 #include "2d/CCAction.h"
-#include "2d/CCActionCatmullRom.h"
 #include "2d/CCActionEase.h"
 #include "2d/CCActionInstant.h"
 #include "2d/CCActionInterval.h"
@@ -117,7 +115,6 @@ THE SOFTWARE.
 
 // 2d utils
 #include "2d/CCCamera.h"
-#include "2d/CCCameraBackgroundBrush.h"
 
 // include
 #include "base/CCProtocols.h"
@@ -179,7 +176,6 @@ THE SOFTWARE.
 
 // sprite_nodes
 #include "2d/CCAnimation.h"
-#include "2d/CCAnimationCache.h"
 #include "2d/CCSprite.h"
 #include "2d/CCAutoPolygon.h"
 #include "2d/CCSpriteBatchNode.h"
@@ -193,7 +189,6 @@ THE SOFTWARE.
 #include "renderer/CCTextureAtlas.h"
 
 // tilemap_parallax_nodes
-#include "2d/CCParallaxNode.h"
 #include "2d/CCTMXObjectGroup.h"
 #include "2d/CCTMXXMLParser.h"
 #include "2d/CCFastTMXLayer.h"

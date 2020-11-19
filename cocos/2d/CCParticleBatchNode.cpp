@@ -33,7 +33,6 @@
 #include "2d/CCParticleSystem.h"
 #include "base/CCConsole.h"
 #include "base/CCDirector.h"
-#include "base/CCProfiling.h"
 #include "base/ccUTF8.h"
 #include "renderer/CCTextureCache.h"
 #include "renderer/CCQuadCommand.h"
@@ -390,15 +389,12 @@ void ParticleBatchNode::removeAllChildrenWithCleanup(bool doCleanup)
 
 void ParticleBatchNode::draw(Renderer* renderer, const Mat4 & /*transform*/, uint32_t flags)
 {
-    CC_PROFILER_START("CCParticleBatchNode - draw");
-
     if( _textureAtlas->getTotalQuads() == 0 )
     {
         return;
     }
     _batchCommand.init(_globalZOrder, getGLProgram(), _blendFunc, _textureAtlas, _modelViewTransform, flags);
     renderer->addCommand(&_batchCommand);
-    CC_PROFILER_STOP("CCParticleBatchNode - draw");
 }
 
 

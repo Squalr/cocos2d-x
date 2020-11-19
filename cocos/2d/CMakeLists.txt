@@ -24,18 +24,15 @@ set(COCOS_2D_HEADER
     2d/CCActionInstant.h
     2d/CCLabel.h
     2d/CCLabelAtlas.h
-    2d/CCActionCatmullRom.h
     2d/CCDrawingPrimitives.h
     2d/CCParticleBatchNode.h
     2d/CCActionEase.h
     2d/CCScene.h
     2d/CCTextFieldTTF.h
-    2d/CCAnimationCache.h
     2d/CCFastTMXLayer.h
     2d/CCFontAtlasCache.h
     2d/CCFont.h
     2d/CCParticleSystemQuad.h
-    2d/CCCameraBackgroundBrush.h
     2d/CCFastTMXTiledMap.h
     2d/CCLabelTextFormatter.h
     2d/CCFontFNT.h
@@ -50,24 +47,20 @@ set(COCOS_2D_HEADER
     2d/CCActionManager.h
     2d/CCDrawNode.h
     2d/CCCamera.h
-    2d/CCParallaxNode.h
 
     )
 
 set(COCOS_2D_SRC
 
-    2d/CCActionCatmullRom.cpp
     2d/CCAction.cpp
     2d/CCActionEase.cpp
     2d/CCActionInstant.cpp
     2d/CCActionInterval.cpp
     2d/CCActionManager.cpp
     2d/CCActionTween.cpp
-    2d/CCAnimationCache.cpp
     2d/CCAnimation.cpp
     2d/CCAtlasNode.cpp
     2d/CCCamera.cpp
-    2d/CCCameraBackgroundBrush.cpp
     2d/CCClippingNode.cpp
     2d/CCDrawingPrimitives.cpp
     2d/CCDrawNode.cpp
@@ -84,7 +77,6 @@ set(COCOS_2D_SRC
     2d/CCLabelTextFormatter.cpp
     2d/CCLayer.cpp
     2d/CCNode.cpp
-    2d/CCParallaxNode.cpp
     2d/CCParticleBatchNode.cpp
     2d/CCParticleSystem.cpp
     2d/CCParticleSystemQuad.cpp

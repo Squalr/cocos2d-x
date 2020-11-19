@@ -56,7 +56,6 @@ THE SOFTWARE.
  - drawCircle
  - drawQuadBezier
  - drawCubicBezier
- - drawCatmullRom
  - drawCardinalSpline
  
  You can change the color, point size, width by calling:
@@ -214,25 +213,6 @@ namespace DrawPrimitives
      * @since v0.8
      */
     CC_DEPRECATED_ATTRIBUTE void CC_DLL drawCubicBezier(const Vec2& origin, const Vec2& control1, const Vec2& control2, const Vec2& destination, unsigned int segments);
-
-    /** Draws a Catmull Rom path.
-     *
-     * @param arrayOfControlPoints A point array  of control point.
-     * @param segments The number of segments.
-     * @warning This function could be pretty slow. Use it only for debugging purposes.
-     * @since v2.0
-     */
-    CC_DEPRECATED_ATTRIBUTE void CC_DLL drawCatmullRom(PointArray *arrayOfControlPoints, unsigned int segments);
-
-    /** Draws a Cardinal Spline path.
-     *
-     * @param config A array point.
-     * @param tension The tension of the spline.
-     * @param segments The number of segments.
-     * @warning This function could be pretty slow. Use it only for debugging purposes.
-     * @since v2.0
-     */
-    CC_DEPRECATED_ATTRIBUTE void CC_DLL drawCardinalSpline(PointArray *config, float tension,  unsigned int segments);
 
     /** Set the drawing color with 4 unsigned bytes.
      *

@@ -31,7 +31,6 @@ THE SOFTWARE.
 #include "2d/CCSprite.h"
 #include "base/CCConsole.h"
 #include "base/CCDirector.h"
-#include "base/CCProfiling.h"
 #include "base/ccUTF8.h"
 #include "renderer/CCTextureCache.h"
 #include "renderer/CCRenderer.h"
@@ -139,8 +138,6 @@ SpriteBatchNode::~SpriteBatchNode()
 // don't call visit on it's children
 void SpriteBatchNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
-    CC_PROFILER_START_CATEGORY(kProfilerCategoryBatchSprite, "CCSpriteBatchNode - visit");
-
     _selfFlags |= parentFlags;
 
     // CAREFUL:

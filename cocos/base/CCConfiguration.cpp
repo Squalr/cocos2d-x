@@ -55,13 +55,6 @@ bool Configuration::init()
 {
 	_valueDict["cocos2d.x.version"] = Value(cocos2dVersion());
 
-
-#if CC_ENABLE_PROFILERS
-	_valueDict["cocos2d.x.compiled_with_profiler"] = Value(true);
-#else
-	_valueDict["cocos2d.x.compiled_with_profiler"] = Value(false);
-#endif
-
 #if CC_ENABLE_GL_STATE_CACHE == 0
 	_valueDict["cocos2d.x.compiled_with_gl_state_cache"] = Value(false);
 #else
@@ -84,11 +77,6 @@ Configuration::~Configuration()
 
 std::string Configuration::getInfo() const
 {
-	// And Dump some warnings as well
-#if CC_ENABLE_PROFILERS
-    CCLOG("cocos2d: **** WARNING **** CC_ENABLE_PROFILERS is defined. Disable it when you finish profiling (from ccConfig.h)\n");
-#endif
-
 #if CC_ENABLE_GL_STATE_CACHE == 0
     CCLOG("cocos2d: **** WARNING **** CC_ENABLE_GL_STATE_CACHE is disabled. To improve performance, enable it (from ccConfig.h)\n");
 #endif

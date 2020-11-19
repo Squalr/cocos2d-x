@@ -26,7 +26,6 @@
 
  ****************************************************************************/
 #include "2d/CCCamera.h"
-#include "2d/CCCameraBackgroundBrush.h"
 #include "2d/CCScene.h"
 #include "base/CCConsole.h"
 #include "base/CCDirector.h"
@@ -116,14 +115,11 @@ Camera::Camera()
 , _depth(-1)
 , _fbo(nullptr)
 {
-    _clearBrush = CameraBackgroundBrush::createDepthBrush(1.f);
-    _clearBrush->retain();
 }
 
 Camera::~Camera()
 {
     CC_SAFE_RELEASE_NULL(_fbo);
-    CC_SAFE_RELEASE(_clearBrush);
 }
 
 const Mat4& Camera::getProjectionMatrix() const
@@ -417,10 +413,6 @@ void Camera::setScene(Scene* scene)
 
 void Camera::clearBackground()
 {
-    if (_clearBrush)
-    {
-        _clearBrush->drawBackground(this);
-    }
 }
 
 void Camera::setFrameBufferObject(cocos_experimental::FrameBuffer *fbo)
@@ -519,18 +511,6 @@ void Camera::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t par
 {
     _viewProjectionUpdated = (_selfFlags & FLAGS_TRANSFORM_DIRTY);
     return Node::visit(renderer, parentTransform, parentFlags);
-}
-
-void Camera::setBackgroundBrush(CameraBackgroundBrush* clearBrush)
-{
-    CC_SAFE_RETAIN(clearBrush);
-    CC_SAFE_RELEASE(_clearBrush);
-    _clearBrush = clearBrush;
-}
-
-bool Camera::isBrushValid()
-{
-    return _clearBrush != nullptr && _clearBrush->isValid();
 }
 
 NS_CC_END

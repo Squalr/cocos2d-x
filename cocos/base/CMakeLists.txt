@@ -26,7 +26,6 @@ set(COCOS_BASE_HEADER
     base/CCAsyncTaskPool.h
     base/ccRandom.h
     base/CCRef.h
-    base/CCProfiling.h
     base/CCProperties.h
     base/CCVector.h
     base/CCEventCustom.h
@@ -84,7 +83,6 @@ set(COCOS_BASE_SRC
     base/CCEventMouse.cpp
     base/CCIMEDispatcher.cpp
     base/CCNS.cpp
-    base/CCProfiling.cpp
     base/CCProperties.cpp
     base/CCRef.cpp
     base/CCScheduler.cpp

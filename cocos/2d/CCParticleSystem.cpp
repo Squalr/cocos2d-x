@@ -52,7 +52,6 @@ THE SOFTWARE.
 #include "base/base64.h"
 #include "base/ZipUtils.h"
 #include "base/CCDirector.h"
-#include "base/CCProfiling.h"
 #include "base/ccUTF8.h"
 #include "renderer/CCTextureAtlas.h"
 #include "renderer/CCTextureCache.h"
@@ -773,8 +772,6 @@ bool ParticleSystem::isFull()
 // ParticleSystem - MainLoop
 void ParticleSystem::update(float dt)
 {
-    CC_PROFILER_START_CATEGORY(kProfilerCategoryParticles , "CCParticleSystem - update");
-
     if (!this->canUpdate())
     {
         return;
@@ -916,8 +913,6 @@ void ParticleSystem::update(float dt)
     {
         postStep();
     }
-
-    CC_PROFILER_STOP_CATEGORY(kProfilerCategoryParticles , "CCParticleSystem - update");
 }
 
 void ParticleSystem::updateWithNoTime(void)
