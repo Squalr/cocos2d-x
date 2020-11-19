@@ -91,7 +91,6 @@ THE SOFTWARE.
 
 // actions
 #include "2d/CCAction.h"
-#include "2d/CCActionCamera.h"
 #include "2d/CCActionCatmullRom.h"
 #include "2d/CCActionEase.h"
 #include "2d/CCActionInstant.h"

@@ -11,7 +11,6 @@ set(COCOS_2D_HEADER
     2d/CCActionTween.h
     2d/CCSpriteFrameCache.h
     2d/CCLayer.h
-    2d/CCActionCamera.h
     2d/CCSprite.h
     2d/CCNode.h
     2d/CCTweenFunction.h
@@ -57,7 +56,6 @@ set(COCOS_2D_HEADER
 
 set(COCOS_2D_SRC
 
-    2d/CCActionCamera.cpp
     2d/CCActionCatmullRom.cpp
     2d/CCAction.cpp
     2d/CCActionEase.cpp

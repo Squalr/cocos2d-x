@@ -1423,20 +1423,6 @@ public:
      */
     Vec2 convertToWorldSpaceAR(const Vec2& nodePoint) const;
 
-    /**
-     *  Sets an additional transform matrix to the node.
-     *
-     *  In order to remove it, call it again with the argument `nullptr`.
-     *
-     * @note The additional transform will be concatenated at the end of getNodeToParentTransform.
-     *        It could be used to simulate `parent-child` relationship between two nodes (e.g. one is in BatchNode, another isn't).
-     *
-     * @param additionalTransform An additional transform matrix.
-     */
-    void setAdditionalTransform(const Mat4* additionalTransform);
-    void setAdditionalTransform(const Mat4& additionalTransform);
-    void setAdditionalTransform(const AffineTransform& additionalTransform);
-
     /// @} end of Coordinate Converters
 
     // overrides
@@ -1592,8 +1578,6 @@ protected:
     mutable bool _transformDirty;   ///< transform dirty flag
     mutable Mat4 _inverse;          ///< inverse transform
     mutable bool _inverseDirty;     ///< inverse transform dirty flag
-    mutable Mat4* _additionalTransform; ///< two transforms needed by additional transforms
-    mutable bool _additionalTransformDirty; ///< transform dirty ?
     uint32_t _selfFlags;    ///< Whether or not the Transform object was updated since the last frame < whether or not the contentSize is dirty
 
 #if CC_LITTLE_ENDIAN
