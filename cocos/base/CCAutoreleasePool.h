@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define __AUTORELEASEPOOL_H__
 
 #include <vector>
+#include <set>
 #include <string>
 #include "base/CCRef.h"
 
@@ -133,7 +134,7 @@ private:
      * be destructed properly by calling Ref::release() even if the object
      * is in the pool.
      */
-    std::vector<Ref*> _managedObjectArray;
+    std::set<Ref*> _managedObjectArray;
     std::string _name;
     
 #if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)

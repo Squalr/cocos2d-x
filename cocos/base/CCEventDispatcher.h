@@ -241,7 +241,7 @@ protected:
     /**
      *
      */
-    bool removeListenerInVector(std::set<EventListener*>* listeners, EventListener* listener);
+    bool removeListenerInSet(std::set<EventListener*>* listeners, EventListener* listener);
         
     void removeAllListenersInVector(std::set<EventListener*>* listenerVector);
     

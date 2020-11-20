@@ -561,14 +561,7 @@ void EventDispatcher::removeEventListener(EventListener* listener)
         auto sceneGraphPriorityListeners = listeners->getSceneGraphPriorityListeners();
         bool isFound = false;
 
-        isFound = this->removeListenerInVector(sceneGraphPriorityListeners, listener);
-
-        /*
-        if (isFound)
-        {
-            // fixed #4160: Dirty flag need to be updated after listeners were removed.
-            setDirty(listener->getListenerID(), DirtyFlag::SCENE_GRAPH_PRIORITY);
-        }*/
+        isFound = this->removeListenerInSet(sceneGraphPriorityListeners, listener);
 
         if (iter->second->empty())
         {
@@ -601,7 +594,7 @@ void EventDispatcher::removeEventListener(EventListener* listener)
     }
 }
 
-bool EventDispatcher::removeListenerInVector(std::set<EventListener*>* listeners, EventListener* listener)
+bool EventDispatcher::removeListenerInSet(std::set<EventListener*>* listeners, EventListener* listener)
 {
     bool isFound = false;
 
@@ -840,23 +833,6 @@ void EventDispatcher::updateListeners(Event* event)
     
     CCASSERT(_inDispatch == 1, "_inDispatch should be 1 here.");
     
-    // Zac: This code has a performance hit (iterating over a map? seriously?), and seems to never actually *do* anything. Literally always evaluates false.
-    // For this reason, I'm just gonna disable this.
-    /*
-    for (auto iter = _listenerMap.begin(); iter != _listenerMap.end();)
-    {
-        if (iter->second->empty())
-        {
-            _priorityDirtyFlagMap.erase(iter->first);
-            delete iter->second;
-            iter = _listenerMap.erase(iter);
-        }
-        else
-        {
-            ++iter;
-        }
-    }*/
-    
     if (!_toAddedListeners.empty())
     {
         for (auto& listener : _toAddedListeners)
@@ -874,90 +850,14 @@ void EventDispatcher::updateListeners(Event* event)
 
 void EventDispatcher::updateDirtyFlagForSceneGraph()
 {
-    /*
-    if (!_dirtyNodes.empty())
-    {
-        for (auto& node : _dirtyNodes)
-        {
-            auto iter = _nodeListenersMap.find(node);
-            if (iter != _nodeListenersMap.end())
-            {
-                for (auto& l : *iter->second)
-                {
-                    setDirty(l->getListenerID(), DirtyFlag::SCENE_GRAPH_PRIORITY);
-                }
-            }
-        }
-        
-        _dirtyNodes.clear();
-    }
-    */
 }
 
 void EventDispatcher::sortEventListeners(const EventListener::ListenerID& listenerID)
 {
-    /*
-    return;
-    DirtyFlag dirtyFlag = DirtyFlag::NONE;
-    
-    auto dirtyIter = _priorityDirtyFlagMap.find(listenerID);
-    if (dirtyIter != _priorityDirtyFlagMap.end())
-    {
-        dirtyFlag = dirtyIter->second;
-    }
-    
-    if (dirtyFlag != DirtyFlag::NONE)
-    {
-        // Clear the dirty flag first, if `rootNode` is nullptr, then set its dirty flag of scene graph priority
-        dirtyIter->second = DirtyFlag::NONE;
-        
-        if ((int)dirtyFlag & (int)DirtyFlag::SCENE_GRAPH_PRIORITY)
-        {
-            auto rootNode = Director::getInstance()->getRunningScene();
-            if (rootNode)
-            {
-                sortEventListenersOfSceneGraphPriority(listenerID, rootNode);
-            }
-            else
-            {
-                dirtyIter->second = DirtyFlag::SCENE_GRAPH_PRIORITY;
-            }
-        }
-    }
-    */
 }
 
 void EventDispatcher::sortEventListenersOfSceneGraphPriority(const EventListener::ListenerID& listenerID, Node* rootNode)
 {
-    /*
-    auto listeners = getListeners(listenerID);
-    
-    if (listeners == nullptr)
-        return;
-    auto sceneGraphListeners = listeners->getSceneGraphPriorityListeners();
-    
-    if (sceneGraphListeners == nullptr)
-        return;
-
-    // Reset priority index
-    _nodePriorityIndex = 0;
-    _nodePriorityMap.clear();
-
-    visitTarget(rootNode, true);
-    
-    // After sort: priority < 0, > 0
-    std::stable_sort(sceneGraphListeners->begin(), sceneGraphListeners->end(), [this](const EventListener* l1, const EventListener* l2) {
-        return _nodePriorityMap[l1->getAssociatedNode()] > _nodePriorityMap[l2->getAssociatedNode()];
-    });
-    
-#if DUMP_LISTENER_ITEM_PRIORITY_INFO
-    log("-----------------------------------");
-    for (auto& l : *sceneGraphListeners)
-    {
-        log("listener priority: node ([%s]%p), priority (%d)", typeid(*l->_node).name(), l->_node, _nodePriorityMap[l->_node]);
-    }
-#endif
-*/
 }
 
 EventDispatcher::EventListenerVector* EventDispatcher::getListeners(const EventListener::ListenerID& listenerID) const
