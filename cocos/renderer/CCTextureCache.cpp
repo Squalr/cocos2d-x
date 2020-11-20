@@ -219,7 +219,7 @@ void TextureCache::addImageAsync(const std::string &path, const std::function<vo
 
     if (0 == _asyncRefCount)
     {
-        Director::getInstance()->getScheduler()->schedule(CC_CALLBACK_1(TextureCache::addImageAsyncCallBack, this), this, 0, false, "ADD_IMG");
+        Director::getInstance()->getScheduler()->schedule(CC_CALLBACK_1(TextureCache::addImageAsyncCallBack, this), this, "ADD_IMG");
     }
 
     ++_asyncRefCount;

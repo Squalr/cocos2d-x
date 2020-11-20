@@ -151,7 +151,8 @@ bool Director::init(void)
     _scheduler = new (std::nothrow) Scheduler();
     // action manager
     _actionManager = new (std::nothrow) ActionManager();
-    _scheduler->scheduleUpdate(_actionManager, false);
+
+    _scheduler->schedule(std::bind(&ActionManager::update,_actionManager, std::placeholders::_1), _actionManager, "ACTION_MGR_UPDATE");
 
     _eventDispatcher = new (std::nothrow) EventDispatcher();
     
@@ -1055,7 +1056,7 @@ void Director::restartDirector()
     initTextureCache();
     
     // Reschedule for action manager
-    getScheduler()->scheduleUpdate(getActionManager(), false);
+    _scheduler->schedule(std::bind(&ActionManager::update, getActionManager(), std::placeholders::_1), getActionManager(), "ACTION_MGR_UPDATE");
     
     // release the objects
     PoolManager::getInstance()->getCurrentPool()->clear();

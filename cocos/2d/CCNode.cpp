@@ -1286,24 +1286,9 @@ void Node::unscheduleUpdate()
     _scheduler->unscheduleUpdate(this);
 }
 
-void Node::schedule(const std::function<void(float)> &callback, const std::string &key)
+void Node::schedule(const std::function<void(float)>& callback, const std::string& key, float interval, unsigned int repeat)
 {
-    _scheduler->schedule(callback, this, 0, !_running, key);
-}
-
-void Node::schedule(const std::function<void(float)> &callback, float interval, const std::string &key)
-{
-    _scheduler->schedule(callback, this, interval, !_running, key);
-}
-
-void Node::schedule(const std::function<void(float)>& callback, float interval, unsigned int repeat, float delay, const std::string &key)
-{
-    _scheduler->schedule(callback, this, interval, repeat, delay, !_running, key);
-}
-
-void Node::scheduleOnce(const std::function<void(float)> &callback, float delay, const std::string &key)
-{
-    _scheduler->schedule(callback, this, 0, 0, delay, !_running, key);
+    _scheduler->schedule(callback, this, key, interval, repeat, !_running);
 }
 
 void Node::unschedule(const std::string &key)

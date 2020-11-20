@@ -1114,36 +1114,7 @@ public:
      * @see scheduleUpdate();
      */
     void unscheduleUpdate(void);
-
-    /**
-     * Schedules a lambda function that runs only once, with a delay of 0 or larger
-     *
-     * @param callback      The lambda function to be scheduled.
-     * @param delay         The amount of time that the first tick will wait before execution.
-     * @param key           The key of the lambda function. To be used if you want to unschedule it.
-     * @lua NA
-     */
-    void scheduleOnce(const std::function<void(float)>& callback, float delay, const std::string &key);
-
-    /**
-     * Schedules a lambda function. The scheduled lambda function will be called every frame.
-     *
-     * @param callback      The lambda function to be scheduled.
-     * @param key           The key of the lambda function. To be used if you want to unschedule it.
-     * @lua NA
-     */
-    void schedule(const std::function<void(float)>& callback, const std::string &key);
-
-    /**
-     * Schedules a lambda function. The scheduled lambda function will be called every "interval" seconds
-     *
-     * @param callback      The lambda function to be scheduled
-     * @param interval      Callback interval time in seconds. 0 means every frame,
-     * @param key           The key of the lambda function. To be used if you want to unschedule it
-     * @lua NA
-     */
-    void schedule(const std::function<void(float)>& callback, float interval, const std::string &key);
-
+    
     /**
      * Schedules a lambda function.
      *
@@ -1154,7 +1125,7 @@ public:
      * @param key       The key of the lambda function. To be used if you want to unschedule it.
      * @lua NA
      */
-    void schedule(const std::function<void(float)>& callback, float interval, unsigned int repeat, float delay, const std::string &key);
+    void schedule(const std::function<void(float)>& callback, const std::string& key, float interval = 0.0f, unsigned int repeat = CC_REPEAT_FOREVER);
 
     /**
      * Unschedules a lambda function.

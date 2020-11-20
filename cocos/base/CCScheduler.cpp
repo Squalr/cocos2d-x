@@ -35,57 +35,23 @@ THE SOFTWARE.
 
 NS_CC_BEGIN
 
-// data structures
-
-typedef struct _listEntry
-{
-    std::function<void(float)>  callback;
-    void                        *target;
-    bool                        paused;
-    bool                        markedForDeletion; // selector will no longer be called and entry will be removed at end of the next tick
-} tListEntry;
-
-typedef struct _hashUpdateEntry
-{
-    tListEntry                  **list;        // Which list does it belong to ?
-    tListEntry                  *entry;        // entry in the list
-    void                        *target;
-    std::function<void(float)>  callback;
-    UT_hash_handle              hh;
-} tHashUpdateEntry;
-
-// Hash Element used for "selectors with interval"
-typedef struct _hashSelectorEntry
-{
-    ccArray             *timers;
-    void                *target;
-    int                 timerIndex;
-    Timer               *currentTimer;
-    bool                paused;
-    UT_hash_handle      hh;
-} tHashTimerEntry;
-
 // implementation Timer
 
 Timer::Timer()
 : _scheduler(nullptr)
 , _elapsed(-1)
 , _runForever(false)
-, _useDelay(false)
 , _timesExecuted(0)
 , _repeat(0)
-, _delay(0.0f)
 , _interval(0.0f)
 , _aborted(false)
 {
 }
 
-void Timer::setupTimerWithInterval(float seconds, unsigned int repeat, float delay)
+void Timer::setupTimerWithInterval(float seconds, unsigned int repeat)
 {
     _elapsed = -1;
     _interval = seconds;
-    _delay = delay;
-    _useDelay = (_delay > 0.0f) ? true : false;
     _repeat = repeat;
     _runForever = (_repeat == CC_REPEAT_FOREVER) ? true : false;
     _timesExecuted = 0;
@@ -103,27 +69,9 @@ void Timer::update(float dt)
     // accumulate elapsed time
     _elapsed += dt;
     
-    // deal with delay
-    if (_useDelay)
-    {
-        if (_elapsed < _delay)
-        {
-            return;
-        }
-        _timesExecuted += 1; // important to increment before call trigger
-        trigger(_delay);
-        _elapsed = _elapsed - _delay;
-        _useDelay = false;
-        // after delay, the rest time should compare with interval
-        if (isExhausted())
-        {    //unschedule timer
-            cancel();
-            return;
-        }
-    }
-    
     // if _interval == 0, should trigger once every frame
     float interval = (_interval > 0) ? _interval : _elapsed;
+
     while ((_elapsed >= interval) && !_aborted)
     {
         _timesExecuted += 1; // important to increment before call trigger
@@ -156,13 +104,13 @@ TimerTargetCallback::TimerTargetCallback()
 {
 }
 
-bool TimerTargetCallback::initWithCallback(Scheduler* scheduler, const std::function<void(float)>& callback, void *target, const std::string& key, float seconds, unsigned int repeat, float delay)
+bool TimerTargetCallback::initWithCallback(Scheduler* scheduler, const std::function<void(float)>& callback, void *target, const std::string& key, float seconds, unsigned int repeat)
 {
     _scheduler = scheduler;
     _target = target;
     _callback = callback;
     _key = key;
-    setupTimerWithInterval(seconds, repeat, delay);
+    setupTimerWithInterval(seconds, repeat);
     return true;
 }
 
@@ -181,16 +129,13 @@ void TimerTargetCallback::cancel()
 
 // implementation of Scheduler
 
-Scheduler::Scheduler(void)
-: _timeScale(1.0f)
-, _updatesList(nullptr)
-, _hashForTimers(nullptr)
+Scheduler::Scheduler()
+: _hashForTimers(nullptr)
 , _currentTarget(nullptr)
 , _currentTargetSalvaged(false)
 , _updateHashLocked(false)
 {
-    // I don't expect to have more than 30 functions to all per frame
-    _functionsToPerform.reserve(30);
+    this->_functionsToPerform.reserve(32); // Not expecting more than 32 functions to all per frame
 }
 
 Scheduler::~Scheduler(void)
@@ -205,22 +150,27 @@ void Scheduler::removeHashElement(_hashSelectorEntry *element)
     free(element);
 }
 
-void Scheduler::schedule(const std::function<void(float)>& callback, void *target, float interval, bool paused, const std::string& key)
+void Scheduler::scheduleUpdate(Node* target, bool paused)
 {
-    this->schedule(callback, target, interval, CC_REPEAT_FOREVER, 0.0f, paused, key);
+    if (this->taskTable.find(target) != this->taskTable.end())
+    {
+        return;
+    }
+
+    this->taskTable[target] = ScheduledTask(CC_CALLBACK_1(Node::update, target), target, paused);
 }
 
-void Scheduler::schedule(const std::function<void(float)>& callback, void *target, float interval, unsigned int repeat, float delay, bool paused, const std::string& key)
+void Scheduler::schedule(const std::function<void(float)>& callback, void *target, const std::string& key, float interval, unsigned int repeat, bool paused)
 {
     CCASSERT(target, "Argument target must be non-nullptr");
     CCASSERT(!key.empty(), "key should not be empty!");
 
-    tHashTimerEntry *element = nullptr;
+    _hashSelectorEntry *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
 
     if (! element)
     {
-        element = (tHashTimerEntry *)calloc(sizeof(*element), 1);
+        element = (_hashSelectorEntry *)calloc(sizeof(*element), 1);
         element->target = target;
 
         HASH_ADD_PTR(_hashForTimers, target, element);
@@ -245,8 +195,8 @@ void Scheduler::schedule(const std::function<void(float)>& callback, void *targe
 
             if (timer && !timer->isExhausted() && key == timer->getKey())
             {
-                CCLOG("CCScheduler#schedule. Reiniting timer with interval %.4f, repeat %u, delay %.4f", interval, repeat, delay);
-                timer->setupTimerWithInterval(interval, repeat, delay);
+                CCLOG("CCScheduler#schedule. Reiniting timer with interval %.4f, repeat %u", interval, repeat);
+                timer->setupTimerWithInterval(interval, repeat);
                 return;
             }
         }
@@ -254,7 +204,7 @@ void Scheduler::schedule(const std::function<void(float)>& callback, void *targe
     }
 
     TimerTargetCallback *timer = new (std::nothrow) TimerTargetCallback();
-    timer->initWithCallback(this, callback, target, key, interval, repeat, delay);
+    timer->initWithCallback(this, callback, target, key, interval, repeat);
     ccArrayAppendObject(element->timers, timer);
     timer->release();
 }
@@ -270,7 +220,7 @@ void Scheduler::unschedule(const std::string &key, void *target)
     //CCASSERT(target);
     //CCASSERT(selector);
 
-    tHashTimerEntry *element = nullptr;
+    _hashSelectorEntry *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
 
     if (element)
@@ -313,29 +263,12 @@ void Scheduler::unschedule(const std::string &key, void *target)
     }
 }
 
-void Scheduler::schedulePerFrame(const std::function<void(float)>& callback, void *target, bool paused)
-{
-    if (this->taskTable.find(target) != this->taskTable.end())
-    {
-        return;
-    }
-
-    tListEntry *listElement = new (std::nothrow) tListEntry();
-
-    listElement->callback = callback;
-    listElement->target = target;
-    listElement->paused = paused;
-    listElement->markedForDeletion = false;
-
-    this->taskTable[target] = listElement;
-}
-
 bool Scheduler::isScheduled(const std::string& key, const void *target) const
 {
     CCASSERT(!key.empty(), "Argument key must not be empty");
     CCASSERT(target, "Argument target must be non-nullptr");
     
-    tHashTimerEntry *element = nullptr;
+    _hashSelectorEntry *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
     
     if (!element)
@@ -369,12 +302,10 @@ void Scheduler::unscheduleUpdate(void* target)
 
         if (_updateHashLocked)
         {
-            element->markedForDeletion = true;
             scheduledDeletionTable.push_back(target);
         }
         else
         {
-            delete(this->taskTable[target]);
             this->taskTable.erase(target);
         }
     }
@@ -393,7 +324,7 @@ void Scheduler::unscheduleAllForTarget(void *target)
     }
 
     // Custom Selectors
-    tHashTimerEntry *element = nullptr;
+    _hashSelectorEntry *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
 
     if (element)
@@ -425,7 +356,7 @@ void Scheduler::resumeTarget(void *target)
     CCASSERT(target != nullptr, "target can't be nullptr!");
 
     // custom selectors
-    tHashTimerEntry *element = nullptr;
+    _hashSelectorEntry *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
     if (element)
     {
@@ -435,7 +366,7 @@ void Scheduler::resumeTarget(void *target)
     // update selector
     if (this->taskTable.find(target) != this->taskTable.end())
     {
-        this->taskTable[target]->paused = false;
+        this->taskTable[target].paused = false;
     }
 }
 
@@ -444,7 +375,7 @@ void Scheduler::pauseTarget(void *target)
     CCASSERT(target != nullptr, "target can't be nullptr!");
 
     // custom selectors
-    tHashTimerEntry *element = nullptr;
+    _hashSelectorEntry *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
     if (element)
     {
@@ -454,7 +385,7 @@ void Scheduler::pauseTarget(void *target)
     // update selector
     if (this->taskTable.find(target) != this->taskTable.end())
     {
-        this->taskTable[target]->paused = true;
+        this->taskTable[target].paused = true;
     }
 }
 
@@ -463,7 +394,7 @@ bool Scheduler::isTargetPaused(void *target)
     CCASSERT( target != nullptr, "target must be non nil" );
 
     // Custom selectors
-    tHashTimerEntry *element = nullptr;
+    _hashSelectorEntry *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
     if( element )
     {
@@ -473,7 +404,7 @@ bool Scheduler::isTargetPaused(void *target)
     // We should check update selectors if target does not have custom selectors
     if (this->taskTable.find(target) != this->taskTable.end())
     {
-        return this->taskTable[target]->paused;
+        return this->taskTable[target].paused;
     }
     
     return false;  // should never get here
@@ -496,25 +427,16 @@ void Scheduler::update(float dt)
 {
     _updateHashLocked = true;
 
-    if (_timeScale != 1.0f)
-    {
-        dt *= _timeScale;
-    }
-
-    //
-    // Selector callbacks
-    //
-
     for (const auto&[key, task] : this->taskTable)
     {
-        if (!task->paused && !task->markedForDeletion)
+        if (!task.paused)
         {
-            task->callback(dt);
+            task.callback(dt);
         }
     }
 
     // Iterate over all the custom selectors
-    for (tHashTimerEntry *elt = _hashForTimers; elt != nullptr; )
+    for (_hashSelectorEntry *elt = _hashForTimers; elt != nullptr; )
     {
         _currentTarget = elt;
         _currentTargetSalvaged = false;
@@ -543,7 +465,7 @@ void Scheduler::update(float dt)
 
         // elt, at this moment, is still valid
         // so it is safe to ask this here (issue #490)
-        elt = (tHashTimerEntry *)elt->hh.next;
+        elt = (_hashSelectorEntry *)elt->hh.next;
 
         // only delete currentTarget if no actions were scheduled during the cycle (issue #481)
         if (_currentTargetSalvaged && _currentTarget->timers->num == 0)
@@ -555,7 +477,6 @@ void Scheduler::update(float dt)
     // delete all updates that are removed in update
     for (auto& target : scheduledDeletionTable)
     {
-        delete(this->taskTable[target]);
         this->taskTable.erase(target);
     }
 

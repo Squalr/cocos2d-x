@@ -29,7 +29,6 @@ THE SOFTWARE.
 #ifndef __CCSCHEDULER_H__
 #define __CCSCHEDULER_H__
 
-#include <list>
 #include <functional>
 #include <map>
 #include <mutex>
@@ -42,6 +41,9 @@ THE SOFTWARE.
 
 NS_CC_BEGIN
 
+struct _ccArray;
+
+class Node;
 class Scheduler;
 
 /**
@@ -52,7 +54,7 @@ class CC_DLL Timer : public Ref
 protected:
     Timer();
 public:
-    void setupTimerWithInterval(float seconds, unsigned int repeat, float delay);
+    void setupTimerWithInterval(float seconds, unsigned int repeat);
     void setAborted() { _aborted = true; }
     bool isAborted() const { return _aborted; }
     bool isExhausted() const;
@@ -67,10 +69,8 @@ protected:
     Scheduler* _scheduler; // weak ref
     float _elapsed;
     bool _runForever;
-    bool _useDelay;
     unsigned int _timesExecuted;
     unsigned int _repeat; //0 = once, 1 is 2 x executed
-    float _delay;
     float _interval;
     bool _aborted;
 };
@@ -81,8 +81,8 @@ class CC_DLL TimerTargetCallback : public Timer
 public:
     TimerTargetCallback();
     
-    // Initializes a timer with a target, a lambda and an interval in seconds, repeat in number of times to repeat, delay in seconds.
-    bool initWithCallback(Scheduler* scheduler, const std::function<void(float)>& callback, void *target, const std::string& key, float seconds, unsigned int repeat, float delay);
+    // Initializes a timer with a target, a lambda and an interval in seconds, repeat in number of times to repeat.
+    bool initWithCallback(Scheduler* scheduler, const std::function<void(float)>& callback, void *target, const std::string& key, float seconds, unsigned int repeat);
     
     const std::function<void(float)>& getCallback() const { return _callback; }
     const std::string& getKey() const { return _key; }
@@ -105,9 +105,35 @@ protected:
  * @{
  */
 
-struct _listEntry;
-struct _hashSelectorEntry;
-struct _hashUpdateEntry;
+struct ScheduledTask
+{
+    std::function<void(float)> callback;
+    Node* target;
+    bool paused;
+
+    ScheduledTask() : callback(nullptr), target(nullptr), paused(false) { }
+    ScheduledTask(std::function<void(float)> callback, Node* target, bool paused) : callback(callback), target(target), paused(paused) { }
+};
+
+struct _hashUpdateEntry
+{
+    ScheduledTask                  **list;        // Which list does it belong to ?
+    ScheduledTask                  *entry;        // entry in the list
+    void                        *target;
+    std::function<void(float)>  callback;
+    UT_hash_handle              hh;
+};
+
+// Hash Element used for "selectors with interval"
+struct _hashSelectorEntry
+{
+    _ccArray             *timers;
+    void                *target;
+    int                 timerIndex;
+    Timer               *currentTimer;
+    bool                paused;
+    UT_hash_handle      hh;
+};
 
 /** @brief Scheduler is responsible for triggering the scheduled callbacks.
 You should not use system timer for your game logic. Instead, use this class.
@@ -138,20 +164,6 @@ public:
      */
     virtual ~Scheduler();
 
-    /**
-     * Gets the time scale of schedule callbacks.
-     * @see Scheduler::setTimeScale()
-     */
-    float getTimeScale() { return _timeScale; }
-    /** Modifies the time of all scheduled callbacks.
-    You can use this property to create a 'slow motion' or 'fast forward' effect.
-    Default is 1.0. To create a 'slow motion' effect, use values below 1.0.
-    To create a 'fast forward' effect, use values higher than 1.0.
-    @since v0.8
-    @warning It will affect EVERY scheduled selector / action.
-    */
-    void setTimeScale(float timeScale) { _timeScale = timeScale; }
-
     /** 'update' the scheduler.
      * You should NEVER call this method, unless you know what you are doing.
      * @lua NA
@@ -160,52 +172,25 @@ public:
 
     /////////////////////////////////////
     
-    // schedule
-    
-    /** The scheduled method will be called every 'interval' seconds.
-     If paused is true, then it won't be called until it is resumed.
-     If 'interval' is 0, it will be called every frame, but if so, it's recommended to use 'scheduleUpdate' instead.
-     If the 'callback' is already scheduled, then only the interval parameter will be updated without re-scheduling it again.
-     repeat let the action be repeated repeat + 1 times, use CC_REPEAT_FOREVER to let the action run continuously
-     delay is the amount of time the action will wait before it'll start.
-     @param callback The callback function.
-     @param target The target of the callback function.
-     @param interval The interval to schedule the callback. If the value is 0, then the callback will be scheduled every frame.
-     @param repeat repeat+1 times to schedule the callback.
-     @param delay Schedule call back after `delay` seconds. If the value is not 0, the first schedule will happen after `delay` seconds.
-            But it will only affect first schedule. After first schedule, the delay time is determined by `interval`.
-     @param paused Whether or not to pause the schedule.
-     @param key The key to identify the callback function, because there is not way to identify a std::function<>.
-     @since v3.0
-     */
-    void schedule(const std::function<void(float)>& callback, void *target, float interval, unsigned int repeat, float delay, bool paused, const std::string& key);
-
     /** The scheduled method will be called every 'interval' seconds for ever.
      @param callback The callback function.
      @param target The target of the callback function.
-     @param interval The interval to schedule the callback. If the value is 0, then the callback will be scheduled every frame.
-     @param paused Whether or not to pause the schedule.
      @param key The key to identify the callback function, because there is not way to identify a std::function<>.
+     @param interval The interval to schedule the callback. If the value is 0, then the callback will be scheduled every frame.
+     @param repeat Number of times to repeat the task.
+     @param paused Whether or not to pause the schedule.
      @since v3.0
      */
-    void schedule(const std::function<void(float)>& callback, void *target, float interval, bool paused, const std::string& key);
+    void schedule(const std::function<void(float)>& callback, void *target, const std::string& key, float interval = 0.0f, unsigned int repeat = CC_REPEAT_FOREVER, bool paused = false);
     
     /** Schedules the 'update' selector for a given target.
      The 'update' selector will be called every frame.
      @since v3.0
      @lua NA
      */
-    template <class T>
-    void scheduleUpdate(T *target, bool paused)
-    {
-        this->schedulePerFrame([target](float dt){
-            target->update(dt);
-        }, target, paused);
-    }
+    void scheduleUpdate(Node* target, bool paused);
 
     /////////////////////////////////////
-    
-    // unschedule
 
     /** Unschedules a callback for a key and a given target.
      If you want to unschedule the 'callbackPerFrame', use unscheduleUpdate.
@@ -291,25 +276,10 @@ public:
     void removeAllFunctionsToBePerformedInCocosThread();
     
 protected:
-    
-    /** Schedules the 'callback' function for a given target.
-     The 'callback' selector will be called every frame.
-     @note This method is only for internal use.
-     @since v3.0
-     @js _schedulePerFrame
-     */
-    void schedulePerFrame(const std::function<void(float)>& callback, void *target, bool paused);
-    
     void removeHashElement(struct _hashSelectorEntry *element);
 
-    // update specific
-
-    float _timeScale;
-
-    struct _listEntry *_updatesList;
-
-    std::list<struct _listEntry*> taskList;
-    std::map<void*, struct _listEntry*> taskTable;  // hash used to fetch quickly the list entries for pause, delete, etc
+    // Tasks that must be explicitly unscheduled
+    std::map<void*, ScheduledTask> taskTable;  // hash used to fetch quickly the list entries for pause, delete, etc
     std::vector<void*> scheduledDeletionTable;      // the vector holds list entries that needs to be deleted after update
 
     // Used for "selectors with interval"
