@@ -55,7 +55,6 @@ public:
         CUSTOM
     };
     
-CC_CONSTRUCTOR_ACCESS:
     /** Constructor */
     Event(Type type);
 public:
@@ -79,21 +78,11 @@ public:
      */
     bool isStopped() const { return _isStopped; }
     
-    /** Gets current target of the event.
-     * @return The target with which the event associates.
-     * @note It's only available when the event listener is associated with node.
-     *        It returns 0 when the listener is associated with fixed priority.
-     */
-    Node* getCurrentTarget() { return _currentTarget; }
-    
 protected:
-    /** Sets current target */
-    void setCurrentTarget(Node* target) { _currentTarget = target; }
     
 	Type _type;     ///< Event type
     
     bool _isStopped;       ///< whether the event has been stopped.
-    Node* _currentTarget;  ///< Current target
     
     friend class EventDispatcher;
 };

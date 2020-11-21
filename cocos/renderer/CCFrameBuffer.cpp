@@ -110,25 +110,11 @@ bool RenderTarget::init(unsigned int width, unsigned int height, Texture2D::Pixe
         free(data);
         return false;
     }
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    _rebuildTextureListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED, [this](EventCustom* event){
-        auto dataLen = _width * _height * 4;
-        auto data = malloc(dataLen);
-        _texture->initWithData(data, dataLen,_texture->getPixelFormat(), _width, _height, Size(_width, _height));
-        free(data);
-        CCLOG("RenderTarget Texture recreated is %d", _texture->getName());
-    });
-    
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_rebuildTextureListener, -1);
-#endif
     return true;
 }
 
 RenderTarget::RenderTarget()
 : _texture(nullptr)
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-, _rebuildTextureListener(nullptr)
-#endif
 {
     _type = Type::Texture2D;
 }
@@ -136,17 +122,11 @@ RenderTarget::RenderTarget()
 RenderTarget::~RenderTarget()
 {
     CC_SAFE_RELEASE_NULL(_texture);
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    Director::getInstance()->getEventDispatcher()->removeEventListener(_rebuildTextureListener);
-#endif
 }
 
 RenderTargetRenderBuffer::RenderTargetRenderBuffer()
 : _format(GL_RGBA4)
 , _colorBuffer(0)
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-, _reBuildRenderBufferListener(nullptr)
-#endif
 {
     _type = Type::RenderBuffer;
 }
@@ -158,9 +138,6 @@ RenderTargetRenderBuffer::~RenderTargetRenderBuffer()
         glDeleteRenderbuffers(1, &_colorBuffer);
         _colorBuffer = 0;
     }
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    Director::getInstance()->getEventDispatcher()->removeEventListener(_reBuildRenderBufferListener);
-#endif
 }
 
 bool RenderTargetRenderBuffer::init(unsigned int width, unsigned int height)
@@ -175,24 +152,6 @@ bool RenderTargetRenderBuffer::init(unsigned int width, unsigned int height)
     //todo: this could have a param
     glRenderbufferStorage(GL_RENDERBUFFER, _format, width, height);
     glBindRenderbuffer(GL_RENDERBUFFER, oldRenderBuffer);
-    
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    _reBuildRenderBufferListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED, [this](EventCustom* event){
-        /** listen the event that renderer was recreated on Android/WP8 */
-        GLint oldRenderBuffer(0);
-        glGetIntegerv(GL_RENDERBUFFER_BINDING, &oldRenderBuffer);
-        
-        glGenRenderbuffers(1, &_colorBuffer);
-        //generate depthStencil
-        glBindRenderbuffer(GL_RENDERBUFFER, _colorBuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER, _format, _width, _height);
-        glBindRenderbuffer(GL_RENDERBUFFER, oldRenderBuffer);
-        CCLOG("RenderTargetRenderBuffer recreated, _colorBuffer is %d", _colorBuffer);
-    });
-    
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_reBuildRenderBufferListener, -1);
-#endif
-    
     return true;
 }
 
@@ -215,9 +174,6 @@ RenderTargetRenderBuffer* RenderTargetRenderBuffer::create(unsigned int width, u
 
 RenderTargetDepthStencil::RenderTargetDepthStencil()
 : _depthStencilBuffer(0)
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-, _reBuildDepthStencilListener(nullptr)
-#endif
 {
     _type = Type::RenderBuffer;
 }
@@ -229,9 +185,6 @@ RenderTargetDepthStencil::~RenderTargetDepthStencil()
         glDeleteRenderbuffers(1, &_depthStencilBuffer);
         _depthStencilBuffer = 0;
     }
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    Director::getInstance()->getEventDispatcher()->removeEventListener(_reBuildDepthStencilListener);
-#endif
 }
 
 bool RenderTargetDepthStencil::init(unsigned int width, unsigned int height)
@@ -245,23 +198,6 @@ bool RenderTargetDepthStencil::init(unsigned int width, unsigned int height)
     glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
     glBindRenderbuffer(GL_RENDERBUFFER, oldRenderBuffer);
-    
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    _reBuildDepthStencilListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED, [this](EventCustom* event){
-        /** listen the event that renderer was recreated on Android/WP8 */
-        GLint oldRenderBuffer(0);
-        glGetIntegerv(GL_RENDERBUFFER_BINDING, &oldRenderBuffer);
-        
-        glGenRenderbuffers(1, &_depthStencilBuffer);
-        //generate depthStencil
-        glBindRenderbuffer(GL_RENDERBUFFER, _depthStencilBuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
-        glBindRenderbuffer(GL_RENDERBUFFER, oldRenderBuffer);
-        CCLOG("RenderTargetDepthStencil recreated, _depthStencilBuffer is %d", _depthStencilBuffer);
-    });
-    
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_reBuildDepthStencilListener, -1);
-#endif
     
     return true;
 }
@@ -362,24 +298,8 @@ bool FrameBuffer::init(uint8_t fid, unsigned int width, unsigned int height)
     glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, oldfbo);
     
-//    _rt = RenderTarget::create(width, height);
-//    if(nullptr == _rt) return false;
-    
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    _dirtyFBOListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED, [this](EventCustom* event){
-        if(isDefaultFBO()) return;
-        GLint oldfbo;
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldfbo);
-
-        glGenFramebuffers(1, &_fbo);
-        glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-        glBindFramebuffer(GL_FRAMEBUFFER, oldfbo);
-        CCLOG("Recreate FrameBufferObject _fbo is %d", _fbo);
-        _fboBindingDirty = true;
-    });
-    
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_dirtyFBOListener, -1);
-#endif
+    // _rt = RenderTarget::create(width, height);
+    // if(nullptr == _rt) return false;
     return true;
 }
 
@@ -393,9 +313,6 @@ FrameBuffer::FrameBuffer()
 , _rt(nullptr)
 , _rtDepthStencil(nullptr)
 , _isDefault(false)
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-, _dirtyFBOListener(nullptr)
-#endif
 {
     _frameBuffers.insert(this);
 }
@@ -408,9 +325,6 @@ FrameBuffer::~FrameBuffer()
         glDeleteFramebuffers(1, &_fbo);
         _fbo = 0;
         _frameBuffers.erase(this);
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-        Director::getInstance()->getEventDispatcher()->removeEventListener(_dirtyFBOListener);
-#endif
         if (isDefaultFBO())
             _defaultFBO = nullptr;
     }

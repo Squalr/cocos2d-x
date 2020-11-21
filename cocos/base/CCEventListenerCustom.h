@@ -45,7 +45,7 @@ class EventCustom;
  *
  *        auto callback = [](EventCustom* event){ do_some_thing(); };
  *        auto listener = EventListenerCustom::create(callback);
- *        dispatcher->addEventListenerWithSceneGraphPriority(listener, one_node);
+ *        dispatcher->addEventListener(listener, one_node);
  *
  *     Dispatches a custom event:
  *
@@ -72,12 +72,11 @@ public:
     virtual bool checkAvailable() override;
     virtual EventListenerCustom* clone() override;
     
-CC_CONSTRUCTOR_ACCESS:
     /** Constructor */
     EventListenerCustom();
     
     /** Initializes event with type and callback function */
-    bool init(const ListenerID& listenerId, const std::function<void(EventCustom*)>& callback);
+    bool init(const std::string& listenerId, const std::function<void(EventCustom*)>& callback);
     
 protected:
     std::function<void(EventCustom*)> _onCustomEvent;

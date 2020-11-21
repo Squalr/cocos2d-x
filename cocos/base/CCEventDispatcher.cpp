@@ -26,8 +26,6 @@
 #include <algorithm>
 
 #include "base/CCEventCustom.h"
-#include "base/CCEventListenerMouse.h"
-#include "base/CCEventListenerKeyboard.h"
 #include "base/CCEventListenerCustom.h"
 #include "base/CCEventListenerFocus.h"
 #include "base/CCEventListenerController.h"
@@ -63,25 +61,15 @@ private:
 
 NS_CC_BEGIN
 
-static EventListener::ListenerID __getListenerID(Event* event)
+static std::string __getListenerID(Event* event)
 {
-    EventListener::ListenerID ret;
+    std::string ret;
     switch (event->getType())
     {
         case Event::Type::CUSTOM:
         {
             auto customEvent = static_cast<EventCustom*>(event);
             ret = customEvent->getEventName();
-            break;
-        }
-        case Event::Type::KEYBOARD:
-        {
-            ret = EventListenerKeyboard::LISTENER_ID;
-            break;
-        }
-        case Event::Type::MOUSE:
-        {
-            ret = EventListenerMouse::LISTENER_ID;
             break;
         }
         case Event::Type::FOCUS:
@@ -131,12 +119,6 @@ bool EventDispatcher::EventListenerVector::empty() const
 
 void EventDispatcher::EventListenerVector::push_back(EventListener* listener)
 {
-#if CC_NODE_DEBUG_VERIFY_EVENT_LISTENERS
-    CCASSERT(_sceneGraphListeners == nullptr ||
-             std::count(_sceneGraphListeners->begin(), _sceneGraphListeners->end(), listener) == 0,
-             "Listener should not be added twice!");
-#endif
-
     if (_sceneGraphListeners == nullptr)
     {
         _sceneGraphListeners = new (std::nothrow) std::set<EventListener*>();
@@ -164,9 +146,9 @@ void EventDispatcher::EventListenerVector::clear()
 
 EventDispatcher::EventDispatcher()
 : _inDispatch(0)
-, _isEnabled(false)
 , _nodePriorityIndex(0)
 {
+    this->listenerMap = std::unordered_map<std::string, std::set<EventListenerCustom*>>();
     _toAddedListeners.reserve(50);
     _toRemovedListeners.reserve(50);
     
@@ -424,23 +406,60 @@ void EventDispatcher::dissociateNodeAndEventListener(Node* node, EventListener* 
     }
 }
 
-void EventDispatcher::addEventListener(EventListener* listener)
+void EventDispatcher::addEventListener(EventListenerCustom* listener)
 {
-    if (_inDispatch == 0)
+    CCASSERT(listener, "Invalid parameters.");
+    CCASSERT(!listener->isRegistered(), "The listener has been registered.");
+    
+    if (!listener->checkAvailable())
     {
-        forceAddEventListener(listener);
+        return;
     }
-    else
+    
+    listener->setAssociatedNode(nullptr);
+    listener->setRegistered(true);
+
+    this->listenerMap[listener->_listenerID].insert(listener);
+}
+
+void EventDispatcher::dispatchEvent(const std::string &eventName, void* optionalUserData)
+{
+    EventCustom event = EventCustom(eventName, optionalUserData);
+
+    dispatchEvent(&event);
+}
+
+void EventDispatcher::dispatchEvent(EventCustom* event)
+{
+    const std::string& eventName = event->getEventName();
+
+    if (this->listenerMap.find(eventName) == this->listenerMap.end())
     {
-        _toAddedListeners.push_back(listener);
+        return;
     }
-    listener->retain();
+
+    for (const auto& listener : this->listenerMap[eventName])
+    {
+        if (listener->_onEvent != nullptr
+            && listener->isEnabled()
+            && ((listener->isGlobal() || (listener->isIgnorePause() || !listener->isPaused()))
+            && listener->isRegistered()))
+        {
+            listener->_onEvent(event);
+
+            if (event->isStopped())
+            {
+                break;
+            }
+        }
+    }
 }
 
 void EventDispatcher::forceAddEventListener(EventListener* listener)
 {
     EventListenerVector* listeners = nullptr;
-    EventListener::ListenerID listenerID = listener->getListenerID();
+    std::string listenerID = listener->getListenerID();
+
     auto itr = _listenerMap.find(listenerID);
     if (itr == _listenerMap.end())
     {
@@ -468,87 +487,45 @@ void EventDispatcher::forceAddEventListener(EventListener* listener)
     }
 }
 
-void EventDispatcher::addEventListenerWithSceneGraphPriority(EventListener* listener, Node* node)
+void EventDispatcher::addEventListener(EventListener* listener, Node* node)
 {
     CCASSERT(listener && node, "Invalid parameters.");
     CCASSERT(!listener->isRegistered(), "The listener has been registered.");
     
     if (!listener->checkAvailable())
+    {
         return;
+    }
     
-    listener->setAssociatedNode(node);
+    listener->setAssociatedNode(nullptr);
     listener->setRegistered(true);
     
-    addEventListener(listener);
+    if (_inDispatch == 0)
+    {
+        forceAddEventListener(listener);
+    }
+    else
+    {
+        _toAddedListeners.push_back(listener);
+    }
+    listener->retain();
 }
-
-#if CC_NODE_DEBUG_VERIFY_EVENT_LISTENERS && COCOS2D_DEBUG > 0
-
-void EventDispatcher::debugCheckNodeHasNoEventListenersOnDestruction(Node* node)
-{
-    // Check the listeners map
-    for (const auto & keyValuePair : _listenerMap)
-    {
-        const EventListenerVector * eventListenerVector = keyValuePair.second;
-        
-        if (eventListenerVector)
-        {
-            if (eventListenerVector->getSceneGraphPriorityListeners())
-            {
-                for (EventListener * listener : *eventListenerVector->getSceneGraphPriorityListeners())
-                {
-                    CCASSERT(!listener ||
-                             listener->getAssociatedNode() != node,
-                             "Node should have no event listeners registered for it upon destruction!");
-                }
-            }
-        }
-    }
-    
-    // Check the node listeners map
-    for (const auto & keyValuePair : _nodeListenersMap)
-    {
-        CCASSERT(keyValuePair.first != node, "Node should have no event listeners registered for it upon destruction!");
-        
-        if (keyValuePair.second)
-        {
-            for (EventListener * listener : *keyValuePair.second)
-            {
-                CCASSERT(listener->getAssociatedNode() != node,
-                         "Node should have no event listeners registered for it upon destruction!");
-            }
-        }
-    }
-    
-    // Check the node priority map
-    for (const auto & keyValuePair : _nodePriorityMap)
-    {
-        CCASSERT(keyValuePair.first != node,
-                 "Node should have no event listeners registered for it upon destruction!");
-    }
-    
-    // Check the to be added list
-    for (EventListener * listener : _toAddedListeners)
-    {
-        CCASSERT(listener->getAssociatedNode() != node,
-                 "Node should have no event listeners registered for it upon destruction!");
-    }
-    
-    // Check the dirty nodes set
-    for (Node * dirtyNode : _dirtyNodes)
-    {
-        CCASSERT(dirtyNode != node,
-                 "Node should have no event listeners registered for it upon destruction!");
-    }
-}
-
-#endif  // #if CC_NODE_DEBUG_VERIFY_EVENT_LISTENERS && COCOS2D_DEBUG > 0
 
 void EventDispatcher::removeEventListener(EventListener* listener)
 {
     if (listener == nullptr)
+    {
         return;
+    }
     
+    EventListenerCustom* listenerCustom = static_cast<EventListenerCustom*>(listener);
+    const std::string& listenerId = listener->getListenerID();
+
+    if (this->listenerMap[listenerId].find(listenerCustom) != this->listenerMap[listenerId].end())
+    {
+        this->listenerMap[listenerId].erase(listenerCustom);
+    }
+
     // just return if listener is in _toRemovedListeners to avoid remove listeners more than once
     if (std::find(_toRemovedListeners.begin(), _toRemovedListeners.end(), listener) != _toRemovedListeners.end())
     {
@@ -596,37 +573,30 @@ void EventDispatcher::removeEventListener(EventListener* listener)
 
 bool EventDispatcher::removeListenerInSet(std::set<EventListener*>* listeners, EventListener* listener)
 {
-    bool isFound = false;
-
-    if (listeners == nullptr)
+    if (listeners == nullptr || (listeners->find(listener) == listeners->end()))
     {
-        return isFound;
+        return false;
     }
     
-    if (listeners->find(listener) != listeners->end())
+    CC_SAFE_RETAIN(listener);
+    listener->setRegistered(false);
+    if (listener->getAssociatedNode() != nullptr)
     {
-        CC_SAFE_RETAIN(listener);
-        listener->setRegistered(false);
-        if (listener->getAssociatedNode() != nullptr)
-        {
-            dissociateNodeAndEventListener(listener->getAssociatedNode(), listener);
-            listener->setAssociatedNode(nullptr);  // nullptr out the node pointer so we don't have any dangling pointers to destroyed nodes.
-        }
-        
-        if (_inDispatch == 0)
-        {
-            listeners->erase(listener);
-            releaseListener(listener);
-        }
-        else
-        {
-            _toRemovedListeners.push_back(listener);
-        }
-        
-        isFound = true;
+        dissociateNodeAndEventListener(listener->getAssociatedNode(), listener);
+        listener->setAssociatedNode(nullptr);  // nullptr out the node pointer so we don't have any dangling pointers to destroyed nodes.
+    }
+    
+    if (_inDispatch == 0)
+    {
+        listeners->erase(listener);
+        releaseListener(listener);
+    }
+    else
+    {
+        _toRemovedListeners.push_back(listener);
     }
 
-    return isFound;
+    return true;
 }
 
 void EventDispatcher::removeAllListenersInVector(std::set<EventListener*>* listenerVector)
@@ -738,13 +708,10 @@ void EventDispatcher::dispatchMouseEventToListeners(EventListenerVector* listene
     }
 }
 
+/*
 void EventDispatcher::dispatchEvent(Event* event)
 {
-    if (!_isEnabled)
-        return;
-    
     updateDirtyFlagForSceneGraph();
-    
     
     DispatchGuard guard(_inDispatch);
     
@@ -762,8 +729,8 @@ void EventDispatcher::dispatchEvent(Event* event)
     {
         auto listeners = iter->second;
         
-        auto onEvent = [&event](EventListener* listener) -> bool{
-            event->setCurrentTarget(listener->getAssociatedNode());
+        auto onEvent = [&event](EventListener* listener) -> bool
+        {
             listener->_onEvent(event);
             return event->isStopped();
         };
@@ -773,6 +740,7 @@ void EventDispatcher::dispatchEvent(Event* event)
     
     updateListeners(event);
 }
+*/
 
 void EventDispatcher::dispatchCustomEvent(const std::string &eventName, void *optionalUserData)
 {
@@ -781,23 +749,23 @@ void EventDispatcher::dispatchCustomEvent(const std::string &eventName, void *op
     dispatchEvent(&ev);
 }
 
-bool EventDispatcher::hasEventListener(const EventListener::ListenerID& listenerID) const
-{
-    return getListeners(listenerID) != nullptr;
-}
-
 void EventDispatcher::updateListeners(Event* event)
 {
     CCASSERT(_inDispatch > 0, "If program goes here, there should be event in dispatch.");
 
     if (_inDispatch > 1)
+    {
         return;
+    }
 
-    auto onUpdateListeners = [this](const EventListener::ListenerID& listenerID)
+    auto onUpdateListeners = [this](const std::string& listenerID)
     {
         auto listenersIter = _listenerMap.find(listenerID);
+
         if (listenersIter == _listenerMap.end())
+        {
             return;
+        }
 
         auto listeners = listenersIter->second;
         auto sceneGraphPriorityListeners = listeners->getSceneGraphPriorityListeners();
@@ -807,6 +775,7 @@ void EventDispatcher::updateListeners(Event* event)
             for (auto iter = sceneGraphPriorityListeners->begin(); iter != sceneGraphPriorityListeners->end();)
             {
                 auto l = *iter;
+
                 if (!l->isRegistered())
                 {
                     iter = sceneGraphPriorityListeners->erase(iter);
@@ -852,17 +821,18 @@ void EventDispatcher::updateDirtyFlagForSceneGraph()
 {
 }
 
-void EventDispatcher::sortEventListeners(const EventListener::ListenerID& listenerID)
+void EventDispatcher::sortEventListeners(const std::string& listenerID)
 {
 }
 
-void EventDispatcher::sortEventListenersOfSceneGraphPriority(const EventListener::ListenerID& listenerID, Node* rootNode)
+void EventDispatcher::sortEventListenersOfSceneGraphPriority(const std::string& listenerID, Node* rootNode)
 {
 }
 
-EventDispatcher::EventListenerVector* EventDispatcher::getListeners(const EventListener::ListenerID& listenerID) const
+EventDispatcher::EventListenerVector* EventDispatcher::getListeners(const std::string& listenerID) const
 {
     auto iter = _listenerMap.find(listenerID);
+
     if (iter != _listenerMap.end())
     {
         return iter->second;
@@ -871,9 +841,10 @@ EventDispatcher::EventListenerVector* EventDispatcher::getListeners(const EventL
     return nullptr;
 }
 
-void EventDispatcher::removeEventListenersForListenerID(const EventListener::ListenerID& listenerID)
+void EventDispatcher::removeEventListenersForListenerID(const std::string& listenerID)
 {
     auto listenerItemIter = _listenerMap.find(listenerID);
+
     if (listenerItemIter != _listenerMap.end())
     {
         auto listeners = listenerItemIter->second;
@@ -908,31 +879,10 @@ void EventDispatcher::removeEventListenersForListenerID(const EventListener::Lis
     }
 }
 
-void EventDispatcher::removeEventListenersForType(EventListener::Type listenerType)
-{
-    if (listenerType == EventListener::Type::MOUSE)
-    {
-        removeEventListenersForListenerID(EventListenerMouse::LISTENER_ID);
-    }
-    else if (listenerType == EventListener::Type::KEYBOARD)
-    {
-        removeEventListenersForListenerID(EventListenerKeyboard::LISTENER_ID);
-    }
-    else
-    {
-        CCASSERT(false, "Invalid listener type!");
-    }
-}
-
-void EventDispatcher::removeCustomEventListeners(const std::string& customEventName)
-{
-    removeEventListenersForListenerID(customEventName);
-}
-
 void EventDispatcher::removeAllEventListeners()
 {
     bool cleanMap = true;
-    std::vector<EventListener::ListenerID> types;
+    std::vector<std::string> types;
     types.reserve(_listenerMap.size());
     
     for (const auto& e : _listenerMap)
@@ -958,16 +908,6 @@ void EventDispatcher::removeAllEventListeners()
     }
 }
 
-void EventDispatcher::setEnabled(bool isEnabled)
-{
-    _isEnabled = isEnabled;
-}
-
-bool EventDispatcher::isEnabled() const
-{
-    return _isEnabled;
-}
-
 void EventDispatcher::setDirtyForNode(Node* node)
 {
     /*
@@ -986,7 +926,7 @@ void EventDispatcher::setDirtyForNode(Node* node)
     */
 }
 
-void EventDispatcher::setDirty(const EventListener::ListenerID& listenerID, DirtyFlag flag)
+void EventDispatcher::setDirty(const std::string& listenerID, DirtyFlag flag)
 {    
     auto iter = _priorityDirtyFlagMap.find(listenerID);
     if (iter == _priorityDirtyFlagMap.end())

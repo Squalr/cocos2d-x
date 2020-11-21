@@ -146,10 +146,6 @@ Node::~Node()
     CC_SAFE_RELEASE_NULL(_scheduler);
     
     _eventDispatcher->removeEventListenersForTarget(this);
-    
-#if CC_NODE_DEBUG_VERIFY_EVENT_LISTENERS && COCOS2D_DEBUG > 0
-    _eventDispatcher->debugCheckNodeHasNoEventListenersOnDestruction(this);
-#endif
 
     // CCASSERT(!_running, "Node still marked as running on node destruction! Was base class onExit() called in derived class onExit() implementations?");
     CC_SAFE_RELEASE(_eventDispatcher);
@@ -178,7 +174,9 @@ void Node::cleanup()
 //    _eventDispatcher->removeEventListenersForTarget(this);
     
     for( const auto &child: _children)
+    {
         child->cleanup();
+    }
 }
 
 std::string Node::getDescription() const
@@ -1212,17 +1210,6 @@ void Node::onExit()
     }
 }
 
-void Node::setEventDispatcher(EventDispatcher* dispatcher)
-{
-    if (dispatcher != _eventDispatcher)
-    {
-        _eventDispatcher->removeEventListenersForTarget(this);
-        CC_SAFE_RETAIN(dispatcher);
-        CC_SAFE_RELEASE(_eventDispatcher);
-        _eventDispatcher = dispatcher;
-    }
-}
-
 void Node::setActionManager(ActionManager* actionManager)
 {
     if( actionManager != _actionManager )
@@ -1299,6 +1286,7 @@ void Node::unschedule(const std::string &key)
 void Node::unscheduleAllCallbacks()
 {
     _scheduler->unscheduleAllForTarget(this);
+    _scheduler->unscheduleUpdate(this);
 }
 
 bool Node::isPaused()

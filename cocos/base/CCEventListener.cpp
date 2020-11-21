@@ -35,7 +35,7 @@ EventListener::~EventListener()
 	CCLOGINFO("In the destructor of EventListener. %p", this);
 }
 
-bool EventListener::init(Type t, const ListenerID& listenerID, const std::function<void(Event*)>& callback)
+bool EventListener::init(Type t, const std::string& listenerID, const std::function<void(Event*)>& callback)
 {
     _onEvent = callback;
     _type = t;
@@ -55,7 +55,7 @@ bool EventListener::checkAvailable()
 	return (_onEvent != nullptr);
 }
 
-EventListener::ListenerID EventListener::getListenerId()
+std::string EventListener::getListenerId()
 {
     return this->_listenerID;
 }

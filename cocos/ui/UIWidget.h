@@ -39,7 +39,8 @@ NS_CC_BEGIN
 class Event;
 class Camera;
 
-namespace ui {
+namespace ui
+{
     class LayoutComponent;
 
 /**
@@ -645,8 +646,6 @@ public:
      *@return true represent the widget use Layout Component, false represent the widget couldn't use Layout Component.
      */
     bool isLayoutComponentEnabled()const;
-
-CC_CONSTRUCTOR_ACCESS:
 
     //initializes state of widget.
     virtual bool init() override;

@@ -34,8 +34,7 @@ NS_CC_BEGIN
 const std::string EventListenerFocus::LISTENER_ID = "__cc_focus_event";
 
 
-EventListenerFocus::EventListenerFocus()
-:onFocusChanged(nullptr)
+EventListenerFocus::EventListenerFocus() : onFocusChanged(nullptr)
 {
     
 }

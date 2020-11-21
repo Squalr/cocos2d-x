@@ -265,8 +265,7 @@ public:
     bool isViewProjectionUpdated() const {return _viewProjectionUpdated;}
 
     virtual void visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t parentFlags) override;
-
-CC_CONSTRUCTOR_ACCESS:
+    
     Camera();
     ~Camera();
 

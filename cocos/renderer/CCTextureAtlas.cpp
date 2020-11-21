@@ -56,9 +56,6 @@ TextureAtlas::TextureAtlas()
     ,_dirty(false)
     ,_texture(nullptr)
     ,_quads(nullptr)
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    ,_rendererRecreatedListener(nullptr)
-#endif
 {}
 
 TextureAtlas::~TextureAtlas()
@@ -76,10 +73,6 @@ TextureAtlas::~TextureAtlas()
         GL::bindVAO(0);
     }
     CC_SAFE_RELEASE(_texture);
-    
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    Director::getInstance()->getEventDispatcher()->removeEventListener(_rendererRecreatedListener);
-#endif
 }
 
 ssize_t TextureAtlas::getTotalQuads() const
@@ -190,12 +183,6 @@ bool TextureAtlas::initWithTexture(Texture2D *texture, ssize_t capacity)
 
     memset( _quads, 0, _capacity * sizeof(V3F_C4B_T2F_Quad) );
     memset( _indices, 0, _capacity * 6 * sizeof(GLushort) );
-    
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    /** listen the event that renderer was recreated on Android/WP8 */
-    _rendererRecreatedListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED, CC_CALLBACK_1(TextureAtlas::listenRendererRecreated, this));
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_rendererRecreatedListener, -1);
-#endif
     
     this->setupIndices();
 

@@ -259,10 +259,6 @@ protected:
     Texture2D* _texture;
     /** Quads that are going to be rendered */
     V3F_C4B_T2F_Quad* _quads;
-    
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    EventListenerCustom* _rendererRecreatedListener;
-#endif
 };
 
 // end of textures group

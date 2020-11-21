@@ -145,8 +145,7 @@ public:
     * @lua NA
     */
     virtual const BlendFunc& getBlendFunc(void) const override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     /**
      * @js ctor
      */

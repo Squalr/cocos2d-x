@@ -104,7 +104,7 @@ TimerTargetCallback::TimerTargetCallback()
 {
 }
 
-bool TimerTargetCallback::initWithCallback(Scheduler* scheduler, const std::function<void(float)>& callback, void *target, const std::string& key, float seconds, unsigned int repeat)
+bool TimerTargetCallback::initWithCallback(Scheduler* scheduler, const std::function<void(float)>& callback, void* target, const std::string& key, float seconds, unsigned int repeat)
 {
     _scheduler = scheduler;
     _target = target;
@@ -135,6 +135,8 @@ Scheduler::Scheduler()
 , _currentTargetSalvaged(false)
 , _updateHashLocked(false)
 {
+    this->taskTable = std::unordered_map<Node*, ScheduledUpdateTask>();
+    this->scheduledDeletionTable = std::vector<Node*>();
     this->_functionsToPerform.reserve(32); // Not expecting more than 32 functions to all per frame
 }
 
@@ -143,7 +145,7 @@ Scheduler::~Scheduler(void)
     unscheduleAll();
 }
 
-void Scheduler::removeHashElement(_hashSelectorEntry *element)
+void Scheduler::removeHashElement(ScheduledTask* element)
 {
     ccArrayFree(element->timers);
     HASH_DEL(_hashForTimers, element);
@@ -157,7 +159,7 @@ void Scheduler::scheduleUpdate(Node* target, bool paused)
         return;
     }
 
-    this->taskTable[target] = ScheduledTask(CC_CALLBACK_1(Node::update, target), target, paused);
+    this->taskTable[target] = ScheduledUpdateTask(CC_CALLBACK_1(Node::update, target), target, paused);
 }
 
 void Scheduler::schedule(const std::function<void(float)>& callback, void *target, const std::string& key, float interval, unsigned int repeat, bool paused)
@@ -165,12 +167,12 @@ void Scheduler::schedule(const std::function<void(float)>& callback, void *targe
     CCASSERT(target, "Argument target must be non-nullptr");
     CCASSERT(!key.empty(), "key should not be empty!");
 
-    _hashSelectorEntry *element = nullptr;
+    ScheduledTask *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
 
     if (! element)
     {
-        element = (_hashSelectorEntry *)calloc(sizeof(*element), 1);
+        element = (ScheduledTask *)calloc(sizeof(*element), 1);
         element->target = target;
 
         HASH_ADD_PTR(_hashForTimers, target, element);
@@ -220,7 +222,7 @@ void Scheduler::unschedule(const std::string &key, void *target)
     //CCASSERT(target);
     //CCASSERT(selector);
 
-    _hashSelectorEntry *element = nullptr;
+    ScheduledTask *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
 
     if (element)
@@ -268,7 +270,7 @@ bool Scheduler::isScheduled(const std::string& key, const void *target) const
     CCASSERT(!key.empty(), "Argument key must not be empty");
     CCASSERT(target, "Argument target must be non-nullptr");
     
-    _hashSelectorEntry *element = nullptr;
+    ScheduledTask *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
     
     if (!element)
@@ -294,7 +296,7 @@ bool Scheduler::isScheduled(const std::string& key, const void *target) const
     return false;
 }
 
-void Scheduler::unscheduleUpdate(void* target)
+void Scheduler::unscheduleUpdate(Node* target)
 {
     if (this->taskTable.find(target) != this->taskTable.end())
     {
@@ -315,7 +317,7 @@ void Scheduler::unscheduleAll()
 {
 }
 
-void Scheduler::unscheduleAllForTarget(void *target)
+void Scheduler::unscheduleAllForTarget(void* target)
 {
     // explicit nullptr handling
     if (target == nullptr)
@@ -324,7 +326,7 @@ void Scheduler::unscheduleAllForTarget(void *target)
     }
 
     // Custom Selectors
-    _hashSelectorEntry *element = nullptr;
+    ScheduledTask *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
 
     if (element)
@@ -346,17 +348,14 @@ void Scheduler::unscheduleAllForTarget(void *target)
             removeHashElement(element);
         }
     }
-
-    // update selector
-    unscheduleUpdate(target);
 }
 
-void Scheduler::resumeTarget(void *target)
+void Scheduler::resumeTarget(Node* target)
 {
     CCASSERT(target != nullptr, "target can't be nullptr!");
 
     // custom selectors
-    _hashSelectorEntry *element = nullptr;
+    ScheduledTask *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
     if (element)
     {
@@ -370,12 +369,12 @@ void Scheduler::resumeTarget(void *target)
     }
 }
 
-void Scheduler::pauseTarget(void *target)
+void Scheduler::pauseTarget(Node* target)
 {
     CCASSERT(target != nullptr, "target can't be nullptr!");
 
     // custom selectors
-    _hashSelectorEntry *element = nullptr;
+    ScheduledTask *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
     if (element)
     {
@@ -389,12 +388,12 @@ void Scheduler::pauseTarget(void *target)
     }
 }
 
-bool Scheduler::isTargetPaused(void *target)
+bool Scheduler::isTargetPaused(Node* target)
 {
     CCASSERT( target != nullptr, "target must be non nil" );
 
     // Custom selectors
-    _hashSelectorEntry *element = nullptr;
+    ScheduledTask *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
     if( element )
     {
@@ -436,7 +435,7 @@ void Scheduler::update(float dt)
     }
 
     // Iterate over all the custom selectors
-    for (_hashSelectorEntry *elt = _hashForTimers; elt != nullptr; )
+    for (ScheduledTask *elt = _hashForTimers; elt != nullptr; )
     {
         _currentTarget = elt;
         _currentTargetSalvaged = false;
@@ -465,7 +464,7 @@ void Scheduler::update(float dt)
 
         // elt, at this moment, is still valid
         // so it is safe to ask this here (issue #490)
-        elt = (_hashSelectorEntry *)elt->hh.next;
+        elt = (ScheduledTask *)elt->hh.next;
 
         // only delete currentTarget if no actions were scheduled during the cycle (issue #481)
         if (_currentTargetSalvaged && _currentTarget->timers->num == 0)

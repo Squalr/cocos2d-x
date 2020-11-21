@@ -541,8 +541,7 @@ public:
 
     int getResourceType() const { return _fileType; }
     const std::string& getResourceName() const { return _fileName; }
-
-CC_CONSTRUCTOR_ACCESS :
+    
 	/**
      * @js ctor
      */

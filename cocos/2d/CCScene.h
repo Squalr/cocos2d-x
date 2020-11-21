@@ -117,7 +117,6 @@ public:
     /** override function */
     virtual void removeAllChildren() override;
     
-CC_CONSTRUCTOR_ACCESS:
     Scene();
     virtual ~Scene();
     

@@ -32,8 +32,6 @@ THE SOFTWARE.
 #include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/CCEventDispatcher.h"
-#include "base/CCEventKeyboard.h"
-#include "base/CCEventListenerKeyboard.h"
 #include "base/ccUTF8.h"
 #include "platform/CCDevice.h"
 #include "renderer/CCRenderer.h"
@@ -47,9 +45,7 @@ THE SOFTWARE.
 NS_CC_BEGIN
 
 // Layer
-Layer::Layer() :
-_keyboardEnabled(false)
-, _keyboardListener(nullptr)
+Layer::Layer()
 {
     _ignoreAnchorPointForPosition = true;
     setAnchorPoint(Vec2(0.5f, 0.5f));
@@ -82,54 +78,6 @@ Layer *Layer::create()
     }
 }
 
-#if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#elif _MSC_VER >= 1400 //vs 2005 or higher
-#pragma warning (push)
-#pragma warning (disable: 4996)
-#endif
-
-void Layer::onKeyPressed(EventKeyboard::KeyCode /*keyCode*/, Event* /*unused_event*/)
-{
-}
-
-void Layer::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* /*unused_event*/)
-{
-    CC_UNUSED_PARAM(keyCode);
-}
-
-/// isKeyboardEnabled getter
-bool Layer::isKeyboardEnabled() const
-{
-    return _keyboardEnabled;
-}
-/// isKeyboardEnabled setter
-void Layer::setKeyboardEnabled(bool enabled)
-{
-    if (enabled != _keyboardEnabled)
-    {
-        _keyboardEnabled = enabled;
-
-        _eventDispatcher->removeEventListener(_keyboardListener);
-        _keyboardListener = nullptr;
-
-        if (enabled)
-        {
-            auto listener = EventListenerKeyboard::create();
-            listener->onKeyPressed = CC_CALLBACK_2(Layer::onKeyPressed, this);
-            listener->onKeyReleased = CC_CALLBACK_2(Layer::onKeyReleased, this);
-
-            _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-            _keyboardListener = listener;
-        }
-    }
-}
-
-void Layer::setKeypadEnabled(bool enabled)
-{
-    setKeyboardEnabled(enabled);
-}
-
 std::string Layer::getDescription() const
 {
     return StringUtils::format("<Layer | Tag = %d>", -1);
@@ -141,11 +89,6 @@ __LayerRGBA::__LayerRGBA()
 }
 
 
-#if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-#pragma GCC diagnostic warning "-Wdeprecated-declarations"
-#elif _MSC_VER >= 1400 //vs 2005 or higher
-#pragma warning (pop)
-#endif
 /// LayerColor
 
 LayerColor::LayerColor()
@@ -183,14 +126,16 @@ LayerColor* LayerColor::create()
     return ret;
 }
 
-LayerColor * LayerColor::create(const Color4B& color, GLfloat width, GLfloat height)
+LayerColor* LayerColor::create(const Color4B& color, GLfloat width, GLfloat height)
 {
-    LayerColor * layer = new (std::nothrow) LayerColor();
+    LayerColor* layer = new (std::nothrow) LayerColor();
+
     if( layer && layer->initWithColor(color,width,height))
     {
         layer->autorelease();
         return layer;
     }
+    
     CC_SAFE_DELETE(layer);
     return nullptr;
 }

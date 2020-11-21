@@ -138,12 +138,6 @@ bool ParticleSystemQuad::initWithTotalParticles(int numberOfParticles)
 
         setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP));
 
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-        // Need to listen the event only when not use batchnode, because it will use VBO
-        auto listener = EventListenerCustom::create(EVENT_RENDERER_RECREATED, CC_CALLBACK_1(ParticleSystemQuad::listenRendererRecreated, this));
-        _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-#endif
-
         return true;
     }
     return false;

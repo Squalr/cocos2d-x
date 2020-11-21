@@ -28,8 +28,7 @@
 
 NS_CC_BEGIN
 
-EventController::EventController(ControllerEventType type, Controller* controller, int keyCode)
-: Event(Type::GAME_CONTROLLER)
+EventController::EventController(ControllerEventType type, Controller* controller, int keyCode) : EventCustom("__cc_controller")
 , _controllerEventType(type)
 , _controller(controller)
 , _keyCode(keyCode)
@@ -38,8 +37,7 @@ EventController::EventController(ControllerEventType type, Controller* controlle
     
 }
 
-EventController::EventController(ControllerEventType type, Controller* controller, bool isConnected)
-: Event(Type::GAME_CONTROLLER)
+EventController::EventController(ControllerEventType type, Controller* controller, bool isConnected) : EventCustom("__cc_controller")
 , _controllerEventType(type)
 , _controller(controller)
 , _keyCode(0)

@@ -11,11 +11,10 @@ endif()
 
 set(COCOS_BASE_HEADER
     base/CCValue.h
-    base/CCEventListenerMouse.h
     base/utlist.h
     base/CCData.h
     base/ccMacros.h
-    base/CCEventListenerKeyboard.h
+    base/CCInputEvents.h
     base/CCConsole.h
     base/CCController.h
     base/base64.h
@@ -29,7 +28,6 @@ set(COCOS_BASE_HEADER
     base/CCProperties.h
     base/CCVector.h
     base/CCEventCustom.h
-    base/CCEventKeyboard.h
     base/CCEventListenerCustom.h
     base/CCEventDispatcher.h
     base/uthash.h
@@ -45,7 +43,6 @@ set(COCOS_BASE_HEADER
     base/CCEventFocus.h
     base/CCConfiguration.h
     base/CCProtocols.h
-    base/CCEventMouse.h
     base/CCIMEDelegate.h
     base/CCNS.h
     base/CCAutoreleasePool.h
@@ -70,14 +67,11 @@ set(COCOS_BASE_SRC
     base/CCEventCustom.cpp
     base/CCEventDispatcher.cpp
     base/CCEventFocus.cpp
-    base/CCEventKeyboard.cpp
     base/CCEventListener.cpp
     base/CCEventListenerController.cpp
     base/CCEventListenerCustom.cpp
     base/CCEventListenerFocus.cpp
-    base/CCEventListenerKeyboard.cpp
-    base/CCEventListenerMouse.cpp
-    base/CCEventMouse.cpp
+    base/CCInputEvents.cpp
     base/CCIMEDispatcher.cpp
     base/CCNS.cpp
     base/CCProperties.cpp

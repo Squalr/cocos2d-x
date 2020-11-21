@@ -252,8 +252,7 @@ public:
      * @return true if polygonInfo is available
      */
     bool hasPolygonInfo() const;
-
-CC_CONSTRUCTOR_ACCESS:
+    
     /**
      * @lua NA
      */

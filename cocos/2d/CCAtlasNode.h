@@ -101,7 +101,6 @@ public:
     */
     virtual const BlendFunc& getBlendFunc() const override;
 
-CC_CONSTRUCTOR_ACCESS:
     AtlasNode();
     virtual ~AtlasNode();
 

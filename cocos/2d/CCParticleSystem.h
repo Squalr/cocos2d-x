@@ -774,8 +774,7 @@ public:
 
     bool canUpdate() { return _canUpdate; }
     void toggleCanUpdate(bool canUpdate) { _canUpdate = canUpdate; }
-    
-CC_CONSTRUCTOR_ACCESS:
+
     /**
      * @js ctor
      */

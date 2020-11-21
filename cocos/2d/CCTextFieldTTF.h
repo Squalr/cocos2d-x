@@ -252,7 +252,7 @@ protected:
     virtual void insertText(const char * text, size_t len) override;
     virtual void deleteBackward() override;
     virtual const std::string& getContentText() override;
-    virtual void controlKey(EventKeyboard::KeyCode keyCode) override;
+    virtual void controlKey(InputEvents::KeyCode keyCode) override;
 
     TextFieldDelegate * _delegate;
     std::size_t _charCount;

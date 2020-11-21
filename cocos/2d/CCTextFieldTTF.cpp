@@ -604,14 +604,14 @@ void TextFieldTTF::setCursorChar(char cursor)
     }
 }
 
-void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
+void TextFieldTTF::controlKey(InputEvents::KeyCode keyCode)
 {
     if (_cursorEnabled)
     {
         switch (keyCode)
         {
-        case EventKeyboard::KeyCode::KEY_DELETE:
-        case EventKeyboard::KeyCode::KEY_KP_DELETE:
+        case InputEvents::KeyCode::KEY_DELETE:
+        case InputEvents::KeyCode::KEY_KP_DELETE:
             if (_cursorPosition < (std::size_t)_charCount)
             {
                 StringUtils::StringUTF8 stringUTF8;
@@ -623,22 +623,22 @@ void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
                 setString(stringUTF8.getAsCharSequence());
             }
             break;
-        case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+        case InputEvents::KeyCode::KEY_LEFT_ARROW:
             if (_cursorPosition)
             {
                 setCursorPosition(_cursorPosition - 1);
                 updateCursorDisplayText();
             }
             break;
-        case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+        case InputEvents::KeyCode::KEY_RIGHT_ARROW:
             if (_cursorPosition < (std::size_t)_charCount)
             {
                 setCursorPosition(_cursorPosition + 1);
                 updateCursorDisplayText();
             }
             break;
-		case EventKeyboard::KeyCode::KEY_HOME:
-		case EventKeyboard::KeyCode::KEY_KP_HOME:
+		case InputEvents::KeyCode::KEY_HOME:
+		case InputEvents::KeyCode::KEY_KP_HOME:
 		{
 			// Get current row offset
 			std::size_t currentRowSearch = this->getString().rfind('\n', _cursorPosition <= 0 ? 0 : _cursorPosition - 1);
@@ -648,7 +648,7 @@ void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
 			updateCursorDisplayText();
 		}
 			break;
-		case EventKeyboard::KeyCode::KEY_END:
+		case InputEvents::KeyCode::KEY_END:
 			if (_cursorPosition < (std::size_t)_charCount)
 			{
 				// Get current row offset
@@ -659,7 +659,7 @@ void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
 				updateCursorDisplayText();
 			}
 			break;
-        case EventKeyboard::KeyCode::KEY_UP_ARROW:
+        case InputEvents::KeyCode::KEY_UP_ARROW:
             if (_cursorPosition)
             {
                 // Get current row offset
@@ -690,7 +690,7 @@ void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
                 }
             }
             break;
-        case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+        case InputEvents::KeyCode::KEY_DOWN_ARROW:
             if (_cursorPosition < (std::size_t)_charCount)
             {
                 // Get current row offset
@@ -718,7 +718,7 @@ void TextFieldTTF::controlKey(EventKeyboard::KeyCode keyCode)
                 updateCursorDisplayText();
             }
             break;
-        case EventKeyboard::KeyCode::KEY_ESCAPE:
+        case InputEvents::KeyCode::KEY_ESCAPE:
             detachWithIME();
             break;
         default:

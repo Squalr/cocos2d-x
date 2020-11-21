@@ -61,7 +61,6 @@ public:
     virtual void stop() override;
     virtual void update(float time) override;
 
-CC_CONSTRUCTOR_ACCESS:
     ActionEase()
     : _inner(nullptr)
     {}
@@ -101,7 +100,6 @@ public:
     */
     float getRate() const { return _rate; }
 
-CC_CONSTRUCTOR_ACCESS:
     EaseRateAction() {}
     virtual ~EaseRateAction() {}
     /**
@@ -126,10 +124,9 @@ private:
 #define EASE_TEMPLATE_DECL_CLASS(CLASSNAME) \
 class CC_DLL CLASSNAME : public ActionEase \
 { \
-CC_CONSTRUCTOR_ACCESS: \
+public: \
     virtual ~CLASSNAME() { } \
     CLASSNAME() { } \
-public: \
     static CLASSNAME* create(ActionInterval* action); \
     virtual CLASSNAME* clone() const override; \
     virtual void update(float time) override; \
@@ -375,10 +372,9 @@ EASE_TEMPLATE_DECL_CLASS(EaseCubicActionInOut);
 #define EASERATE_TEMPLATE_DECL_CLASS(CLASSNAME) \
 class CC_DLL CLASSNAME : public EaseRateAction \
 { \
-CC_CONSTRUCTOR_ACCESS: \
+public: \
     virtual ~CLASSNAME() { } \
     CLASSNAME() { } \
-public: \
     static CLASSNAME* create(ActionInterval* action, float rate); \
     virtual CLASSNAME* clone() const override; \
     virtual void update(float time) override; \
@@ -437,7 +433,6 @@ public:
     */
     void setPeriod(float fPeriod) { _period = fPeriod; }
 
-CC_CONSTRUCTOR_ACCESS:
     EaseElastic() {}
     virtual ~EaseElastic() {}
     /**
@@ -462,7 +457,6 @@ private:
 #define EASEELASTIC_TEMPLATE_DECL_CLASS(CLASSNAME) \
 class CC_DLL CLASSNAME : public EaseElastic \
 { \
-CC_CONSTRUCTOR_ACCESS: \
     virtual ~CLASSNAME() { } \
     CLASSNAME() { } \
 public: \
@@ -536,7 +530,6 @@ public:
     */
     virtual void setBezierParamer( float p0, float p1, float p2, float p3);
 
-CC_CONSTRUCTOR_ACCESS:
     EaseBezierAction() {}
     virtual ~EaseBezierAction() {}
 

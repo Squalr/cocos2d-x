@@ -61,10 +61,7 @@ public:
 		GAME_CONTROLLER,
         CUSTOM
     };
-
-    typedef std::string ListenerID;
-
-CC_CONSTRUCTOR_ACCESS:
+    
     /**
      * Constructor
      * @js ctor
@@ -75,9 +72,9 @@ CC_CONSTRUCTOR_ACCESS:
      * Initializes event with type and callback function
      * @js NA
      */
-    bool init(Type t, const ListenerID& listenerID, const std::function<void(Event*)>& callback);
+    bool init(Type t, const std::string& listenerID, const std::function<void(Event*)>& callback);
 
-    ListenerID getListenerId();
+    std::string getListenerId();
     void invoke(Event*);
 
 public:
@@ -153,7 +150,7 @@ protected:
     /** Gets the listener ID of this listener
      *  When event is being dispatched, listener ID is used as key for searching listeners according to event type.
      */
-    const ListenerID& getListenerID() const { return _listenerID; }
+    const std::string& getListenerID() const { return _listenerID; }
 
     /** Sets the node associated with this listener */
     void setAssociatedNode(Node* node) { _node = node; }
@@ -169,7 +166,7 @@ protected:
     std::function<void(Event*)> _onEvent;   /// Event callback function
 
     Type _type;                             /// Event listener type
-    ListenerID _listenerID;                 /// Event listener ID
+    std::string _listenerID;                 /// Event listener ID
     bool _isRegistered;                     /// Whether the listener has been added to dispatcher.
 
     int   _fixedPriority;   // The higher the number, the higher the priority, 0 is for scene graph base priority.

@@ -28,7 +28,7 @@
 #define __cocos2d_libs__EventController__
 
 #include "platform/CCPlatformMacros.h"
-#include "base/CCEvent.h"
+#include "base/CCEventCustom.h"
 
 /**
  * @addtogroup base
@@ -44,7 +44,7 @@ class EventListenerController;
 /** @class EventController
  * @brief Controller event.
  */
-class CC_DLL EventController : public Event
+class CC_DLL EventController : public EventCustom
 {
 public:
     /** ControllerEventType Controller event type.*/

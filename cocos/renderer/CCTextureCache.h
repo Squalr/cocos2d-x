@@ -41,10 +41,6 @@ THE SOFTWARE.
 #include "renderer/CCTexture2D.h"
 #include "platform/CCImage.h"
 
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    #include <list>
-#endif
-
 NS_CC_BEGIN
 
 /**
@@ -246,71 +242,6 @@ protected:
 
     static std::string s_etc1AlphaFileSuffix;
 };
-
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-
-class VolatileTexture
-{
-    typedef enum {
-        kInvalid = 0,
-        kImageFile,
-        kImageData,
-        kString,
-        kImage,
-    }ccCachedImageType;
-
-private:
-    VolatileTexture(Texture2D *t);
-    /**
-     * @js NA
-     * @lua NA
-     */
-    ~VolatileTexture();
-
-protected:
-    friend class  VolatileTextureMgr;
-    Texture2D *_texture;
-    
-    Image *_uiImage;
-
-    ccCachedImageType _cashedImageType;
-
-    void *_textureData;
-    int  _dataLen;
-    Size _textureSize;
-    Texture2D::PixelFormat _pixelFormat;
-
-    std::string _fileName;
-
-    bool                      _hasMipmaps;
-    Texture2D::TexParams      _texParams;
-    std::string               _text;
-    FontDefinition            _fontDefinition;
-};
-
-class CC_DLL VolatileTextureMgr
-{
-public:
-    static void addImageTexture(Texture2D *tt, const std::string& imageFileName);
-    static void addStringTexture(Texture2D *tt, const char* text, const FontDefinition& fontDefinition);
-    static void addDataTexture(Texture2D *tt, void* data, int dataLen, Texture2D::PixelFormat pixelFormat, const Size& contentSize);
-    static void addImage(Texture2D *tt, Image *image);
-
-    static void setHasMipmaps(Texture2D *t, bool hasMipmaps);
-    static void setTexParameters(Texture2D *t, const Texture2D::TexParams &texParams);
-    static void removeTexture(Texture2D *t);
-    static void reloadAllTextures();
-public:
-    static std::list<VolatileTexture*> _textures;
-    static bool _isReloading;
-private:
-    // find VolatileTexture by Texture2D*
-    // if not found, create a new one
-    static VolatileTexture* findVolotileTexture(Texture2D *tt);
-    static void reloadTexture(Texture2D* texture, const std::string& filename, Texture2D::PixelFormat pixelFormat);
-};
-
-#endif
 
 // end of textures group
 /// @}

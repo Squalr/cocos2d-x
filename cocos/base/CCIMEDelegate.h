@@ -29,7 +29,7 @@ THE SOFTWARE.
 
 #include <string>
 #include "math/CCGeometry.h"
-#include "base/CCEventKeyboard.h"
+#include "base/CCInputEvents.h"
 
 /**
  * @addtogroup base
@@ -131,7 +131,7 @@ protected:
     * @js NA
     * @lua NA
     */
-    virtual void controlKey(EventKeyboard::KeyCode /*keyCode*/) {}
+    virtual void controlKey(InputEvents::KeyCode /*keyCode*/) {}
 
     /**
     @brief    Called by IMEDispatcher for text stored in delegate.

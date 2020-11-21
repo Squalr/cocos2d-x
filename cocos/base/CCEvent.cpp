@@ -30,7 +30,6 @@ NS_CC_BEGIN
 Event::Event(Type type)
 : _type(type)
 , _isStopped(false)
-, _currentTarget(nullptr)
 {
 }
 

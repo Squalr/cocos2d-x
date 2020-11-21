@@ -71,7 +71,7 @@ public:
     * @brief Dispatches the press control key operation.
     * @lua NA
     */
-    void dispatchControlKey(EventKeyboard::KeyCode keyCode);
+    void dispatchControlKey(InputEvents::KeyCode keyCode);
 
     /**
      * @brief Get the content text from IMEDelegate, retrieved previously from IME.

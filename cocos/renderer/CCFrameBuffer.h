@@ -90,15 +90,12 @@ public:
     bool init(unsigned int width, unsigned int height, Texture2D::PixelFormat format);
     
     virtual Texture2D* getTexture() const { return _texture; }
-CC_CONSTRUCTOR_ACCESS:
+
     RenderTarget();
     virtual ~RenderTarget();
     
 protected:
     Texture2D* _texture;
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    EventListenerCustom* _rebuildTextureListener;
-#endif
 };
 
 class CC_DLL RenderTargetRenderBuffer : public RenderTargetBase
@@ -110,17 +107,13 @@ public:
     bool init(unsigned int width, unsigned int height);
     
     virtual GLuint getBuffer() const { return _colorBuffer; }
-    
-CC_CONSTRUCTOR_ACCESS:
+
     RenderTargetRenderBuffer();
     virtual ~RenderTargetRenderBuffer();
     
 protected:
     GLenum _format;
     GLuint _colorBuffer;
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    EventListenerCustom* _reBuildRenderBufferListener;
-#endif
 };
 
 class CC_DLL RenderTargetDepthStencil : public RenderTargetBase
@@ -134,16 +127,13 @@ public:
     virtual GLuint getBuffer() const { return _depthStencilBuffer; }
     
     CC_DEPRECATED(3.7) GLuint getDepthStencilBuffer() const { return _depthStencilBuffer; }
-CC_CONSTRUCTOR_ACCESS:
+    
     RenderTargetDepthStencil();
     virtual ~RenderTargetDepthStencil();
     
 protected:
 
     GLuint _depthStencilBuffer;
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    EventListenerCustom* _reBuildDepthStencilListener;
-#endif
 };
 
 class CC_DLL FrameBuffer : public Ref
@@ -175,7 +165,6 @@ public:
     unsigned int getWidth() const { return _width; }
     unsigned int getHeight() const { return _height; }
 
-CC_CONSTRUCTOR_ACCESS:
     FrameBuffer();
     virtual ~FrameBuffer();
     bool initWithGLView(GLView* view);
@@ -206,9 +195,6 @@ private:
     static std::set<FrameBuffer*> _frameBuffers;
     
 private:
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    EventListenerCustom* _dirtyFBOListener;
-#endif
 };
 } // end of namespace cocos_experimental
 

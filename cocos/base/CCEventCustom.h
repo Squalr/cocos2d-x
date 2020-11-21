@@ -47,7 +47,7 @@ public:
      * @param eventName A given name of the custom event.
      * @js ctor
      */
-    EventCustom(const std::string& eventName);
+    EventCustom(const std::string& eventName, void* data = nullptr);
     
     /** Sets user data.
      *

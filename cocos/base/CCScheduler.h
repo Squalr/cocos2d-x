@@ -30,9 +30,9 @@ THE SOFTWARE.
 #define __CCSCHEDULER_H__
 
 #include <functional>
-#include <map>
 #include <mutex>
 #include <set>
+#include <unordered_map>
 #include <vector>
 
 #include "base/CCRef.h"
@@ -105,29 +105,19 @@ protected:
  * @{
  */
 
-struct ScheduledTask
+struct ScheduledUpdateTask
 {
     std::function<void(float)> callback;
     Node* target;
     bool paused;
 
-    ScheduledTask() : callback(nullptr), target(nullptr), paused(false) { }
-    ScheduledTask(std::function<void(float)> callback, Node* target, bool paused) : callback(callback), target(target), paused(paused) { }
+    ScheduledUpdateTask() : callback(nullptr), target(nullptr), paused(false) { }
+    ScheduledUpdateTask(std::function<void(float)> callback, Node* target, bool paused) : callback(callback), target(target), paused(paused) { }
 };
 
-struct _hashUpdateEntry
+struct ScheduledTask
 {
-    ScheduledTask                  **list;        // Which list does it belong to ?
-    ScheduledTask                  *entry;        // entry in the list
-    void                        *target;
-    std::function<void(float)>  callback;
-    UT_hash_handle              hh;
-};
-
-// Hash Element used for "selectors with interval"
-struct _hashSelectorEntry
-{
-    _ccArray             *timers;
+    _ccArray            *timers;
     void                *target;
     int                 timerIndex;
     Timer               *currentTimer;
@@ -204,7 +194,7 @@ public:
      @param target The target to be unscheduled.
      @since v0.99.3
      */
-    void unscheduleUpdate(void *target);
+    void unscheduleUpdate(Node* target);
     
     /** Unschedules all selectors for a given target.
      This also includes the "update" selector.
@@ -212,7 +202,7 @@ public:
      @since v0.99.3
      @lua NA
      */
-    void unscheduleAllForTarget(void *target);
+    void unscheduleAllForTarget(void* target);
     
     /** Unschedules all selectors from all targets.
      You should NEVER call this method, unless you know what you are doing.
@@ -240,7 +230,7 @@ public:
      @param target The target to be paused.
      @since v0.99.3
      */
-    void pauseTarget(void *target);
+    void pauseTarget(Node* target);
 
     /** Resumes the target.
      The 'target' will be unpaused, so all schedule selectors/update will be 'ticked' again.
@@ -248,7 +238,7 @@ public:
      @param target The target to be resumed.
      @since v0.99.3
      */
-    void resumeTarget(void *target);
+    void resumeTarget(Node* target);
 
     /** Returns whether or not the target is paused.
      * @param target The target to be checked.
@@ -256,7 +246,7 @@ public:
      * @since v1.0.0
      * @lua NA
      */
-    bool isTargetPaused(void *target);
+    bool isTargetPaused(Node* target);
 
     /** Calls a function on the cocos2d thread. Useful when you need to call a cocos2d function from another thread.
      This function is thread safe.
@@ -276,15 +266,15 @@ public:
     void removeAllFunctionsToBePerformedInCocosThread();
     
 protected:
-    void removeHashElement(struct _hashSelectorEntry *element);
+    void removeHashElement(struct ScheduledTask *element);
 
     // Tasks that must be explicitly unscheduled
-    std::map<void*, ScheduledTask> taskTable;  // hash used to fetch quickly the list entries for pause, delete, etc
-    std::vector<void*> scheduledDeletionTable;      // the vector holds list entries that needs to be deleted after update
+    std::unordered_map<Node*, ScheduledUpdateTask> taskTable;  // hash used to fetch quickly the list entries for pause, delete, etc
+    std::vector<Node*> scheduledDeletionTable;      // the vector holds list entries that needs to be deleted after update
 
     // Used for "selectors with interval"
-    struct _hashSelectorEntry *_hashForTimers;
-    struct _hashSelectorEntry *_currentTarget;
+    struct ScheduledTask* _hashForTimers;
+    struct ScheduledTask* _currentTarget;
     bool _currentTargetSalvaged;
     // If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
     bool _updateHashLocked;

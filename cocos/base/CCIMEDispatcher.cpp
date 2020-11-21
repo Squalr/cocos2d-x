@@ -244,7 +244,7 @@ void IMEDispatcher::dispatchDeleteBackward()
     } while (0);
 }
 
-void IMEDispatcher::dispatchControlKey(EventKeyboard::KeyCode keyCode)
+void IMEDispatcher::dispatchControlKey(InputEvents::KeyCode keyCode)
 {
     do
     {

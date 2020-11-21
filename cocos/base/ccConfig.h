@@ -101,15 +101,6 @@ THE SOFTWARE.
 #define CC_DIRECTOR_STATS_INTERVAL (0.5f)
 #endif
 
-/** @def CC_DIRECTOR_FPS_POSITION
- * Position of the FPS.
-
- * Default: 0,0 (bottom-left corner).
- */
-#ifndef CC_DIRECTOR_FPS_POSITION
-#define CC_DIRECTOR_FPS_POSITION Vec2(0,0)
-#endif
-
 /** @def CC_DIRECTOR_DISPATCH_FAST_EVENTS
  * If enabled, and only when it is used with FastDirector, the main loop will wait 0.04 seconds to
  * dispatch all the events, even if there are not events to dispatch.
@@ -217,28 +208,9 @@ THE SOFTWARE.
 #define CC_LABELBMFONT_DEBUG_DRAW 0
 #endif
 
-/** @def CC_NODE_DEBUG_VERIFY_EVENT_LISTENERS
- * If enabled (in conjunction with assertion macros) will verify on Node destruction that the node being destroyed has no event
- * listeners still associated with it in the event dispatcher. This can be used to track down problems where the event dispatch
- * system has dangling pointers to destroyed nodes.
- * Note: event listener verification will always be disabled in builds where assertions are disabled regardless of this setting.
- */
-#ifndef CC_NODE_DEBUG_VERIFY_EVENT_LISTENERS
-#define CC_NODE_DEBUG_VERIFY_EVENT_LISTENERS 0
-#endif
-
 /** Use culling or not. */
 #ifndef CC_USE_CULLING
 #define CC_USE_CULLING 0
-#endif
-
-/** @def CC_CONSTRUCTOR_ACCESS
- * Indicate the init functions access modifier. If value equals to protected, then these functions are protected.
- * If value equals to public, these functions are public,
- * protected by default.
- */
-#ifndef CC_CONSTRUCTOR_ACCESS
-    #define CC_CONSTRUCTOR_ACCESS public
 #endif
 
 /** @def CC_ENABLE_ALLOCATOR

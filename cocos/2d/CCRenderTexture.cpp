@@ -63,15 +63,6 @@ RenderTexture::RenderTexture()
 , _sprite(nullptr)
 , _depthAndStencilFormat(0)
 {
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    // Listen this event to save render texture before come to background.
-    // Then it can be restored after coming to foreground on Android.
-    auto toBackgroundListener = EventListenerCustom::create(EVENT_COME_TO_BACKGROUND, CC_CALLBACK_1(RenderTexture::listenToBackground, this));
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(toBackgroundListener, this);
-
-    auto toForegroundListener = EventListenerCustom::create(EVENT_COME_TO_FOREGROUND, CC_CALLBACK_1(RenderTexture::listenToForeground, this));
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(toForegroundListener, this);
-#endif
 }
 
 RenderTexture::~RenderTexture()
@@ -95,74 +86,10 @@ RenderTexture::~RenderTexture()
 
 void RenderTexture::listenToBackground(EventCustom* /*event*/)
 {
-    // We have not found a way to dispatch the enter background message before the texture data are destroyed.
-    // So we disable this pair of message handler at present.
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    CC_SAFE_DELETE(_UITextureImage);
-    
-    // to get the rendered texture data
-    _UITextureImage = newImage(false);
-
-    if (_UITextureImage)
-    {
-        const Size& s = _texture->getContentSizeInPixels();
-        VolatileTextureMgr::addDataTexture(_texture, _UITextureImage->getData(), s.width * s.height * 4, Texture2D::PixelFormat::RGBA8888, s);
-        
-        if ( _textureCopy )
-        {
-            VolatileTextureMgr::addDataTexture(_textureCopy, _UITextureImage->getData(), s.width * s.height * 4, Texture2D::PixelFormat::RGBA8888, s);
-        }
-    }
-    else
-    {
-        CCLOG("Cache rendertexture failed!");
-    }
-    
-    glDeleteFramebuffers(1, &_FBO);
-    _FBO = 0;
-
-    if (_depthRenderBuffer)
-    {
-        glDeleteRenderbuffers(1, &_depthRenderBuffer);
-        _depthRenderBuffer = 0;
-    }
-    
-    if (_stencilRenderBuffer)
-    {
-        glDeleteRenderbuffers(1, &_stencilRenderBuffer);
-        _stencilRenderBuffer = 0;
-    }
-#endif
 }
 
 void RenderTexture::listenToForeground(EventCustom* /*event*/)
 {
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    // -- regenerate frame buffer object and attach the texture
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_oldFBO);
-
-    GLint oldRBO;
-    glGetIntegerv(GL_RENDERBUFFER_BINDING, &oldRBO);
-    
-    glGenFramebuffers(1, &_FBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
-
-    const Size& s = _texture->getContentSizeInPixels();
-    if (_depthAndStencilFormat != 0)
-    {
-        setupDepthAndStencil(s.width, s.height);
-    }
-    
-    _texture->setAntiAliasTexParameters();
-    if(_textureCopy)
-    {
-        _textureCopy->setAntiAliasTexParameters();
-    }
-    
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _texture->getName(), 0);
-    glBindRenderbuffer(GL_RENDERBUFFER, oldRBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, _oldFBO);
-#endif
 }
 
 RenderTexture * RenderTexture::create(int w, int h, Texture2D::PixelFormat eFormat)

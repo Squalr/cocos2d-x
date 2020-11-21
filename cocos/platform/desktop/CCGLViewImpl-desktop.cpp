@@ -33,9 +33,8 @@ THE SOFTWARE.
 #include "base/CCConsole.h"
 #include "base/CCDirector.h"
 #include "base/CCEventDispatcher.h"
-#include "base/CCEventKeyboard.h"
-#include "base/CCEventMouse.h"
 #include "base/CCIMEDispatcher.h"
+#include "base/CCInputEvents.h"
 #include "base/ccUTF8.h"
 #include "base/ccUtils.h"
 #include "platform/CCApplication.h"
@@ -53,139 +52,139 @@ const std::string GLViewImpl::EVENT_WINDOW_UNFOCUSED = "glview_window_unfocused"
 struct keyCodeItem
 {
     int glfwKeyCode;
-    EventKeyboard::KeyCode keyCode;
+    InputEvents::KeyCode keyCode;
 };
 
-static std::unordered_map<int, EventKeyboard::KeyCode> g_keyCodeMap;
+static std::unordered_map<int, InputEvents::KeyCode> g_keyCodeMap;
 
 static keyCodeItem g_keyCodeStructArray[] = {
     /* The unknown key */
-    { GLFW_KEY_UNKNOWN         , EventKeyboard::KeyCode::KEY_NONE          },
+    { GLFW_KEY_UNKNOWN         , InputEvents::KeyCode::KEY_NONE          },
 
     /* Printable keys */
-    { GLFW_KEY_SPACE           , EventKeyboard::KeyCode::KEY_SPACE         },
-    { GLFW_KEY_APOSTROPHE      , EventKeyboard::KeyCode::KEY_APOSTROPHE    },
-    { GLFW_KEY_COMMA           , EventKeyboard::KeyCode::KEY_COMMA         },
-    { GLFW_KEY_MINUS           , EventKeyboard::KeyCode::KEY_MINUS         },
-    { GLFW_KEY_PERIOD          , EventKeyboard::KeyCode::KEY_PERIOD        },
-    { GLFW_KEY_SLASH           , EventKeyboard::KeyCode::KEY_SLASH         },
-    { GLFW_KEY_0               , EventKeyboard::KeyCode::KEY_0             },
-    { GLFW_KEY_1               , EventKeyboard::KeyCode::KEY_1             },
-    { GLFW_KEY_2               , EventKeyboard::KeyCode::KEY_2             },
-    { GLFW_KEY_3               , EventKeyboard::KeyCode::KEY_3             },
-    { GLFW_KEY_4               , EventKeyboard::KeyCode::KEY_4             },
-    { GLFW_KEY_5               , EventKeyboard::KeyCode::KEY_5             },
-    { GLFW_KEY_6               , EventKeyboard::KeyCode::KEY_6             },
-    { GLFW_KEY_7               , EventKeyboard::KeyCode::KEY_7             },
-    { GLFW_KEY_8               , EventKeyboard::KeyCode::KEY_8             },
-    { GLFW_KEY_9               , EventKeyboard::KeyCode::KEY_9             },
-    { GLFW_KEY_SEMICOLON       , EventKeyboard::KeyCode::KEY_SEMICOLON     },
-    { GLFW_KEY_EQUAL           , EventKeyboard::KeyCode::KEY_EQUAL         },
-    { GLFW_KEY_A               , EventKeyboard::KeyCode::KEY_A             },
-    { GLFW_KEY_B               , EventKeyboard::KeyCode::KEY_B             },
-    { GLFW_KEY_C               , EventKeyboard::KeyCode::KEY_C             },
-    { GLFW_KEY_D               , EventKeyboard::KeyCode::KEY_D             },
-    { GLFW_KEY_E               , EventKeyboard::KeyCode::KEY_E             },
-    { GLFW_KEY_F               , EventKeyboard::KeyCode::KEY_F             },
-    { GLFW_KEY_G               , EventKeyboard::KeyCode::KEY_G             },
-    { GLFW_KEY_H               , EventKeyboard::KeyCode::KEY_H             },
-    { GLFW_KEY_I               , EventKeyboard::KeyCode::KEY_I             },
-    { GLFW_KEY_J               , EventKeyboard::KeyCode::KEY_J             },
-    { GLFW_KEY_K               , EventKeyboard::KeyCode::KEY_K             },
-    { GLFW_KEY_L               , EventKeyboard::KeyCode::KEY_L             },
-    { GLFW_KEY_M               , EventKeyboard::KeyCode::KEY_M             },
-    { GLFW_KEY_N               , EventKeyboard::KeyCode::KEY_N             },
-    { GLFW_KEY_O               , EventKeyboard::KeyCode::KEY_O             },
-    { GLFW_KEY_P               , EventKeyboard::KeyCode::KEY_P             },
-    { GLFW_KEY_Q               , EventKeyboard::KeyCode::KEY_Q             },
-    { GLFW_KEY_R               , EventKeyboard::KeyCode::KEY_R             },
-    { GLFW_KEY_S               , EventKeyboard::KeyCode::KEY_S             },
-    { GLFW_KEY_T               , EventKeyboard::KeyCode::KEY_T             },
-    { GLFW_KEY_U               , EventKeyboard::KeyCode::KEY_U             },
-    { GLFW_KEY_V               , EventKeyboard::KeyCode::KEY_V             },
-    { GLFW_KEY_W               , EventKeyboard::KeyCode::KEY_W             },
-    { GLFW_KEY_X               , EventKeyboard::KeyCode::KEY_X             },
-    { GLFW_KEY_Y               , EventKeyboard::KeyCode::KEY_Y             },
-    { GLFW_KEY_Z               , EventKeyboard::KeyCode::KEY_Z             },
-    { GLFW_KEY_LEFT_BRACKET    , EventKeyboard::KeyCode::KEY_LEFT_BRACKET  },
-    { GLFW_KEY_BACKSLASH       , EventKeyboard::KeyCode::KEY_BACK_SLASH    },
-    { GLFW_KEY_RIGHT_BRACKET   , EventKeyboard::KeyCode::KEY_RIGHT_BRACKET },
-    { GLFW_KEY_GRAVE_ACCENT    , EventKeyboard::KeyCode::KEY_GRAVE         },
-    { GLFW_KEY_WORLD_1         , EventKeyboard::KeyCode::KEY_GRAVE         },
-    { GLFW_KEY_WORLD_2         , EventKeyboard::KeyCode::KEY_NONE          },
+    { GLFW_KEY_SPACE           , InputEvents::KeyCode::KEY_SPACE         },
+    { GLFW_KEY_APOSTROPHE      , InputEvents::KeyCode::KEY_APOSTROPHE    },
+    { GLFW_KEY_COMMA           , InputEvents::KeyCode::KEY_COMMA         },
+    { GLFW_KEY_MINUS           , InputEvents::KeyCode::KEY_MINUS         },
+    { GLFW_KEY_PERIOD          , InputEvents::KeyCode::KEY_PERIOD        },
+    { GLFW_KEY_SLASH           , InputEvents::KeyCode::KEY_SLASH         },
+    { GLFW_KEY_0               , InputEvents::KeyCode::KEY_0             },
+    { GLFW_KEY_1               , InputEvents::KeyCode::KEY_1             },
+    { GLFW_KEY_2               , InputEvents::KeyCode::KEY_2             },
+    { GLFW_KEY_3               , InputEvents::KeyCode::KEY_3             },
+    { GLFW_KEY_4               , InputEvents::KeyCode::KEY_4             },
+    { GLFW_KEY_5               , InputEvents::KeyCode::KEY_5             },
+    { GLFW_KEY_6               , InputEvents::KeyCode::KEY_6             },
+    { GLFW_KEY_7               , InputEvents::KeyCode::KEY_7             },
+    { GLFW_KEY_8               , InputEvents::KeyCode::KEY_8             },
+    { GLFW_KEY_9               , InputEvents::KeyCode::KEY_9             },
+    { GLFW_KEY_SEMICOLON       , InputEvents::KeyCode::KEY_SEMICOLON     },
+    { GLFW_KEY_EQUAL           , InputEvents::KeyCode::KEY_EQUAL         },
+    { GLFW_KEY_A               , InputEvents::KeyCode::KEY_A             },
+    { GLFW_KEY_B               , InputEvents::KeyCode::KEY_B             },
+    { GLFW_KEY_C               , InputEvents::KeyCode::KEY_C             },
+    { GLFW_KEY_D               , InputEvents::KeyCode::KEY_D             },
+    { GLFW_KEY_E               , InputEvents::KeyCode::KEY_E             },
+    { GLFW_KEY_F               , InputEvents::KeyCode::KEY_F             },
+    { GLFW_KEY_G               , InputEvents::KeyCode::KEY_G             },
+    { GLFW_KEY_H               , InputEvents::KeyCode::KEY_H             },
+    { GLFW_KEY_I               , InputEvents::KeyCode::KEY_I             },
+    { GLFW_KEY_J               , InputEvents::KeyCode::KEY_J             },
+    { GLFW_KEY_K               , InputEvents::KeyCode::KEY_K             },
+    { GLFW_KEY_L               , InputEvents::KeyCode::KEY_L             },
+    { GLFW_KEY_M               , InputEvents::KeyCode::KEY_M             },
+    { GLFW_KEY_N               , InputEvents::KeyCode::KEY_N             },
+    { GLFW_KEY_O               , InputEvents::KeyCode::KEY_O             },
+    { GLFW_KEY_P               , InputEvents::KeyCode::KEY_P             },
+    { GLFW_KEY_Q               , InputEvents::KeyCode::KEY_Q             },
+    { GLFW_KEY_R               , InputEvents::KeyCode::KEY_R             },
+    { GLFW_KEY_S               , InputEvents::KeyCode::KEY_S             },
+    { GLFW_KEY_T               , InputEvents::KeyCode::KEY_T             },
+    { GLFW_KEY_U               , InputEvents::KeyCode::KEY_U             },
+    { GLFW_KEY_V               , InputEvents::KeyCode::KEY_V             },
+    { GLFW_KEY_W               , InputEvents::KeyCode::KEY_W             },
+    { GLFW_KEY_X               , InputEvents::KeyCode::KEY_X             },
+    { GLFW_KEY_Y               , InputEvents::KeyCode::KEY_Y             },
+    { GLFW_KEY_Z               , InputEvents::KeyCode::KEY_Z             },
+    { GLFW_KEY_LEFT_BRACKET    , InputEvents::KeyCode::KEY_LEFT_BRACKET  },
+    { GLFW_KEY_BACKSLASH       , InputEvents::KeyCode::KEY_BACK_SLASH    },
+    { GLFW_KEY_RIGHT_BRACKET   , InputEvents::KeyCode::KEY_RIGHT_BRACKET },
+    { GLFW_KEY_GRAVE_ACCENT    , InputEvents::KeyCode::KEY_GRAVE         },
+    { GLFW_KEY_WORLD_1         , InputEvents::KeyCode::KEY_GRAVE         },
+    { GLFW_KEY_WORLD_2         , InputEvents::KeyCode::KEY_NONE          },
 
     /* Function keys */
-    { GLFW_KEY_ESCAPE          , EventKeyboard::KeyCode::KEY_ESCAPE        },
-    { GLFW_KEY_ENTER           , EventKeyboard::KeyCode::KEY_ENTER      },
-    { GLFW_KEY_TAB             , EventKeyboard::KeyCode::KEY_TAB           },
-    { GLFW_KEY_BACKSPACE       , EventKeyboard::KeyCode::KEY_BACKSPACE     },
-    { GLFW_KEY_INSERT          , EventKeyboard::KeyCode::KEY_INSERT        },
-    { GLFW_KEY_DELETE          , EventKeyboard::KeyCode::KEY_DELETE        },
-    { GLFW_KEY_RIGHT           , EventKeyboard::KeyCode::KEY_RIGHT_ARROW   },
-    { GLFW_KEY_LEFT            , EventKeyboard::KeyCode::KEY_LEFT_ARROW    },
-    { GLFW_KEY_DOWN            , EventKeyboard::KeyCode::KEY_DOWN_ARROW    },
-    { GLFW_KEY_UP              , EventKeyboard::KeyCode::KEY_UP_ARROW      },
-    { GLFW_KEY_PAGE_UP         , EventKeyboard::KeyCode::KEY_PG_UP      },
-    { GLFW_KEY_PAGE_DOWN       , EventKeyboard::KeyCode::KEY_PG_DOWN    },
-    { GLFW_KEY_HOME            , EventKeyboard::KeyCode::KEY_HOME       },
-    { GLFW_KEY_END             , EventKeyboard::KeyCode::KEY_END           },
-    { GLFW_KEY_CAPS_LOCK       , EventKeyboard::KeyCode::KEY_CAPS_LOCK     },
-    { GLFW_KEY_SCROLL_LOCK     , EventKeyboard::KeyCode::KEY_SCROLL_LOCK   },
-    { GLFW_KEY_NUM_LOCK        , EventKeyboard::KeyCode::KEY_NUM_LOCK      },
-    { GLFW_KEY_PRINT_SCREEN    , EventKeyboard::KeyCode::KEY_PRINT         },
-    { GLFW_KEY_PAUSE           , EventKeyboard::KeyCode::KEY_PAUSE         },
-    { GLFW_KEY_F1              , EventKeyboard::KeyCode::KEY_F1            },
-    { GLFW_KEY_F2              , EventKeyboard::KeyCode::KEY_F2            },
-    { GLFW_KEY_F3              , EventKeyboard::KeyCode::KEY_F3            },
-    { GLFW_KEY_F4              , EventKeyboard::KeyCode::KEY_F4            },
-    { GLFW_KEY_F5              , EventKeyboard::KeyCode::KEY_F5            },
-    { GLFW_KEY_F6              , EventKeyboard::KeyCode::KEY_F6            },
-    { GLFW_KEY_F7              , EventKeyboard::KeyCode::KEY_F7            },
-    { GLFW_KEY_F8              , EventKeyboard::KeyCode::KEY_F8            },
-    { GLFW_KEY_F9              , EventKeyboard::KeyCode::KEY_F9            },
-    { GLFW_KEY_F10             , EventKeyboard::KeyCode::KEY_F10           },
-    { GLFW_KEY_F11             , EventKeyboard::KeyCode::KEY_F11           },
-    { GLFW_KEY_F12             , EventKeyboard::KeyCode::KEY_F12           },
-    { GLFW_KEY_F13             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F14             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F15             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F16             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F17             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F18             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F19             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F20             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F21             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F22             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F23             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F24             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_F25             , EventKeyboard::KeyCode::KEY_NONE          },
-    { GLFW_KEY_KP_0            , EventKeyboard::KeyCode::KEY_0             },
-    { GLFW_KEY_KP_1            , EventKeyboard::KeyCode::KEY_1             },
-    { GLFW_KEY_KP_2            , EventKeyboard::KeyCode::KEY_2             },
-    { GLFW_KEY_KP_3            , EventKeyboard::KeyCode::KEY_3             },
-    { GLFW_KEY_KP_4            , EventKeyboard::KeyCode::KEY_4             },
-    { GLFW_KEY_KP_5            , EventKeyboard::KeyCode::KEY_5             },
-    { GLFW_KEY_KP_6            , EventKeyboard::KeyCode::KEY_6             },
-    { GLFW_KEY_KP_7            , EventKeyboard::KeyCode::KEY_7             },
-    { GLFW_KEY_KP_8            , EventKeyboard::KeyCode::KEY_8             },
-    { GLFW_KEY_KP_9            , EventKeyboard::KeyCode::KEY_9             },
-    { GLFW_KEY_KP_DECIMAL      , EventKeyboard::KeyCode::KEY_PERIOD        },
-    { GLFW_KEY_KP_DIVIDE       , EventKeyboard::KeyCode::KEY_KP_DIVIDE     },
-    { GLFW_KEY_KP_MULTIPLY     , EventKeyboard::KeyCode::KEY_KP_MULTIPLY   },
-    { GLFW_KEY_KP_SUBTRACT     , EventKeyboard::KeyCode::KEY_KP_MINUS      },
-    { GLFW_KEY_KP_ADD          , EventKeyboard::KeyCode::KEY_KP_PLUS       },
-    { GLFW_KEY_KP_ENTER        , EventKeyboard::KeyCode::KEY_KP_ENTER      },
-    { GLFW_KEY_KP_EQUAL        , EventKeyboard::KeyCode::KEY_EQUAL         },
-    { GLFW_KEY_LEFT_SHIFT      , EventKeyboard::KeyCode::KEY_LEFT_SHIFT         },
-    { GLFW_KEY_LEFT_CONTROL    , EventKeyboard::KeyCode::KEY_LEFT_CTRL          },
-    { GLFW_KEY_LEFT_ALT        , EventKeyboard::KeyCode::KEY_LEFT_ALT           },
-    { GLFW_KEY_LEFT_SUPER      , EventKeyboard::KeyCode::KEY_HYPER         },
-    { GLFW_KEY_RIGHT_SHIFT     , EventKeyboard::KeyCode::KEY_RIGHT_SHIFT         },
-    { GLFW_KEY_RIGHT_CONTROL   , EventKeyboard::KeyCode::KEY_RIGHT_CTRL          },
-    { GLFW_KEY_RIGHT_ALT       , EventKeyboard::KeyCode::KEY_RIGHT_ALT           },
-    { GLFW_KEY_RIGHT_SUPER     , EventKeyboard::KeyCode::KEY_HYPER         },
-    { GLFW_KEY_MENU            , EventKeyboard::KeyCode::KEY_MENU          },
-    { GLFW_KEY_LAST            , EventKeyboard::KeyCode::KEY_NONE          }
+    { GLFW_KEY_ESCAPE          , InputEvents::KeyCode::KEY_ESCAPE        },
+    { GLFW_KEY_ENTER           , InputEvents::KeyCode::KEY_ENTER      },
+    { GLFW_KEY_TAB             , InputEvents::KeyCode::KEY_TAB           },
+    { GLFW_KEY_BACKSPACE       , InputEvents::KeyCode::KEY_BACKSPACE     },
+    { GLFW_KEY_INSERT          , InputEvents::KeyCode::KEY_INSERT        },
+    { GLFW_KEY_DELETE          , InputEvents::KeyCode::KEY_DELETE        },
+    { GLFW_KEY_RIGHT           , InputEvents::KeyCode::KEY_RIGHT_ARROW   },
+    { GLFW_KEY_LEFT            , InputEvents::KeyCode::KEY_LEFT_ARROW    },
+    { GLFW_KEY_DOWN            , InputEvents::KeyCode::KEY_DOWN_ARROW    },
+    { GLFW_KEY_UP              , InputEvents::KeyCode::KEY_UP_ARROW      },
+    { GLFW_KEY_PAGE_UP         , InputEvents::KeyCode::KEY_PG_UP      },
+    { GLFW_KEY_PAGE_DOWN       , InputEvents::KeyCode::KEY_PG_DOWN    },
+    { GLFW_KEY_HOME            , InputEvents::KeyCode::KEY_HOME       },
+    { GLFW_KEY_END             , InputEvents::KeyCode::KEY_END           },
+    { GLFW_KEY_CAPS_LOCK       , InputEvents::KeyCode::KEY_CAPS_LOCK     },
+    { GLFW_KEY_SCROLL_LOCK     , InputEvents::KeyCode::KEY_SCROLL_LOCK   },
+    { GLFW_KEY_NUM_LOCK        , InputEvents::KeyCode::KEY_NUM_LOCK      },
+    { GLFW_KEY_PRINT_SCREEN    , InputEvents::KeyCode::KEY_PRINT         },
+    { GLFW_KEY_PAUSE           , InputEvents::KeyCode::KEY_PAUSE         },
+    { GLFW_KEY_F1              , InputEvents::KeyCode::KEY_F1            },
+    { GLFW_KEY_F2              , InputEvents::KeyCode::KEY_F2            },
+    { GLFW_KEY_F3              , InputEvents::KeyCode::KEY_F3            },
+    { GLFW_KEY_F4              , InputEvents::KeyCode::KEY_F4            },
+    { GLFW_KEY_F5              , InputEvents::KeyCode::KEY_F5            },
+    { GLFW_KEY_F6              , InputEvents::KeyCode::KEY_F6            },
+    { GLFW_KEY_F7              , InputEvents::KeyCode::KEY_F7            },
+    { GLFW_KEY_F8              , InputEvents::KeyCode::KEY_F8            },
+    { GLFW_KEY_F9              , InputEvents::KeyCode::KEY_F9            },
+    { GLFW_KEY_F10             , InputEvents::KeyCode::KEY_F10           },
+    { GLFW_KEY_F11             , InputEvents::KeyCode::KEY_F11           },
+    { GLFW_KEY_F12             , InputEvents::KeyCode::KEY_F12           },
+    { GLFW_KEY_F13             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F14             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F15             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F16             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F17             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F18             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F19             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F20             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F21             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F22             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F23             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F24             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_F25             , InputEvents::KeyCode::KEY_NONE          },
+    { GLFW_KEY_KP_0            , InputEvents::KeyCode::KEY_0             },
+    { GLFW_KEY_KP_1            , InputEvents::KeyCode::KEY_1             },
+    { GLFW_KEY_KP_2            , InputEvents::KeyCode::KEY_2             },
+    { GLFW_KEY_KP_3            , InputEvents::KeyCode::KEY_3             },
+    { GLFW_KEY_KP_4            , InputEvents::KeyCode::KEY_4             },
+    { GLFW_KEY_KP_5            , InputEvents::KeyCode::KEY_5             },
+    { GLFW_KEY_KP_6            , InputEvents::KeyCode::KEY_6             },
+    { GLFW_KEY_KP_7            , InputEvents::KeyCode::KEY_7             },
+    { GLFW_KEY_KP_8            , InputEvents::KeyCode::KEY_8             },
+    { GLFW_KEY_KP_9            , InputEvents::KeyCode::KEY_9             },
+    { GLFW_KEY_KP_DECIMAL      , InputEvents::KeyCode::KEY_PERIOD        },
+    { GLFW_KEY_KP_DIVIDE       , InputEvents::KeyCode::KEY_KP_DIVIDE     },
+    { GLFW_KEY_KP_MULTIPLY     , InputEvents::KeyCode::KEY_KP_MULTIPLY   },
+    { GLFW_KEY_KP_SUBTRACT     , InputEvents::KeyCode::KEY_KP_MINUS      },
+    { GLFW_KEY_KP_ADD          , InputEvents::KeyCode::KEY_KP_PLUS       },
+    { GLFW_KEY_KP_ENTER        , InputEvents::KeyCode::KEY_KP_ENTER      },
+    { GLFW_KEY_KP_EQUAL        , InputEvents::KeyCode::KEY_EQUAL         },
+    { GLFW_KEY_LEFT_SHIFT      , InputEvents::KeyCode::KEY_LEFT_SHIFT         },
+    { GLFW_KEY_LEFT_CONTROL    , InputEvents::KeyCode::KEY_LEFT_CTRL          },
+    { GLFW_KEY_LEFT_ALT        , InputEvents::KeyCode::KEY_LEFT_ALT           },
+    { GLFW_KEY_LEFT_SUPER      , InputEvents::KeyCode::KEY_HYPER         },
+    { GLFW_KEY_RIGHT_SHIFT     , InputEvents::KeyCode::KEY_RIGHT_SHIFT         },
+    { GLFW_KEY_RIGHT_CONTROL   , InputEvents::KeyCode::KEY_RIGHT_CTRL          },
+    { GLFW_KEY_RIGHT_ALT       , InputEvents::KeyCode::KEY_RIGHT_ALT           },
+    { GLFW_KEY_RIGHT_SUPER     , InputEvents::KeyCode::KEY_HYPER         },
+    { GLFW_KEY_MENU            , InputEvents::KeyCode::KEY_MENU          },
+    { GLFW_KEY_LAST            , InputEvents::KeyCode::KEY_NONE          }
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -201,8 +200,13 @@ GLViewImpl::GLViewImpl(bool initglfw)
 , _frameZoomFactor(1.0f)
 , _mainWindow(nullptr)
 , _monitor(nullptr)
-, _mouseX(0.0f)
-, _mouseY(0.0f)
+, openGLMousePosition(Vec2::ZERO)
+, mousePosition(Vec2::ZERO)
+, mouseInitialPosition(Vec2::ZERO)
+, scrollDelta(Vec2::ZERO)
+, canClick(false)
+, isDragging(false)
+, isLeftClicked(false)
 {
     _viewName = "cocos2dx";
     g_keyCodeMap.clear();
@@ -653,13 +657,15 @@ void GLViewImpl::onGLFWError(int errorID, const char* errorDesc)
 
 void GLViewImpl::onGLFWMouseCallBack(GLFWwindow* /*window*/, int button, int action, int /*modify*/)
 {
-    if(GLFW_MOUSE_BUTTON_LEFT == button)
+    const float NonDragTolerance = 4.0f;
+
+    if(button == GLFW_MOUSE_BUTTON_LEFT)
     {
-        if(GLFW_PRESS == action)
+        if(action == GLFW_PRESS)
         {
             _captured = true;
         }
-        else if(GLFW_RELEASE == action)
+        else if(action == GLFW_RELEASE)
         {
             if (_captured)
             {
@@ -667,48 +673,152 @@ void GLViewImpl::onGLFWMouseCallBack(GLFWwindow* /*window*/, int button, int act
             }
         }
     }
-    
-    //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
-    float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
-    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
 
-    if(GLFW_PRESS == action)
+    if(action == GLFW_PRESS)
     {
-        EventMouse event(EventMouse::MouseEventType::MOUSE_DOWN);
-        event.setCursorPosition(cursorX, cursorY);
-        event.setMouseButton(static_cast<cocos2d::EventMouse::MouseButton>(button));
-        Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+        switch(static_cast<InputEvents::MouseButton>(button))
+        {
+            case InputEvents::MouseButton::BUTTON_LEFT:
+            {
+                this->isLeftClicked = true;
+
+                if (!this->isDragging)
+                {
+                    this->mouseInitialPosition = this->mousePosition;
+                }
+
+                InputEvents::TriggerMouseDown(InputEvents::MouseEventArgs(
+                    this->mousePosition,
+                    this->mouseInitialPosition,
+                    this->scrollDelta,
+                    this->isDragging,
+                    this->canClick,
+                    this->isLeftClicked
+                ));
+
+                // InputEvents::TriggerStateChange(MouseState::getMouseState());
+
+                /*
+                    MouseState::mousePosition = Vec2(event->getCursorX(), event->getCursorY());
+                    MouseState::isLeftClicked = (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT);
+
+
+                    InputEvents::TriggerMouseDown(MouseState::getMouseState());
+                    InputEvents::TriggerStateChange(MouseState::getMouseState());
+
+                EventMouse event(EventMouse::MouseEventType::MOUSE_DOWN);
+                event.setCursorPosition(cursorX, cursorY);
+                event.setMouseButton(static_cast<InputEvents::MouseButton>(button));
+                Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+                */
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
     }
-    else if(GLFW_RELEASE == action)
+    else if(action == GLFW_RELEASE)
     {
-        EventMouse event(EventMouse::MouseEventType::MOUSE_UP);
-        event.setCursorPosition(cursorX, cursorY);
-        event.setMouseButton(static_cast<cocos2d::EventMouse::MouseButton>(button));
-        Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+        switch(static_cast<InputEvents::MouseButton>(button))
+        {
+            case InputEvents::MouseButton::BUTTON_LEFT:
+            {
+                this->isLeftClicked = false;
+
+                if (this->mousePosition.distance(this->mouseInitialPosition) < NonDragTolerance)
+                {
+                    this->isDragging = false;
+                }
+
+                InputEvents::TriggerMouseUp(InputEvents::MouseEventArgs(
+                    this->mousePosition,
+                    this->mouseInitialPosition,
+                    this->scrollDelta,
+                    this->isDragging,
+                    this->canClick,
+                    this->isLeftClicked
+                ));
+
+                this->isDragging = false;
+                this->canClick = false;
+
+                // InputEvents::TriggerStateChange(MouseState::getMouseState());
+                // InputEvents::TriggerMouseRefresh(MouseState::getMouseState());
+
+                /*
+
+                    MouseState::mousePosition = Vec2(event->getCursorX(), event->getCursorY());
+                    MouseState::isLeftClicked = (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT);
+
+                    if (MouseState::mousePosition.distance(MouseState::mouseInitialPosition) < NonDragTolerance)
+                    {
+                        MouseState::isDragging = false;
+                    }
+
+                    InputEvents::TriggerMouseUp(MouseState::getMouseState());
+
+                    MouseState::isDragging = false;
+                    MouseState::canClick = false;
+
+                    InputEvents::TriggerStateChange(MouseState::getMouseState());
+                    InputEvents::TriggerMouseRefresh(MouseState::getMouseState());
+                    EventMouse event(EventMouse::MouseEventType::MOUSE_UP);
+                    event.setCursorPosition(cursorX, cursorY);
+                    event.setMouseButton(static_cast<cocos2d::EventMouse::MouseButton>(button));
+                    Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+                */
+                break;
+            }
+            default:
+            {
+                break;
+            }
+        }
     }
 }
 
 void GLViewImpl::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
 {
-    _mouseX = (float)x;
-    _mouseY = (float)y;
+    openGLMousePosition.x = (float)x;
+    openGLMousePosition.y = (float)y;
 
-    _mouseX /= this->getFrameZoomFactor();
-    _mouseY /= this->getFrameZoomFactor();
+    openGLMousePosition.x /= this->getFrameZoomFactor();
+    openGLMousePosition.y /= this->getFrameZoomFactor();
 
     if (_isInRetinaMonitor)
     {
         if (_retinaFactor == 1)
         {
-            _mouseX *= 2;
-            _mouseY *= 2;
+            openGLMousePosition.x *= 2.0f;
+            openGLMousePosition.y *= 2.0f;
         }
     }
     
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
-    float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
-    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
+    this->mousePosition.x = (openGLMousePosition.x - _viewPortRect.origin.x) / _scaleX;
+    this->mousePosition.y = (_viewPortRect.origin.y + _viewPortRect.size.height - openGLMousePosition.y) / _scaleY;
 
+    InputEvents::TriggerMouseMove(InputEvents::MouseEventArgs(
+        this->mousePosition,
+        this->mouseInitialPosition,
+        this->scrollDelta,
+        this->isDragging,
+        this->canClick,
+        this->isLeftClicked
+    ));
+
+    /*
+        MouseState::mousePosition = Vec2(event->getCursorX(), event->getCursorY());
+        MouseState::isLeftClicked = (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT);
+        MouseState::canClick = false;
+
+        InputEvents::TriggerMouseMove(MouseState::getMouseState());
+        InputEvents::TriggerStateChange(MouseState::getMouseState());
+    */
+
+   /*
     EventMouse event(EventMouse::MouseEventType::MOUSE_MOVE);
 
     // Set current button
@@ -726,45 +836,80 @@ void GLViewImpl::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
     }
     event.setCursorPosition(cursorX, cursorY);
     Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+    */
 }
 
 void GLViewImpl::onGLFWMouseScrollCallback(GLFWwindow* /*window*/, double x, double y)
 {
+    this->scrollDelta.x = x;
+    this->scrollDelta.y = -y;
+
+    InputEvents::TriggerMouseMove(InputEvents::MouseEventArgs(
+        this->mousePosition,
+        this->mouseInitialPosition,
+        this->scrollDelta,
+        this->isDragging,
+        this->canClick,
+        this->isLeftClicked
+    ));
+
+    this->scrollDelta.x = 0.0f;
+    this->scrollDelta.y = 0.0f;
+    /*
+        MouseState::scrollDelta = Vec2(event->getScrollX(), event->getScrollY());
+
+        InputEvents::TriggerMouseScroll(MouseState::getMouseState());
+        InputEvents::TriggerMouseRefresh(MouseState::getMouseState());
+
+        MouseState::scrollDelta = Vec2::ZERO;
+    */
+   /*
     EventMouse event(EventMouse::MouseEventType::MOUSE_SCROLL);
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
-    float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
-    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
+    float cursorX = (openGLMousePosition.x - _viewPortRect.origin.x) / _scaleX;
+    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - openGLMousePosition.y) / _scaleY;
     event.setScrollData((float)x, -(float)y);
     event.setCursorPosition(cursorX, cursorY);
+
     Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+    */
 }
 
 void GLViewImpl::onGLFWKeyCallback(GLFWwindow* /*window*/, int key, int /*scancode*/, int action, int /*mods*/)
 {
     if (GLFW_REPEAT != action)
     {
-        EventKeyboard event(g_keyCodeMap[key], GLFW_PRESS == action);
-        auto dispatcher = Director::getInstance()->getEventDispatcher();
-        dispatcher->dispatchEvent(&event);
+        bool isPressed = GLFW_PRESS == action;
+
+        InputEvents::KeyboardEventArgs event = InputEvents::KeyboardEventArgs(g_keyCodeMap[key]);
+
+        if (isPressed)
+        {
+            Director::getInstance()->getEventDispatcher()->dispatchEvent(InputEvents::EventKeyJustPressed, &event);
+        }
+        else
+        {
+            Director::getInstance()->getEventDispatcher()->dispatchEvent(InputEvents::EventKeyJustReleased, &event);
+        }
     }
 
     if (GLFW_RELEASE != action)
     {
         switch (g_keyCodeMap[key])
         {
-        case EventKeyboard::KeyCode::KEY_BACKSPACE:
+        case InputEvents::KeyCode::KEY_BACKSPACE:
             IMEDispatcher::sharedDispatcher()->dispatchDeleteBackward();
             break;
-        case EventKeyboard::KeyCode::KEY_HOME:
-        case EventKeyboard::KeyCode::KEY_KP_HOME:
-        case EventKeyboard::KeyCode::KEY_DELETE:
-        case EventKeyboard::KeyCode::KEY_KP_DELETE:
-        case EventKeyboard::KeyCode::KEY_END:
-		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-		case EventKeyboard::KeyCode::KEY_UP_ARROW:
-		case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
-        case EventKeyboard::KeyCode::KEY_ESCAPE:
+        case InputEvents::KeyCode::KEY_HOME:
+        case InputEvents::KeyCode::KEY_KP_HOME:
+        case InputEvents::KeyCode::KEY_DELETE:
+        case InputEvents::KeyCode::KEY_KP_DELETE:
+        case InputEvents::KeyCode::KEY_END:
+		case InputEvents::KeyCode::KEY_LEFT_ARROW:
+		case InputEvents::KeyCode::KEY_RIGHT_ARROW:
+		case InputEvents::KeyCode::KEY_UP_ARROW:
+		case InputEvents::KeyCode::KEY_DOWN_ARROW:
+        case InputEvents::KeyCode::KEY_ESCAPE:
             IMEDispatcher::sharedDispatcher()->dispatchControlKey(g_keyCodeMap[key]);
             break;
         default:

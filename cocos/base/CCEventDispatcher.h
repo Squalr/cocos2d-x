@@ -62,31 +62,34 @@ dispatched.
 class CC_DLL EventDispatcher : public Ref
 {
 public:
-    // Adds event listener.
-    
-    /** Adds a event listener for a specified event with the priority of scene graph.
-     *  @param listener The listener of a specified event.
-     *  @param node The priority of the listener is based on the draw order of this node.
-     *  @note  The priority of scene graph will be fixed value 0. So the order of listener item
-     *          in the vector will be ' <0, scene graph (0 priority), >0'.
+    /** Constructor of EventDispatcher.
      */
-    void addEventListenerWithSceneGraphPriority(EventListener* listener, Node* node);
-
-    /////////////////////////////////////////////
+    EventDispatcher();
+    /** Destructor of EventDispatcher.
+     */
+    ~EventDispatcher();
     
-    // Removes event listener
+    /** Adds an event listener
+     */
+    void addEventListener(EventListenerCustom* listener);
+    
+    /** Dispatches a Custom Event with a event name an optional user data.
+     *
+     * @param eventName The name of the event which needs to be dispatched.
+     * @param optionalUserData The optional user data, it's a void*, the default value is nullptr.
+     */
+    void dispatchEvent(const std::string &eventName, void *optionalUserData = nullptr);
+    
+    /** Dispatches a Custom Event.
+     *
+     */
+    void dispatchEvent(EventCustom* event);
     
     /** Remove a listener.
      *
      *  @param listener The specified event listener which needs to be removed.
      */
     void removeEventListener(EventListener* listener);
-
-    /** Removes all listeners with the same event listener type.
-     *
-     * @param listenerType A given event listener type which needs to be removed.
-     */
-    void removeEventListenersForType(EventListener::Type listenerType);
 
 	/** Removes all listeners which are associated with the specified target.
 	 *
@@ -101,21 +104,11 @@ public:
 	 * @param recursive True if remove recursively, the default value is false.
 	 */
 	void removeEventListenersForTargetWhere(Node* target, std::function<bool(EventListener*)> predicate, bool recursive = false);
-    
-    /** Removes all custom listeners with the same event name.
-     *
-     * @param customEventName A given event listener name which needs to be removed.
-     */
-    void removeCustomEventListeners(const std::string& customEventName);
 
     /** Removes all listeners.
      */
     void removeAllEventListeners();
 
-    /////////////////////////////////////////////
-    
-    // Pauses / Resumes event listener
-    
     /** Pauses all listeners which are associated the specified target.
      *
      * @param target A given target node.
@@ -129,22 +122,20 @@ public:
      * @param recursive True if resume recursively, the default value is false.
      */
     void resumeEventListenersForTarget(Node* target, bool recursive = false);
+
     
-    /////////////////////////////////////////////
 
-    /** Whether to enable dispatching events.
-     *
-     * @param isEnabled  True if enable dispatching events.
+
+
+    ///////// DEPRECATE THESE
+    
+    /** Adds a event listener for a specified event with the priority of scene graph.
+     *  @param listener The listener of a specified event.
+     *  @param node The priority of the listener is based on the draw order of this node.
+     *  @note  The priority of scene graph will be fixed value 0. So the order of listener item
+     *          in the vector will be ' <0, scene graph (0 priority), >0'.
      */
-    void setEnabled(bool isEnabled);
-
-    /** Checks whether dispatching events is enabled.
-     *
-     * @return True if dispatching events is enabled.
-     */
-    bool isEnabled() const;
-
-    /////////////////////////////////////////////
+    void addEventListener(EventListener* listener, Node* node);
     
     /** Dispatches the event.
      *  Also removes all EventListeners marked for deletion from the
@@ -152,7 +143,7 @@ public:
      *
      * @param event The event needs to be dispatched.
      */
-    void dispatchEvent(Event* event);
+    // void dispatchEvent(Event* event);
 
     /** Dispatches a Custom Event with a event name an optional user data.
      *
@@ -161,34 +152,10 @@ public:
      */
     void dispatchCustomEvent(const std::string &eventName, void *optionalUserData = nullptr);
 
-    /** Query whether the specified event listener id has been added.
-     *
-     * @param listenerID The listenerID of the event listener id.
-     *
-     * @return True if dispatching events is exist
-     */
-    bool hasEventListener(const EventListener::ListenerID& listenerID) const;
+private:
+    std::unordered_map<std::string, std::set<EventListenerCustom*>> listenerMap;
 
-    /////////////////////////////////////////////
-    
-    /** Constructor of EventDispatcher.
-     */
-    EventDispatcher();
-    /** Destructor of EventDispatcher.
-     */
-    ~EventDispatcher();
-
-#if CC_NODE_DEBUG_VERIFY_EVENT_LISTENERS && COCOS2D_DEBUG > 0
-    
-    /**
-     * To help track down event listener issues in debug builds.
-     * Verifies that the node has no event listeners associated with it when destroyed.
-     */
-    void debugCheckNodeHasNoEventListenersOnDestruction(Node* node);
-    
-#endif
-
-protected:
+//////// OLD & DEPRECATED
     friend class Node;
     
     /** Sets the dirty flag for a node. */
@@ -217,12 +184,6 @@ protected:
         ssize_t _gt0Index;
     };
     
-    /** Adds an event listener with item
-     *  @note if it is dispatching event, the added operation will be delayed to the end of current dispatch
-     *  @see forceAddEventListener
-     */
-    void addEventListener(EventListener* listener);
-    
     /** Force adding an event listener
      *  @note force add an event listener which will ignore whether it's in dispatching.
      *  @see addEventListener
@@ -230,13 +191,13 @@ protected:
     void forceAddEventListener(EventListener* listener);
     
     /** Gets event the listener list for the event listener type. */
-    EventListenerVector* getListeners(const EventListener::ListenerID& listenerID) const;
+    EventListenerVector* getListeners(const std::string& listenerID) const;
     
     /** Update dirty flag */
     void updateDirtyFlagForSceneGraph();
     
     /** Removes all listeners with the same event listener ID */
-    void removeEventListenersForListenerID(const EventListener::ListenerID& listenerID);
+    void removeEventListenersForListenerID(const std::string& listenerID);
     
     /**
      *
@@ -246,10 +207,10 @@ protected:
     void removeAllListenersInVector(std::set<EventListener*>* listenerVector);
     
     /** Sort event listener */
-    void sortEventListeners(const EventListener::ListenerID& listenerID);
+    void sortEventListeners(const std::string& listenerID);
     
     /** Sorts the listeners of specified type by scene graph priority */
-    void sortEventListenersOfSceneGraphPriority(const EventListener::ListenerID& listenerID, Node* rootNode);
+    void sortEventListenersOfSceneGraphPriority(const std::string& listenerID, Node* rootNode);
     
     /** Updates all listeners
      *  1) Removes all listener items that have been marked as 'removed' when dispatching event.
@@ -287,7 +248,7 @@ protected:
     };
     
     /** Sets the dirty flag for a specified listener ID */
-    void setDirty(const EventListener::ListenerID& listenerID, DirtyFlag flag);
+    void setDirty(const std::string& listenerID, DirtyFlag flag);
     
     /** Walks though scene graph to get the draw order for each node, it's called before sorting event listener with scene graph priority */
     void visitTarget(Node* node, bool isRootNode);
@@ -296,10 +257,10 @@ protected:
     void cleanToRemovedListeners();
 
     /** Listeners map */
-    std::unordered_map<EventListener::ListenerID, EventListenerVector*> _listenerMap;
+    std::unordered_map<std::string, EventListenerVector*> _listenerMap;
     
     /** The map of dirty flag */
-    std::unordered_map<EventListener::ListenerID, DirtyFlag> _priorityDirtyFlagMap;
+    std::unordered_map<std::string, DirtyFlag> _priorityDirtyFlagMap;
     
     /** The map of node and event listeners */
     std::unordered_map<Node*, std::vector<EventListener*>*> _nodeListenersMap;
@@ -322,14 +283,10 @@ protected:
     /** Whether the dispatcher is dispatching event */
     int _inDispatch;
     
-    /** Whether to enable dispatching event */
-    bool _isEnabled;
-    
     int _nodePriorityIndex;
     
     std::set<std::string> _internalCustomListenerIDs;
 };
-
 
 NS_CC_END
 

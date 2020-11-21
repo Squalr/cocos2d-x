@@ -30,7 +30,7 @@ THE SOFTWARE.
 #define __CCLAYER_H__
 
 #include "2d/CCNode.h"
-#include "base/CCEventKeyboard.h"
+#include "base/CCInputEvents.h"
 #include "base/CCProtocols.h"
 #include "renderer/CCCustomCommand.h"
 
@@ -60,67 +60,14 @@ public:
      */
     static Layer *create();
 
-    /** whether or not it will receive keyboard or keypad events
-    You can enable / disable accelerometer events with this property.
-    it's new in cocos2d-x
-    @js NA
-    */
-
-    CC_DEPRECATED_ATTRIBUTE virtual bool isKeyboardEnabled() const;
-    CC_DEPRECATED_ATTRIBUTE virtual void setKeyboardEnabled(bool value);
-
-    /** 
-      Please use onKeyPressed instead. 
-      @js NA
-     */
-    CC_DEPRECATED_ATTRIBUTE virtual void keyPressed(int /*keyCode*/) final {};
-    
-    /** 
-      Please use onKeyReleased instead. 
-      @js NA
-     */
-    CC_DEPRECATED_ATTRIBUTE virtual void keyReleased(int /*keyCode*/) final {};
-
-	/* Callback function should not be deprecated, it will generate lots of warnings.
-	Since 'setKeyboardEnabled' was deprecated, it will make warnings if developer overrides onKeyXXX and invokes setKeyboardEnabled(true) instead of using EventDispatcher::addEventListenerWithXXX.
-    */
-    /** Callback function for key pressed.
-     * @param keyCode KeyCode information.
-     * @param event Event information.
-     * @js NA
-     */
-    virtual void onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event);
-    /** Callback function for key released.
-    * @param keyCode KeyCode information.
-    * @param event Event information.
-    * @js NA
-    */
-    virtual void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event);
-
-    CC_DEPRECATED_ATTRIBUTE virtual bool isKeypadEnabled() const final { return _keyboardEnabled; }
-    CC_DEPRECATED_ATTRIBUTE virtual void setKeypadEnabled(bool value);
-
-    /** 
-      @deprecated Please override onKeyReleased and check the keycode of KeyboardEvent::KeyCode::Menu(KEY_BACKSPACE) instead. 
-      @js NA
-     */
-    CC_DEPRECATED_ATTRIBUTE virtual void keyBackClicked() final {};
-    CC_DEPRECATED_ATTRIBUTE virtual void keyMenuClicked() final {};
-
     // Overrides
     virtual std::string getDescription() const override;
 
-CC_CONSTRUCTOR_ACCESS:
     Layer();
     virtual ~Layer();
 
     virtual bool init() override;
-
-protected:
-    bool _keyboardEnabled;
-    EventListener* _touchListener;
-    EventListenerKeyboard* _keyboardListener;
-
+    
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Layer);
 
@@ -162,7 +109,6 @@ public:
     virtual void setOpacityModifyRGB(bool bValue) override { Layer::setOpacityModifyRGB(bValue); }
     virtual bool isOpacityModifyRGB() const override { return Layer::isOpacityModifyRGB(); }
 
-CC_CONSTRUCTOR_ACCESS:
     __LayerRGBA();
     virtual ~__LayerRGBA() {}
 
@@ -243,8 +189,7 @@ public:
     virtual void setBlendFunc(const BlendFunc& blendFunc) override;
 
     virtual std::string getDescription() const override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     LayerColor();
     virtual ~LayerColor();
     
@@ -385,8 +330,7 @@ public:
     const Vec2& getVector() const;
 
     virtual std::string getDescription() const override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     LayerGradient();
     virtual ~LayerGradient();
     
@@ -466,8 +410,7 @@ public:
     
     void setBlendFunc(const BlendFunc& blendFunc);
     BlendFunc getBlendFunc() const;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     LayerRadialGradient();
     virtual ~LayerRadialGradient();
     
@@ -571,8 +514,7 @@ public:
     void switchToAndReleaseMe(int n);
 
     virtual std::string getDescription() const override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     /**
      * @js ctor
      */

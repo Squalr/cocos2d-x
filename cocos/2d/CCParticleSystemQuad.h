@@ -144,8 +144,7 @@ public:
     virtual void setTotalParticles(int tp) override;
 
     virtual std::string getDescription() const override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     /**
      * @js ctor
      */

@@ -124,8 +124,7 @@ bool SpriteBatchNode::initWithFile(const std::string& fileImage, ssize_t capacit
     return initWithTexture(texture2D, capacity);
 }
 
-SpriteBatchNode::SpriteBatchNode()
-: _textureAtlas(nullptr)
+SpriteBatchNode::SpriteBatchNode() : _textureAtlas(nullptr)
 {
 }
 

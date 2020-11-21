@@ -25,10 +25,12 @@ THE SOFTWARE.
 
 #include "ui/UIWidget.h"
 #include "ui/UIHelper.h"
-#include "base/CCEventListenerKeyboard.h"
+#include "base/CCEventCustom.h"
 #include "base/CCDirector.h"
 #include "base/CCEventFocus.h"
 #include "base/CCEventDispatcher.h"
+#include "base/CCInputEvents.h"
+#include "base/CCEventListenerCustom.h"
 #include "renderer/CCGLProgram.h"
 #include "renderer/CCGLProgramState.h"
 #include "renderer/ccShaders.h"
@@ -37,14 +39,14 @@ THE SOFTWARE.
 
 NS_CC_BEGIN
 
-namespace ui {
+namespace ui
+{
 
 class Widget::FocusNavigationController
 {
     void enableFocusNavigation(bool flag);
 
     FocusNavigationController():
-    _keyboardListener(nullptr),
     _firstFocusedWidget(nullptr),
     _enableFocusNavigation(false),
     _keyboardEventPriority(1)
@@ -55,14 +57,10 @@ class Widget::FocusNavigationController
 protected:
     void setFirstFocusedWidget(Widget* widget);
 
-    void onKeypadKeyPressed(EventKeyboard::KeyCode, Event*);
-
-    void addKeyboardEventListener();
-    void removeKeyboardEventListener();
+    void onKeypadKeyPressed(InputEvents::KeyCode, Event*);
 
     friend class Widget;
 private:
-    EventListenerKeyboard* _keyboardListener ;
     Widget* _firstFocusedWidget ;
     bool _enableFocusNavigation ;
     const int _keyboardEventPriority;
@@ -70,26 +68,25 @@ private:
 
 Widget::FocusNavigationController::~FocusNavigationController()
 {
-    this->removeKeyboardEventListener();
 }
 
-void Widget::FocusNavigationController::onKeypadKeyPressed(EventKeyboard::KeyCode  keyCode, Event* /*event*/)
+void Widget::FocusNavigationController::onKeypadKeyPressed(InputEvents::KeyCode  keyCode, Event* /*event*/)
 {
     if (_enableFocusNavigation && _firstFocusedWidget)
     {
-        if (keyCode == EventKeyboard::KeyCode::KEY_DPAD_DOWN)
+        if (keyCode == InputEvents::KeyCode::KEY_DPAD_DOWN)
         {
             _firstFocusedWidget = _firstFocusedWidget->findNextFocusedWidget(Widget::FocusDirection::DOWN, _firstFocusedWidget);
         }
-        if (keyCode == EventKeyboard::KeyCode::KEY_DPAD_UP)
+        if (keyCode == InputEvents::KeyCode::KEY_DPAD_UP)
         {
             _firstFocusedWidget = _firstFocusedWidget->findNextFocusedWidget(Widget::FocusDirection::UP, _firstFocusedWidget);
         }
-        if (keyCode == EventKeyboard::KeyCode::KEY_DPAD_LEFT)
+        if (keyCode == InputEvents::KeyCode::KEY_DPAD_LEFT)
         {
             _firstFocusedWidget = _firstFocusedWidget->findNextFocusedWidget(Widget::FocusDirection::LEFT, _firstFocusedWidget);
         }
-        if (keyCode == EventKeyboard::KeyCode::KEY_DPAD_RIGHT)
+        if (keyCode == InputEvents::KeyCode::KEY_DPAD_RIGHT)
         {
             _firstFocusedWidget = _firstFocusedWidget->findNextFocusedWidget(Widget::FocusDirection::RIGHT, _firstFocusedWidget);
         }
@@ -102,39 +99,11 @@ void Widget::FocusNavigationController::enableFocusNavigation(bool flag)
         return;
 
     _enableFocusNavigation = flag;
-
-    if (flag)
-        this->addKeyboardEventListener();
-    else
-        this->removeKeyboardEventListener();
 }
 
 void Widget::FocusNavigationController::setFirstFocusedWidget(Widget* widget)
 {
     _firstFocusedWidget = widget;
-}
-
-void Widget::FocusNavigationController::addKeyboardEventListener()
-{
-    if (nullptr == _keyboardListener)
-    {
-        /*
-        _keyboardListener = EventListenerKeyboard::create();
-        _keyboardListener->onKeyReleased = CC_CALLBACK_2(Widget::FocusNavigationController::onKeypadKeyPressed, this);
-        EventDispatcher* dispatcher = Director::getInstance()->getEventDispatcher();
-        dispatcher->addEventListenerWithFixedPriority(_keyboardListener, _keyboardEventPriority);
-        */
-    }
-}
-
-void Widget::FocusNavigationController::removeKeyboardEventListener()
-{
-    if (nullptr != _keyboardListener)
-    {
-        EventDispatcher* dispatcher = Director::getInstance()->getEventDispatcher();
-        dispatcher->removeEventListener(_keyboardListener);
-        _keyboardListener = nullptr;
-    }
 }
 
 Widget* Widget::_focusedWidget = nullptr;
@@ -204,6 +173,19 @@ bool Widget::init()
         onFocusChanged = CC_CALLBACK_2(Widget::onFocusChange,this);
         onNextFocusedWidget = nullptr;
         this->setAnchorPoint(Vec2(0.5f, 0.5f));
+        
+	    this->getEventDispatcher()->addEventListener(EventListenerCustom::create(InputEvents::EventKeyJustPressed, [=](EventCustom* eventCustom)
+        {
+            if (this->_focusNavigationController && this->_focusNavigationController->_enableFocusNavigation)
+            {
+                InputEvents::KeyboardEventArgs* args = static_cast<InputEvents::KeyboardEventArgs*>(eventCustom->getUserData());
+
+                if (args != nullptr)
+                {
+                    this->_focusNavigationController->onKeypadKeyPressed(args->keycode, eventCustom);
+                }
+            }
+        }));
 
         ignoreContentAdaptWithSize(true);
 

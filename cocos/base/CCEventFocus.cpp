@@ -29,8 +29,7 @@
 NS_CC_BEGIN
 
 
-EventFocus::EventFocus(ui::Widget *widgetLoseFocus, ui::Widget* widgetGetFocus)
-:Event(Type::FOCUS),
+EventFocus::EventFocus(ui::Widget *widgetLoseFocus, ui::Widget* widgetGetFocus) : EventCustom("__cc_focus_event"),
 _widgetGetFocus(widgetGetFocus),
 _widgetLoseFocus(widgetLoseFocus)
 {

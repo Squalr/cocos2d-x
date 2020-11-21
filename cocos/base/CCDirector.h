@@ -435,12 +435,6 @@ public:
      * @js NA
      */
     EventDispatcher* getEventDispatcher() const { return _eventDispatcher; }
-    
-    /** Sets the EventDispatcher associated with this director.
-     * @since v3.0
-     * @js NA
-     */
-    void setEventDispatcher(EventDispatcher* dispatcher);
 
     /** Returns the Renderer associated with this director.
      * @since v3.0

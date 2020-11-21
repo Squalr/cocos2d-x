@@ -999,12 +999,7 @@ public:
 
     /** @deprecated Use getBoundingBox instead */
     CC_DEPRECATED_ATTRIBUTE virtual Rect boundingBox() const { return getBoundingBox(); }
-
-    /** Set event dispatcher for scene.
-     *
-     * @param dispatcher The event dispatcher of scene.
-     */
-    virtual void setEventDispatcher(EventDispatcher* dispatcher);
+    
     /** Get the event dispatcher of scene.
      *
      * @return The event dispatcher of scene.
@@ -1396,7 +1391,6 @@ public:
      */
     virtual void setCameraMask(unsigned short mask, bool applyChildren = true);
 
-CC_CONSTRUCTOR_ACCESS:
     // Nodes should be created using create();
     Node();
     virtual ~Node();
@@ -1585,8 +1579,7 @@ public:
 
     virtual void setOpacityModifyRGB(bool bValue) override { return Node::setOpacityModifyRGB(bValue); }
     virtual bool isOpacityModifyRGB() const override { return Node::isOpacityModifyRGB(); }
-
-CC_CONSTRUCTOR_ACCESS:
+    
     __NodeRGBA();
     virtual ~__NodeRGBA() {}
 

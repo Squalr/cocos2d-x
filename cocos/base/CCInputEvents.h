@@ -24,28 +24,51 @@
  
  ****************************************************************************/
 
-#ifndef __cocos2d_libs__CCKeyboardEvent__
-#define __cocos2d_libs__CCKeyboardEvent__
+#ifndef __cocos2d_libs__CCInputEvents__
+#define __cocos2d_libs__CCInputEvents__
 
-#include "base/CCEvent.h"
-
-/**
- * @addtogroup base
- * @{
- */
+#include "base/ccMacros.h"
+#include "math/Vec2.h"
 
 NS_CC_BEGIN
 
-/** @class EventKeyboard
- * @brief Keyboard event.
- */
-class CC_DLL EventKeyboard : public Event
+class CC_DLL InputEvents
 {
 public:
-    /**
-     * KeyCode The key (code).
-     * @js NA
-     */
+	static const std::string EventMouseMove;
+	static const std::string EventMouseRefresh;
+	static const std::string EventMouseDown;
+	static const std::string EventMouseUp;
+	static const std::string EventMouseScroll;
+	static const std::string EventMouseStateUpdate;
+	static const std::string EventClickableMouseOver;
+	static const std::string EventClickableMouseOut;
+	static const std::string EventMouseDrag;
+	static const std::string EventKeyJustPressed;
+	static const std::string EventKeyJustReleased;
+
+    enum class MouseEventType
+    {
+        MOUSE_NONE,
+        MOUSE_DOWN,
+        MOUSE_UP,
+        MOUSE_MOVE,
+        MOUSE_SCROLL,
+    };
+
+    enum class MouseButton
+    {
+      BUTTON_UNSET   = -1,
+      BUTTON_LEFT    =  0,
+      BUTTON_RIGHT   =  1,
+      BUTTON_MIDDLE  =  2,
+      BUTTON_4       =  3,
+      BUTTON_5       =  4,
+      BUTTON_6       =  5,
+      BUTTON_7       =  6,
+      BUTTON_8       =  7
+    };
+    
     enum class KeyCode
     {
         KEY_NONE,
@@ -220,19 +243,70 @@ public:
         KEY_PLAY
     };
     
-    /** Constructor.
-     *
-     * @param keyCode A given keycode.
-     * @param isPressed True if the key is pressed.
-     * @js ctor
-     */
-    EventKeyboard(KeyCode keyCode, bool isPressed);
-    
-private:
-    KeyCode _keyCode;
-    bool _isPressed;
-    
-    friend class EventListenerKeyboard;
+    struct MouseEventArgs
+    {
+        cocos2d::Vec2 mouseInitialCoords;
+        cocos2d::Vec2 mouseCoords;
+        cocos2d::Vec2 scrollDelta;
+        bool isDragging;
+        bool canClick;
+        bool isLeftClicked;
+
+        MouseEventArgs(cocos2d::Vec2 mouseInitialCoords, cocos2d::Vec2 mouseCoords, cocos2d::Vec2 scrollDelta, bool isDragging, bool canClick, bool isLeftClicked) :
+                mouseInitialCoords(mouseInitialCoords), mouseCoords(mouseCoords), scrollDelta(scrollDelta), isDragging(isDragging), canClick(canClick), isLeftClicked(isLeftClicked), handled(false)
+        {
+        }
+
+        void handle()
+        {
+            this->handled = true;
+        }
+
+        void unhandle()
+        {
+            this->handled = false;
+        }
+
+        bool isHandled()
+        {
+            return this->handled;
+        }
+
+        private:
+            bool handled;
+    };
+
+    struct KeyboardEventArgs
+    {
+        cocos2d::InputEvents::KeyCode keycode;
+
+        KeyboardEventArgs(cocos2d::InputEvents::KeyCode keycode) : keycode(keycode), handled(false) { }
+
+        void handle()
+        {
+            this->handled = true;
+        }
+
+        bool isHandled()
+        {
+            return this->handled;
+        }
+
+        private:
+            bool handled;
+    };
+
+	static void TriggerMouseMove(MouseEventArgs args);
+	static void TriggerMouseRefresh(MouseEventArgs args);
+	static void TriggerMouseDown(MouseEventArgs args);
+	static void TriggerMouseUp(MouseEventArgs args);
+	static void TriggerMouseScroll(MouseEventArgs args);
+	static void TriggerStateChange(MouseEventArgs args);
+	static void TriggerEventClickableMouseOver();
+	static void TriggerEventClickableMouseOut();
+	static void TriggerDragEvent();
+	static void TriggerKeyJustPressed(KeyboardEventArgs args);
+	static void TriggerKeyJustReleased(KeyboardEventArgs args);
 };
 
 NS_CC_END
@@ -240,4 +314,4 @@ NS_CC_END
 // end of base group
 /// @}
 
-#endif /* defined(__cocos2d_libs__CCKeyboardEvent__) */
+#endif /* defined(__cocos2d_libs__CCInputEvents__) */

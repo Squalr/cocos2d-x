@@ -27,7 +27,7 @@
 #ifndef __cocos2d_libs__CCEventFocus__
 #define __cocos2d_libs__CCEventFocus__
 
-#include "base/CCEvent.h"
+#include "base/CCEventCustom.h"
 
 /**
  * @addtogroup base
@@ -43,7 +43,7 @@ namespace ui {
 /** @class EventFocus
  * @brief Focus event.
  */
-class CC_DLL EventFocus : public Event
+class CC_DLL EventFocus : public EventCustom
 {
 public:
     /** Constructor.

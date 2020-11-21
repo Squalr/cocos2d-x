@@ -366,7 +366,10 @@ void Director::setOpenGLView(GLView *openGLView)
         CCLOG("%s\n",conf->getInfo().c_str());
 
         if(_openGLView)
+        {
             _openGLView->release();
+        }
+
         _openGLView = openGLView;
         _openGLView->retain();
 
@@ -383,11 +386,6 @@ void Director::setOpenGLView(GLView *openGLView)
         _renderer->initGLView();
 
         CHECK_GL_ERROR_DEBUG();
-
-        if (_eventDispatcher)
-        {
-            _eventDispatcher->setEnabled(true);
-        }
         
         _defaultFBO = cocos_experimental::FrameBuffer::getOrCreateDefaultFBO(_openGLView);
         _defaultFBO->retain();
@@ -1185,16 +1183,6 @@ void Director::setActionManager(ActionManager* actionManager)
         CC_SAFE_RELEASE(_actionManager);
         _actionManager = actionManager;
     }    
-}
-
-void Director::setEventDispatcher(EventDispatcher* dispatcher)
-{
-    if (_eventDispatcher != dispatcher)
-    {
-        CC_SAFE_RETAIN(dispatcher);
-        CC_SAFE_RELEASE(_eventDispatcher);
-        _eventDispatcher = dispatcher;
-    }
 }
 
 void Director::startAnimation()

@@ -160,8 +160,13 @@ protected:
 
     std::string _glfwError;
 
-    float _mouseX;
-    float _mouseY;
+    Vec2 openGLMousePosition;
+    Vec2 mousePosition;
+    Vec2 mouseInitialPosition;
+    Vec2 scrollDelta;
+    bool canClick;
+    bool isDragging;
+    bool isLeftClicked;
 
     friend class GLFWEventHandler;
     

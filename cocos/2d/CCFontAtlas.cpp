@@ -74,13 +74,6 @@ FontAtlas::FontAtlas(Font &theFont)
         }
         
         reinit();
-
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-        auto eventDispatcher = Director::getInstance()->getEventDispatcher();
-
-        _rendererRecreatedListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED, CC_CALLBACK_1(FontAtlas::listenRendererRecreated, this));
-        eventDispatcher->addEventListenerWithFixedPriority(_rendererRecreatedListener, 1);
-#endif
     }
 }
 
@@ -116,15 +109,6 @@ void FontAtlas::reinit()
 
 FontAtlas::~FontAtlas()
 {
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    if (_fontFreeType && _rendererRecreatedListener)
-    {
-        auto eventDispatcher = Director::getInstance()->getEventDispatcher();
-        eventDispatcher->removeEventListener(_rendererRecreatedListener);
-        _rendererRecreatedListener = nullptr;
-    }
-#endif
-
     _font->release();
     releaseTextures();
 

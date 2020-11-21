@@ -98,7 +98,6 @@ public:
     virtual ActionInstant* reverse() const override;
     virtual Show* clone() const override;
 
-CC_CONSTRUCTOR_ACCESS:
     Show(){}
     virtual ~Show(){}
 
@@ -128,7 +127,6 @@ public:
     virtual ActionInstant* reverse() const override;
     virtual Hide* clone() const override;
 
-CC_CONSTRUCTOR_ACCESS:
     Hide(){}
     virtual ~Hide(){}
 
@@ -158,7 +156,6 @@ public:
     virtual ToggleVisibility* reverse() const override;
     virtual ToggleVisibility* clone() const override;
 
-CC_CONSTRUCTOR_ACCESS:
     ToggleVisibility(){}
     virtual ~ToggleVisibility(){}
 
@@ -188,8 +185,7 @@ public:
     virtual void update(float time) override;
     virtual RemoveSelf* clone() const override;
     virtual RemoveSelf* reverse() const override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     RemoveSelf() : _isNeedCleanUp(true){}
     virtual ~RemoveSelf(){}
 
@@ -226,8 +222,7 @@ public:
     virtual void update(float time) override;
     virtual FlipX* reverse() const override;
     virtual FlipX* clone() const override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     FlipX() :_flipX(false) {}
     virtual ~FlipX() {}
 
@@ -264,8 +259,7 @@ public:
     virtual void update(float time) override;
     virtual FlipY* reverse() const override;
     virtual FlipY* clone() const override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     FlipY() :_flipY(false) {}
     virtual ~FlipY() {}
 
@@ -302,8 +296,7 @@ public:
     virtual void update(float time) override;
     virtual Place* reverse() const override;
     virtual Place* clone() const override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     Place(){}
     virtual ~Place(){}
 
@@ -380,8 +373,7 @@ public:
     virtual void update(float time) override;
     virtual CallFunc* reverse() const override;
     virtual CallFunc* clone() const override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     CallFunc()
     : _selectorTarget(nullptr)
     , _callFunc(nullptr)
@@ -445,8 +437,7 @@ public:
     //
     virtual CallFuncN* clone() const override;
     virtual void execute() override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     CallFuncN():_functionN(nullptr){}
     virtual ~CallFuncN(){}
 
@@ -491,8 +482,7 @@ public:
     //
     virtual __CCCallFuncND* clone() const override;
     virtual void execute() override;
-    
-CC_CONSTRUCTOR_ACCESS:
+
     __CCCallFuncND() {}
     virtual ~__CCCallFuncND() {}
     
@@ -535,8 +525,7 @@ public:
     
     Ref* getObject() const;
     void setObject(Ref* obj);
-    
-CC_CONSTRUCTOR_ACCESS:
+
     __CCCallFuncO();
     virtual ~__CCCallFuncO();
     /** initializes the action with the callback

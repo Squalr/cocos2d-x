@@ -343,10 +343,6 @@ void TextureCache::addImageAsyncCallBack(float /*dt*/)
                 texture = new (std::nothrow) Texture2D();
 
                 texture->initWithImage(image, asyncStruct->pixelFormat);
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-                // cache the texture file name
-                VolatileTextureMgr::addImageTexture(texture, asyncStruct->filename);
-#endif
                 // cache the texture. retain it, since it is added in the map
                 _textures.emplace(asyncStruct->filename, texture);
                 texture->retain();
@@ -408,10 +404,6 @@ Texture2D * TextureCache::addImage(const std::string &path)
 
             if (texture && texture->initWithImage(image))
             {
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-                // cache the texture file name
-                VolatileTextureMgr::addImageTexture(texture, fullpath);
-#endif
                 // texture already retained, no need to re-retain it
                 _textures.emplace(fullpath, texture);
             }
@@ -465,10 +457,6 @@ Texture2D* TextureCache::addImage(Image *image, const std::string &key)
         }
 
     } while (0);
-
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    VolatileTextureMgr::addImage(texture, image);
-#endif
 
     return texture;
 }
@@ -590,10 +578,6 @@ Texture2D* TextureCache::getTextureForKey(const std::string &textureKeyName) con
 
 void TextureCache::reloadAllTextures()
 {
-    //will do nothing
-    // #if CC_ENABLE_CACHE_TEXTURE_DATA
-    //     VolatileTextureMgr::reloadAllTextures();
-    // #endif
 }
 
 std::string TextureCache::getTextureFilePath(cocos2d::Texture2D* texture) const
@@ -684,218 +668,6 @@ void TextureCache::renameTextureWithKey(const std::string& srcName, const std::s
         }
     }
 }
-
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-
-std::list<VolatileTexture*> VolatileTextureMgr::_textures;
-bool VolatileTextureMgr::_isReloading = false;
-
-VolatileTexture::VolatileTexture(Texture2D *t)
-: _texture(t)
-, _uiImage(nullptr)
-, _cashedImageType(kInvalid)
-, _textureData(nullptr)
-, _pixelFormat(Texture2D::PixelFormat::RGBA8888)
-, _fileName("")
-, _hasMipmaps(false)
-, _text("")
-{
-    _texParams.minFilter = GL_LINEAR;
-    _texParams.magFilter = GL_LINEAR;
-    _texParams.wrapS = GL_CLAMP_TO_EDGE;
-    _texParams.wrapT = GL_CLAMP_TO_EDGE;
-}
-
-VolatileTexture::~VolatileTexture()
-{
-    CC_SAFE_RELEASE(_uiImage);
-}
-
-void VolatileTextureMgr::addImageTexture(Texture2D *tt, const std::string& imageFileName)
-{
-    if (_isReloading)
-    {
-        return;
-    }
-
-    VolatileTexture *vt = findVolotileTexture(tt);
-
-    vt->_cashedImageType = VolatileTexture::kImageFile;
-    vt->_fileName = imageFileName;
-    vt->_pixelFormat = tt->getPixelFormat();
-}
-
-void VolatileTextureMgr::addImage(Texture2D *tt, Image *image)
-{
-    if (tt == nullptr || image == nullptr)
-        return;
-    
-    VolatileTexture *vt = findVolotileTexture(tt);
-    image->retain();
-    vt->_uiImage = image;
-    vt->_cashedImageType = VolatileTexture::kImage;
-}
-
-VolatileTexture* VolatileTextureMgr::findVolotileTexture(Texture2D *tt)
-{
-    VolatileTexture *vt = nullptr;
-    for (const auto& texture : _textures)
-    {
-        VolatileTexture *v = texture;
-        if (v->_texture == tt)
-        {
-            vt = v;
-            break;
-        }
-    }
-
-    if (!vt)
-    {
-        vt = new (std::nothrow) VolatileTexture(tt);
-        _textures.push_back(vt);
-    }
-
-    return vt;
-}
-
-void VolatileTextureMgr::addDataTexture(Texture2D *tt, void* data, int dataLen, Texture2D::PixelFormat pixelFormat, const Size& contentSize)
-{
-    if (_isReloading)
-    {
-        return;
-    }
-
-    VolatileTexture *vt = findVolotileTexture(tt);
-
-    vt->_cashedImageType = VolatileTexture::kImageData;
-    vt->_textureData = data;
-    vt->_dataLen = dataLen;
-    vt->_pixelFormat = pixelFormat;
-    vt->_textureSize = contentSize;
-}
-
-void VolatileTextureMgr::addStringTexture(Texture2D *tt, const char* text, const FontDefinition& fontDefinition)
-{
-    if (_isReloading)
-    {
-        return;
-    }
-
-    VolatileTexture *vt = findVolotileTexture(tt);
-
-    vt->_cashedImageType = VolatileTexture::kString;
-    vt->_text = text;
-    vt->_fontDefinition = fontDefinition;
-}
-
-void VolatileTextureMgr::setHasMipmaps(Texture2D *t, bool hasMipmaps)
-{
-    VolatileTexture *vt = findVolotileTexture(t);
-    vt->_hasMipmaps = hasMipmaps;
-}
-
-void VolatileTextureMgr::setTexParameters(Texture2D *t, const Texture2D::TexParams &texParams)
-{
-    VolatileTexture *vt = findVolotileTexture(t);
-
-    if (texParams.minFilter != GL_NONE)
-        vt->_texParams.minFilter = texParams.minFilter;
-    if (texParams.magFilter != GL_NONE)
-        vt->_texParams.magFilter = texParams.magFilter;
-    if (texParams.wrapS != GL_NONE)
-        vt->_texParams.wrapS = texParams.wrapS;
-    if (texParams.wrapT != GL_NONE)
-        vt->_texParams.wrapT = texParams.wrapT;
-}
-
-void VolatileTextureMgr::removeTexture(Texture2D *t)
-{
-    for (auto& item : _textures)
-    {
-        VolatileTexture *vt = item;
-        if (vt->_texture == t)
-        {
-            _textures.remove(vt);
-            delete vt;
-            break;
-        }
-    }
-}
-
-void VolatileTextureMgr::reloadAllTextures()
-{
-    _isReloading = true;
-
-    // we need to release all of the glTextures to avoid collisions of texture id's when reloading the textures onto the GPU
-    for (auto& item : _textures)
-    {
-        item->_texture->releaseGLTexture();
-    }
-
-    CCLOG("reload all texture");
-
-    for (auto& texture : _textures)
-    {
-        VolatileTexture *vt = texture;
-
-        switch (vt->_cashedImageType)
-        {
-        case VolatileTexture::kImageFile:
-        {
-            reloadTexture(vt->_texture, vt->_fileName, vt->_pixelFormat);
-
-            // etc1 support check whether alpha texture exists & load it
-            auto alphaFile = vt->_fileName + TextureCache::getETC1AlphaFileSuffix();
-            reloadTexture(vt->_texture->getAlphaTexture(), alphaFile, vt->_pixelFormat);
-        }
-        break;
-        case VolatileTexture::kImageData:
-        {
-            vt->_texture->initWithData(vt->_textureData,
-                vt->_dataLen,
-                vt->_pixelFormat,
-                vt->_textureSize.width,
-                vt->_textureSize.height,
-                vt->_textureSize);
-        }
-        break;
-        case VolatileTexture::kString:
-        {
-            vt->_texture->initWithString(vt->_text.c_str(), vt->_fontDefinition);
-        }
-        break;
-        case VolatileTexture::kImage:
-        {
-            vt->_texture->initWithImage(vt->_uiImage);
-        }
-        break;
-        default:
-            break;
-        }
-        if (vt->_hasMipmaps) {
-            vt->_texture->generateMipmap();
-        }
-        vt->_texture->setTexParameters(vt->_texParams);
-    }
-
-    _isReloading = false;
-}
-
-void VolatileTextureMgr::reloadTexture(Texture2D* texture, const std::string& filename, Texture2D::PixelFormat pixelFormat)
-{
-    if (!texture)
-        return;
-
-    Image* image = new (std::nothrow) Image();
-    Data data = FileUtils::getInstance()->getDataFromFile(filename);
-
-    if (image && image->initWithImageData(data.getBytes(), data.getSize()))
-        texture->initWithImage(image, pixelFormat);
-
-    CC_SAFE_RELEASE(image);
-}
-
-#endif // CC_ENABLE_CACHE_TEXTURE_DATA
 
 NS_CC_END
 

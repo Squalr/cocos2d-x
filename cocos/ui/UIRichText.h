@@ -561,7 +561,6 @@ public:
 
     int getNewlineCount();
 
-CC_CONSTRUCTOR_ACCESS:
     virtual bool init() override;
 
     bool initWithXML(const std::string& xml, const ValueMap& defaults = ValueMap(), const OpenUrlHandler& handleOpenUrl = nullptr);

@@ -79,13 +79,6 @@ CC_DEPRECATED_ATTRIBUTE static __TYPE__* node() \
     } \
 }
 
-/** @def CC_ENABLE_CACHE_TEXTURE_DATA
- * Enable it if you want to cache the texture data.
- * 
- * @since v0.99.5
- */
-#define CC_ENABLE_CACHE_TEXTURE_DATA       0
-
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
     /** Application will crash in glDrawElements function on some win32 computers and some android devices.
      *  Indices should be bound again while drawing to avoid this bug.
