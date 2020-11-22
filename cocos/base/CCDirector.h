@@ -30,6 +30,7 @@ THE SOFTWARE.
 #define __CCDIRECTOR_H__
 
 #include <stack>
+#include <string>
 #include <thread>
 #include <chrono>
 
@@ -96,25 +97,8 @@ enum class MATRIX_STACK_TYPE
 class CC_DLL Director : public Ref
 {
 public:
-    /** Director will trigger an event before set next scene. */
-    static const char* EVENT_BEFORE_SET_NEXT_SCENE;
-    /** Director will trigger an event after set next scene. */
-    static const char* EVENT_AFTER_SET_NEXT_SCENE;
-    
     /** Director will trigger an event when projection type is changed. */
-    static const char* EVENT_PROJECTION_CHANGED;
-    /** Director will trigger an event before Schedule::update() is invoked. */
-    static const char* EVENT_BEFORE_UPDATE;
-    /** Director will trigger an event after Schedule::update() is invoked. */
-    static const char* EVENT_AFTER_UPDATE;
-    /** Director will trigger an event while resetting Director */
-    static const char* EVENT_RESET;
-    /** Director will trigger an event after Scene::render() is invoked. */
-    static const char* EVENT_AFTER_VISIT;
-    /** Director will trigger an event after a scene is drawn, the data is sent to GPU. */
-    static const char* EVENT_AFTER_DRAW;
-    /** Director will trigger an event before a scene is drawn, right after clear. */
-    static const char* EVENT_BEFORE_DRAW;
+    static const std::string EVENT_PROJECTION_CHANGED;
 
     /**
      * @brief Possible OpenGL projections used by director

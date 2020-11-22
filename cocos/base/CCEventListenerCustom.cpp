@@ -32,7 +32,6 @@ EventListenerCustom::EventListenerCustom()
 : callback(nullptr)
 , listenerId("")
 , paused(false)
-, tag("")
 {
 }
 

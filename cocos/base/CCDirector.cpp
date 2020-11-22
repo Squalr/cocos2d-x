@@ -74,15 +74,7 @@ static Director *s_SharedDirector = nullptr;
 #define kDefaultFPS        60  // 60 frames per second
 extern const char* cocos2dVersion(void);
 
-const char *Director::EVENT_BEFORE_SET_NEXT_SCENE = "director_before_set_next_scene";
-const char *Director::EVENT_AFTER_SET_NEXT_SCENE = "director_after_set_next_scene";
-const char *Director::EVENT_PROJECTION_CHANGED = "director_projection_changed";
-const char *Director::EVENT_AFTER_DRAW = "director_after_draw";
-const char *Director::EVENT_AFTER_VISIT = "director_after_visit";
-const char *Director::EVENT_BEFORE_UPDATE = "director_before_update";
-const char *Director::EVENT_AFTER_UPDATE = "director_after_update";
-const char *Director::EVENT_RESET = "director_reset";
-const char *Director::EVENT_BEFORE_DRAW = "director_before_draw";
+const std::string Director::EVENT_PROJECTION_CHANGED = "director_projection_changed";
 
 Director* Director::getInstance()
 {
@@ -156,23 +148,8 @@ bool Director::init(void)
 
     _eventDispatcher = new (std::nothrow) EventDispatcher();
     
-    _beforeSetNextScene = new (std::nothrow) EventCustom(EVENT_BEFORE_SET_NEXT_SCENE);
-    _beforeSetNextScene->setData(this);
-    _afterSetNextScene = new (std::nothrow) EventCustom(EVENT_AFTER_SET_NEXT_SCENE);
-    _afterSetNextScene->setData(this);
-    _eventAfterDraw = new (std::nothrow) EventCustom(EVENT_AFTER_DRAW);
-    _eventAfterDraw->setData(this);
-    _eventBeforeDraw = new (std::nothrow) EventCustom(EVENT_BEFORE_DRAW);
-    _eventBeforeDraw->setData(this);
-    _eventAfterVisit = new (std::nothrow) EventCustom(EVENT_AFTER_VISIT);
-    _eventAfterVisit->setData(this);
-    _eventBeforeUpdate = new (std::nothrow) EventCustom(EVENT_BEFORE_UPDATE);
-    _eventBeforeUpdate->setData(this);
-    _eventAfterUpdate = new (std::nothrow) EventCustom(EVENT_AFTER_UPDATE);
-    _eventAfterUpdate->setData(this);
     _eventProjectionChanged = new (std::nothrow) EventCustom(EVENT_PROJECTION_CHANGED);
     _eventProjectionChanged->setData(this);
-    _eventResetDirector = new (std::nothrow) EventCustom(EVENT_RESET);
     //init TextureCache
     initTextureCache();
     initMatrixStack();
@@ -265,15 +242,11 @@ void Director::drawScene()
     //tick before glClear: issue #533
     if (! _paused)
     {
-        _eventDispatcher->dispatchEvent(_eventBeforeUpdate);
         _scheduler->update(_deltaTime);
-        _eventDispatcher->dispatchEvent(_eventAfterUpdate);
     }
 
     _renderer->clear();
     cocos_experimental::FrameBuffer::clearAllFBOs();
-    
-    _eventDispatcher->dispatchEvent(_eventBeforeDraw);
     
     /* to avoid flickr, nextScene MUST be here: after tick and before draw.
      * FIXME: Which bug is this one. It seems that it can't be reproduced with v0.9
@@ -292,9 +265,9 @@ void Director::drawScene()
         
         //render the scene
         if(_openGLView)
+        {
             _openGLView->renderScene(_runningScene, _renderer);
-        
-        _eventDispatcher->dispatchEvent(_eventAfterVisit);
+        }
     }
 
     // draw the notifications node
@@ -306,8 +279,6 @@ void Director::drawScene()
     updateFrameRate();
     
     _renderer->render();
-
-    _eventDispatcher->dispatchEvent(_eventAfterDraw);
 
     popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
 
@@ -340,14 +311,11 @@ void Director::calculateDeltaTime()
         _deltaTime = MAX(0, _deltaTime);
     }
 
-///#if COCOS2D_DEBUG
-	// Zac: Keeping this always enabled for now. We'll need to properly fix this in the future, but pausing for hackermode can cause a huge deltatime buildup
-    // If we are debugging our code, prevent big delta time
+    // Prevent large delta times
     if (_deltaTime > 5.0 / 60.0f) // 0.2f
     {
         _deltaTime = 1 / 60.0f;
     }
-///#endif
 }
 
 float Director::getDeltaTime() const
@@ -453,8 +421,11 @@ void Director::initProjectionMatrixStack(size_t stackCount)
     _projectionMatrixStackList.clear();
     std::stack<Mat4> projectionMatrixStack;
     projectionMatrixStack.push(Mat4::IDENTITY);
+
     for (size_t i = 0; i < stackCount; ++i)
+    {
         _projectionMatrixStackList.push_back(projectionMatrixStack);
+    }
 }
 
 size_t Director::getProjectionMatrixStackSize()
@@ -1065,8 +1036,6 @@ void Director::restartDirector()
 
 void Director::setNextScene()
 {
-    _eventDispatcher->dispatchEvent(_beforeSetNextScene);
-
     if (_runningScene)
     {
         _runningScene->onExitTransitionDidStart();
@@ -1093,8 +1062,6 @@ void Director::setNextScene()
         _runningScene->onEnter();
         _runningScene->onEnterTransitionDidFinish();
     }
-    
-    _eventDispatcher->dispatchEvent(_afterSetNextScene);
 }
 
 void Director::pause()
