@@ -435,13 +435,6 @@ public:
     static RichText* create();
 
     /**
-     * @brief Create a RichText from an XML
-     *
-     * @return RichText instance.
-     */
-    static RichText* createWithXML(const std::string& xml, const ValueMap& defaults = ValueMap(), const OpenUrlHandler& handleOpenUrl = nullptr);
-
-    /**
      * @brief Insert a RichElement at a given index.
      *
      * @param element A RichElement type.
@@ -562,9 +555,7 @@ public:
     int getNewlineCount();
 
     virtual bool init() override;
-
-    bool initWithXML(const std::string& xml, const ValueMap& defaults = ValueMap(), const OpenUrlHandler& handleOpenUrl = nullptr);
-
+    
 protected:
     virtual void adaptRenderers() override;
 

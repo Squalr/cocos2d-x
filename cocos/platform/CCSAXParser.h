@@ -92,11 +92,6 @@ public:
     bool parse(const std::string& filename);
 
     /**
-    * New API for performance.
-    */
-    bool parseIntrusive(char* xmlData, size_t dataLength);
-
-    /**
      * @js NA
      * @lua NA
      */

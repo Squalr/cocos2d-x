@@ -855,53 +855,11 @@ RichText* RichText::create()
     return nullptr;
 }
 
-RichText* RichText::createWithXML(const std::string& xml, const ValueMap& defaults, const OpenUrlHandler& handleOpenUrl)
-{
-    RichText* widget = new (std::nothrow) RichText();
-    if (widget && widget->initWithXML(xml, defaults, handleOpenUrl))
-    {
-        widget->autorelease();
-        return widget;
-    }
-    CC_SAFE_DELETE(widget);
-    return nullptr;
-}
-
 bool RichText::init()
 {
     if (Widget::init())
     {
         return true;
-    }
-    return false;
-}
-
-bool RichText::initWithXML(const std::string& origxml, const ValueMap& defaults, const OpenUrlHandler& handleOpenUrl)
-{
-    static std::function<std::string(RichText*)> startTagFont = [](RichText* richText) {
-        std::string fontFace = richText->getFontFace();
-        std::stringstream ss;
-        ss << richText->getFontSize();
-        std::string fontSize = ss.str();
-        std::string fontColor = richText->getFontColor();
-        return "<font face=\"" + fontFace + "\" size=\"" + fontSize + "\" color=\"" + fontColor + "\">";
-    };
-    if (Widget::init())
-    {
-        setDefaults(defaults);
-        setOpenUrlHandler(handleOpenUrl);
-
-        // solves to issues:
-        //  - creates defaults values
-        //  - makes sure that the xml well formed and starts with an element
-        std::string xml = startTagFont(this);
-        xml += origxml;
-        xml += "</font>";
-
-        MyXMLVisitor visitor(this);
-        SAXParser parser;
-        parser.setDelegator(&visitor);
-        return parser.parseIntrusive(&xml.front(), xml.length());
     }
     return false;
 }
