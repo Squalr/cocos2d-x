@@ -41,7 +41,6 @@
 NS_CC_BEGIN
 
 class Event;
-class Node;
 
 /** @class EventListener
  *  @brief The base class of event listener.
@@ -51,17 +50,6 @@ class Node;
 class CC_DLL EventListener : public Ref
 {
 public:
-    /** Type Event type.*/
-    enum class Type
-    {
-        UNKNOWN,
-        KEYBOARD,
-        MOUSE,
-        FOCUS,
-		GAME_CONTROLLER,
-        CUSTOM
-    };
-    
     /**
      * Constructor
      * @js ctor
@@ -72,10 +60,7 @@ public:
      * Initializes event with type and callback function
      * @js NA
      */
-    bool init(Type t, const std::string& listenerID, const std::function<void(Event*)>& callback);
-
-    std::string getListenerId();
-    void invoke(Event*);
+    bool init(const std::string& listenerID, const std::function<void(Event*)>& callback);
 
 public:
     /** Destructor.
@@ -83,100 +68,7 @@ public:
      */
     virtual ~EventListener();
 
-    /** Checks whether the listener is available.
-     * 
-     * @return True if the listener is available.
-     */
-    virtual bool checkAvailable() = 0;
-
-    /** Clones the listener, its subclasses have to override this method.
-     */
-    virtual EventListener* clone() = 0;
-
-	void setTag(std::string tag) { _tag = tag; }
-
-    std::string getTag() { return _tag; };
-
-	/** Enables or disables the listener.
-	 * @note Only listeners with `enabled` state will be able to receive events.
-	 *        When an listener was initialized, it's enabled by default.
-	 *        An event listener can receive events when it is enabled and is not paused.
-	 *        paused state is always false when it is a fixed priority listener.
-	 *
-	 * @param enabled True if enables the listener.
-	 */
-	void setEnabled(bool enabled) { _isEnabled = enabled; }
-
-	void setIgnorePause(bool ignorePause) { _ignorePause = ignorePause; }
-
-	bool isIgnorePause() const { return _ignorePause; }
-
-	void setIsGlobal(bool isGlobal) { _isGlobal = isGlobal; }
-
-	bool isGlobal() const { return _isGlobal; }
-
-	/** Checks whether the listener is enabled.
-	 *
-	 * @return True if the listener is enabled.
-	 */
-	bool isEnabled() const { return _isEnabled; }
-
 protected:
-
-    /** Sets paused state for the listener
-     *  The paused state is only used for scene graph priority listeners.
-     *  `EventDispatcher::resumeAllEventListenersForTarget(node)` will set the paused state to `true`,
-     *  while `EventDispatcher::pauseAllEventListenersForTarget(node)` will set it to `false`.
-     *  @note 1) Fixed priority listeners will never get paused. If a fixed priority doesn't want to receive events,
-     *           call `setEnabled(false)` instead.
-     *        2) In `Node`'s onEnter and onExit, the `paused state` of the listeners which associated with that node will be automatically updated.
-     */
-    void setPaused(bool paused) { _paused = paused; }
-
-    /** Checks whether the listener is paused */
-    bool isPaused() const { return _paused; }
-
-    /** Marks the listener was registered by EventDispatcher */
-    void setRegistered(bool registered) { _isRegistered = registered; }
-
-    /** Checks whether the listener was registered by EventDispatcher */
-    bool isRegistered() const { return _isRegistered; }
-
-    /** Gets the type of this listener
-     *  @note It's different from `EventType`
-     */
-    Type getType() const { return _type; }
-
-    /** Gets the listener ID of this listener
-     *  When event is being dispatched, listener ID is used as key for searching listeners according to event type.
-     */
-    const std::string& getListenerID() const { return _listenerID; }
-
-    /** Sets the node associated with this listener */
-    void setAssociatedNode(Node* node) { _node = node; }
-
-    /** Gets the node associated with this listener
-     *  @return nullptr if it's a fixed priority listener, otherwise return non-nullptr
-     */
-    Node* getAssociatedNode() const { return _node; }
-
-    ///////////////
-    // Properties
-    //////////////
-    std::function<void(Event*)> _onEvent;   /// Event callback function
-
-    Type _type;                             /// Event listener type
-    std::string _listenerID;                 /// Event listener ID
-    bool _isRegistered;                     /// Whether the listener has been added to dispatcher.
-
-    int   _fixedPriority;   // The higher the number, the higher the priority, 0 is for scene graph base priority.
-    Node* _node;            // scene graph based priority
-    bool _paused;           // Whether the listener is paused
-    bool _isEnabled;        // Whether the listener is enabled
-	bool _ignorePause;
-	bool _isGlobal;
-    std::string _tag;
-    friend class EventDispatcher;
 };
 
 NS_CC_END

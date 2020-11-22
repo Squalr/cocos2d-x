@@ -68,20 +68,40 @@ public:
      */
     static EventListenerCustom* create(const std::string& eventName, const std::function<void(EventCustom*)>& callback);
     
-    /// Overrides
-    virtual bool checkAvailable() override;
-    virtual EventListenerCustom* clone() override;
-    
     /** Constructor */
     EventListenerCustom();
     
     /** Initializes event with type and callback function */
     bool init(const std::string& listenerId, const std::function<void(EventCustom*)>& callback);
+
+    std::string getListenerId();
+
+    void invoke(EventCustom* eventCustom);
+
+    void setCallback(const std::function<void(EventCustom*)>& callback);
+
+    /** Sets paused state for the listener
+     */
+    void setPaused(bool paused) { this->paused = paused; }
+
+    /** Checks whether the listener is paused */
+    bool isPaused() const { return this->paused; }
+
+	void setTag(std::string tag) { this->tag = tag; }
+
+    /** Gets the listener ID of this listener
+     *  When event is being dispatched, listener ID is used as key for searching listeners according to event type.
+     */
+    const std::string& getListenerID() const { return listenerId; }
+
+    std::string getTag() { return this->tag; };
     
 protected:
-    std::function<void(EventCustom*)> _onCustomEvent;
-    
-    friend class LuaEventListenerCustom;
+    std::function<void(EventCustom*)> callback;
+
+    std::string listenerId;
+    bool paused;
+    std::string tag;
 };
 
 NS_CC_END

@@ -288,43 +288,6 @@ Label::Label(TextHAlignment hAlignment /* = TextHAlignment::LEFT */,
     _debugDrawNode = DrawNode::create();
     addChild(_debugDrawNode);
 #endif
-
-    /*
-    _purgeTextureListener = EventListenerCustom::create(FontAtlas::CMD_PURGE_FONTATLAS, [this](EventCustom* event){
-        if (_fontAtlas && _currentLabelType == LabelType::TTF && event->getUserData() == _fontAtlas)
-        {
-            for (auto&& it : _letters)
-            {
-                it.second->setTexture(nullptr);
-            }
-            _batchNodes.clear();
-
-            if (_fontAtlas)
-            {
-                FontAtlasCache::releaseFontAtlas(_fontAtlas);
-            }
-        }
-    });
-    _eventDispatcher->addEventListenerWithFixedPriority(_purgeTextureListener, 1);
-    
-    _resetTextureListener = EventListenerCustom::create(FontAtlas::CMD_RESET_FONTATLAS, [this](EventCustom* event){
-        if (_fontAtlas && _currentLabelType == LabelType::TTF && event->getUserData() == _fontAtlas)
-        {
-            _fontAtlas = nullptr;
-            auto lineHeight = _lineHeight;
-            this->setTTFConfig(_fontConfig);
-            if (_currentLabelType != LabelType::STRING_TEXTURE)
-            {
-                setLineHeight(lineHeight);
-            }
-            for (auto&& it : _letters)
-            {
-                getLetter(it.first);
-            }
-        }
-    });
-    _eventDispatcher->addEventListenerWithFixedPriority(_resetTextureListener, 2);
-    */
 }
 
 Label::~Label()

@@ -151,8 +151,8 @@ void FontAtlas::purgeTexturesAtlas()
     {
         reset();
         auto eventDispatcher = Director::getInstance()->getEventDispatcher();
-        eventDispatcher->dispatchCustomEvent(CMD_PURGE_FONTATLAS,this);
-        eventDispatcher->dispatchCustomEvent(CMD_RESET_FONTATLAS,this);
+        eventDispatcher->dispatchEvent(CMD_PURGE_FONTATLAS, this);
+        eventDispatcher->dispatchEvent(CMD_RESET_FONTATLAS, this);
     }
 }
 

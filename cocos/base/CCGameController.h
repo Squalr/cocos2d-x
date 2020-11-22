@@ -29,7 +29,6 @@
 
 #include "base/CCController.h"
 #include "base/CCEventController.h"
-#include "base/CCEventListenerController.h"
 
 /// @endcond
 #endif /* defined(__cocos2d_libs__CCGameController__) */

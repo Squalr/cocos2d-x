@@ -18,9 +18,7 @@ set(COCOS_BASE_HEADER
     base/CCConsole.h
     base/CCController.h
     base/base64.h
-    base/CCEventListenerController.h
     base/CCGameController.h
-    base/CCEvent.h
     base/ccTypes.h
     base/CCAsyncTaskPool.h
     base/ccRandom.h
@@ -35,7 +33,6 @@ set(COCOS_BASE_HEADER
     base/CCEventController.h
     base/CCRefPtr.h
     base/CCDirector.h
-    base/CCEventListenerFocus.h
     base/ccConfig.h
     base/ZipUtils.h
     base/CCMap.h
@@ -62,15 +59,12 @@ set(COCOS_BASE_SRC
     base/CCController.cpp
     base/CCData.cpp
     base/CCDirector.cpp
-    base/CCEvent.cpp
     base/CCEventController.cpp
     base/CCEventCustom.cpp
     base/CCEventDispatcher.cpp
     base/CCEventFocus.cpp
     base/CCEventListener.cpp
-    base/CCEventListenerController.cpp
     base/CCEventListenerCustom.cpp
-    base/CCEventListenerFocus.cpp
     base/CCInputEvents.cpp
     base/CCIMEDispatcher.cpp
     base/CCNS.cpp

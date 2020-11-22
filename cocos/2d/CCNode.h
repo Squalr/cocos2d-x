@@ -801,12 +801,12 @@ public:
      * @return A custom user data pointer.
      * @lua NA
      */
-    virtual void* getUserData() { return _userData; }
+    virtual void* getData() { return _userData; }
 
     /**
     * @lua NA
     */
-    virtual const void* getUserData() const { return _userData; }
+    virtual const void* getData() const { return _userData; }
 
     /**
      * Sets a custom user data pointer.
@@ -818,7 +818,7 @@ public:
      * @param userData  A custom user data pointer.
      * @lua NA
      */
-    virtual void setUserData(void *userData);
+    virtual void setData(void *userData);
 
     /**
      * Returns a user assigned Object.

@@ -688,8 +688,8 @@ void GLViewImpl::onGLFWMouseCallBack(GLFWwindow* /*window*/, int button, int act
                 }
 
                 InputEvents::TriggerMouseDown(InputEvents::MouseEventArgs(
-                    this->mousePosition,
                     this->mouseInitialPosition,
+                    this->mousePosition,
                     this->scrollDelta,
                     this->isDragging,
                     this->canClick,
@@ -733,8 +733,8 @@ void GLViewImpl::onGLFWMouseCallBack(GLFWwindow* /*window*/, int button, int act
                 }
 
                 InputEvents::TriggerMouseUp(InputEvents::MouseEventArgs(
-                    this->mousePosition,
                     this->mouseInitialPosition,
+                    this->mousePosition,
                     this->scrollDelta,
                     this->isDragging,
                     this->canClick,
@@ -801,8 +801,8 @@ void GLViewImpl::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
     this->mousePosition.y = (_viewPortRect.origin.y + _viewPortRect.size.height - openGLMousePosition.y) / _scaleY;
 
     InputEvents::TriggerMouseMove(InputEvents::MouseEventArgs(
-        this->mousePosition,
         this->mouseInitialPosition,
+        this->mousePosition,
         this->scrollDelta,
         this->isDragging,
         this->canClick,
@@ -845,8 +845,8 @@ void GLViewImpl::onGLFWMouseScrollCallback(GLFWwindow* /*window*/, double x, dou
     this->scrollDelta.y = -y;
 
     InputEvents::TriggerMouseMove(InputEvents::MouseEventArgs(
-        this->mousePosition,
         this->mouseInitialPosition,
+        this->mousePosition,
         this->scrollDelta,
         this->isDragging,
         this->canClick,
@@ -989,7 +989,7 @@ void GLViewImpl::onGLFWWindowSizeFunCallback(GLFWwindow* /*window*/, int width, 
         setFrameSize(frameWidth, frameHeight);
         setDesignResolutionSize(baseDesignSize.width, baseDesignSize.height, baseResolutionPolicy);
         Director::getInstance()->setViewport();
-        Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(GLViewImpl::EVENT_WINDOW_RESIZED, nullptr);
+        Director::getInstance()->getEventDispatcher()->dispatchEvent(GLViewImpl::EVENT_WINDOW_RESIZED, nullptr);
     }
 }
 
@@ -1009,11 +1009,11 @@ void GLViewImpl::onGLFWWindowFocusCallback(GLFWwindow* /*window*/, int focused)
 {
     if (focused == GL_TRUE)
     {
-        Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(GLViewImpl::EVENT_WINDOW_FOCUSED, nullptr);
+        Director::getInstance()->getEventDispatcher()->dispatchEvent(GLViewImpl::EVENT_WINDOW_FOCUSED, nullptr);
     }
     else
     {
-        Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(GLViewImpl::EVENT_WINDOW_UNFOCUSED, nullptr);
+        Director::getInstance()->getEventDispatcher()->dispatchEvent(GLViewImpl::EVENT_WINDOW_UNFOCUSED, nullptr);
     }
 }
 

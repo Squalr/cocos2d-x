@@ -27,7 +27,8 @@
 #define __cocos2d_libs__CCCustomEvent__
 
 #include <string>
-#include "base/CCEvent.h"
+#include "base/CCRef.h"
+#include "platform/CCPlatformMacros.h"
 
 /**
  * @addtogroup base
@@ -39,7 +40,7 @@ NS_CC_BEGIN
 /** @class EventCustom
  * @brief Custom event.
  */
-class CC_DLL EventCustom : public Event
+class CC_DLL EventCustom : public Ref
 {
 public:
     /** Constructor.
@@ -53,22 +54,28 @@ public:
      *
      * @param data The user data pointer, it's a void*.
      */
-    void setUserData(void* data) { _userData = data; }
+    void setData(void* data) { this->data = data; }
     
     /** Gets user data.
      *
      * @return The user data pointer, it's a void*.
      */
-    void* getUserData() const { return _userData; }
+    void* getData() const { return this->data; }
     
     /** Gets event name.
      *
      * @return The name of the event.
      */
-    const std::string& getEventName() const { return _eventName; }
+    const std::string& getEventName() const { return this->eventName; }
+
+    void stopPropagation() { this->propagationStopped = true; }
+
+    bool isPropagationStopped() const { return this->propagationStopped; }
+    
 protected:
-    void* _userData;       ///< User data
-    std::string _eventName;
+    void* data;
+    std::string eventName;
+    bool propagationStopped;
 };
 
 NS_CC_END

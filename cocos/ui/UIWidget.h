@@ -36,7 +36,8 @@ THE SOFTWARE.
  */
 NS_CC_BEGIN
 
-class Event;
+class EventCustom;
+class EventListenerCustom;
 class Camera;
 
 namespace ui
@@ -765,6 +766,8 @@ protected:
 private:
     class FocusNavigationController;
     static FocusNavigationController* _focusNavigationController;
+
+    EventListenerCustom* keyEventListener;
 };
 }
 

@@ -157,21 +157,21 @@ bool Director::init(void)
     _eventDispatcher = new (std::nothrow) EventDispatcher();
     
     _beforeSetNextScene = new (std::nothrow) EventCustom(EVENT_BEFORE_SET_NEXT_SCENE);
-    _beforeSetNextScene->setUserData(this);
+    _beforeSetNextScene->setData(this);
     _afterSetNextScene = new (std::nothrow) EventCustom(EVENT_AFTER_SET_NEXT_SCENE);
-    _afterSetNextScene->setUserData(this);
+    _afterSetNextScene->setData(this);
     _eventAfterDraw = new (std::nothrow) EventCustom(EVENT_AFTER_DRAW);
-    _eventAfterDraw->setUserData(this);
+    _eventAfterDraw->setData(this);
     _eventBeforeDraw = new (std::nothrow) EventCustom(EVENT_BEFORE_DRAW);
-    _eventBeforeDraw->setUserData(this);
+    _eventBeforeDraw->setData(this);
     _eventAfterVisit = new (std::nothrow) EventCustom(EVENT_AFTER_VISIT);
-    _eventAfterVisit->setUserData(this);
+    _eventAfterVisit->setData(this);
     _eventBeforeUpdate = new (std::nothrow) EventCustom(EVENT_BEFORE_UPDATE);
-    _eventBeforeUpdate->setUserData(this);
+    _eventBeforeUpdate->setData(this);
     _eventAfterUpdate = new (std::nothrow) EventCustom(EVENT_AFTER_UPDATE);
-    _eventAfterUpdate->setUserData(this);
+    _eventAfterUpdate->setData(this);
     _eventProjectionChanged = new (std::nothrow) EventCustom(EVENT_PROJECTION_CHANGED);
-    _eventProjectionChanged->setUserData(this);
+    _eventProjectionChanged->setData(this);
     _eventResetDirector = new (std::nothrow) EventCustom(EVENT_RESET);
     //init TextureCache
     initTextureCache();

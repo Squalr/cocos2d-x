@@ -29,13 +29,17 @@
 NS_CC_BEGIN
 
 EventListenerCustom::EventListenerCustom()
-: _onCustomEvent(nullptr)
+: callback(nullptr)
+, listenerId("")
+, paused(false)
+, tag("")
 {
 }
 
 EventListenerCustom* EventListenerCustom::create(const std::string& eventName, const std::function<void(EventCustom*)>& callback)
 {
     EventListenerCustom* ret = new (std::nothrow) EventListenerCustom();
+
     if (ret && ret->init(eventName, callback))
     {
         ret->autorelease();
@@ -49,46 +53,25 @@ EventListenerCustom* EventListenerCustom::create(const std::string& eventName, c
 
 bool EventListenerCustom::init(const std::string& listenerId, const std::function<void(EventCustom*)>& callback)
 {
-    bool ret = false;
-    
-    _onCustomEvent = callback;
-    
-    auto listener = [this](Event* event){
-        if (_onCustomEvent != nullptr)
-        {
-            _onCustomEvent(static_cast<EventCustom*>(event));
-        }
-    };
-    
-    if (EventListener::init(EventListener::Type::CUSTOM, listenerId, listener))
-    {
-        ret = true;
-    }
-    return ret;
+    this->listenerId = listenerId;
+    this->callback = callback;
+
+    return true;
 }
 
-EventListenerCustom* EventListenerCustom::clone()
+std::string EventListenerCustom::getListenerId()
 {
-    EventListenerCustom* ret = new (std::nothrow) EventListenerCustom();
-    if (ret && ret->init(_listenerID, _onCustomEvent))
-    {
-        ret->autorelease();
-    }
-    else
-    {
-        CC_SAFE_DELETE(ret);
-    }
-    return ret;
+    return this->listenerId;
 }
 
-bool EventListenerCustom::checkAvailable()
+void EventListenerCustom::invoke(EventCustom* event)
 {
-    bool ret = false;
-    if (EventListener::checkAvailable() && _onCustomEvent != nullptr)
-    {
-        ret = true;
-    }
-    return ret;
+    this->callback(event);
+}
+
+void EventListenerCustom::setCallback(const std::function<void(EventCustom*)>& callback)
+{
+    this->callback = callback;
 }
 
 NS_CC_END

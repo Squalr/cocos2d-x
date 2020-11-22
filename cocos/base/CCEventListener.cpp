@@ -35,34 +35,10 @@ EventListener::~EventListener()
 	CCLOGINFO("In the destructor of EventListener. %p", this);
 }
 
-bool EventListener::init(Type t, const std::string& listenerID, const std::function<void(Event*)>& callback)
+bool EventListener::init(const std::string& listenerID, const std::function<void(Event*)>& callback)
 {
-    _onEvent = callback;
-    _type = t;
-    _listenerID = listenerID;
-    _isRegistered = false;
-	_paused = false;
-	_ignorePause = false;
-	_isGlobal = false;
-    _isEnabled = true;
-    _tag = "";
     
     return true;
-}
-
-bool EventListener::checkAvailable()
-{ 
-	return (_onEvent != nullptr);
-}
-
-std::string EventListener::getListenerId()
-{
-    return this->_listenerID;
-}
-
-void EventListener::invoke(Event* event)
-{
-    this->_onEvent(event);
 }
 
 NS_CC_END

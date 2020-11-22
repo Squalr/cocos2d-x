@@ -55,10 +55,8 @@ public:
     EventFocus(ui::Widget* widgetLoseFocus, ui::Widget* widgetGetFocus);
     
 private:
-    ui::Widget *_widgetGetFocus;
-    ui::Widget *_widgetLoseFocus;
-    
-    friend class EventListenerFocus;
+    ui::Widget* _widgetGetFocus;
+    ui::Widget* _widgetLoseFocus;
 };
 
 

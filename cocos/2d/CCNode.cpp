@@ -144,8 +144,6 @@ Node::~Node()
     unscheduleAllCallbacks();
     CC_SAFE_RELEASE_NULL(_actionManager);
     CC_SAFE_RELEASE_NULL(_scheduler);
-    
-    _eventDispatcher->removeEventListenersForTarget(this);
 
     // CCASSERT(!_running, "Node still marked as running on node destruction! Was base class onExit() called in derived class onExit() implementations?");
     CC_SAFE_RELEASE(_eventDispatcher);
@@ -162,16 +160,6 @@ void Node::cleanup()
     this->stopAllActions();
     // timers
     this->unscheduleAllCallbacks();
-
-    // NOTE: Although it was correct that removing event listeners associated with current node in Node::cleanup.
-    // But it broke the compatibility to the versions before v3.16 .
-    // User code may call `node->removeFromParent(true)` which will trigger node's cleanup method, when the node 
-    // is added to scene again, some event listeners may be lost.
-    // In fact, user's code should use `node->removeFromParent(false)` in order not to do a cleanup and just remove node
-    // from its parent. For more discussion about why we revert this change is at https://github.com/cocos2d/cocos2d-x/issues/18104.
-    // We need to consider more before we want to correct the old and wrong logic code.
-    // For now, compatiblity is the most important for our users.
-//    _eventDispatcher->removeEventListenersForTarget(this);
     
     for( const auto &child: _children)
     {
@@ -197,8 +185,6 @@ void Node::setLocalZOrder(std::int32_t z)
     {
         _parent->reorderChild(this, z);
     }
-
-    _eventDispatcher->setDirtyForNode(this);
 }
 
 /// zOrder setter : private method
@@ -218,7 +204,6 @@ void Node::setGlobalZOrder(float globalZOrder)
     if (_globalZOrder != globalZOrder)
     {
         _globalZOrder = globalZOrder;
-        _eventDispatcher->setDirtyForNode(this);
     }
 }
 
@@ -570,7 +555,7 @@ void Node::setName(const std::string& name)
 }
 
 /// userData setter
-void Node::setUserData(void *userData)
+void Node::setData(void *userData)
 {
     _userData = userData;
 }
@@ -1087,7 +1072,6 @@ void Node::sortAllChildren()
     {
         sortNodes(_children);
         _reorderChildDirty = false;
-        _eventDispatcher->setDirtyForNode(this);
     }
 }
 
@@ -1299,7 +1283,6 @@ void Node::resume()
     _paused = false;
     _scheduler->resumeTarget(this);
     _actionManager->resumeTarget(this);
-    _eventDispatcher->resumeEventListenersForTarget(this);
 }
 
 void Node::pause()
@@ -1307,7 +1290,6 @@ void Node::pause()
     _paused = true;
     _scheduler->pauseTarget(this);
     _actionManager->pauseTarget(this);
-    _eventDispatcher->pauseEventListenersForTarget(this);
 }
 
 void Node::resumeSchedulerAndActions()

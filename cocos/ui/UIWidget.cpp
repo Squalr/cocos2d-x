@@ -57,7 +57,7 @@ class Widget::FocusNavigationController
 protected:
     void setFirstFocusedWidget(Widget* widget);
 
-    void onKeypadKeyPressed(InputEvents::KeyCode, Event*);
+    void onKeypadKeyPressed(InputEvents::KeyCode keycode, EventCustom* eventCustom);
 
     friend class Widget;
 private:
@@ -70,7 +70,7 @@ Widget::FocusNavigationController::~FocusNavigationController()
 {
 }
 
-void Widget::FocusNavigationController::onKeypadKeyPressed(InputEvents::KeyCode  keyCode, Event* /*event*/)
+void Widget::FocusNavigationController::onKeypadKeyPressed(InputEvents::KeyCode  keyCode, EventCustom* eventCustom)
 {
     if (_enableFocusNavigation && _firstFocusedWidget)
     {
@@ -130,7 +130,8 @@ _focused(false),
 _focusEnabled(true),
 _ccEventCallback(nullptr),
 _callbackType(""),
-_callbackName("")
+_callbackName(""),
+keyEventListener(nullptr)
 {
 
 }
@@ -150,6 +151,10 @@ void Widget::cleanupWidget()
         _focusedWidget = nullptr;
     }
 
+    if (this->keyEventListener != nullptr)
+    {
+	    this->getEventDispatcher()->removeEventListener(this->keyEventListener);
+    }
 }
 
 Widget* Widget::create()
@@ -173,19 +178,21 @@ bool Widget::init()
         onFocusChanged = CC_CALLBACK_2(Widget::onFocusChange,this);
         onNextFocusedWidget = nullptr;
         this->setAnchorPoint(Vec2(0.5f, 0.5f));
-        
-	    this->getEventDispatcher()->addEventListener(EventListenerCustom::create(InputEvents::EventKeyJustPressed, [=](EventCustom* eventCustom)
+
+        this->keyEventListener = EventListenerCustom::create(InputEvents::EventKeyJustPressed, [=](EventCustom* eventCustom)
         {
             if (this->_focusNavigationController && this->_focusNavigationController->_enableFocusNavigation)
             {
-                InputEvents::KeyboardEventArgs* args = static_cast<InputEvents::KeyboardEventArgs*>(eventCustom->getUserData());
+                InputEvents::KeyboardEventArgs* args = static_cast<InputEvents::KeyboardEventArgs*>(eventCustom->getData());
 
                 if (args != nullptr)
                 {
                     this->_focusNavigationController->onKeypadKeyPressed(args->keycode, eventCustom);
                 }
             }
-        }));
+        });
+        
+	    this->getEventDispatcher()->addEventListener(this->keyEventListener);
 
         ignoreContentAdaptWithSize(true);
 
