@@ -163,12 +163,14 @@ void EventDispatcher::processRemoveForEvent(const std::string& eventName)
 void EventDispatcher::scheduleSlowClean()
 {
 	static const std::string eventKey = "EVENT_SLOW_CLEAN";
+    static const int TasksPerSecond = 8;
+    static const float TickSpeed = 1.0f / float(TasksPerSecond);
 
     // Schedules a job that fires every update cycle which only adds or removes one listener from the schedule queue.
     Director::getInstance()->getScheduler()->schedule([=](float dt)
     {
         this->slowCleanNext();
-    }, this, eventKey);
+    }, this, eventKey, TickSpeed);
 
     // Long explanation:
     // processAddOrRemoveForEvent(eventName) is automatically called for a given eventName every time a corresponding event is dispatched.
