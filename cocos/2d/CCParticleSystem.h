@@ -217,17 +217,9 @@ public:
 
     };
     
-    //* @enum
-    enum {
-        /** The Particle emitter lives forever. */
-        DURATION_INFINITY = -1,
-        
-        /** The starting size of the particle is equal to the ending size. */
-        START_SIZE_EQUAL_TO_END_SIZE = -1,
-        
-        /** The starting radius of the particle is equal to the ending radius. */
-        START_RADIUS_EQUAL_TO_END_RADIUS = -1,
-    };
+    static const float DURATION_INFINITY;
+    static const float START_SIZE_EQUAL_TO_END_SIZE;
+    static const float START_RADIUS_EQUAL_TO_END_RADIUS;
     
     /** Creates an initializes a ParticleSystem from a plist file.
     This plist files can be created manually or with Particle Designer:

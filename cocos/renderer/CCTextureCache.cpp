@@ -191,21 +191,32 @@ void TextureCache::addImageAsync(const std::string &path, const std::function<vo
 {
     Texture2D *texture = nullptr;
 
-    std::string fullpath = FileUtils::getInstance()->fullPathForFilename(path);
-
-    auto it = _textures.find(fullpath);
+    auto it = _textures.find(path);
+    
     if (it != _textures.end())
+    {
         texture = it->second;
+    }
 
     if (texture != nullptr)
     {
-        if (callback) callback(texture);
+        if (callback)
+        {
+            callback(texture);
+        }
+
         return;
     }
 
+    std::string fullpath = FileUtils::getInstance()->fullPathForFilename(path);
+
     // check if file exists
-    if (fullpath.empty() || !FileUtils::getInstance()->isFileExist(fullpath)) {
-        if (callback) callback(nullptr);
+    if (fullpath.empty() || !FileUtils::getInstance()->isFileExist(fullpath))
+    {
+        if (callback)
+        {
+            callback(nullptr);
+        }
         return;
     }
 
@@ -372,22 +383,35 @@ void TextureCache::addImageAsyncCallBack(float /*dt*/)
     }
 }
 
-Texture2D * TextureCache::addImage(const std::string &path)
+Texture2D * TextureCache::addImage(const std::string& path)
 {
     Texture2D * texture = nullptr;
-    Image* image = nullptr;
     // Split up directory and filename
     // MUTEX:
     // Needed since addImageAsync calls this method from a different thread
+    
+    auto it = _textures.find(path);
+
+    if (it != _textures.end())
+    {
+        return it->second;
+    }
 
     std::string fullpath = FileUtils::getInstance()->fullPathForFilename(path);
+
     if (fullpath.size() == 0)
     {
         return nullptr;
     }
-    auto it = _textures.find(fullpath);
+    
+    it = _textures.find(fullpath);
+
     if (it != _textures.end())
-        texture = it->second;
+    {
+        return it->second;
+    }
+    
+    Image* image = nullptr;
 
     if (!texture)
     {
@@ -405,7 +429,7 @@ Texture2D * TextureCache::addImage(const std::string &path)
             if (texture && texture->initWithImage(image))
             {
                 // texture already retained, no need to re-retain it
-                _textures.emplace(fullpath, texture);
+                _textures.emplace(path, texture);
             }
             else
             {
@@ -431,7 +455,9 @@ Texture2D* TextureCache::addImage(Image *image, const std::string &key)
     do
     {
         auto it = _textures.find(key);
-        if (it != _textures.end()) {
+
+        if (it != _textures.end())
+        {
             texture = it->second;
             break;
         }
@@ -466,19 +492,23 @@ bool TextureCache::reloadTexture(const std::string& fileName)
     Texture2D * texture = nullptr;
     Image * image = nullptr;
 
+    auto it = _textures.find(fileName);
+
+    if (it != _textures.end())
+    {
+        texture = it->second;
+    }
+
     std::string fullpath = FileUtils::getInstance()->fullPathForFilename(fileName);
+    
     if (fullpath.size() == 0)
     {
         return false;
     }
 
-    auto it = _textures.find(fullpath);
-    if (it != _textures.end()) {
-        texture = it->second;
-    }
-
     bool ret = false;
-    if (!texture) {
+    if (!texture)
+    {
         texture = this->addImage(fullpath);
         ret = (texture != nullptr);
     }
@@ -550,12 +580,14 @@ void TextureCache::removeTextureForKey(const std::string &textureKeyName)
     std::string key = textureKeyName;
     auto it = _textures.find(key);
 
-    if (it == _textures.end()) {
+    if (it == _textures.end())
+    {
         key = FileUtils::getInstance()->fullPathForFilename(textureKeyName);
         it = _textures.find(key);
     }
 
-    if (it != _textures.end()) {
+    if (it != _textures.end())
+    {
         it->second->release();
         _textures.erase(it);
     }
@@ -566,13 +598,17 @@ Texture2D* TextureCache::getTextureForKey(const std::string &textureKeyName) con
     std::string key = textureKeyName;
     auto it = _textures.find(key);
 
-    if (it == _textures.end()) {
+    if (it == _textures.end())
+    {
         key = FileUtils::getInstance()->fullPathForFilename(textureKeyName);
         it = _textures.find(key);
     }
 
     if (it != _textures.end())
+    {
         return it->second;
+    }
+
     return nullptr;
 }
 
@@ -640,34 +676,4 @@ std::string TextureCache::getCachedTextureInfo() const
     return buffer;
 }
 
-void TextureCache::renameTextureWithKey(const std::string& srcName, const std::string& dstName)
-{
-    std::string key = srcName;
-    auto it = _textures.find(key);
-
-    if (it == _textures.end()) {
-        key = FileUtils::getInstance()->fullPathForFilename(srcName);
-        it = _textures.find(key);
-    }
-
-    if (it != _textures.end()) {
-        std::string fullpath = FileUtils::getInstance()->fullPathForFilename(dstName);
-        Texture2D* tex = it->second;
-
-        Image* image = new (std::nothrow) Image();
-        if (image)
-        {
-            bool ret = image->initWithImageFile(dstName);
-            if (ret)
-            {
-                tex->initWithImage(image);
-                _textures.emplace(fullpath, tex);
-                _textures.erase(it);
-            }
-            CC_SAFE_DELETE(image);
-        }
-    }
-}
-
 NS_CC_END
-
