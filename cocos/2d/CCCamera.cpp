@@ -265,6 +265,11 @@ Vec2 Camera::project(const Vec3& src) const
 
 Vec2 Camera::projectGL(const Vec3& src) const
 {
+    if (Director::getInstance() == nullptr)
+    {
+        return Vec2::ZERO;
+    }
+    
     Vec2 screenPos;
     
     auto viewport = Director::getInstance()->getWinSize();
