@@ -154,8 +154,6 @@ public:
      * @param localZOrder The local Z order value.
      */
     virtual void setLocalZOrder(std::int32_t localZOrder);
-
-    CC_DEPRECATED_ATTRIBUTE virtual void setZOrder(std::int32_t localZOrder) { setLocalZOrder(localZOrder); }
     
     /* 
      Helper function used by `setLocalZOrder`. Don't use it unless you know what you are doing.
@@ -184,39 +182,6 @@ public:
      */
 
     virtual std::int32_t getLocalZOrder() const { return _localZOrder; }
-
-    CC_DEPRECATED_ATTRIBUTE virtual std::int32_t getZOrder() const { return getLocalZOrder(); }
-
-    /**
-     Defines the order in which the nodes are renderer.
-     Nodes that have a Global Z Order lower, are renderer first.
-     
-     In case two or more nodes have the same Global Z Order, the order is not guaranteed.
-     The only exception if the Nodes have a Global Z Order == 0. In that case, the Scene Graph order is used.
-     
-     By default, all nodes have a Global Z Order = 0. That means that by default, the Scene Graph order is used to render the nodes.
-     
-     Global Z Order is useful when you need to render nodes in an order different than the Scene Graph order.
-     
-     Limitations: Global Z Order can't be used by Nodes that have SpriteBatchNode as one of their ancestors.
-     And if ClippingNode is one of the ancestors, then "global Z order" will be relative to the ClippingNode.
-
-     @see `setLocalZOrder()`
-     @see `setVertexZ()`
-
-     @since v3.0
-     *
-     * @param globalZOrder The global Z order value.
-     */
-    virtual void setGlobalZOrder(float globalZOrder);
-    /**
-     * Returns the Node's Global Z Order.
-     *
-     * @see `setGlobalZOrder(int)`
-     *
-     * @return The node's global Z order
-     */
-    virtual float getGlobalZOrder() const { return _globalZOrder; }
 
     /**
      * Sets the scale (x) of the node.
@@ -444,7 +409,6 @@ public:
      * @js setVertexZ
      */
     virtual void setPositionZ(float positionZ);
-    CC_DEPRECATED_ATTRIBUTE virtual void setVertexZ(float vertexZ) { setPositionZ(vertexZ); }
 
     /**
      * Gets position Z coordinate of this node.
@@ -455,7 +419,6 @@ public:
      * @js getVertexZ
      */
     virtual float getPositionZ() const;
-    CC_DEPRECATED_ATTRIBUTE virtual float getVertexZ() const { return getPositionZ(); }
 
     /**
      * Sets the anchor point in percent.
@@ -564,15 +527,6 @@ public:
      */
     virtual Quaternion getRotationQuat() const;
 
-    /** @deprecated No longer needed
-    * @lua NA
-    */
-    CC_DEPRECATED_ATTRIBUTE void setGLServerState(int /*serverState*/) {}
-    /** @deprecated No longer needed
-    * @lua NA
-    */
-    CC_DEPRECATED_ATTRIBUTE int getGLServerState() const { return 0; }
-
     /**
      * Sets whether the anchor point will be (0,0) when you position this node.
      *
@@ -582,7 +536,6 @@ public:
      * @param ignore    true if anchor point will be (0,0) when you position this node.
      */
     virtual void setIgnoreAnchorPointForPosition(bool ignore);
-    CC_DEPRECATED_ATTRIBUTE virtual void ignoreAnchorPointForPosition(bool ignore) { setIgnoreAnchorPointForPosition(ignore); }
     
     /**
      * Gets whether the anchor point will be (0,0) when you position this node.
@@ -644,35 +597,6 @@ public:
      *
      */
     virtual void addChild(Node* child, int localZOrder, const std::string &name);
-
-    /** Search the children of the receiving node to perform processing for nodes which share a name.
-     *
-     * @param name The name to search for, supports c++11 regular expression.
-     * Search syntax options:
-     * `//`: Can only be placed at the begin of the search string. This indicates that it will search recursively.
-     * `..`: The search should move up to the node's parent. Can only be placed at the end of string.
-     * `/` : When placed anywhere but the start of the search string, this indicates that the search should move to the node's children.
-     *
-     * @code
-     * enumerateChildren("//MyName", ...): This searches the children recursively and matches any node with the name `MyName`.
-     * enumerateChildren("[[:alnum:]]+", ...): This search string matches every node of its children.
-     * enumerateChildren("A[[:digit:]]", ...): This searches the node's children and returns any child named `A0`, `A1`, ..., `A9`.
-     * enumerateChildren("Abby/Normal", ...): This searches the node's grandchildren and returns any node whose name is `Normal`
-     * and whose parent is named `Abby`.
-     * enumerateChildren("//Abby/Normal", ...): This searches recursively and returns any node whose name is `Normal` and whose
-     * parent is named `Abby`.
-     * @endcode
-     *
-     * @warning Only support alpha or number for name, and not support unicode.
-     *
-     * @param callback A callback function to execute on nodes that match the `name` parameter. The function takes the following arguments:
-     *  `node` 
-     *      A node that matches the name
-     *  And returns a boolean result. Your callback can return `true` to terminate the enumeration.
-     *
-     * @since v3.2
-     */
-    virtual void enumerateChildren(const std::string &name, std::function<bool(Node* node)> callback) const;
     /**
      * Returns the array of the node's children.
      *
@@ -769,7 +693,8 @@ public:
     template<typename _T> inline
     static void sortNodes(cocos2d::Vector<_T*>& nodes)
     {
-        std::sort(std::begin(nodes), std::end(nodes), [](_T* n1, _T* n2) {
+        std::sort(std::begin(nodes), std::end(nodes), [](_T* n1, _T* n2)
+        {
             return (n1->_localZOrder == n2->_localZOrder && n1->_orderOfArrival < n2->_orderOfArrival) || n1->_localZOrder < n2->_localZOrder;
         });
     }
@@ -793,62 +718,6 @@ public:
      */
     virtual void setName(const std::string& name);
 
-    /**
-     * Returns a custom user data pointer.
-     *
-     * You can set everything in UserData pointer, a data block, a structure or an object.
-     *
-     * @return A custom user data pointer.
-     * @lua NA
-     */
-    virtual void* getData() { return _userData; }
-
-    /**
-    * @lua NA
-    */
-    virtual const void* getData() const { return _userData; }
-
-    /**
-     * Sets a custom user data pointer.
-     *
-     * You can set everything in UserData pointer, a data block, a structure or an object, etc.
-     * @warning Don't forget to release the memory manually,
-     *          especially before you change this data pointer, and before this node is autoreleased.
-     *
-     * @param userData  A custom user data pointer.
-     * @lua NA
-     */
-    virtual void setData(void *userData);
-
-    /**
-     * Returns a user assigned Object.
-     *
-     * Similar to userData, but instead of holding a void* it holds an object.
-     *
-     * @return A user assigned Object.
-     * @lua NA
-     */
-    virtual Ref* getUserObject() { return _userObject; }
-
-    /**
-    * @lua NA
-    */
-    virtual const Ref* getUserObject() const { return _userObject; }
-
-    /**
-     * Returns a user assigned Object.
-     *
-     * Similar to UserData, but instead of holding a void* it holds an object.
-     * The UserObject will be retained once in this method,
-     * and the previous UserObject (if existed) will be released.
-     * The UserObject will be released in Node's destructor.
-     *
-     * @param userObject    A user assigned Object.
-     */
-    virtual void setUserObject(Ref *userObject);
-
-    /// @} end of Tag & User Data
-
 
     /// @{
     /// @name GLProgram
@@ -858,7 +727,7 @@ public:
      * @return The GLProgram (shader) currently used for this node.
      */
     GLProgram* getGLProgram() const;
-    CC_DEPRECATED_ATTRIBUTE GLProgram* getShaderProgram() const { return getGLProgram(); }
+
     /**
      * Sets the shader program for this node
      *
@@ -871,7 +740,6 @@ public:
      * @param glprogram The shader program.
      */
     virtual void setGLProgram(GLProgram *glprogram);
-    CC_DEPRECATED_ATTRIBUTE void setShaderProgram(GLProgram *glprogram) { setGLProgram(glprogram); }
     
     /**
      * Return the GLProgramState currently used for this node.
@@ -996,9 +864,6 @@ public:
      */
 	virtual Rect getBoundingBox() const;
 	virtual Rect getBoundingBoxNoTransform() const;
-
-    /** @deprecated Use getBoundingBox instead */
-    CC_DEPRECATED_ATTRIBUTE virtual Rect boundingBox() const { return getBoundingBox(); }
     
     /** Get the event dispatcher of scene.
      *
@@ -1057,10 +922,6 @@ public:
      * @return The number of actions that are running plus the ones that are schedule to run.
      */
     ssize_t getNumberOfRunningActions() const;
-
-
-    /** @deprecated Use getNumberOfRunningActions() instead */
-    CC_DEPRECATED_ATTRIBUTE ssize_t numberOfRunningActions() const { return getNumberOfRunningActions(); };
 
     /// @} end of Actions
 
@@ -1137,8 +998,6 @@ public:
      */
     void unscheduleAllCallbacks();
 
-    CC_DEPRECATED_ATTRIBUTE void unscheduleAllSelectors() { unscheduleAllCallbacks(); }
-
 	virtual bool isPaused(void);
     /**
      * Resumes all scheduled selectors, actions and event listeners.
@@ -1150,17 +1009,6 @@ public:
      * This method is called internally by onExit.
      */
     virtual void pause(void);
-
-    /**
-     * Resumes all scheduled selectors, actions and event listeners.
-     * This method is called internally by onEnter.
-     */
-    CC_DEPRECATED_ATTRIBUTE void resumeSchedulerAndActions();
-    /**
-     * Pauses all scheduled selectors, actions and event listeners.
-     * This method is called internally by onExit.
-     */
-    CC_DEPRECATED_ATTRIBUTE void pauseSchedulerAndActions();
 
     /**
      * Update method will be called automatically every frame if "scheduleUpdate" is called, and the node is "live".
@@ -1221,9 +1069,6 @@ public:
      */
     virtual void setNodeToParentTransform(const Mat4& transform);
 
-    /** @deprecated use getNodeToParentTransform() instead */
-    CC_DEPRECATED_ATTRIBUTE virtual AffineTransform nodeToParentTransform() const { return getNodeToParentAffineTransform(); }
-
     /**
      * Returns the matrix that transform parent's space coordinates to the node's (local) space coordinates.
      * The matrix is in Pixels.
@@ -1233,9 +1078,6 @@ public:
     virtual const Mat4& getParentToNodeTransform() const;
     virtual AffineTransform getParentToNodeAffineTransform() const;
 
-    /** @deprecated Use getParentToNodeTransform() instead */
-    CC_DEPRECATED_ATTRIBUTE virtual AffineTransform parentToNodeTransform() const { return getParentToNodeAffineTransform(); }
-
     /**
      * Returns the world affine transform matrix. The matrix is in Pixels.
      *
@@ -1244,9 +1086,6 @@ public:
     virtual Mat4 getNodeToWorldTransform() const;
     virtual AffineTransform getNodeToWorldAffineTransform() const;
 
-    /** @deprecated Use getNodeToWorldTransform() instead */
-    CC_DEPRECATED_ATTRIBUTE virtual AffineTransform nodeToWorldTransform() const { return getNodeToWorldAffineTransform(); }
-
     /**
      * Returns the inverse world affine transform matrix. The matrix is in Pixels.
      *
@@ -1254,9 +1093,6 @@ public:
      */
     virtual Mat4 getWorldToNodeTransform() const;
     virtual AffineTransform getWorldToNodeAffineTransform() const;
-
-    /** @deprecated Use getWorldToNodeTransform() instead */
-    CC_DEPRECATED_ATTRIBUTE virtual AffineTransform worldToNodeTransform() const { return getWorldToNodeAffineTransform(); }
 
     /// @} end of Transformations
 
@@ -1396,11 +1232,12 @@ public:
     virtual ~Node();
 
     virtual bool init();
+    
+    // Optimization for external use
+    unsigned int parentStackPositionHash;
+    Vec3 cachedWorldCoords3D;
 
 protected:
-    /// lazy allocs
-    void childrenAlloc(void);
-    
     /// helper that reorder a child
     void insertChild(Node* child, int z);
 
@@ -1415,9 +1252,6 @@ protected:
     virtual void updateCascadeColor();
     virtual void disableCascadeColor();
     virtual void updateColor() {}
-    
-    bool doEnumerate(std::string name, std::function<bool (Node *)> callback) const;
-    bool doEnumerateRecursive(const Node* node, const std::string &name, std::function<bool (Node *)> callback) const;
     
     // update quaternion from Rotation
     void updateRotationQuat();
@@ -1456,54 +1290,32 @@ protected:
     mutable bool _inverseDirty;     ///< inverse transform dirty flag
     uint32_t _selfFlags;    ///< Whether or not the Transform object was updated since the last frame < whether or not the contentSize is dirty
 
-#if CC_LITTLE_ENDIAN
-    union {
-        struct {
+    union
+    {
+        struct
+        {
             std::uint32_t _orderOfArrival;
             std::int32_t _localZOrder;
         };
         std::int64_t _localZOrder$Arrival;
     };
-#else
-    union {
-        struct {
-            std::int32_t _localZOrder;
-            std::uint32_t _orderOfArrival;
-        };
-        std::int64_t _localZOrder$Arrival;
-    };
-#endif
-
-    float _globalZOrder;            ///< Global order used to sort the node
 
     static std::uint32_t s_globalOrderOfArrival;
 
     Vector<Node*> _children;        ///< array of children nodes
     Node *_parent;                  ///< weak reference to parent node
     Director* _director;            //cached director pointer to improve rendering performance
-    
     std::string _name;              ///<a string label, an user defined string to identify this node
-
-    void *_userData;                ///< A user assigned void pointer, Can be point to any cpp object
-    Ref *_userObject;               ///< A user assigned Object
-
     GLProgramState *_glProgramState; ///< OpenGL Program State
-
     Scheduler *_scheduler;          ///< scheduler used to schedule timers and updates
-
     ActionManager *_actionManager;  ///< a pointer to ActionManager singleton, which is used to handle all the actions
-
     EventDispatcher* _eventDispatcher;  ///< event dispatcher used to dispatch all kinds of events
 
     bool _running;                  ///< is running
-
 	bool _paused;                  ///< is paused
-
     bool _visible;                  ///< is this node visible
-
     bool _ignoreAnchorPointForPosition; ///< true if the Anchor Vec2 will be (0,0) when you position the Node, false otherwise.
                                           ///< Used by Layer and Scene.
-
     bool _reorderChildDirty;          ///< children order dirty flag
     bool _isTransitionFinished;       ///< flag to indicate whether the transition was finished
     

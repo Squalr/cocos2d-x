@@ -393,7 +393,7 @@ void ParticleBatchNode::draw(Renderer* renderer, const Mat4 & /*transform*/, uin
     {
         return;
     }
-    _batchCommand.init(_globalZOrder, getGLProgram(), _blendFunc, _textureAtlas, _modelViewTransform, flags);
+    _batchCommand.init(0.0f, getGLProgram(), _blendFunc, _textureAtlas, _modelViewTransform, flags);
     renderer->addCommand(&_batchCommand);
 }
 

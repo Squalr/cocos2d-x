@@ -1072,7 +1072,6 @@ void Label::createSpriteForSystemFont(const FontDefinition& fontDef)
     _textSprite = Sprite::createWithTexture(texture);
     //set camera mask using label's camera mask, because _textSprite may be null when setting camera mask to label
     _textSprite->setCameraMask(getCameraMask());
-    _textSprite->setGlobalZOrder(getGlobalZOrder());
     _textSprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     this->setContentSize(_textSprite->getContentSize());
     texture->release();
@@ -1117,7 +1116,6 @@ void Label::createShadowSpriteForSystemFont(const FontDefinition& fontDef)
             _shadowNode->setBlendFunc(_blendFunc);
         }
         _shadowNode->setCameraMask(getCameraMask());
-        _shadowNode->setGlobalZOrder(getGlobalZOrder());
         _shadowNode->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
         _shadowNode->setPosition(_shadowOffset.width, _shadowOffset.height);
 
@@ -1374,21 +1372,8 @@ void Label::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
     }
     // Don't do calculate the culling if the transform was not updated
     bool transformUpdated = flags & FLAGS_TRANSFORM_DIRTY;
-#if CC_USE_CULLING
-    auto visitingCamera = Camera::getVisitingCamera();
-    auto defaultCamera = Camera::getDefaultCamera();
-    if (visitingCamera == defaultCamera) {
-        _insideBounds = (transformUpdated || visitingCamera->isViewProjectionUpdated()) ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
-    }
-    else
     {
-        _insideBounds = renderer->checkVisibility(transform, _contentSize);
-    }
-
-    if (_insideBounds)
-#endif
-    {
-        _customCommand.init(_globalZOrder, transform, flags);
+        _customCommand.init(0.0f, transform, flags);
         _customCommand.func = CC_CALLBACK_0(Label::onDraw, this, transform, transformUpdated);
 
         renderer->addCommand(&_customCommand);
@@ -1955,19 +1940,6 @@ FontDefinition Label::_getFontDefinition() const
     }
 
     return systemFontDef;
-}
-
-void Label::setGlobalZOrder(float globalZOrder)
-{
-    Node::setGlobalZOrder(globalZOrder);
-    if (_textSprite)
-    {
-        _textSprite->setGlobalZOrder(globalZOrder);
-        if (_shadowNode)
-        {
-            _shadowNode->setGlobalZOrder(globalZOrder);
-        }
-    }
 }
 
 float Label::getRenderingFontSize()const

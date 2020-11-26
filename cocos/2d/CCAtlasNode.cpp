@@ -128,7 +128,7 @@ void AtlasNode::updateAtlasValues()
 void AtlasNode::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
     // ETC1 ALPHA supports.
-    _quadCommand.init(_globalZOrder, _textureAtlas->getTexture(), getGLProgramState(), _blendFunc, _textureAtlas->getQuads(), _quadsToDraw, transform, flags);
+    _quadCommand.init(0.0f, _textureAtlas->getTexture(), getGLProgramState(), _blendFunc, _textureAtlas->getQuads(), _quadsToDraw, transform, flags);
     
     renderer->addCommand(&_quadCommand);
 

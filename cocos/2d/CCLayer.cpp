@@ -231,7 +231,7 @@ void LayerColor::updateColor()
 
 void LayerColor::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
-    _customCommand.init(_globalZOrder, transform, flags);
+    _customCommand.init(0.0f, transform, flags);
     _customCommand.func = CC_CALLBACK_0(LayerColor::onDraw, this, transform, flags);
     renderer->addCommand(&_customCommand);
     
@@ -561,7 +561,7 @@ bool LayerRadialGradient::initWithColor(const cocos2d::Color4B &startColor, cons
 
 void LayerRadialGradient::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
-    _customCommand.init(_globalZOrder, transform, flags);
+    _customCommand.init(0.0f, transform, flags);
     _customCommand.func = CC_CALLBACK_0(LayerRadialGradient::onDraw, this, transform, flags);
     renderer->addCommand(&_customCommand);
 }

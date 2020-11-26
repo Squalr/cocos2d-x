@@ -90,31 +90,6 @@ THE SOFTWARE.
 #define CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL 0
 #endif
 
-/** @def CC_DIRECTOR_STATS_INTERVAL
- * Seconds between FPS updates.
- * 0.5 seconds, means that the FPS number will be updated every 0.5 seconds.
- * Having a bigger number means a more reliable FPS.
-
- * Default value: 0.5f
- */
-#ifndef CC_DIRECTOR_STATS_INTERVAL
-#define CC_DIRECTOR_STATS_INTERVAL (0.5f)
-#endif
-
-/** @def CC_DIRECTOR_DISPATCH_FAST_EVENTS
- * If enabled, and only when it is used with FastDirector, the main loop will wait 0.04 seconds to
- * dispatch all the events, even if there are not events to dispatch.
- * If your game uses lot's of events (eg: touches) it might be a good idea to enable this feature.
- * Otherwise, it is safe to leave it disabled.
-
- * To enable set it to 1. Disabled by default.
-
- * @warning This feature is experimental.
- */
-#ifndef CC_DIRECTOR_DISPATCH_FAST_EVENTS
- #define CC_DIRECTOR_DISPATCH_FAST_EVENTS 0
-#endif
-
 /** @def CC_DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD
  * If enabled, cocos2d-mac will run on the Display Link thread. If disabled cocos2d-mac will run in its own thread.
  * If enabled, the images will be drawn at the "correct" time, but the events might not be very responsive.
@@ -208,10 +183,6 @@ THE SOFTWARE.
 #define CC_LABELBMFONT_DEBUG_DRAW 0
 #endif
 
-/** Use culling or not. */
-#ifndef CC_USE_CULLING
-#define CC_USE_CULLING 0
-#endif
 
 /** @def CC_ENABLE_ALLOCATOR
  * Turn on creation of global allocator and pool allocators

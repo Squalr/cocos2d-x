@@ -74,48 +74,9 @@ RenderQueue::RenderQueue()
 
 void RenderQueue::push_back(RenderCommand* command)
 {
-    float z = command->getGlobalOrder();
-    
-    if(z < 0)
+    if (_commandCounts[QUEUE_GROUP::GLOBALZ_ZERO] < _commandMaximums[GLOBALZ_ZERO])
     {
-        if (_commandCounts[QUEUE_GROUP::GLOBALZ_NEG] < _commandMaximums[GLOBALZ_NEG])
-        {
-            _commands[QUEUE_GROUP::GLOBALZ_NEG][_commandCounts[QUEUE_GROUP::GLOBALZ_NEG]++] = command;
-        }
-    }
-    else if(z > 0)
-    {
-        if (_commandCounts[QUEUE_GROUP::GLOBALZ_POS] < _commandMaximums[GLOBALZ_POS])
-        {
-            _commands[QUEUE_GROUP::GLOBALZ_POS][_commandCounts[QUEUE_GROUP::GLOBALZ_POS]++] = command;
-        }
-    }
-    else
-    {
-        if(command->is3D())
-        {
-            if(command->isTransparent())
-            {
-                if (_commandCounts[QUEUE_GROUP::TRANSPARENT_3D] < _commandMaximums[TRANSPARENT_3D])
-                {
-                    _commands[QUEUE_GROUP::TRANSPARENT_3D][_commandCounts[QUEUE_GROUP::TRANSPARENT_3D]++] = command;
-                }
-            }
-            else
-            {
-                if (_commandCounts[QUEUE_GROUP::OPAQUE_3D] < _commandMaximums[OPAQUE_3D])
-                {
-                    _commands[QUEUE_GROUP::OPAQUE_3D][_commandCounts[QUEUE_GROUP::OPAQUE_3D]++] = command;
-                }
-            }
-        }
-        else
-        {
-            if (_commandCounts[QUEUE_GROUP::GLOBALZ_ZERO] < _commandMaximums[GLOBALZ_ZERO])
-            {
-                _commands[QUEUE_GROUP::GLOBALZ_ZERO][_commandCounts[QUEUE_GROUP::GLOBALZ_ZERO]++] = command;
-            }
-        }
+        _commands[QUEUE_GROUP::GLOBALZ_ZERO][_commandCounts[QUEUE_GROUP::GLOBALZ_ZERO]++] = command;
     }
 }
 
@@ -144,7 +105,9 @@ RenderCommand* RenderQueue::operator[](ssize_t index) const
     for(int queIndex = 0; queIndex < QUEUE_GROUP::QUEUE_COUNT; ++queIndex)
     {
         if(index < static_cast<ssize_t>(_commands[queIndex].size()))
+        {
             return _commands[queIndex][index];
+        }
         else
         {
             index -= _commandCounts[queIndex];

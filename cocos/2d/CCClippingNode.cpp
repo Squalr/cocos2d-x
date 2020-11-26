@@ -155,13 +155,13 @@ void ClippingNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32
 
     this->setContentSize(_stencil == nullptr ? Size::ZERO : _stencil->getContentSize());
 
-    _beforeVisitCmd.init(_globalZOrder);
+    _beforeVisitCmd.init(0.0f);
     _beforeVisitCmd.func = CC_CALLBACK_0(StencilStateManager::onBeforeVisit, _stencilStateManager);
     renderer->addCommand(&_beforeVisitCmd);
     
     _stencil->visit(renderer, _modelViewTransform, _selfFlags);
 
-    _afterDrawStencilCmd.init(_globalZOrder);
+    _afterDrawStencilCmd.init(0.0f);
     _afterDrawStencilCmd.func = CC_CALLBACK_0(StencilStateManager::onAfterDrawStencil, _stencilStateManager);
     renderer->addCommand(&_afterDrawStencilCmd);
     
@@ -177,7 +177,7 @@ void ClippingNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32
         _children[index]->visit(renderer, _modelViewTransform, _selfFlags);
     }
 
-    _afterVisitCmd.init(_globalZOrder);
+    _afterVisitCmd.init(0.0f);
     _afterVisitCmd.func = CC_CALLBACK_0(StencilStateManager::onAfterVisit, _stencilStateManager);
     renderer->addCommand(&_afterVisitCmd);
 

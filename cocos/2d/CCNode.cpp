@@ -77,13 +77,9 @@ Node::Node()
 // children (lazy allocs)
 // lazy alloc
 , _localZOrder$Arrival(0LL)
-, _globalZOrder(0)
 , _parent(nullptr)
 // "whole screen" objects. like Scenes and Layers, should set _ignoreAnchorPointForPosition to true
 , _name("")
-// userData is always inited as nil
-, _userData(nullptr)
-, _userObject(nullptr)
 , _glProgramState(nullptr)
 , _running(false)
 , _paused(false)
@@ -99,6 +95,8 @@ Node::Node()
 , _cascadeOpacityEnabled(true)
 , _cameraMask(1)
 , _anchorPoint(0, 0)
+, parentStackPositionHash(0)
+, cachedWorldCoords3D(Vec3::ZERO)
 {
     // set default scheduler and actionManager
     _director = Director::getInstance();
@@ -128,10 +126,6 @@ Node * Node::create()
 
 Node::~Node()
 {
-    // User object has to be released before others, since userObject may have a weak reference of this node
-    // It may invoke `node->stopAllActions();` while `_actionManager` is null if the next line is after `CC_SAFE_RELEASE_NULL(_actionManager)`.
-    CC_SAFE_RELEASE_NULL(_userObject);
-    
     // attributes
     CC_SAFE_RELEASE_NULL(_glProgramState);
 
@@ -197,14 +191,6 @@ void Node::_setLocalZOrder(std::int32_t z)
 void Node::updateOrderOfArrival()
 {
     _orderOfArrival = (++s_globalOrderOfArrival);
-}
-
-void Node::setGlobalZOrder(float globalZOrder)
-{
-    if (_globalZOrder != globalZOrder)
-    {
-        _globalZOrder = globalZOrder;
-    }
 }
 
 /// rotation getter
@@ -554,19 +540,6 @@ void Node::setName(const std::string& name)
     _name = name;
 }
 
-/// userData setter
-void Node::setData(void *userData)
-{
-    _userData = userData;
-}
-
-void Node::setUserObject(Ref* userObject)
-{
-    CC_SAFE_RETAIN(userObject);
-    CC_SAFE_RELEASE(_userObject);
-    _userObject = userObject;
-}
-
 GLProgramState* Node::getGLProgramState() const
 {
     return _glProgramState;
@@ -630,127 +603,6 @@ Rect Node::getBoundingBoxNoTransform() const
 
 // MARK: Children logic
 
-// lazy allocs
-void Node::childrenAlloc()
-{
-    _children.reserve(4);
-}
-
-void Node::enumerateChildren(const std::string &name, std::function<bool (Node *)> callback) const
-{
-    CCASSERT(!name.empty(), "Invalid name");
-    CCASSERT(callback != nullptr, "Invalid callback function");
-    
-    size_t length = name.length();
-    
-    size_t subStrStartPos = 0;  // sub string start index
-    size_t subStrlength = length; // sub string length
-    
-    // Starts with '//'?
-    bool searchRecursively = false;
-    if (length > 2 && name[0] == '/' && name[1] == '/')
-    {
-        searchRecursively = true;
-        subStrStartPos = 2;
-        subStrlength -= 2;
-    }
-    
-    // End with '/..'?
-    bool searchFromParent = false;
-    if (length > 3 &&
-        name[length-3] == '/' &&
-        name[length-2] == '.' &&
-        name[length-1] == '.')
-    {
-        searchFromParent = true;
-        subStrlength -= 3;
-    }
-    
-    // Remove '//', '/..' if exist
-    std::string newName = name.substr(subStrStartPos, subStrlength);
-
-    if (searchFromParent)
-    {
-        newName.insert(0, "[[:alnum:]]+/");
-    }
-    
-    
-    if (searchRecursively)
-    {
-        // name is '//xxx'
-        doEnumerateRecursive(this, newName, callback);
-    }
-    else
-    {
-        // name is xxx
-        doEnumerate(newName, callback);
-    }
-}
-
-bool Node::doEnumerateRecursive(const Node* node, const std::string &name, std::function<bool (Node *)> callback) const
-{
-    bool ret =false;
-    
-    if (node->doEnumerate(name, callback))
-    {
-        // search itself
-        ret = true;
-    }
-    else
-    {
-        // search its children
-        for (const auto& child : node->getChildren())
-        {
-            if (doEnumerateRecursive(child, name, callback))
-            {
-                ret = true;
-                break;
-            }
-        }
-    }
-    
-    return ret;
-}
-
-bool Node::doEnumerate(std::string name, std::function<bool (Node *)> callback) const
-{
-    // name may be xxx/yyy, should find its parent
-    size_t pos = name.find('/');
-    std::string searchName = name;
-    bool needRecursive = false;
-    if (pos != name.npos)
-    {
-        searchName = name.substr(0, pos);
-        name.erase(0, pos+1);
-        needRecursive = true;
-    }
-    
-    bool ret = false;
-    for (const auto& child : getChildren())
-    {
-        if (std::regex_match(child->_name, std::regex(searchName)))
-        {
-            if (!needRecursive)
-            {
-                // terminate enumeration if callback return true
-                if (callback(child))
-                {
-                    ret = true;
-                    break;
-                }
-            }
-            else
-            {
-                ret = child->doEnumerate(name, callback);
-                if (ret)
-                    break;
-            }
-        }
-    }
-    
-    return ret;
-}
-
 void Node::addChild(Node* child, int localZOrder, const std::string &name)
 {
     CCASSERT(child != nullptr, "Argument must be non-nil");
@@ -786,11 +638,6 @@ void Node::addChildHelper(Node* child, int localZOrder, const std::string &name,
     
     CCASSERT( assertNotSelfChild(),
               "A node cannot be the child of his own children" );
-    
-    if (_children.empty())
-    {
-        this->childrenAlloc();
-    }
     
     this->insertChild(child, localZOrder);
     
@@ -849,11 +696,6 @@ void Node::addChildInsert(Node *child, int index, bool isReentry)
 
 	CCASSERT(assertNotSelfChild(),
 		"A node cannot be the child of his own children");
-
-	if (_children.empty())
-	{
-		this->childrenAlloc();
-	}
 
     _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 	_reorderChildDirty = true;
@@ -1290,16 +1132,6 @@ void Node::pause()
     _paused = true;
     _scheduler->pauseTarget(this);
     _actionManager->pauseTarget(this);
-}
-
-void Node::resumeSchedulerAndActions()
-{
-    resume();
-}
-
-void Node::pauseSchedulerAndActions()
-{
-    pause();
 }
 
 // override me
