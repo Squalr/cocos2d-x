@@ -91,7 +91,8 @@ public:
      * Stores the columns of this 4x4 matrix.
      * */
 #ifdef __SSE__
-    union {
+    union
+    {
         __m128 col[4];
         float m[16];
     };

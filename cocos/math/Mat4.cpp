@@ -724,7 +724,6 @@ void Mat4::multiply(float scalar, Mat4* dst) const
 
 void Mat4::multiply(const Mat4& m, float scalar, Mat4* dst)
 {
-    GP_ASSERT(dst);
 #ifdef __SSE__
     MathUtil::multiplyMatrix(m.col, scalar, dst->col);
 #else
@@ -739,7 +738,6 @@ void Mat4::multiply(const Mat4& mat)
 
 void Mat4::multiply(const Mat4& m1, const Mat4& m2, Mat4* dst)
 {
-    GP_ASSERT(dst);
 #ifdef __SSE__
     MathUtil::multiplyMatrix(m1.col, m2.col, dst->col);
 #else
