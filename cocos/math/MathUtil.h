@@ -23,11 +23,11 @@
 #ifndef MATHUTIL_H_
 #define MATHUTIL_H_
 
+#include "math/CCMathBase.h"
+
 #ifdef __SSE__
 #include <xmmintrin.h>
 #endif
-
-#include "math/CCMathBase.h"
 
 /**
  * @addtogroup base

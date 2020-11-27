@@ -31,6 +31,10 @@ THE SOFTWARE.
 
 #include "platform/CCPlatformConfig.h"
 
+#ifndef __SSE__
+#define __SSE__ 1
+#endif
+
 /**
  * @file
  * cocos2d (cc) configuration file.

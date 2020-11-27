@@ -38,7 +38,6 @@ void MathUtil::multiplyMatrix(const __m128 m[4], float scalar, __m128 dst[4])
 
 void MathUtil::multiplyMatrix(const __m128 m1[4], const __m128 m2[4], __m128 dst[4])
 {
-    __m128 dst0, dst1, dst2, dst3;
 	{
 		__m128 e0 = _mm_shuffle_ps(m2[0], m2[0], _MM_SHUFFLE(0, 0, 0, 0));
 		__m128 e1 = _mm_shuffle_ps(m2[0], m2[0], _MM_SHUFFLE(1, 1, 1, 1));
@@ -54,7 +53,7 @@ void MathUtil::multiplyMatrix(const __m128 m1[4], const __m128 m2[4], __m128 dst
 		__m128 a1 = _mm_add_ps(v2, v3);
 		__m128 a2 = _mm_add_ps(a0, a1);
         
-		dst0 = a2;
+		dst[0] = a2;
 	}
     
 	{
@@ -72,7 +71,7 @@ void MathUtil::multiplyMatrix(const __m128 m1[4], const __m128 m2[4], __m128 dst
 		__m128 a1 = _mm_add_ps(v2, v3);
 		__m128 a2 = _mm_add_ps(a0, a1);
         
-		dst1 = a2;
+		dst[1] = a2;
 	}
     
 	{
@@ -90,7 +89,7 @@ void MathUtil::multiplyMatrix(const __m128 m1[4], const __m128 m2[4], __m128 dst
 		__m128 a1 = _mm_add_ps(v2, v3);
 		__m128 a2 = _mm_add_ps(a0, a1);
         
-		dst2 = a2;
+		dst[2] = a2;
 	}
     
 	{
@@ -108,12 +107,8 @@ void MathUtil::multiplyMatrix(const __m128 m1[4], const __m128 m2[4], __m128 dst
 		__m128 a1 = _mm_add_ps(v2, v3);
 		__m128 a2 = _mm_add_ps(a0, a1);
         
-		dst3 = a2;
+		dst[3] = a2;
 	}
-    dst[0] = dst0;
-    dst[1] = dst1;
-    dst[2] = dst2;
-    dst[3] = dst3;
 }
 
 void MathUtil::negateMatrix(const __m128 m[4], __m128 dst[4])

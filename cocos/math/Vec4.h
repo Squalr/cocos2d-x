@@ -23,11 +23,11 @@
 #ifndef MATH_VEC4_H
 #define MATH_VEC4_H
 
+#include "math/CCMathBase.h"
+
 #ifdef __SSE__
 #include <xmmintrin.h>
 #endif
-
-#include "math/CCMathBase.h"
 
 /**
  * @addtogroup base

@@ -32,18 +32,12 @@ NS_CC_BEGIN
 
 AutoreleasePool::AutoreleasePool()
 : _name("")
-#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
-, _isClearing(false)
-#endif
 {
     PoolManager::getInstance()->push(this);
 }
 
 AutoreleasePool::AutoreleasePool(const std::string &name)
 : _name(name)
-#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
-, _isClearing(false)
-#endif
 {
     PoolManager::getInstance()->push(this);
 }
@@ -58,34 +52,29 @@ AutoreleasePool::~AutoreleasePool()
 
 void AutoreleasePool::addObject(Ref* object)
 {
-    _managedObjectArray.insert(object);
+    _managedObjects.insert(object);
 }
 
 void AutoreleasePool::clear()
 {
-#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
-    _isClearing = true;
-#endif
-    for (const auto &obj : _managedObjectArray)
+    for (const auto &obj : _managedObjects)
     {
         obj->release();
     }
-    _managedObjectArray.clear();
-#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
-    _isClearing = false;
-#endif
+    
+    _managedObjects.clear();
 }
 
 bool AutoreleasePool::contains(Ref* object) const
 {
-    return _managedObjectArray.find(object) != _managedObjectArray.end();
+    return _managedObjects.find(object) != _managedObjects.end();
 }
 
 void AutoreleasePool::dump()
 {
-    CCLOG("autorelease pool: %s, number of managed object %d\n", _name.c_str(), static_cast<int>(_managedObjectArray.size()));
+    CCLOG("autorelease pool: %s, number of managed object %d\n", _name.c_str(), static_cast<int>(_managedObjects.size()));
     CCLOG("%20s%20s%20s", "Object pointer", "Object id", "reference count");
-    for (const auto &obj : _managedObjectArray)
+    for (const auto &obj : _managedObjects)
     {
         CCLOG("%20p%20u\n", obj, obj->getReferenceCount());
     }
@@ -134,7 +123,6 @@ PoolManager::~PoolManager()
     }
 }
 
-
 AutoreleasePool* PoolManager::getCurrentPool() const
 {
     return _releasePoolStack.back();
@@ -145,8 +133,11 @@ bool PoolManager::isObjectInPools(Ref* obj) const
     for (const auto& pool : _releasePoolStack)
     {
         if (pool->contains(obj))
+        {
             return true;
+        }
     }
+
     return false;
 }
 

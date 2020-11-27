@@ -1233,8 +1233,11 @@ public:
 
     virtual bool init();
     
+    // Exposed for optimization for external use
+    Mat4 _modelViewTransform;       ///< ModelView transform of the Node.
+    
     // Optimization for external use
-    unsigned int parentStackPositionHash;
+    unsigned int positionHash;
     Vec3 cachedWorldCoords3D;
 
 protected:
@@ -1255,12 +1258,11 @@ protected:
     
     // update quaternion from Rotation
     void updateRotationQuat();
-    
+
 private:
     void addChildHelper(Node* child, int localZOrder, const std::string &name, bool isReentry = false);
     
 protected:
-
     float _rotationX;               ///< rotation on the X-axis
     
     Quaternion _rotationQuat;       ///rotation using quaternion, if _rotationZ_X == _rotationZ_Y, _rotationQuat = RotationZ_X * RotationY * RotationX, else _rotationQuat = RotationY * RotationX
@@ -1280,8 +1282,6 @@ protected:
     Vec2 _anchorPoint;              ///< anchor point normalized (NOT in points)
 
     Size _contentSize;              ///< untransformed size of the node
-
-    Mat4 _modelViewTransform;       ///< ModelView transform of the Node.
 
     // "cache" variables are allowed to be mutable
     mutable Mat4 _transform;        ///< transform
