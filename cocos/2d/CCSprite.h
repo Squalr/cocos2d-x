@@ -36,12 +36,10 @@ THE SOFTWARE.
 #include "renderer/CCTextureAtlas.h"
 #include "renderer/CCTrianglesCommand.h"
 #include "renderer/CCCustomCommand.h"
-#include "2d/CCAutoPolygon.h"
 
 NS_CC_BEGIN
 
 class SpriteBatchNode;
-class SpriteFrame;
 class Animation;
 class Rect;
 class Size;
@@ -74,14 +72,10 @@ struct transformValues_;
  *  - ...and the Renderer will automatically "batch" your sprites (will draw all of them in one OpenGL call).
  *
  *  Sprite has 4 types or rendering modes:
- *
  *  - `QUAD`: Renders the sprite using 2 triangles (1 rectangle): uses small memory, but renders empty pixels (slow)
  *  - `POLYGON`: Renders the sprite using many triangles (depending on the setting): Uses more memory, but doesn't render so much empty pixels (faster)
  *  - `SLICE9`: Renders the sprite using 18 triangles (9 rectangles). Useful to to scale buttons an other rectangular sprites
  *  - `QUAD_BATCHNODE`: Renders the sprite using 2 triangles (1 rectangle) with a static batch, which has some limitations (see below)
- *
- * By default, the sprite uses `QUAD` mode. But can be changed to `POLYGON` when calling `setPolygonInfo()`. To use `SLICE9` call `setCenterRect()` or
- * `serCenterRectNormalized()`. To use `QUAD_BATCHNODE` parent the sprite to a `SpriteBatchNode` object.
  *
  *
  *  `QUAD_BATCHNODE` is deprecated and should be avoid. It has the following limitations:
@@ -96,7 +90,8 @@ struct transformValues_;
 class CC_DLL Sprite : public Node, public TextureProtocol
 {
 public:
-    enum class RenderMode {
+    enum class RenderMode
+    {
         QUAD,
         POLYGON,
         SLICE9,
@@ -126,17 +121,6 @@ public:
      * @return  An autoreleased sprite object.
      */
     static Sprite* create(const std::string& filename);
-    
-    /**
-     * Creates a polygon sprite with a polygon info.
-     *
-     * After creation, the rect of sprite will be the size of the image,
-     * and the offset will be (0,0).
-     *
-     * @param   polygonInfo A path to image file, e.g., "scene1/monster.png".
-     * @return  An autoreleased sprite object.
-     */
-    static Sprite* create(const PolygonInfo& info);
 
     /**
      * Creates a sprite with an image filename and a rect.
@@ -169,25 +153,6 @@ public:
      * @return  An autoreleased sprite object.
      */
     static Sprite* createWithTexture(Texture2D *texture, const Rect& rect, bool rotated=false);
-
-    /**
-     * Creates a sprite with an sprite frame.
-     *
-     * @param   spriteFrame    A sprite frame which involves a texture and a rect.
-     * @return  An autoreleased sprite object.
-     */
-    static Sprite* createWithSpriteFrame(SpriteFrame *spriteFrame);
-
-    /**
-     * Creates a sprite with an sprite frame name.
-     *
-     * A SpriteFrame will be fetched from the SpriteFrameCache by spriteFrameName param.
-     * If the SpriteFrame doesn't exist it will raise an exception.
-     *
-     * @param   spriteFrameName A null terminated string which indicates the sprite frame name.
-     * @return  An autoreleased sprite object.
-     */
-    static Sprite* createWithSpriteFrameName(const std::string& spriteFrameName);
 
     //  end of creators group
     /// @}
@@ -263,69 +228,6 @@ public:
      * Do not call it manually. Use setTextureRect instead.
      */
     virtual void setVertexRect(const Rect& rect);
-
-    /**
-     * setCenterRectNormalized
-     *
-     * Useful to implement "9 sliced" sprites.
-     * The default value is (0,0) - (1,1), which means that only one "slice" will be used: From top-left (0,0) to bottom-right (1,1).
-     * If the value is different than (0,0), (1,1), then the sprite will be sliced into a 3 x 3 grid. The four corners of this grid are applied without
-     * performing any scaling. The upper- and lower-middle parts are scaled horizontally, and the left- and right-middle parts are scaled vertically.
-     * The center is scaled in both directions.
-     * Important: The scaling is based the Sprite's trimmed size.
-     *
-     * Limitations: Does not work when the sprite is part of `SpriteBatchNode`.
-     */
-    virtual void setCenterRectNormalized(const Rect& rect);
-
-    /**
-     * getCenterRectNormalized
-     *
-     * Returns the CenterRect in normalized coordinates
-     */
-    virtual Rect getCenterRectNormalized() const;
-
-    /* setCenterRect
-     *
-     * Like `setCenterRectNormalized`, but instead of being in normalized coordinates, it is in points coordinates
-     */
-    virtual void setCenterRect(const Rect& rect);
-
-    /**
-     * @brief Returns the Cap Insets rect
-     *
-     * @return Scale9Sprite's cap inset.
-     */
-    virtual Rect getCenterRect() const;
-
-
-    /** @{
-     * Sets a new SpriteFrame to the Sprite.
-     */
-    virtual void setSpriteFrame(const std::string &spriteFrameName);
-    virtual void setSpriteFrame(SpriteFrame* newFrame);
-    /** @} */
-
-    /** @deprecated Use `setSpriteFrame()` instead. */
-    CC_DEPRECATED_ATTRIBUTE virtual void setDisplayFrame(SpriteFrame *newFrame) { setSpriteFrame(newFrame); }
-
-    /**
-     * Returns whether or not a SpriteFrame is being displayed.
-     */
-    virtual bool isFrameDisplayed(SpriteFrame *frame) const;
-
-    /**
-     * Returns the current displayed frame.
-     */
-    virtual SpriteFrame* getSpriteFrame() const;
-    /** @deprecated Use `getSpriteFrame()` instead.
-     * @js NA
-     */
-    CC_DEPRECATED_ATTRIBUTE virtual SpriteFrame* getDisplayFrame() const { return getSpriteFrame(); }
-    /** @deprecated Use `getSpriteFrame()` instead. */
-    CC_DEPRECATED_ATTRIBUTE virtual SpriteFrame* displayFrame() const { return getSpriteFrame(); };
-
-    /// @} End of frames methods
     
     /// @{
     /// @name Sprite Properties' setter/getters.
@@ -398,7 +300,6 @@ public:
      */
     const Vec2& getOffsetPosition() const { return _offsetPosition; }
 
-
     /**
      * Returns the flag which indicates whether the sprite is flipped horizontally or not.
      *
@@ -416,16 +317,6 @@ public:
      * @param flippedX true if the sprite should be flipped horizontally, false otherwise.
      */
     void setFlippedX(bool flippedX);
-
-    /** @deprecated Use isFlippedX() instead.
-    * @js NA
-    * @lua NA
-    */
-    CC_DEPRECATED_ATTRIBUTE bool isFlipX() { return isFlippedX(); };
-    /** @deprecated Use setFlippedX() instead
-     * @js NA
-     */
-    CC_DEPRECATED_ATTRIBUTE void setFlipX(bool flippedX) { setFlippedX(flippedX); };
 
     /**
      * Return the flag which indicates whether the sprite is flipped vertically or not.
@@ -445,42 +336,11 @@ public:
      */
     void setFlippedY(bool flippedY);
 
-    /// @} End of Sprite properties getter/setters
-
-    /** @deprecated Use isFlippedY() instead.
-     * @js NA
-     */
-    CC_DEPRECATED_ATTRIBUTE bool isFlipY() { return isFlippedY(); };
-    /** @deprecated Use setFlippedY() instead.
-     * @js NA
-     */
-    CC_DEPRECATED_ATTRIBUTE void setFlipY(bool flippedY) { setFlippedY(flippedY); };
-
-    /**
-     * returns a reference of the polygon information associated with this sprite
-     *
-     * @return a reference of PolygonInfo
-     */
-    const PolygonInfo& getPolygonInfo() const;
-
-    /**
-     * set the sprite to use this new PolygonInfo
-     *
-     * @param PolygonInfo the polygon information object
-     */
-    void setPolygonInfo(const PolygonInfo& info);
-
     /** whether or not contentSize stretches the sprite's texture */
     void setStretchEnabled(bool enabled);
 
-    /** @deprecated Use setStretchEnabled() instead. */
-    CC_DEPRECATED_ATTRIBUTE void setStrechEnabled(bool enabled);
-
     /** returns whether or not contentSize stretches the sprite's texture */
     bool isStretchEnabled() const;
-
-    /** @deprecated Use isStretchEnabled() instead. */
-    CC_DEPRECATED_ATTRIBUTE bool isStrechEnabled() const;
 
     //
     // Overrides
@@ -561,17 +421,6 @@ public:
      * @return  True if the sprite is initialized properly, false otherwise.
      */
     virtual bool initWithTexture(Texture2D *texture);
-    
-    
-    /**
-     * Initializes a sprite with a PolygonInfo.
-     *
-     * After initialization, the rect used will be the size of the texture, and the offset will be (0,0).
-     *
-     * @param   PolygonInfo    a Polygon info contains the structure of the polygon.
-     * @return  True if the sprite is initialized properly, false otherwise.
-     */
-    virtual bool initWithPolygon(const PolygonInfo& info);
 
     /**
      * Initializes a sprite with a texture and a rect.
@@ -597,25 +446,6 @@ public:
      * @return  True if the sprite is initialized properly, false otherwise.
      */
     virtual bool initWithTexture(Texture2D *texture, const Rect& rect, bool rotated);
-
-    /**
-     * Initializes a sprite with an SpriteFrame. The texture and rect in SpriteFrame will be applied on this sprite.
-     *
-     * @param   spriteFrame  A SpriteFrame object. It should includes a valid texture and a rect.
-     * @return  True if the sprite is initialized properly, false otherwise.
-     */
-    virtual bool initWithSpriteFrame(SpriteFrame *spriteFrame);
-
-    /**
-     * Initializes a sprite with an sprite frame name.
-     *
-     * A SpriteFrame will be fetched from the SpriteFrameCache by name.
-     * If the SpriteFrame doesn't exist it will raise an exception.
-     *
-     * @param   spriteFrameName  A key string that can fetched a valid SpriteFrame from SpriteFrameCache.
-     * @return  True if the sprite is initialized properly, false otherwise.
-     */
-    virtual bool initWithSpriteFrameName(const std::string& spriteFrameName);
 
     /**
      * Initializes a sprite with an image filename.
@@ -679,11 +509,7 @@ protected:
     //
     BlendFunc        _blendFunc;            /// It's required for TextureProtocol inheritance
     Texture2D*       _texture;              /// Texture2D object that is used to render the sprite
-    SpriteFrame*     _spriteFrame;
     TrianglesCommand _trianglesCommand;     ///
-#if CC_SPRITE_DEBUG_DRAW
-    DrawNode *_debugDrawNode;
-#endif //CC_SPRITE_DEBUG_DRAW
     //
     // Shared data
     //
@@ -701,12 +527,13 @@ protected:
     // Offset Position (used by Zwoptex)
     Vec2 _offsetPosition;
     Vec2 _unflippedOffsetPositionFromCenter;
+    
+    TrianglesCommand::Triangles triangles;
 
     // vertex coords, texture coords and color info
     V3F_C4B_T2F_Quad _quad;
     V3F_C4B_T2F* _trianglesVertex;
     unsigned short* _trianglesIndex;
-    PolygonInfo  _polyInfo;
 
     // opacity and RGB protocol
     bool _opacityModifyRGB;

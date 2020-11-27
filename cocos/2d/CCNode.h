@@ -1232,13 +1232,6 @@ public:
     virtual ~Node();
 
     virtual bool init();
-    
-    // Exposed for optimization for external use
-    Mat4 _modelViewTransform;       ///< ModelView transform of the Node.
-    
-    // Optimization for external use
-    unsigned int positionHash;
-    Vec3 cachedWorldCoords3D;
 
 protected:
     /// helper that reorder a child
@@ -1282,8 +1275,9 @@ protected:
     Vec2 _anchorPoint;              ///< anchor point normalized (NOT in points)
 
     Size _contentSize;              ///< untransformed size of the node
-
+    
     // "cache" variables are allowed to be mutable
+    Mat4 _modelViewTransform;       ///< ModelView transform of the Node.
     mutable Mat4 _transform;        ///< transform
     mutable bool _transformDirty;   ///< transform dirty flag
     mutable Mat4 _inverse;          ///< inverse transform

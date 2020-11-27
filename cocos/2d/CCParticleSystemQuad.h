@@ -34,7 +34,6 @@ THE SOFTWARE.
 
 NS_CC_BEGIN
 
-class SpriteFrame;
 class EventCustom;
 
 /**
@@ -84,14 +83,6 @@ public:
      * @return An autoreleased ParticleSystemQuad object.
      */
     static ParticleSystemQuad * create(ValueMap &dictionary);
-
-    /** Sets a new SpriteFrame as particle.
-    WARNING: this method is experimental. Use setTextureWithRect instead.
-     *
-     * @param spriteFrame A given sprite frame as particle texture.
-    @since v0.99.4
-    */
-    void setDisplayFrame(SpriteFrame *spriteFrame);
 
     /** Sets a new texture with a rect. The rect is in Points.
      @since v0.99.4

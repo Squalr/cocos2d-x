@@ -89,7 +89,6 @@ THE SOFTWARE.
 #include "2d/CCActionInstant.h"
 #include "2d/CCActionInterval.h"
 #include "2d/CCActionManager.h"
-#include "2d/CCActionTween.h"
 #include "2d/CCTweenFunction.h"
 
 // 2d nodes
@@ -168,12 +167,8 @@ THE SOFTWARE.
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 
 // sprite_nodes
-#include "2d/CCAnimation.h"
 #include "2d/CCSprite.h"
-#include "2d/CCAutoPolygon.h"
 #include "2d/CCSpriteBatchNode.h"
-#include "2d/CCSpriteFrame.h"
-#include "2d/CCSpriteFrameCache.h"
 
 // text_input_node
 #include "2d/CCTextFieldTTF.h"

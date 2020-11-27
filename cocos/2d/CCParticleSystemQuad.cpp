@@ -32,7 +32,6 @@ THE SOFTWARE.
 
 #include <algorithm>
 
-#include "2d/CCSpriteFrame.h"
 #include "2d/CCParticleBatchNode.h"
 #include "base/CCConsole.h"
 #include "base/CCDirector.h"
@@ -234,14 +233,6 @@ void ParticleSystemQuad::setTexture(Texture2D* texture)
 {
     const Size& s = texture->getContentSize();
     this->setTextureWithRect(texture, Rect(0, 0, s.width, s.height));
-}
-
-void ParticleSystemQuad::setDisplayFrame(SpriteFrame *spriteFrame)
-{
-    CCASSERT(spriteFrame->getOffsetInPixels().isZero(), 
-             "QuadParticle only supports SpriteFrames with no offsets");
-
-    this->setTextureWithRect(spriteFrame->getTexture(), spriteFrame->getRect());
 }
 
 void ParticleSystemQuad::initIndices()

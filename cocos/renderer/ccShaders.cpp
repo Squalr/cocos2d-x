@@ -78,18 +78,6 @@ NS_CC_BEGIN
 #include "renderer/shaders/ccShader_Label_outline.frag"
 
 //
-#include "renderer/shaders/ccShader_3D_PositionTex.vert"
-#include "renderer/shaders/ccShader_3D_Color.frag"
-#include "renderer/shaders/ccShader_3D_ColorTex.frag"
-#include "renderer/shaders/ccShader_3D_PositionNormalTex.vert"
-#include "renderer/shaders/ccShader_3D_ColorNormal.frag"
-#include "renderer/shaders/ccShader_3D_ColorNormalTex.frag"
-#include "renderer/shaders/ccShader_3D_Particle.vert"
-#include "renderer/shaders/ccShader_3D_Particle.frag"
-#include "renderer/shaders/ccShader_3D_Skybox.vert"
-#include "renderer/shaders/ccShader_3D_Skybox.frag"
-#include "renderer/shaders/ccShader_3D_Terrain.vert"
-#include "renderer/shaders/ccShader_3D_Terrain.frag"
 #include "renderer/shaders/ccShader_CameraClear.vert"
 #include "renderer/shaders/ccShader_CameraClear.frag"
 

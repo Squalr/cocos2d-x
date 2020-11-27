@@ -95,8 +95,6 @@ Node::Node()
 , _cascadeOpacityEnabled(true)
 , _cameraMask(1)
 , _anchorPoint(0, 0)
-, positionHash(0)
-, cachedWorldCoords3D(Vec3::ZERO)
 {
     // set default scheduler and actionManager
     _director = Director::getInstance();

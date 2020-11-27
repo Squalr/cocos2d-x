@@ -3,18 +3,13 @@ include_directories(
         ../external/poly2tri
         ../external/poly2tri/common
         ../external/poly2tri/sweep
-        ../external/clipper
 )
 
 set(COCOS_2D_HEADER
-
-    2d/CCActionTween.h
-    2d/CCSpriteFrameCache.h
     2d/CCLayer.h
     2d/CCSprite.h
     2d/CCNode.h
     2d/CCTweenFunction.h
-    2d/CCAutoPolygon.h
     2d/CCFontAtlas.h
     2d/CCAtlasNode.h
     2d/CCClippingNode.h
@@ -33,11 +28,8 @@ set(COCOS_2D_HEADER
     2d/CCFont.h
     2d/CCParticleSystemQuad.h
     2d/CCFastTMXTiledMap.h
-    2d/CCLabelTextFormatter.h
     2d/CCSpriteBatchNode.h
-    2d/CCSpriteFrame.h
     2d/CCTMXObjectGroup.h
-    2d/CCAnimation.h
     2d/CCFontFreeType.h
     2d/CCAction.h
     2d/CCParticleSystem.h
@@ -54,8 +46,6 @@ set(COCOS_2D_SRC
     2d/CCActionInstant.cpp
     2d/CCActionInterval.cpp
     2d/CCActionManager.cpp
-    2d/CCActionTween.cpp
-    2d/CCAnimation.cpp
     2d/CCAtlasNode.cpp
     2d/CCCamera.cpp
     2d/CCClippingNode.cpp
@@ -68,7 +58,6 @@ set(COCOS_2D_SRC
     2d/CCFont.cpp
     2d/CCFontFreeType.cpp
     2d/CCLabel.cpp
-    2d/CCLabelTextFormatter.cpp
     2d/CCLayer.cpp
     2d/CCNode.cpp
     2d/CCParticleBatchNode.cpp
@@ -78,9 +67,6 @@ set(COCOS_2D_SRC
     2d/CCScene.cpp
     2d/CCSpriteBatchNode.cpp
     2d/CCSprite.cpp
-    2d/CCSpriteFrameCache.cpp
-    2d/CCSpriteFrame.cpp
-    2d/CCAutoPolygon.cpp
     2d/CCTextFieldTTF.cpp
     2d/CCTMXObjectGroup.cpp
     2d/CCTMXXMLParser.cpp

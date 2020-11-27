@@ -1308,8 +1308,6 @@ void RichText::formatText()
                         RichElementImage* elmtImage = static_cast<RichElementImage*>(element);
                         if (elmtImage->_textureType == Widget::TextureResType::LOCAL)
                             elementRenderer = Sprite::create(elmtImage->_filePath);
-                        else
-                            elementRenderer = Sprite::createWithSpriteFrameName(elmtImage->_filePath);
                         
                         if (elementRenderer && (elmtImage->_height != -1 || elmtImage->_width != -1))
                         {

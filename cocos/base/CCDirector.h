@@ -347,7 +347,7 @@ public:
     // Memory Helper
 
     /** Removes all cocos2d cached data.
-     * It will purge the TextureCache, SpriteFrameCache, LabelBMFont cache
+     * It will purge the TextureCache, LabelBMFont cache
      * @since v0.99.3
      */
     void purgeCachedData();

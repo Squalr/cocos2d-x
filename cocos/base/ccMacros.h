@@ -283,14 +283,6 @@ CC_ASSERT(__gl_error_code == GL_NO_ERROR, "Error"); \
 /*******************/
 /** Notifications **/
 /*******************/
-/** @def AnimationFrameDisplayedNotification
- Notification name when a SpriteFrame is displayed
- */
-#define AnimationFrameDisplayedNotification "CCAnimationFrameDisplayedNotification"
-
-/*******************/
-/** Notifications **/
-/*******************/
 /** @def Animate3DDisplayedNotification
  Notification name when a frame in Animate3D is played
  */
