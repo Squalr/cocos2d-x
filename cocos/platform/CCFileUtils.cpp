@@ -45,11 +45,6 @@ THE SOFTWARE.
 #include "cereal/archives/binary.hpp"
 
 #include <tinyxml2.h>
-#ifdef MINIZIP_FROM_SYSTEM
-#include <minizip/unzip.h>
-#else // from our embedded sources
-#include "unzip.h"
-#endif
 #include <sys/stat.h>
 
 NS_CC_BEGIN
@@ -741,49 +736,6 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
     }
 
     return Status::OK;
-}
-
-unsigned char* FileUtils::getFileDataFromZip(const std::string& zipFilePath, const std::string& filename, ssize_t *size)
-{
-    unsigned char * buffer = nullptr;
-    unzFile file = nullptr;
-    *size = 0;
-
-    do
-    {
-        CC_BREAK_IF(zipFilePath.empty());
-
-        file = unzOpen(FileUtils::getInstance()->getSuitableFOpen(zipFilePath).c_str());
-        CC_BREAK_IF(!file);
-
-        // FIXME: Other platforms should use upstream minizip like mingw-w64
-#ifdef MINIZIP_FROM_SYSTEM
-        int ret = unzLocateFile(file, filename.c_str(), NULL);
-#else
-        int ret = unzLocateFile(file, filename.c_str(), 1);
-#endif
-        CC_BREAK_IF(UNZ_OK != ret);
-
-        char filePathA[260];
-        unz_file_info fileInfo;
-        ret = unzGetCurrentFileInfo(file, &fileInfo, filePathA, sizeof(filePathA), nullptr, 0, nullptr, 0);
-        CC_BREAK_IF(UNZ_OK != ret);
-
-        ret = unzOpenCurrentFile(file);
-        CC_BREAK_IF(UNZ_OK != ret);
-
-        buffer = (unsigned char*)malloc(fileInfo.uncompressed_size);
-
-        *size = fileInfo.uncompressed_size;
-        unzCloseCurrentFile(file);
-    } while (0);
-
-    if (file)
-    {
-        unzClose(file);
-    }
-
-    return buffer;
 }
 
 void FileUtils::writeValueMapToFile(ValueMap dict, const std::string& fullPath, std::function<void(bool)> callback)

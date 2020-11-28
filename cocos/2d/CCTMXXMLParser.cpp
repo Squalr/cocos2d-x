@@ -470,17 +470,6 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
             tmxMapInfo->setLayerAttribs(layerAttribs | TMXLayerAttribBase64);
             tmxMapInfo->setStoringCharacters(true);
 
-            if (compression == "gzip")
-            {
-                layerAttribs = tmxMapInfo->getLayerAttribs();
-                tmxMapInfo->setLayerAttribs(layerAttribs | TMXLayerAttribGzip);
-            }
-            else if (compression == "zlib")
-            {
-                layerAttribs = tmxMapInfo->getLayerAttribs();
-                tmxMapInfo->setLayerAttribs(layerAttribs | TMXLayerAttribZlib);
-            }
-
             CCASSERT(compression == "", "TMX: unsupported compression method");
         }
         else if (encoding == "csv")
@@ -714,28 +703,7 @@ void TMXMapInfo::endElement(void* /*ctx*/, const char *name)
                 return;
             }
             
-            if (tmxMapInfo->getLayerAttribs() & (TMXLayerAttribGzip | TMXLayerAttribZlib))
-            {
-                unsigned char *deflated = nullptr;
-                Size s = layer->_layerSize;
-                // int sizeHint = s.width * s.height * sizeof(uint32_t);
-                ssize_t sizeHint = s.width * s.height * sizeof(unsigned int);
-                
-                free(buffer);
-                buffer = nullptr;
-                
-                if (!deflated)
-                {
-                    CCLOG("cocos2d: TiledMap: inflate data error");
-                    return;
-                }
-                
-                layer->_tiles = reinterpret_cast<uint32_t*>(deflated);
-            }
-            else
-            {
-                layer->_tiles = reinterpret_cast<uint32_t*>(buffer);
-            }
+            layer->_tiles = reinterpret_cast<uint32_t*>(buffer);
             
             tmxMapInfo->setCurrentString("");
         }

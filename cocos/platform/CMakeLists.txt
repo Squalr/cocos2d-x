@@ -136,7 +136,6 @@ set(COCOS_PLATFORM_INCLUDE_PATHS
     ${PROJECT_SOURCE_DIR}/external/poly2tri
     ${PROJECT_SOURCE_DIR}/external/poly2tri/common
     ${PROJECT_SOURCE_DIR}/external/poly2tri/sweep
-    $<$<NOT:$<BOOL:${USE_SYSTEM_MINIZIP}>>:${PROJECT_SOURCE_DIR}/external/unzip>
     )
 
 set(COCOS_PLATFORM_HEADER
@@ -172,7 +171,4 @@ set(COCOS_PLATFORM_SRC
     ../external/poly2tri/sweep/cdt.cc
     ../external/poly2tri/sweep/sweep_context.cc
     ../external/poly2tri/sweep/sweep.cc
-    $<$<NOT:$<BOOL:${USE_SYSTEM_MINIZIP}>>:../external/unzip/ioapi_mem.cpp>
-    $<$<NOT:$<BOOL:${USE_SYSTEM_MINIZIP}>>:../external/unzip/ioapi.cpp>
-    $<$<NOT:$<BOOL:${USE_SYSTEM_MINIZIP}>>:../external/unzip/unzip.cpp>
     )

@@ -511,7 +511,7 @@ bool ParticleSystem::initWithDictionary(ValueMap& dictionary, const std::string&
                         auto dataLen = textureData.size();
                         if (dataLen != 0)
                         {
-                            // if it fails, try to get it from the base64-gzipped data    
+                            // if it fails, try to get it from the base64-data (must not be zipped)
                             int decodeLen = base64Decode((unsigned char*)textureData.c_str(), (unsigned int)dataLen, &buffer);
                             CCASSERT( buffer != nullptr, "CCParticleSystem: error decoding textureImageData");
                             CC_BREAK_IF(!buffer);
