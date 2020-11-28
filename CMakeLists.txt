@@ -50,7 +50,6 @@ option(BUILD_TESTS               "Build ${PROJECT_NAME} Tests"       OFF)
 option(BUILD_JPEG_SUPPORT        "Build JPEG Support"                ON)
 option(BUILD_PNG_SUPPORT         "Build PNG Support"                 ON)
 option(BUILD_TIFF_SUPPORT        "Build TIFF Support"                ON)
-option(USE_SYSTEM_MINIZIP        "Use system minizip"                OFF)
 
 # Dependencies
 find_package(OpenAL REQUIRED)

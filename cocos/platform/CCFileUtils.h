@@ -267,16 +267,6 @@ public:
     }
     virtual Status getContents(const std::string& filename, ResizableBuffer* buffer);
 
-    /**
-     *  Gets resource file data from a zip file.
-     *
-     *  @param[in]  filename The resource file name which contains the relative path of the zip file.
-     *  @param[out] size If the file read operation succeeds, it will be the data size, otherwise 0.
-     *  @return Upon success, a pointer to the data is returned, otherwise nullptr.
-     *  @warning Recall: you are responsible for calling free() on any Non-nullptr pointer returned.
-     */
-    virtual unsigned char* getFileDataFromZip(const std::string& zipFilePath, const std::string& filename, ssize_t *size);
-
 
     /** Returns the fullpath for a given filename.
 
