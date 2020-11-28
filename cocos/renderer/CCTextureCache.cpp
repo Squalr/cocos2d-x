@@ -48,23 +48,6 @@ NS_CC_BEGIN
 
 std::string TextureCache::s_etc1AlphaFileSuffix = "@alpha";
 
-// implementation TextureCache
-
-void TextureCache::setETC1AlphaFileSuffix(const std::string& suffix)
-{
-    s_etc1AlphaFileSuffix = suffix;
-}
-
-std::string TextureCache::getETC1AlphaFileSuffix()
-{
-    return s_etc1AlphaFileSuffix;
-}
-
-TextureCache * TextureCache::getInstance()
-{
-    return Director::getInstance()->getTextureCache();
-}
-
 TextureCache::TextureCache()
 : _loadingThread(nullptr)
 , _needQuit(false)
@@ -80,19 +63,6 @@ TextureCache::~TextureCache()
         texture.second->release();
 
     CC_SAFE_DELETE(_loadingThread);
-}
-
-void TextureCache::destroyInstance()
-{
-}
-
-TextureCache * TextureCache::sharedTextureCache()
-{
-    return Director::getInstance()->getTextureCache();
-}
-
-void TextureCache::purgeSharedTextureCache()
-{
 }
 
 std::string TextureCache::getDescription() const
@@ -119,6 +89,11 @@ public:
     Texture2D::PixelFormat pixelFormat;
     bool loadSuccess;
 };
+
+void TextureCache::cacheImageAsync(const std::string &filepath)
+{
+    addImageAsync(filepath, nullptr, filepath);
+}
 
 /**
  The addImageAsync logic follow the steps:
@@ -152,7 +127,7 @@ public:
  */
 void TextureCache::addImageAsync(const std::string &path, const std::function<void(Texture2D*)>& callback)
 {
-    addImageAsync( path, callback, path );
+    addImageAsync(path, callback, path);
 }
 
 /**
@@ -200,7 +175,7 @@ void TextureCache::addImageAsync(const std::string &path, const std::function<vo
 
     if (texture != nullptr)
     {
-        if (callback)
+        if (callback != nullptr)
         {
             callback(texture);
         }
@@ -209,16 +184,6 @@ void TextureCache::addImageAsync(const std::string &path, const std::function<vo
     }
 
     std::string fullpath = FileUtils::getInstance()->fullPathForFilename(path);
-
-    // check if file exists
-    if (fullpath.empty() || !FileUtils::getInstance()->isFileExist(fullpath))
-    {
-        if (callback)
-        {
-            callback(nullptr);
-        }
-        return;
-    }
 
     // lazy init
     if (_loadingThread == nullptr)
@@ -236,8 +201,7 @@ void TextureCache::addImageAsync(const std::string &path, const std::function<vo
     ++_asyncRefCount;
 
     // generate async struct
-    AsyncStruct *data =
-      new (std::nothrow) AsyncStruct(fullpath, callback, callbackKey);
+    AsyncStruct *data = new (std::nothrow) AsyncStruct(fullpath, callback, callbackKey);
     
     // add async struct into queue
     _asyncStructQueue.push_back(data);
@@ -610,10 +574,6 @@ Texture2D* TextureCache::getTextureForKey(const std::string &textureKeyName) con
     }
 
     return nullptr;
-}
-
-void TextureCache::reloadAllTextures()
-{
 }
 
 std::string TextureCache::getTextureFilePath(cocos2d::Texture2D* texture) const

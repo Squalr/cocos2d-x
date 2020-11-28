@@ -675,12 +675,6 @@ void TextField::deleteBackwardEvent()
     }
     this->release();
 }
-
-void TextField::addEventListenerTextField(Ref *target, SEL_TextFieldEvent selector)
-{
-    _textFieldEventListener = target;
-    _textFieldEventSelector = selector;
-}
     
 void TextField::addEventListener(const ccTextFieldCallback& callback)
 {

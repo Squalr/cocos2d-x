@@ -148,8 +148,6 @@ public:
      * @js NA
      */
     Image* newImage(bool flipImage = true);
-    
-    CC_DEPRECATED_ATTRIBUTE Image* newCCImage(bool flipImage = true) { return newImage(flipImage); };
 
     /** Listen "come to background" message, and save render texture.
      * It only has effect on Android.

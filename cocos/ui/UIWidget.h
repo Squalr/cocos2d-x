@@ -190,23 +190,10 @@ public:
 
     /**
      * Gets the left boundary position of this widget in parent's coordination system.
-     * @deprecated use `getLeftBoundary` instead.
-     * @return The left boundary position of this widget.
-     */
-    CC_DEPRECATED_ATTRIBUTE float getLeftInParent(){return this->getLeftBoundary();}
-
-    /**
-     * Gets the left boundary position of this widget in parent's coordination system.
      * @return The left boundary position of this widget.
      */
     float getLeftBoundary() const;
-
-    /**
-     * Gets the bottom boundary position of this widget in parent's coordination system.
-     * @deprecated use `getBottomBoundary` instead.
-     * @return The bottom boundary position of this widget.
-     */
-    CC_DEPRECATED_ATTRIBUTE float getBottomInParent(){return this->getBottomBoundary();}
+    
     /**
      * Gets the bottom boundary position of this widget in parent's coordination system.
      * @return The bottom boundary position of this widget.
@@ -215,22 +202,10 @@ public:
 
     /**
      * Gets the right boundary position of this widget in parent's coordination system.
-     * @deprecated use `getRightBoundary` instead.
-     * @return The right boundary position of this widget.
-     */
-    CC_DEPRECATED_ATTRIBUTE float getRightInParent(){return this->getRightBoundary();}
-    /**
-     * Gets the right boundary position of this widget in parent's coordination system.
      * @return The right boundary position of this widget.
      */
     float getRightBoundary() const;
 
-    /**
-     * Gets the top boundary position of this widget in parent's coordination system.
-     * @deprecated use `getTopBoundary` instead.
-     * @return The top boundary position of this widget.
-     */
-    CC_DEPRECATED_ATTRIBUTE float getTopInParent(){return this->getTopBoundary();}
     /**
      * Gets the top boundary position of this widget in parent's coordination system.
      * @return The top boundary position of this widget.
@@ -335,15 +310,6 @@ public:
      */
     virtual bool isFlippedY()const{return _flippedY;};
 
-    /** @deprecated Use isFlippedX() instead */
-    CC_DEPRECATED_ATTRIBUTE bool isFlipX() { return isFlippedX(); };
-    /** @deprecated Use setFlippedX() instead */
-    CC_DEPRECATED_ATTRIBUTE void setFlipX(bool flipX) { setFlippedX(flipX); };
-    /** @deprecated Use isFlippedY() instead */
-    CC_DEPRECATED_ATTRIBUTE bool isFlipY() { return isFlippedY(); };
-    /** @deprecated Use setFlippedY() instead */
-    CC_DEPRECATED_ATTRIBUTE void setFlipY(bool flipY) { setFlippedY(flipY); };
-
     //override the setScale function of Node
     virtual void setScaleX(float scaleX) override;
     virtual void setScaleY(float scaleY) override;
@@ -354,15 +320,6 @@ public:
     virtual float getScaleY() const override;
     virtual float getScale() const override;
     using Node::getScaleZ;
-    
-    /**
-     * Checks a point if in parent's area.
-     *
-     * @param pt A point in `Vec2`.
-     * @deprecated  use `isClippingParentContainsPoint` instead.
-     * @return true if the point is in parent's area, false otherwise.
-     */
-    CC_DEPRECATED_ATTRIBUTE bool clippingParentAreaContainPoint(const Vec2 &pt){return this->isClippingParentContainsPoint(pt);}
 
     /**
      * Checks a point if in parent's area.
@@ -372,12 +329,6 @@ public:
      */
     bool isClippingParentContainsPoint(const Vec2& pt);
 
-    /**
-     * Changes the size that is widget's size
-     * @deprecated use `setContentSize` instead.
-     * @param size that is widget's size
-     */
-    CC_DEPRECATED_ATTRIBUTE virtual void setSize(const Size &size);
     /**
      * Changes the size that is widget's size
      * @param contentSize A content size in `Size`.
@@ -406,13 +357,6 @@ public:
      * @see `SizeType`
      */
     SizeType getSizeType() const;
-
-    /**
-     * Get the size of widget
-     *
-     * @return Widget content size.
-     */
-    CC_DEPRECATED_ATTRIBUTE const Size& getSize() const;
     
     /**
      * Get the user defined widget size.
@@ -570,15 +514,6 @@ public:
     /**
      * Return a current focused widget in your UI scene.
      * No matter what widget object you call this method on , it will return you the exact one focused widget.
-     * @param isWidget  if your set isWidget to true, it will return the _realFocusedWidget which is always a widget
-     *                  otherwise, it will return a widget or a layout.
-     * @deprecated use `getCurrentFocusedWidget` instead.
-     */
-    CC_DEPRECATED_ATTRIBUTE Widget* getCurrentFocusedWidget(bool isWidget);
-
-    /**
-     * Return a current focused widget in your UI scene.
-     * No matter what widget object you call this method on , it will return you the exact one focused widget.
      */
     static Widget* getCurrentFocusedWidget();
 
@@ -715,9 +650,6 @@ protected:
     bool isAncestorsEnabled();
     Widget* getAncestorWidget(Node* node);
     bool isAncestorsVisible(Node* node);
-
-    /** @deprecated Use getAncestorWidget instead. */
-    CC_DEPRECATED_ATTRIBUTE Widget* getAncensterWidget(Node* node);
 
     void cleanupWidget();
     LayoutComponent* getOrCreateLayoutComponent();

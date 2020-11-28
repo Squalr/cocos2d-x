@@ -56,29 +56,6 @@ static __TYPE__* create() \
     } \
 }
 
-/** @def NODE_FUNC(__TYPE__)
- * Define a node function for a specific type, such as Layer.
- *
- * @param __TYPE__  class type to add node(), such as Layer.
- * @deprecated  This interface will be deprecated sooner or later.
- */
-#define NODE_FUNC(__TYPE__) \
-CC_DEPRECATED_ATTRIBUTE static __TYPE__* node() \
-{ \
-    __TYPE__ *pRet = new(std::nothrow) __TYPE__(); \
-    if (pRet && pRet->init()) \
-    { \
-        pRet->autorelease(); \
-        return pRet; \
-    } \
-    else \
-    { \
-        delete pRet; \
-        pRet = NULL; \
-        return NULL; \
-    } \
-}
-
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
     /** Application will crash in glDrawElements function on some win32 computers and some android devices.
      *  Indices should be bound again while drawing to avoid this bug.
@@ -247,24 +224,6 @@ private: varType varName; public: virtual inline varType get##funName(void) cons
     TypeName();                                        \
     CC_DISALLOW_COPY_AND_ASSIGN(TypeName)
 
-/** @def CC_DEPRECATED_ATTRIBUTE
- * Only certain compilers support __attribute__((deprecated)).
- */
-#if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-    #define CC_DEPRECATED_ATTRIBUTE __attribute__((deprecated))
-#elif _MSC_VER >= 1400 //vs 2005 or higher
-    #define CC_DEPRECATED_ATTRIBUTE __declspec(deprecated) 
-#else
-    #define CC_DEPRECATED_ATTRIBUTE
-#endif 
-
-/** @def CC_DEPRECATED(...)
- * Macro to mark things deprecated as of a particular version
- * can be used with arbitrary parameters which are thrown away.
- * e.g. CC_DEPRECATED(4.0) or CC_DEPRECATED(4.0, "not going to need this anymore") etc.
- */
-#define CC_DEPRECATED(...) CC_DEPRECATED_ATTRIBUTE
-
 /** @def CC_FORMAT_PRINTF(formatPos, argPos)
  * Only certain compiler support __attribute__((format))
  *
@@ -285,12 +244,6 @@ private: varType varName; public: virtual inline varType get##funName(void) cons
 #define CC_FORMAT_PRINTF_SIZE_T "%08lX"
 #else
 #define CC_FORMAT_PRINTF_SIZE_T "%08zX"
-#endif
-
-#ifdef __GNUC__
-#define CC_UNUSED __attribute__ ((unused))
-#else
-#define CC_UNUSED
 #endif
 
 /** @def CC_REQUIRES_NULL_TERMINATION

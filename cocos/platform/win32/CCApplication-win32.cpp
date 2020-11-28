@@ -168,12 +168,6 @@ Application* Application::getInstance()
     return sm_pSharedApplication;
 }
 
-// @deprecated Use getInstance() instead
-Application* Application::sharedApplication()
-{
-    return Application::getInstance();
-}
-
 LanguageType Application::getCurrentLanguage()
 {
     LCID localeID = GetUserDefaultLCID();
@@ -315,25 +309,6 @@ bool Application::openURL(const std::string &url)
     HINSTANCE r = ShellExecuteW(NULL, L"open", temp, NULL, NULL, SW_SHOWNORMAL);
     delete[] temp;
     return (size_t)r>32;
-}
-
-void Application::setResourceRootPath(const std::string& rootResDir)
-{
-    _resourceRootPath = rootResDir;
-    std::replace(_resourceRootPath.begin(), _resourceRootPath.end(), '\\', '/');
-    if (_resourceRootPath[_resourceRootPath.length() - 1] != '/')
-    {
-        _resourceRootPath += '/';
-    }
-    FileUtils* pFileUtils = FileUtils::getInstance();
-    std::vector<std::string> searchPaths = pFileUtils->getSearchPaths();
-    searchPaths.insert(searchPaths.begin(), _resourceRootPath);
-    pFileUtils->setSearchPaths(searchPaths);
-}
-
-const std::string& Application::getResourceRootPath(void)
-{
-    return _resourceRootPath;
 }
 
 void Application::setStartupScriptFilename(const std::string& startupScriptFile)

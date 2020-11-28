@@ -68,9 +68,6 @@ public:
      @return Current application instance pointer.
      */
     static Application* getInstance();
-
-    /** @deprecated Use getInstance() instead */
-    CC_DEPRECATED_ATTRIBUTE static Application* sharedApplication();
     
     /* override functions */
     virtual LanguageType getCurrentLanguage() override;
@@ -92,19 +89,6 @@ public:
      @return true if the resource located by the URL was successfully opened; otherwise false.
      */
     virtual bool openURL(const std::string &url) override;
-
-
-    /**
-     *  Sets the Resource root path.
-     *  @deprecated Please use FileUtils::getInstance()->setSearchPaths() instead.
-     */
-    CC_DEPRECATED_ATTRIBUTE void setResourceRootPath(const std::string& rootResDir);
-    
-    /** 
-     *  Gets the Resource root path.
-     *  @deprecated Please use FileUtils::getInstance()->getSearchPaths() instead. 
-     */
-    CC_DEPRECATED_ATTRIBUTE const std::string& getResourceRootPath(void);
     
     /**
      @brief Get target platform

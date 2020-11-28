@@ -18,7 +18,6 @@ set(COCOS_2D_HEADER
     2d/CCTMXXMLParser.h
     2d/CCActionInstant.h
     2d/CCLabel.h
-    2d/CCDrawingPrimitives.h
     2d/CCParticleBatchNode.h
     2d/CCActionEase.h
     2d/CCScene.h
@@ -49,7 +48,6 @@ set(COCOS_2D_SRC
     2d/CCAtlasNode.cpp
     2d/CCCamera.cpp
     2d/CCClippingNode.cpp
-    2d/CCDrawingPrimitives.cpp
     2d/CCDrawNode.cpp
     2d/CCFastTMXLayer.cpp
     2d/CCFastTMXTiledMap.cpp

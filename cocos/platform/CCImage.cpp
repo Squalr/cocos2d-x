@@ -200,7 +200,7 @@ bool Image::initWithImageData(const unsigned char * data, ssize_t dataLen)
         
         unsigned char* unpackedData = nullptr;
         ssize_t unpackedLen = 0;
-        
+
         //detect and unzip the compress file
         if (ZipUtils::isCCZBuffer(data, dataLen))
         {

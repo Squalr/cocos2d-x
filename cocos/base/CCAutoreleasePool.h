@@ -155,11 +155,7 @@ private:
 class CC_DLL PoolManager
 {
 public:
-
-    CC_DEPRECATED_ATTRIBUTE static PoolManager* sharedPoolManager() { return getInstance(); }
     static PoolManager* getInstance();
-    
-    CC_DEPRECATED_ATTRIBUTE static void purgePoolManager() { destroyInstance(); }
     static void destroyInstance();
     
     /**
@@ -167,10 +163,8 @@ public:
      * You can create your own auto release pool at demand, which will be put into auto release pool stack.
      */
     AutoreleasePool *getCurrentPool() const;
-
     bool isObjectInPools(Ref* obj) const;
-
-
+    
     friend class AutoreleasePool;
     
 private:

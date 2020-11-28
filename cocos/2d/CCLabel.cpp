@@ -179,18 +179,6 @@ Label* Label::create()
     return ret;
 }
 
-Label* Label::create(const std::string& text, const std::string& font, float fontSize, const Size& dimensions /* = Size::ZERO */, TextHAlignment hAlignment /* = TextHAlignment::LEFT */, TextVAlignment vAlignment /* = TextVAlignment::TOP */)
-{
-    if (FileUtils::getInstance()->isFileExist(font))
-    {
-        return createWithTTF(text,font,fontSize,dimensions,hAlignment,vAlignment);
-    } 
-    else
-    {
-        return createWithSystemFont(text,font,fontSize,dimensions,hAlignment,vAlignment);
-    }
-}
-
 Label* Label::createWithSystemFont(const std::string& text, const std::string& font, float fontSize, const Size& dimensions /* = Size::ZERO */, TextHAlignment hAlignment /* = TextHAlignment::LEFT */, TextVAlignment vAlignment /* = TextVAlignment::TOP */)
 {
     auto ret = new (std::nothrow) Label(hAlignment,vAlignment);
@@ -1136,30 +1124,6 @@ void Label::setCameraMask(unsigned short mask, bool applyChildren)
     if (_shadowNode)
     {
         _shadowNode->setCameraMask(mask, applyChildren);
-    }
-}
-
-void Label::setFontDefinition(const FontDefinition& textDefinition)
-{
-    _systemFont = textDefinition._fontName;
-    _systemFontSize = textDefinition._fontSize;
-    _hAlignment = textDefinition._alignment;
-    _vAlignment = textDefinition._vertAlignment;
-    setDimensions(textDefinition._dimensions.width, textDefinition._dimensions.height);
-    Color4B textColor = Color4B(textDefinition._fontFillColor);
-    textColor.a = textDefinition._fontAlpha;
-    setTextColor(textColor);
-    
-    if (textDefinition._stroke._strokeEnabled)
-    {
-        CCLOGERROR("Stroke Currently only supported on iOS and Android!");
-    }
-    _outlineSize = 0.f;
-
-    if (textDefinition._shadow._shadowEnabled)
-    {
-        enableShadow(Color4B(0, 0, 0, 255 * textDefinition._shadow._shadowOpacity),
-            textDefinition._shadow._shadowOffset, textDefinition._shadow._shadowBlur);
     }
 }
 

@@ -283,11 +283,6 @@ void Widget::setContentSize(const cocos2d::Size &contentSize)
     onSizeChanged();
 }
 
-void Widget::setSize(const Size &size)
-{
-    this->setContentSize(size);
-}
-
 void Widget::setSizePercent(const Vec2 &percent)
 {
     _sizePercent = percent;
@@ -429,11 +424,6 @@ void Widget::ignoreContentAdaptWithSize(bool ignore)
 bool Widget::isIgnoreContentAdaptWithSize() const
 {
     return _ignoreSize;
-}
-
-const Size& Widget::getSize() const
-{
-    return this->getContentSize();
 }
 
 const Size& Widget::getCustomSize() const
@@ -597,11 +587,6 @@ Widget* Widget::getAncestorWidget(Node* node)
     {
         return this->getAncestorWidget(parent->getParent());
     }
-}
-
-Widget* Widget::getAncensterWidget(Node* node)
-{
-    return getAncestorWidget(node);
 }
 
 bool Widget::isAncestorsVisible(Node* node)
@@ -1056,10 +1041,6 @@ void Widget::onFocusChange(Widget* widgetLostFocus, Widget* widgetGetFocus)
     {
         widgetGetFocus->setFocused(true);
     }
-}
-    
-Widget* Widget::getCurrentFocusedWidget(bool /*isWidget*/){
-    return getCurrentFocusedWidget();
 }
 
 Widget* Widget::getCurrentFocusedWidget()

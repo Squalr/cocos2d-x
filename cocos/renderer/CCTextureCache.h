@@ -59,31 +59,6 @@ NS_CC_BEGIN
 class CC_DLL TextureCache : public Ref
 {
 public:
-    /** Returns the shared instance of the cache. */
-    CC_DEPRECATED_ATTRIBUTE static TextureCache * getInstance();
-
-    /** @deprecated Use getInstance() instead. */
-    CC_DEPRECATED_ATTRIBUTE static TextureCache * sharedTextureCache();
-
-    /** Purges the cache. It releases the retained instance.
-     @since v0.99.0
-     */
-    CC_DEPRECATED_ATTRIBUTE static void destroyInstance();
-
-    /** @deprecated Use destroyInstance() instead. */
-    CC_DEPRECATED_ATTRIBUTE static void purgeSharedTextureCache();
-
-    /** Reload all textures.
-    Should not call it, called by frame work.
-    Now the function do nothing, use VolatileTextureMgr::reloadAllTextures.
-     */
-    CC_DEPRECATED_ATTRIBUTE static void reloadAllTextures();
-
-    // ETC1 ALPHA supports.
-    static void setETC1AlphaFileSuffix(const std::string& suffix);
-    static std::string getETC1AlphaFileSuffix();
-
-public:
     /**
      * @js ctor
      */
@@ -106,16 +81,21 @@ public:
     * Object and it will return it. It will use the filename as a key.
     * Otherwise it will return a reference of a previously loaded image.
     * Supported image extensions: .png, .bmp, .tiff, .jpeg, .pvr.
-     @param filepath A null terminated string.
+     * @param filename The related/absolute path of the file image.
     */
     Texture2D* addImage(const std::string &filepath);
+
+    /** Asyncronously attempts to cache an image. If successful, it will be available for later use.
+     @since v0.8
+    */
+    virtual void cacheImageAsync(const std::string &filepath);
 
     /** Returns a Texture2D object given a file image.
     * If the file image was not previously loaded, it will create a new Texture2D object and it will return it.
     * Otherwise it will load a texture in a new thread, and when the image is loaded, the callback will be called with the Texture2D as a parameter.
     * The callback will be called from the main thread, so it is safe to create any cocos2d object from the callback.
     * Supported image extensions: .png, .jpg
-     @param filepath A null terminated string.
+     * @param filename The related/absolute path of the file image.
      @param callback A callback function would be invoked after the image is loaded.
      @since v0.8
     */
@@ -126,7 +106,7 @@ public:
     /** Unbind a specified bound image asynchronous callback.
      * In the case an object who was bound to an image asynchronous callback was destroyed before the callback is invoked,
      * the object always need to unbind this callback manually.
-     * @param filename It's the related/absolute path of the file image.
+     * @param filename The related/absolute path of the file image.
      * @since v3.1
      */
     virtual void unbindImageAsync(const std::string &filename);
@@ -143,14 +123,12 @@ public:
     * If "key" is nil, then a new texture will be created each time.
     */
     Texture2D* addImage(Image *image, const std::string &key);
-    CC_DEPRECATED_ATTRIBUTE Texture2D* addUIImage(Image *image, const std::string& key) { return addImage(image,key); }
 
     /** Returns an already created texture. Returns nil if the texture doesn't exist.
     @param key It's the related/absolute path of the file image.
     @since v0.99.5
     */
     Texture2D* getTextureForKey(const std::string& key) const;
-    CC_DEPRECATED_ATTRIBUTE Texture2D* textureForKey(const std::string& key) const { return getTextureForKey(key); }
 
     /** Reload texture from the image file.
     * If the file image hasn't loaded before, load it.
