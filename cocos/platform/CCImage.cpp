@@ -89,7 +89,6 @@ extern "C"
 #include "platform/CCFileUtils.h"
 #include "base/CCConfiguration.h"
 #include "base/ccUtils.h"
-#include "base/ZipUtils.h"
 
 #define CC_GL_ATC_RGB_AMD                                          0x8C92
 #define CC_GL_ATC_RGBA_EXPLICIT_ALPHA_AMD                          0x8C93
@@ -197,37 +196,19 @@ bool Image::initWithImageData(const unsigned char * data, ssize_t dataLen)
     do
     {
         CC_BREAK_IF(! data || dataLen <= 0);
-        
-        unsigned char* unpackedData = nullptr;
-        ssize_t unpackedLen = 0;
 
-        //detect and unzip the compress file
-        if (ZipUtils::isCCZBuffer(data, dataLen))
-        {
-            unpackedLen = ZipUtils::inflateCCZBuffer(data, dataLen, &unpackedData);
-        }
-        else if (ZipUtils::isGZipBuffer(data, dataLen))
-        {
-            unpackedLen = ZipUtils::inflateMemory(const_cast<unsigned char*>(data), dataLen, &unpackedData);
-        }
-        else
-        {
-            unpackedData = const_cast<unsigned char*>(data);
-            unpackedLen = dataLen;
-        }
-
-        _fileType = detectFormat(unpackedData, unpackedLen);
+        _fileType = detectFormat(data, dataLen);
 
         switch (_fileType)
         {
             case Format::PNG:
             {
-                ret = initWithPngData(unpackedData, unpackedLen);
+                ret = initWithPngData(data, dataLen);
                 break;
             }
             case Format::TIFF:
             {
-                ret = initWithTiffData(unpackedData, unpackedLen);
+                ret = initWithTiffData(data, dataLen);
                 break;
             }
             default:
@@ -235,11 +216,6 @@ bool Image::initWithImageData(const unsigned char * data, ssize_t dataLen)
                 CCLOG("cocos2d: unsupported image format!");
                 break;
             }
-        }
-        
-        if(unpackedData != data)
-        {
-            free(unpackedData);
         }
     } while (0);
     

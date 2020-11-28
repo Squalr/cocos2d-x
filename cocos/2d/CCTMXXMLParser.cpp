@@ -35,7 +35,6 @@ THE SOFTWARE.
 #include "base/CCConsole.h"
 #include "base/base64.h"
 #include "base/CCDirector.h"
-#include "base/ZipUtils.h"
 #include "platform/CCFileUtils.h"
 
 using namespace std;
@@ -475,13 +474,14 @@ void TMXMapInfo::startElement(void* /*ctx*/, const char *name, const char **atts
             {
                 layerAttribs = tmxMapInfo->getLayerAttribs();
                 tmxMapInfo->setLayerAttribs(layerAttribs | TMXLayerAttribGzip);
-            } else
-            if (compression == "zlib")
+            }
+            else if (compression == "zlib")
             {
                 layerAttribs = tmxMapInfo->getLayerAttribs();
                 tmxMapInfo->setLayerAttribs(layerAttribs | TMXLayerAttribZlib);
             }
-            CCASSERT( compression == "" || compression == "gzip" || compression == "zlib", "TMX: unsupported compression method" );
+
+            CCASSERT(compression == "", "TMX: unsupported compression method");
         }
         else if (encoding == "csv")
         {

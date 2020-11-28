@@ -91,10 +91,8 @@ target_link_libraries(cocos2d
 
     PRIVATE
         # optional dependencies
-        $<$<BOOL:${BUILD_JPEG_SUPPORT}>:JPEG::JPEG>
         $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
         $<$<BOOL:${BUILD_TIFF_SUPPORT}>:TIFF::TIFF>
-        $<$<BOOL:${USE_SYSTEM_MINIZIP}>:MINIZIP::minizip>
 
         # dependencies
         OpenAL::AL

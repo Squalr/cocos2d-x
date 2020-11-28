@@ -34,7 +34,6 @@ set(COCOS_BASE_HEADER
     base/CCRefPtr.h
     base/CCDirector.h
     base/ccConfig.h
-    base/ZipUtils.h
     base/CCMap.h
     base/ccUTF8.h
     base/CCEventFocus.h
@@ -73,7 +72,6 @@ set(COCOS_BASE_SRC
     base/CCScheduler.cpp
     base/CCValue.cpp
     base/CCStencilStateManager.cpp
-    base/ZipUtils.cpp
     base/base64.cpp
     base/ccCArray.cpp
     base/ccRandom.cpp

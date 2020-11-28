@@ -50,7 +50,6 @@ THE SOFTWARE.
 #include "2d/CCParticleBatchNode.h"
 #include "base/CCConsole.h"
 #include "base/base64.h"
-#include "base/ZipUtils.h"
 #include "base/CCDirector.h"
 #include "base/ccUTF8.h"
 #include "renderer/CCTextureAtlas.h"
@@ -517,13 +516,9 @@ bool ParticleSystem::initWithDictionary(ValueMap& dictionary, const std::string&
                             CCASSERT( buffer != nullptr, "CCParticleSystem: error decoding textureImageData");
                             CC_BREAK_IF(!buffer);
                             
-                            ssize_t deflatedLen = ZipUtils::inflateMemory(buffer, decodeLen, &deflated);
-                            CCASSERT( deflated != nullptr, "CCParticleSystem: error ungzipping textureImageData");
-                            CC_BREAK_IF(!deflated);
-                            
                             // For android, we should retain it in VolatileTexture::addImage which invoked in Director::getInstance()->getTextureCache()->addUIImage()
                             image = new (std::nothrow) Image();
-                            bool isOK = image->initWithImageData(deflated, deflatedLen);
+                            bool isOK = image->initWithImageData(buffer, decodeLen);
                             CCASSERT(isOK, "CCParticleSystem: error init image with Data");
                             CC_BREAK_IF(!isOK);
                             
