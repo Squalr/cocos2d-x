@@ -923,7 +923,7 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
         return;
     }
     
-    // if(_selfFlags & FLAGS_DIRTY_MASK)
+    if(_selfFlags & FLAGS_DIRTY_MASK)
     {
         _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
@@ -1152,7 +1152,7 @@ AffineTransform Node::getNodeToParentAffineTransform(Node* ancestor) const
 }
 const Mat4& Node::getNodeToParentTransform() const
 {
-    // if (_transformDirty)
+    if (_transformDirty)
     {
         // Translate values
         float x = _position.x;
@@ -1167,12 +1167,8 @@ const Mat4& Node::getNodeToParentTransform() const
 
         // Build Transform Matrix = translation * rotation * scale
         Mat4 translation;
-        //move to anchor point first, then rotate
         Mat4::createTranslation(x, y, z, &translation);
-
         Mat4::createRotation(_rotationQuat, &_transform);
-
-        // _transform = Mat4::IDENTITY;
 
         _transform = translation * _transform;
 
