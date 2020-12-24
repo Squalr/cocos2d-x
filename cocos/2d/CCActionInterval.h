@@ -888,16 +888,6 @@ public:
      */
     static ScaleTo* create(float duration, float sx, float sy);
 
-    /** 
-     * Creates the action with X Y Z factor.
-     * @param duration Duration time, in seconds.
-     * @param sx Scale factor of x.
-     * @param sy Scale factor of y.
-     * @param sz Scale factor of z.
-     * @return An autoreleased ScaleTo object.
-     */
-    static ScaleTo* create(float duration, float sx, float sy, float sz);
-
     //
     // Overrides
     //
@@ -922,25 +912,16 @@ public:
      * @param duration in seconds
      */
     bool initWithDuration(float duration, float sx, float sy);
-    /** 
-     * initializes the action with X Y Z factor 
-     * @param duration in seconds
-     */
-    bool initWithDuration(float duration, float sx, float sy, float sz);
 
 protected:
     float _scaleX;
     float _scaleY;
-    float _scaleZ;
     float _startScaleX;
     float _startScaleY;
-    float _startScaleZ;
     float _endScaleX;
     float _endScaleY;
-    float _endScaleZ;
     float _deltaX;
     float _deltaY;
-    float _deltaZ;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(ScaleTo);
@@ -969,16 +950,6 @@ public:
      * @return An autoreleased ScaleBy object.
      */
     static ScaleBy* create(float duration, float sx, float sy);
-
-    /** 
-     * Creates the action with X Y Z factor.
-     * @param duration Duration time, in seconds.
-     * @param sx Scale factor of x.
-     * @param sy Scale factor of y.
-     * @param sz Scale factor of z.
-     * @return An autoreleased ScaleBy object.
-     */
-    static ScaleBy* create(float duration, float sx, float sy, float sz);
 
     //
     // Overrides

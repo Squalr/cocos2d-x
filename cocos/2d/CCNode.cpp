@@ -65,7 +65,6 @@ Node::Node()
 : _rotationX(0.0f)
 , _scaleX(1.0f)
 , _scaleY(1.0f)
-, _scaleZ(1.0f)
 , _position(Vec2::ZERO)
 , _positionZ(0.0f)
 , _usingNormalizedPosition(false)
@@ -252,12 +251,14 @@ float Node::getScale(void) const
 /// scale setter
 void Node::setScale(float scale)
 {
-    if (_scaleX == scale && _scaleY == scale && _scaleZ == scale)
-        return;
-    
-    _scaleX = _scaleY = _scaleZ = scale;
-    _transformDirty = _inverseDirty = true;
-    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
+    setScaleX(scale);
+    setScaleY(scale);
+}
+
+void Node::setScale(const Vec2& scale)
+{
+    setScaleX(scale.x);
+    setScaleY(scale.y);
 }
 
 /// scaleX getter
@@ -267,15 +268,10 @@ float Node::getScaleX() const
 }
 
 /// scale setter
-void Node::setScale(float scaleX,float scaleY)
+void Node::setScale(float scaleX, float scaleY)
 {
-    if (_scaleX == scaleX && _scaleY == scaleY)
-        return;
-    
-    _scaleX = scaleX;
-    _scaleY = scaleY;
-    _transformDirty = _inverseDirty = true;
-    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
+    setScaleX(scaleX);
+    setScaleY(scaleY);
 }
 
 /// scaleX setter
@@ -293,23 +289,6 @@ void Node::setScaleX(float scaleX)
 float Node::getScaleY() const
 {
     return _scaleY;
-}
-
-/// scaleY setter
-void Node::setScaleZ(float scaleZ)
-{
-    if (_scaleZ == scaleZ)
-        return;
-    
-    _scaleZ = scaleZ;
-    _transformDirty = _inverseDirty = true;
-    _selfFlags |= FLAGS_TRANSFORM_DIRTY;
-}
-
-/// scaleY getter
-float Node::getScaleZ() const
-{
-    return _scaleZ;
 }
 
 /// scaleY setter
@@ -944,7 +923,7 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
         return;
     }
     
-    if(_selfFlags & FLAGS_DIRTY_MASK)
+    // if(_selfFlags & FLAGS_DIRTY_MASK)
     {
         _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
@@ -1173,7 +1152,7 @@ AffineTransform Node::getNodeToParentAffineTransform(Node* ancestor) const
 }
 const Mat4& Node::getNodeToParentTransform() const
 {
-    if (_transformDirty)
+    // if (_transformDirty)
     {
         // Translate values
         float x = _position.x;
@@ -1203,9 +1182,6 @@ const Mat4& Node::getNodeToParentTransform() const
         _transform.m[4] *= _scaleY;
         _transform.m[5] *= _scaleY;
         _transform.m[6] *= _scaleY;
-        // _transform.m[8] *= _scaleZ;
-        // _transform.m[9] *= _scaleZ;
-        // _transform.m[10] *= _scaleZ;
 
         // adjust anchor point
         _transform.m[12] += _transform.m[0] * -_anchorPointInPoints.x + _transform.m[4] * -_anchorPointInPoints.y;

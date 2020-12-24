@@ -223,26 +223,6 @@ public:
     virtual float getScaleY() const;
 
     /**
-     * Changes the scale factor on Z axis of this node
-     *
-     * The Default value is 1.0 if you haven't changed it before.
-     *
-     * @param scaleZ   The scale factor on Z axis.
-     *
-     * @warning The physics body doesn't support this.
-     */
-    virtual void setScaleZ(float scaleZ);
-    /**
-     * Returns the scale factor on Z axis of this node
-     *
-     * @see `setScaleZ(float)`
-     *
-     * @return The scale factor on Z axis.
-     */
-    virtual float getScaleZ() const;
-
-
-    /**
      * Sets the scale (x,y,z) of the node.
      *
      * It is a scaling factor that multiplies the width, height and depth of the node and its children.
@@ -252,6 +232,9 @@ public:
      * @warning The physics body doesn't support this.
      */
     virtual void setScale(float scale);
+
+    virtual void setScale(const Vec2& scale);
+
     /**
      * Gets the scale factor of the node,  when X and Y have the same scale factor.
      *
@@ -1262,7 +1245,6 @@ protected:
 
     float _scaleX;                  ///< scaling factor on x-axis
     float _scaleY;                  ///< scaling factor on y-axis
-    float _scaleZ;                  ///< scaling factor on z-axis
     
     Vec2 _position;                 ///< position of the node
     float _positionZ;               ///< OpenGL real Z position

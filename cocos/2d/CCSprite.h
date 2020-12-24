@@ -371,7 +371,6 @@ public:
     /// @name Functions inherited from Node.
     virtual void setScaleX(float scaleX) override;
     virtual void setScaleY(float scaleY) override;
-    virtual void setScale(float scaleX, float scaleY) override;
     /**
     * @js  NA
     * @lua NA
@@ -386,7 +385,6 @@ public:
     virtual void addChild(Node *child, int zOrder) override;
     virtual void addChild(Node *child, int zOrder, const std::string &name) override;
     virtual void sortAllChildren() override;
-    virtual void setScale(float scale) override;
     virtual void setPositionZ(float positionZ) override;
     virtual void setAnchorPoint(const Vec2& anchor) override;
     virtual void setContentSize(const Size& size) override;
