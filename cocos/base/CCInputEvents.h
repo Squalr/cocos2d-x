@@ -35,10 +35,17 @@ NS_CC_BEGIN
 class CC_DLL InputEvents
 {
 public:
+	static const std::string EventMouseMoveInternal;
+	static const std::string EventMouseDownInternal;
+	static const std::string EventMouseUpInternal;
+	static const std::string EventMouseScrollInternal;
+	static const std::string EventKeyJustPressedInternal;
+	static const std::string EventKeyJustReleasedInternal;
+
 	static const std::string EventMouseMove;
-	static const std::string EventMouseRefresh;
 	static const std::string EventMouseDown;
 	static const std::string EventMouseUp;
+	static const std::string EventMouseRefresh;
 	static const std::string EventMouseScroll;
 	static const std::string EventMouseStateUpdate;
 	static const std::string EventClickableMouseOver;
@@ -245,15 +252,18 @@ public:
     
     struct MouseEventArgs
     {
-        cocos2d::Vec2 mouseInitialCoords;
-        cocos2d::Vec2 mouseCoords;
-        cocos2d::Vec2 scrollDelta;
+        Vec2 mouseInitialCoords;
+        Vec2 mouseCoords;
+        Vec2 scrollDelta;
         bool isDragging;
         bool canClick;
         bool isLeftClicked;
 
-        MouseEventArgs(cocos2d::Vec2 mouseInitialCoords, cocos2d::Vec2 mouseCoords, cocos2d::Vec2 scrollDelta, bool isDragging, bool canClick, bool isLeftClicked) :
+        MouseEventArgs(Vec2 mouseInitialCoords, Vec2 mouseCoords, Vec2 scrollDelta, bool isDragging, bool canClick, bool isLeftClicked) :
                 mouseInitialCoords(mouseInitialCoords), mouseCoords(mouseCoords), scrollDelta(scrollDelta), isDragging(isDragging), canClick(canClick), isLeftClicked(isLeftClicked), handled(false)
+        {
+        }
+        MouseEventArgs() : mouseInitialCoords(Vec2::ZERO), mouseCoords(Vec2::ZERO), scrollDelta(Vec2::ZERO), isDragging(false), canClick(false), isLeftClicked(false), handled(false)
         {
         }
 
@@ -278,9 +288,9 @@ public:
 
     struct KeyboardEventArgs
     {
-        cocos2d::InputEvents::KeyCode keycode;
+        InputEvents::KeyCode keycode;
 
-        KeyboardEventArgs(cocos2d::InputEvents::KeyCode keycode) : keycode(keycode), handled(false) { }
+        KeyboardEventArgs(InputEvents::KeyCode keycode) : keycode(keycode), handled(false) { }
 
         void handle()
         {
@@ -296,10 +306,19 @@ public:
             bool handled;
     };
 
+    // These are called from within cocos and expected to be handled by user code
+	static void TriggerMouseMoveInternal(MouseEventArgs args);
+	static void TriggerMouseDownInternal(MouseEventArgs args);
+	static void TriggerMouseUpInternal(MouseEventArgs args);
+	static void TriggerMouseScrollInternal(MouseEventArgs args);
+	static void TriggerKeyJustPressedInternal(KeyboardEventArgs args);
+	static void TriggerKeyJustReleasedInternal(KeyboardEventArgs args);
+
+    // These are to be called from outside cocos
 	static void TriggerMouseMove(MouseEventArgs args);
-	static void TriggerMouseRefresh(MouseEventArgs args);
 	static void TriggerMouseDown(MouseEventArgs args);
 	static void TriggerMouseUp(MouseEventArgs args);
+	static void TriggerMouseRefresh(MouseEventArgs args);
 	static void TriggerMouseScroll(MouseEventArgs args);
 	static void TriggerStateChange(MouseEventArgs args);
 	static void TriggerEventClickableMouseOver();

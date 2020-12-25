@@ -164,7 +164,6 @@ protected:
     Vec2 mousePosition;
     Vec2 mouseInitialPosition;
     Vec2 scrollDelta;
-    bool canClick;
     bool isDragging;
     bool isLeftClicked;
 

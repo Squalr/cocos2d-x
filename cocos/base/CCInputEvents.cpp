@@ -30,6 +30,13 @@
 
 NS_CC_BEGIN
 
+const std::string InputEvents::EventMouseMoveInternal = "EVENT_MOUSE_MOVE_INTERNAL";
+const std::string InputEvents::EventMouseDownInternal = "EVENT_MOUSE_DOWN_INTERNAL";
+const std::string InputEvents::EventMouseUpInternal = "EVENT_MOUSE_UP_INTERNAL";
+const std::string InputEvents::EventMouseScrollInternal = "EVENT_MOUSE_SCROLL_INTERNAL";
+const std::string InputEvents::EventKeyJustPressedInternal = "EVENT_KEY_JUST_PRESSED_INTERNAL";
+const std::string InputEvents::EventKeyJustReleasedInternal = "EVENT_KEY_JUST_RELEASED_INTERNAL";
+
 const std::string InputEvents::EventMouseMove = "EVENT_MOUSE_MOVE";
 const std::string InputEvents::EventMouseRefresh = "EVENT_MOUSE_REFRESH";
 const std::string InputEvents::EventMouseDown = "EVENT_MOUSE_DOWN";
@@ -41,6 +48,54 @@ const std::string InputEvents::EventMouseDrag = "EVENT_MOUSE_DRAG";
 const std::string InputEvents::EventMouseStateUpdate = "EVENT_MOUSE_STATE_UPDATE";
 const std::string InputEvents::EventKeyJustPressed = "EVENT_KEY_JUST_PRESSED";
 const std::string InputEvents::EventKeyJustReleased = "EVENT_KEY_JUST_RELEASED";
+
+void InputEvents::TriggerMouseMoveInternal(MouseEventArgs args)
+{
+	Director::getInstance()->getEventDispatcher()->dispatchEvent(
+		InputEvents::EventMouseMoveInternal,
+		&args
+	);
+}
+
+void InputEvents::TriggerMouseDownInternal(MouseEventArgs args)
+{
+	Director::getInstance()->getEventDispatcher()->dispatchEvent(
+		InputEvents::EventMouseDownInternal,
+		&args
+	);
+}
+
+void InputEvents::TriggerMouseUpInternal(MouseEventArgs args)
+{
+	Director::getInstance()->getEventDispatcher()->dispatchEvent(
+		InputEvents::EventMouseUpInternal,
+		&args
+	);
+}
+
+void InputEvents::TriggerMouseScrollInternal(MouseEventArgs args)
+{
+	Director::getInstance()->getEventDispatcher()->dispatchEvent(
+		InputEvents::EventMouseScrollInternal,
+		&args
+	);
+}
+
+void InputEvents::TriggerKeyJustPressedInternal(KeyboardEventArgs args)
+{
+	Director::getInstance()->getEventDispatcher()->dispatchEvent(
+		InputEvents::EventKeyJustPressedInternal,
+		&args
+	);
+}
+
+void InputEvents::TriggerKeyJustReleasedInternal(KeyboardEventArgs args)
+{
+	Director::getInstance()->getEventDispatcher()->dispatchEvent(
+		InputEvents::EventKeyJustReleasedInternal,
+		&args
+	);
+}
 
 void InputEvents::TriggerMouseMove(MouseEventArgs args)
 {

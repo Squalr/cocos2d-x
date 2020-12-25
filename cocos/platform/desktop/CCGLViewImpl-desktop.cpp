@@ -115,7 +115,7 @@ static keyCodeItem g_keyCodeStructArray[] = {
 
     /* Function keys */
     { GLFW_KEY_ESCAPE          , InputEvents::KeyCode::KEY_ESCAPE        },
-    { GLFW_KEY_ENTER           , InputEvents::KeyCode::KEY_ENTER      },
+    { GLFW_KEY_ENTER           , InputEvents::KeyCode::KEY_ENTER         },
     { GLFW_KEY_TAB             , InputEvents::KeyCode::KEY_TAB           },
     { GLFW_KEY_BACKSPACE       , InputEvents::KeyCode::KEY_BACKSPACE     },
     { GLFW_KEY_INSERT          , InputEvents::KeyCode::KEY_INSERT        },
@@ -124,9 +124,9 @@ static keyCodeItem g_keyCodeStructArray[] = {
     { GLFW_KEY_LEFT            , InputEvents::KeyCode::KEY_LEFT_ARROW    },
     { GLFW_KEY_DOWN            , InputEvents::KeyCode::KEY_DOWN_ARROW    },
     { GLFW_KEY_UP              , InputEvents::KeyCode::KEY_UP_ARROW      },
-    { GLFW_KEY_PAGE_UP         , InputEvents::KeyCode::KEY_PG_UP      },
-    { GLFW_KEY_PAGE_DOWN       , InputEvents::KeyCode::KEY_PG_DOWN    },
-    { GLFW_KEY_HOME            , InputEvents::KeyCode::KEY_HOME       },
+    { GLFW_KEY_PAGE_UP         , InputEvents::KeyCode::KEY_PG_UP         },
+    { GLFW_KEY_PAGE_DOWN       , InputEvents::KeyCode::KEY_PG_DOWN       },
+    { GLFW_KEY_HOME            , InputEvents::KeyCode::KEY_HOME          },
     { GLFW_KEY_END             , InputEvents::KeyCode::KEY_END           },
     { GLFW_KEY_CAPS_LOCK       , InputEvents::KeyCode::KEY_CAPS_LOCK     },
     { GLFW_KEY_SCROLL_LOCK     , InputEvents::KeyCode::KEY_SCROLL_LOCK   },
@@ -175,13 +175,13 @@ static keyCodeItem g_keyCodeStructArray[] = {
     { GLFW_KEY_KP_ADD          , InputEvents::KeyCode::KEY_KP_PLUS       },
     { GLFW_KEY_KP_ENTER        , InputEvents::KeyCode::KEY_KP_ENTER      },
     { GLFW_KEY_KP_EQUAL        , InputEvents::KeyCode::KEY_EQUAL         },
-    { GLFW_KEY_LEFT_SHIFT      , InputEvents::KeyCode::KEY_LEFT_SHIFT         },
-    { GLFW_KEY_LEFT_CONTROL    , InputEvents::KeyCode::KEY_LEFT_CTRL          },
-    { GLFW_KEY_LEFT_ALT        , InputEvents::KeyCode::KEY_LEFT_ALT           },
+    { GLFW_KEY_LEFT_SHIFT      , InputEvents::KeyCode::KEY_LEFT_SHIFT    },
+    { GLFW_KEY_LEFT_CONTROL    , InputEvents::KeyCode::KEY_LEFT_CTRL     },
+    { GLFW_KEY_LEFT_ALT        , InputEvents::KeyCode::KEY_LEFT_ALT      },
     { GLFW_KEY_LEFT_SUPER      , InputEvents::KeyCode::KEY_HYPER         },
-    { GLFW_KEY_RIGHT_SHIFT     , InputEvents::KeyCode::KEY_RIGHT_SHIFT         },
-    { GLFW_KEY_RIGHT_CONTROL   , InputEvents::KeyCode::KEY_RIGHT_CTRL          },
-    { GLFW_KEY_RIGHT_ALT       , InputEvents::KeyCode::KEY_RIGHT_ALT           },
+    { GLFW_KEY_RIGHT_SHIFT     , InputEvents::KeyCode::KEY_RIGHT_SHIFT   },
+    { GLFW_KEY_RIGHT_CONTROL   , InputEvents::KeyCode::KEY_RIGHT_CTRL    },
+    { GLFW_KEY_RIGHT_ALT       , InputEvents::KeyCode::KEY_RIGHT_ALT     },
     { GLFW_KEY_RIGHT_SUPER     , InputEvents::KeyCode::KEY_HYPER         },
     { GLFW_KEY_MENU            , InputEvents::KeyCode::KEY_MENU          },
     { GLFW_KEY_LAST            , InputEvents::KeyCode::KEY_NONE          }
@@ -204,7 +204,6 @@ GLViewImpl::GLViewImpl(bool initglfw)
 , mousePosition(Vec2::ZERO)
 , mouseInitialPosition(Vec2::ZERO)
 , scrollDelta(Vec2::ZERO)
-, canClick(false)
 , isDragging(false)
 , isLeftClicked(false)
 {
@@ -238,10 +237,13 @@ GLViewImpl* GLViewImpl::create(const std::string& viewName)
 GLViewImpl* GLViewImpl::create(const std::string& viewName, bool resizable)
 {
     auto ret = new (std::nothrow) GLViewImpl;
-    if(ret && ret->initWithRect(viewName, Rect(0, 0, 960, 640), 1.0f, resizable)) {
+    
+    if(ret && ret->initWithRect(viewName, Rect(0, 0, 960, 640), 1.0f, resizable))
+    {
         ret->autorelease();
         return ret;
     }
+
     CC_SAFE_DELETE(ret);
     return nullptr;
 }
@@ -249,10 +251,13 @@ GLViewImpl* GLViewImpl::create(const std::string& viewName, bool resizable)
 GLViewImpl* GLViewImpl::createWithRect(const std::string& viewName, Rect rect, float frameZoomFactor, bool resizable)
 {
     auto ret = new (std::nothrow) GLViewImpl;
-    if(ret && ret->initWithRect(viewName, rect, frameZoomFactor, resizable)) {
+
+    if(ret && ret->initWithRect(viewName, rect, frameZoomFactor, resizable))
+    {
         ret->autorelease();
         return ret;
     }
+
     CC_SAFE_DELETE(ret);
     return nullptr;
 }
@@ -260,10 +265,13 @@ GLViewImpl* GLViewImpl::createWithRect(const std::string& viewName, Rect rect, f
 GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName)
 {
     auto ret = new (std::nothrow) GLViewImpl();
-    if(ret && ret->initWithFullScreen(viewName)) {
+
+    if(ret && ret->initWithFullScreen(viewName))
+    {
         ret->autorelease();
         return ret;
     }
+
     CC_SAFE_DELETE(ret);
     return nullptr;
 }
@@ -271,10 +279,13 @@ GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName)
 GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName, const GLFWvidmode &videoMode, GLFWmonitor *monitor)
 {
     auto ret = new (std::nothrow) GLViewImpl();
-    if(ret && ret->initWithFullscreen(viewName, videoMode, monitor)) {
+
+    if(ret && ret->initWithFullscreen(viewName, videoMode, monitor))
+    {
         ret->autorelease();
         return ret;
     }
+
     CC_SAFE_DELETE(ret);
     return nullptr;
 }
@@ -325,10 +336,12 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     */
     int realW = 0, realH = 0;
     glfwGetWindowSize(_mainWindow, &realW, &realH);
+
     if (realW != neededWidth)
     {
         rect.size.width = realW / _frameZoomFactor;
     }
+
     if (realH != neededHeight)
     {
         rect.size.height = realH / _frameZoomFactor;
@@ -368,14 +381,16 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
     
     if(_glContextAttrs.multisamplingCount > 0)
+    {
         glEnable(GL_MULTISAMPLE);
+    }
 
     // ZAC: attempt to patch double cursor issue for OSX
     glfwFocusWindow(_mainWindow);
 
-//    // GLFW v3.2 no longer emits "onGLFWWindowSizeFunCallback" at creation time. Force default viewport:
-//    setViewPortInPoints(0, 0, neededWidth, neededHeight);
-//
+    // GLFW v3.2 no longer emits "onGLFWWindowSizeFunCallback" at creation time. Force default viewport:
+    // setViewPortInPoints(0, 0, neededWidth, neededHeight);
+
     return true;
 }
 
@@ -383,8 +398,11 @@ bool GLViewImpl::initWithFullScreen(const std::string& viewName)
 {
     //Create fullscreen window on primary monitor at its current video mode.
     _monitor = glfwGetPrimaryMonitor();
-    if (nullptr == _monitor)
+
+    if (_monitor == nullptr)
+    {
         return false;
+    }
 
     const GLFWvidmode* videoMode = glfwGetVideoMode(_monitor);
     return initWithRect(viewName, Rect(0, 0, videoMode->width, videoMode->height), 1.0f, false);
@@ -394,8 +412,11 @@ bool GLViewImpl::initWithFullscreen(const std::string &viewname, const GLFWvidmo
 {
     //Create fullscreen on specified monitor at the specified video mode.
     _monitor = monitor;
+
     if (nullptr == _monitor)
+    {
         return false;
+    }
     
     //These are soft constraints. If the video mode is retrieved at runtime, the resulting window and context should match these exactly. If invalid attribs are passed (eg. from an outdated cache), window creation will NOT fail but the actual window/context may differ.
     glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate);
@@ -418,6 +439,7 @@ void GLViewImpl::end()
         glfwSetWindowShouldClose(_mainWindow,1);
         _mainWindow = nullptr;
     }
+
     // Release self. Otherwise, GLViewImpl could not be freed.
     release();
 }
@@ -425,15 +447,21 @@ void GLViewImpl::end()
 void GLViewImpl::swapBuffers()
 {
     if(_mainWindow)
+    {
         glfwSwapBuffers(_mainWindow);
+    }
 }
 
 bool GLViewImpl::windowShouldClose()
 {
     if(_mainWindow)
+    {
         return glfwWindowShouldClose(_mainWindow) ? true : false;
+    }
     else
+    {
         return true;
+    }
 }
 
 void GLViewImpl::pollEvents()
@@ -639,6 +667,7 @@ Rect GLViewImpl::getScissorRect() const
     float y = (params[1] - _viewPortRect.origin.y * _retinaFactor * _frameZoomFactor) / (_scaleY * _retinaFactor  * _frameZoomFactor);
     float w = params[2] / (_scaleX * _retinaFactor * _frameZoomFactor);
     float h = params[3] / (_scaleY * _retinaFactor  * _frameZoomFactor);
+
     return Rect(x, y, w, h);
 }
 
@@ -687,30 +716,14 @@ void GLViewImpl::onGLFWMouseCallBack(GLFWwindow* /*window*/, int button, int act
                     this->mouseInitialPosition = this->mousePosition;
                 }
 
-                InputEvents::TriggerMouseDown(InputEvents::MouseEventArgs(
+                InputEvents::TriggerMouseDownInternal(InputEvents::MouseEventArgs(
                     this->mouseInitialPosition,
                     this->mousePosition,
                     this->scrollDelta,
                     this->isDragging,
-                    this->canClick,
+                    false,
                     this->isLeftClicked
                 ));
-
-                // InputEvents::TriggerStateChange(MouseState::getMouseState());
-
-                /*
-                    MouseState::mousePosition = Vec2(event->getCursorX(), event->getCursorY());
-                    MouseState::isLeftClicked = (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT);
-
-
-                    InputEvents::TriggerMouseDown(MouseState::getMouseState());
-                    InputEvents::TriggerStateChange(MouseState::getMouseState());
-
-                EventMouse event(EventMouse::MouseEventType::MOUSE_DOWN);
-                event.setCursorPosition(cursorX, cursorY);
-                event.setMouseButton(static_cast<InputEvents::MouseButton>(button));
-                Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
-                */
                 break;
             }
             default:
@@ -732,43 +745,16 @@ void GLViewImpl::onGLFWMouseCallBack(GLFWwindow* /*window*/, int button, int act
                     this->isDragging = false;
                 }
 
-                InputEvents::TriggerMouseUp(InputEvents::MouseEventArgs(
+                InputEvents::TriggerMouseUpInternal(InputEvents::MouseEventArgs(
                     this->mouseInitialPosition,
                     this->mousePosition,
                     this->scrollDelta,
                     this->isDragging,
-                    this->canClick,
+                    false,
                     this->isLeftClicked
                 ));
 
                 this->isDragging = false;
-                this->canClick = false;
-
-                // InputEvents::TriggerStateChange(MouseState::getMouseState());
-                // InputEvents::TriggerMouseRefresh(MouseState::getMouseState());
-
-                /*
-
-                    MouseState::mousePosition = Vec2(event->getCursorX(), event->getCursorY());
-                    MouseState::isLeftClicked = (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT);
-
-                    if (MouseState::mousePosition.distance(MouseState::mouseInitialPosition) < NonDragTolerance)
-                    {
-                        MouseState::isDragging = false;
-                    }
-
-                    InputEvents::TriggerMouseUp(MouseState::getMouseState());
-
-                    MouseState::isDragging = false;
-                    MouseState::canClick = false;
-
-                    InputEvents::TriggerStateChange(MouseState::getMouseState());
-                    InputEvents::TriggerMouseRefresh(MouseState::getMouseState());
-                    EventMouse event(EventMouse::MouseEventType::MOUSE_UP);
-                    event.setCursorPosition(cursorX, cursorY);
-                    event.setMouseButton(static_cast<cocos2d::EventMouse::MouseButton>(button));
-                    Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
-                */
                 break;
             }
             default:
@@ -796,47 +782,18 @@ void GLViewImpl::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
         }
     }
     
-    //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
+    // Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
     this->mousePosition.x = (openGLMousePosition.x - _viewPortRect.origin.x) / _scaleX;
     this->mousePosition.y = (_viewPortRect.origin.y + _viewPortRect.size.height - openGLMousePosition.y) / _scaleY;
 
-    InputEvents::TriggerMouseMove(InputEvents::MouseEventArgs(
+    InputEvents::TriggerMouseMoveInternal(InputEvents::MouseEventArgs(
         this->mouseInitialPosition,
         this->mousePosition,
         this->scrollDelta,
         this->isDragging,
-        this->canClick,
+        false,
         this->isLeftClicked
     ));
-
-    /*
-        MouseState::mousePosition = Vec2(event->getCursorX(), event->getCursorY());
-        MouseState::isLeftClicked = (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT);
-        MouseState::canClick = false;
-
-        InputEvents::TriggerMouseMove(MouseState::getMouseState());
-        InputEvents::TriggerStateChange(MouseState::getMouseState());
-    */
-
-   /*
-    EventMouse event(EventMouse::MouseEventType::MOUSE_MOVE);
-
-    // Set current button
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-    {
-        event.setMouseButton(static_cast<cocos2d::EventMouse::MouseButton>(GLFW_MOUSE_BUTTON_LEFT));
-    }
-    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-    {
-        event.setMouseButton(static_cast<cocos2d::EventMouse::MouseButton>(GLFW_MOUSE_BUTTON_RIGHT));
-    }
-    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
-    {
-        event.setMouseButton(static_cast<cocos2d::EventMouse::MouseButton>(GLFW_MOUSE_BUTTON_MIDDLE));
-    }
-    event.setCursorPosition(cursorX, cursorY);
-    Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
-    */
 }
 
 void GLViewImpl::onGLFWMouseScrollCallback(GLFWwindow* /*window*/, double x, double y)
@@ -844,35 +801,17 @@ void GLViewImpl::onGLFWMouseScrollCallback(GLFWwindow* /*window*/, double x, dou
     this->scrollDelta.x = x;
     this->scrollDelta.y = -y;
 
-    InputEvents::TriggerMouseMove(InputEvents::MouseEventArgs(
+    InputEvents::TriggerMouseScrollInternal(InputEvents::MouseEventArgs(
         this->mouseInitialPosition,
         this->mousePosition,
         this->scrollDelta,
         this->isDragging,
-        this->canClick,
+        false,
         this->isLeftClicked
     ));
 
     this->scrollDelta.x = 0.0f;
     this->scrollDelta.y = 0.0f;
-    /*
-        MouseState::scrollDelta = Vec2(event->getScrollX(), event->getScrollY());
-
-        InputEvents::TriggerMouseScroll(MouseState::getMouseState());
-        InputEvents::TriggerMouseRefresh(MouseState::getMouseState());
-
-        MouseState::scrollDelta = Vec2::ZERO;
-    */
-   /*
-    EventMouse event(EventMouse::MouseEventType::MOUSE_SCROLL);
-    //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
-    float cursorX = (openGLMousePosition.x - _viewPortRect.origin.x) / _scaleX;
-    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - openGLMousePosition.y) / _scaleY;
-    event.setScrollData((float)x, -(float)y);
-    event.setCursorPosition(cursorX, cursorY);
-
-    Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
-    */
 }
 
 void GLViewImpl::onGLFWKeyCallback(GLFWwindow* /*window*/, int key, int /*scancode*/, int action, int /*mods*/)
@@ -885,11 +824,11 @@ void GLViewImpl::onGLFWKeyCallback(GLFWwindow* /*window*/, int key, int /*scanco
 
         if (isPressed)
         {
-            Director::getInstance()->getEventDispatcher()->dispatchEvent(InputEvents::EventKeyJustPressed, &event);
+            InputEvents::TriggerKeyJustPressedInternal(InputEvents::KeyboardEventArgs(g_keyCodeMap[key]));
         }
         else
         {
-            Director::getInstance()->getEventDispatcher()->dispatchEvent(InputEvents::EventKeyJustReleased, &event);
+            InputEvents::TriggerKeyJustReleasedInternal(InputEvents::KeyboardEventArgs(g_keyCodeMap[key]));
         }
     }
 
@@ -897,23 +836,29 @@ void GLViewImpl::onGLFWKeyCallback(GLFWwindow* /*window*/, int key, int /*scanco
     {
         switch (g_keyCodeMap[key])
         {
-        case InputEvents::KeyCode::KEY_BACKSPACE:
-            IMEDispatcher::sharedDispatcher()->dispatchDeleteBackward();
-            break;
-        case InputEvents::KeyCode::KEY_HOME:
-        case InputEvents::KeyCode::KEY_KP_HOME:
-        case InputEvents::KeyCode::KEY_DELETE:
-        case InputEvents::KeyCode::KEY_KP_DELETE:
-        case InputEvents::KeyCode::KEY_END:
-		case InputEvents::KeyCode::KEY_LEFT_ARROW:
-		case InputEvents::KeyCode::KEY_RIGHT_ARROW:
-		case InputEvents::KeyCode::KEY_UP_ARROW:
-		case InputEvents::KeyCode::KEY_DOWN_ARROW:
-        case InputEvents::KeyCode::KEY_ESCAPE:
-            IMEDispatcher::sharedDispatcher()->dispatchControlKey(g_keyCodeMap[key]);
-            break;
-        default:
-            break;
+            case InputEvents::KeyCode::KEY_BACKSPACE:
+            {
+                IMEDispatcher::sharedDispatcher()->dispatchDeleteBackward();
+                break;
+            }
+            case InputEvents::KeyCode::KEY_HOME:
+            case InputEvents::KeyCode::KEY_KP_HOME:
+            case InputEvents::KeyCode::KEY_DELETE:
+            case InputEvents::KeyCode::KEY_KP_DELETE:
+            case InputEvents::KeyCode::KEY_END:
+            case InputEvents::KeyCode::KEY_LEFT_ARROW:
+            case InputEvents::KeyCode::KEY_RIGHT_ARROW:
+            case InputEvents::KeyCode::KEY_UP_ARROW:
+            case InputEvents::KeyCode::KEY_DOWN_ARROW:
+            case InputEvents::KeyCode::KEY_ESCAPE:
+            {
+                IMEDispatcher::sharedDispatcher()->dispatchControlKey(g_keyCodeMap[key]);
+                break;
+            }
+            default:
+            {
+                break;
+            }
         }
     }
 }
@@ -922,9 +867,10 @@ void GLViewImpl::onGLFWCharCallback(GLFWwindow* /*window*/, unsigned int charact
 {
     char16_t wcharString[2] = { (char16_t) character, 0 };
     std::string utf8String;
+    StringUtils::UTF16ToUTF8(wcharString, utf8String);
 
-    StringUtils::UTF16ToUTF8( wcharString, utf8String );
-    static std::set<std::string> controlUnicode = {
+    static std::set<std::string> controlUnicode =
+    {
         "\xEF\x9C\x80", // up
         "\xEF\x9C\x81", // down
         "\xEF\x9C\x82", // left
@@ -936,6 +882,7 @@ void GLViewImpl::onGLFWCharCallback(GLFWwindow* /*window*/, unsigned int charact
         "\xEF\x9C\xAD", // pagedown
         "\xEF\x9C\xB9"  // clear
     };
+
     // Check for send control key
     if (controlUnicode.find(utf8String) == controlUnicode.end())
     {
@@ -958,6 +905,7 @@ void GLViewImpl::onGLFWframebuffersize(GLFWwindow* window, int w, int h)
     if (std::abs(factorX - 0.5f) < FLT_EPSILON && std::abs(factorY - 0.5f) < FLT_EPSILON)
     {
         _isInRetinaMonitor = true;
+
         if (_isRetinaEnabled)
         {
             _retinaFactor = 1;
@@ -1026,6 +974,7 @@ static bool glew_dynamic_binding()
     if (glGenFramebuffers == nullptr)
     {
         CCLOG("OpenGL: glGenFramebuffers is nullptr, try to detect an extension");
+
         if (strstr(gl_extensions, "ARB_framebuffer_object"))
         {
             CCLOG("OpenGL: ARB_framebuffer_object is supported");
@@ -1048,8 +997,7 @@ static bool glew_dynamic_binding()
             glGetFramebufferAttachmentParameteriv = (PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC) wglGetProcAddress("glGetFramebufferAttachmentParameteriv");
             glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC) wglGetProcAddress("glGenerateMipmap");
         }
-        else
-        if (strstr(gl_extensions, "EXT_framebuffer_object"))
+        else if (strstr(gl_extensions, "EXT_framebuffer_object"))
         {
             CCLOG("OpenGL: EXT_framebuffer_object is supported");
             glIsRenderbuffer = (PFNGLISRENDERBUFFERPROC) wglGetProcAddress("glIsRenderbufferEXT");
