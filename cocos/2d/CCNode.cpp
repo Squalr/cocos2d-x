@@ -640,21 +640,6 @@ void Node::addChildInsert(Node *child, int index, bool isReentry)
 		return;
 	}
 
-	auto assertNotSelfChild
-	([this, child]() -> bool
-	{
-		for (Node* parent(getParent()); parent != nullptr;
-			parent = parent->getParent())
-			if (parent == child)
-				return false;
-
-		return true;
-	});
-	(void)assertNotSelfChild;
-
-	CCASSERT(assertNotSelfChild(),
-		"A node cannot be the child of his own children");
-
     _selfFlags |= FLAGS_TRANSFORM_DIRTY;
 	_reorderChildDirty = true;
 	_children.insert(std::min(index, (int)_children.size()), child);
