@@ -183,14 +183,6 @@ void ClippingNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32
     _selfFlags = 0;
 }
 
-void ClippingNode::setCameraMask(unsigned short mask, bool applyChildren)
-{
-    Node::setCameraMask(mask, applyChildren);
-    
-    if (_stencil)
-        _stencil->setCameraMask(mask, applyChildren);
-}
-
 Node* ClippingNode::getStencil() const
 {
     return _stencil;

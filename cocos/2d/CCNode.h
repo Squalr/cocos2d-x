@@ -116,11 +116,6 @@ public:
      * @return A initialized node which is marked as "autorelease".
      */
     static Node * create();
-
-    /**
-     * Gets count of nodes those are attached to scene graph.
-     */
-    static int getAttachedNodeCount();
 public:
     
     /**
@@ -1197,18 +1192,6 @@ public:
      * @return A boolean value, true indicates that opacity will modify color; false otherwise.
      */
     virtual bool isOpacityModifyRGB() const;
-    
-    /**
-     * get & set camera mask, the node is visible by the camera whose camera flag & node's camera mask is true
-     */
-    unsigned short getCameraMask() const { return _cameraMask; }
-    /**
-     * Modify the camera mask for current node.
-     * If applyChildren is true, then it will modify the camera mask of its children recursively.
-     * @param mask A unsigned short bit for mask.
-     * @param applyChildren A boolean value to determine whether the mask bit should apply to its children or not.
-     */
-    virtual void setCameraMask(unsigned short mask, bool applyChildren = true);
 
     // Nodes should be created using create();
     Node();
@@ -1302,16 +1285,11 @@ protected:
     Color3B     _realColor;
     bool        _cascadeColorEnabled;
     bool        _cascadeOpacityEnabled;
-
-    // camera mask, it is visible only when _cameraMask & current camera' camera flag is true
-    unsigned short _cameraMask;
     
     std::function<void()> _onEnterCallback;
     std::function<void()> _onExitCallback;
     std::function<void()> _onEnterTransitionDidFinishCallback;
     std::function<void()> _onExitTransitionDidStartCallback;
-
-    static int __attachedNodeCount;
     
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Node);

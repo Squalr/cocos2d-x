@@ -501,8 +501,6 @@ public:
     virtual void visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags) override;
     virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
 
-    virtual void setCameraMask(unsigned short mask, bool applyChildren = true) override;
-
 	virtual void removeLetters();
 	virtual void removeAllChildrenWithCleanup(bool cleanup) override;
     virtual void removeChild(Node* child, bool cleanup = true) override;

@@ -133,10 +133,11 @@ Scheduler::Scheduler()
 : _hashForTimers(nullptr)
 , _currentTarget(nullptr)
 , _currentTargetSalvaged(false)
-, _updateHashLocked(false)
+, updateHashLocked(false)
 {
     this->taskTable = std::unordered_map<Node*, ScheduledUpdateTask>();
-    this->scheduledDeletionTable = std::vector<Node*>();
+    this->scheduledDeleteTable = std::set<Node*>();
+    this->scheduledAddTable = std::unordered_map<Node*, ScheduledUpdateTask>();
     this->_functionsToPerform.reserve(32); // Not expecting more than 32 functions to all per frame
 }
 
@@ -154,12 +155,20 @@ void Scheduler::removeHashElement(ScheduledTask* element)
 
 void Scheduler::scheduleUpdate(Node* target, bool paused)
 {
-    if (this->taskTable.find(target) != this->taskTable.end())
+    if (this->taskTable.find(target) != this->taskTable.end()
+        || this->scheduledAddTable.find(target) != this->scheduledAddTable.end())
     {
         return;
     }
 
-    this->taskTable[target] = ScheduledUpdateTask(CC_CALLBACK_1(Node::update, target), target, paused);
+    if (this->updateHashLocked)
+    {
+        this->scheduledAddTable[target] = ScheduledUpdateTask(CC_CALLBACK_1(Node::update, target), target, paused);
+    }
+    else
+    {
+        this->taskTable[target] = ScheduledUpdateTask(CC_CALLBACK_1(Node::update, target), target, paused);
+    }
 }
 
 void Scheduler::schedule(const std::function<void(float)>& callback, void *target, const std::string& key, float interval, unsigned int repeat, bool paused)
@@ -170,7 +179,7 @@ void Scheduler::schedule(const std::function<void(float)>& callback, void *targe
     ScheduledTask *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
 
-    if (! element)
+    if (!element)
     {
         element = (ScheduledTask *)calloc(sizeof(*element), 1);
         element->target = target;
@@ -227,9 +236,9 @@ void Scheduler::unschedule(const std::string &key, void *target)
 
     if (element)
     {
-        for (int i = 0; i < element->timers->num; ++i)
+        for (int index = 0; index < element->timers->num; index++)
         {
-            TimerTargetCallback *timer = dynamic_cast<TimerTargetCallback*>(element->timers->arr[i]);
+            TimerTargetCallback *timer = dynamic_cast<TimerTargetCallback*>(element->timers->arr[index]);
 
             if (timer && key == timer->getKey())
             {
@@ -239,10 +248,10 @@ void Scheduler::unschedule(const std::string &key, void *target)
                     timer->setAborted();
                 }
 
-                ccArrayRemoveObjectAtIndex(element->timers, i, true);
+                ccArrayRemoveObjectAtIndex(element->timers, index, true);
 
                 // update timerIndex in case we are in tick:, looping over the actions
-                if (element->timerIndex >= i)
+                if (element->timerIndex >= index)
                 {
                     element->timerIndex--;
                 }
@@ -300,11 +309,9 @@ void Scheduler::unscheduleUpdate(Node* target)
 {
     if (this->taskTable.find(target) != this->taskTable.end())
     {
-        auto& element = this->taskTable[target];
-
-        if (_updateHashLocked)
+        if (this->updateHashLocked)
         {
-            scheduledDeletionTable.push_back(target);
+            this->scheduledDeleteTable.insert(target);
         }
         else
         {
@@ -357,6 +364,7 @@ void Scheduler::resumeTarget(Node* target)
     // custom selectors
     ScheduledTask *element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
+
     if (element)
     {
         element->paused = false;
@@ -367,6 +375,11 @@ void Scheduler::resumeTarget(Node* target)
     {
         this->taskTable[target].paused = false;
     }
+
+    if (this->scheduledAddTable.find(target) != this->scheduledAddTable.end())
+    {
+        this->scheduledAddTable[target].paused = false;
+    }
 }
 
 void Scheduler::pauseTarget(Node* target)
@@ -374,8 +387,9 @@ void Scheduler::pauseTarget(Node* target)
     CCASSERT(target != nullptr, "target can't be nullptr!");
 
     // custom selectors
-    ScheduledTask *element = nullptr;
+    ScheduledTask* element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
+    
     if (element)
     {
         element->paused = true;
@@ -393,9 +407,10 @@ bool Scheduler::isTargetPaused(Node* target)
     CCASSERT( target != nullptr, "target must be non nil" );
 
     // Custom selectors
-    ScheduledTask *element = nullptr;
+    ScheduledTask* element = nullptr;
     HASH_FIND_PTR(_hashForTimers, &target, element);
-    if( element )
+
+    if(element)
     {
         return element->paused;
     }
@@ -424,65 +439,71 @@ void Scheduler::removeAllFunctionsToBePerformedInCocosThread()
 // main loop
 void Scheduler::update(float dt)
 {
-    _updateHashLocked = true;
+    this->updateHashLocked = true;
 
     for (const auto&[key, task] : this->taskTable)
     {
-        if (!task.paused)
+        if (!task.paused && this->scheduledDeleteTable.find(key) == this->scheduledDeleteTable.end())
         {
             task.callback(dt);
         }
     }
 
     // Iterate over all the custom selectors
-    for (ScheduledTask *elt = _hashForTimers; elt != nullptr; )
+    for (ScheduledTask* scheduledTask = this->_hashForTimers; scheduledTask != nullptr;)
     {
-        _currentTarget = elt;
-        _currentTargetSalvaged = false;
+        this->_currentTarget = scheduledTask;
+        this->_currentTargetSalvaged = false;
 
-        if (!_currentTarget->paused)
+        if (!this->_currentTarget->paused)
         {
             // The 'timers' array may change while inside this loop
-            for (elt->timerIndex = 0; elt->timerIndex < elt->timers->num; ++(elt->timerIndex))
+            for (scheduledTask->timerIndex = 0; scheduledTask->timerIndex < scheduledTask->timers->num; ++(scheduledTask->timerIndex))
             {
-                elt->currentTimer = (Timer*)(elt->timers->arr[elt->timerIndex]);
-                CCASSERT(!elt->currentTimer->isAborted(), "An aborted timer should not be updated");
+                scheduledTask->currentTimer = (Timer*)(scheduledTask->timers->arr[scheduledTask->timerIndex]);
+                CCASSERT(!scheduledTask->currentTimer->isAborted(), "An aborted timer should not be updated");
 
-                elt->currentTimer->update(dt);
+                scheduledTask->currentTimer->update(dt);
 
-                if (elt->currentTimer->isAborted())
+                if (scheduledTask->currentTimer->isAborted())
                 {
                     // The currentTimer told the remove itself. To prevent the timer from
                     // accidentally deallocating itself before finishing its step, we retained
                     // it. Now that step is done, it's safe to release it.
-                    elt->currentTimer->release();
+                    scheduledTask->currentTimer->release();
                 }
 
-                elt->currentTimer = nullptr;
+                scheduledTask->currentTimer = nullptr;
             }
         }
 
-        // elt, at this moment, is still valid
+        // scheduledTask, at this moment, is still valid
         // so it is safe to ask this here (issue #490)
-        elt = (ScheduledTask *)elt->hh.next;
+        scheduledTask = (ScheduledTask*)scheduledTask->hh.next;
 
         // only delete currentTarget if no actions were scheduled during the cycle (issue #481)
-        if (_currentTargetSalvaged && _currentTarget->timers->num == 0)
+        if (this->_currentTargetSalvaged && this->_currentTarget->timers->num == 0)
         {
-            removeHashElement(_currentTarget);
+            this->removeHashElement(_currentTarget);
         }
+    }
+
+    for (auto& target : this->scheduledAddTable)
+    {
+        this->taskTable[target.first] = target.second;
     }
  
     // delete all updates that are removed in update
-    for (auto& target : scheduledDeletionTable)
+    for (auto& target : this->scheduledDeleteTable)
     {
         this->taskTable.erase(target);
     }
 
-    scheduledDeletionTable.clear();
+    this->scheduledAddTable.clear();
+    this->scheduledDeleteTable.clear();
 
-    _updateHashLocked = false;
-    _currentTarget = nullptr;
+    this->updateHashLocked = false;
+    this->_currentTarget = nullptr;
 
     //
     // Functions allocated from another thread
@@ -490,12 +511,12 @@ void Scheduler::update(float dt)
 
     // Testing size is faster than locking / unlocking.
     // And almost never there will be functions scheduled to be called.
-    if(!_functionsToPerform.empty())
+    if(!this->_functionsToPerform.empty())
     {
-        _performMutex.lock();
+        this->_performMutex.lock();
         // fixed #4123: Save the callback functions, they must be invoked after '_performMutex.unlock()', otherwise if new functions are added in callback, it will cause thread deadlock.
         auto temp = std::move(_functionsToPerform);
-        _performMutex.unlock();
+        this->_performMutex.unlock();
         
         for (const auto &function : temp)
         {

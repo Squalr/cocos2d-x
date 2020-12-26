@@ -57,7 +57,6 @@ NS_CC_BEGIN
 
 // FIXME:: Yes, nodes might have a sort problem once every 30 days if the game runs at 60 FPS and each frame sprites are reordered.
 std::uint32_t Node::s_globalOrderOfArrival = 0;
-int Node::__attachedNodeCount = 0;
 
 // MARK: Constructor, Destructor, Init
 
@@ -92,7 +91,6 @@ Node::Node()
 , _realColor(Color3B::WHITE)
 , _cascadeColorEnabled(false)
 , _cascadeOpacityEnabled(true)
-, _cameraMask(1)
 , _anchorPoint(0, 0)
 {
     // set default scheduler and actionManager
@@ -945,11 +943,6 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
 
 void Node::onEnter()
 {
-	if (!_running)
-	{
-		++__attachedNodeCount;
-	}
-
 	_isTransitionFinished = false;
 
     sortAllChildren();
@@ -966,11 +959,6 @@ void Node::onEnter()
 
 void Node::onReenter()
 {
-	if (!_running)
-	{
-		++__attachedNodeCount;
-	}
-
 	// _isTransitionFinished = false;
 	_isTransitionFinished = true;
 
@@ -997,15 +985,7 @@ void Node::onExitTransitionDidStart()
 
 void Node::onExit()
 {
-    if (_running)
-    {
-        --__attachedNodeCount;
-    }
-
-    // Zac: Disabled this. Why pause on exit? Just dispose it. This causes dumb bugs.
-    // this->pause();
-    
-    _running = false;
+    this->_running = false;
     
     for(const auto &child: _children)
     {
@@ -1015,7 +995,7 @@ void Node::onExit()
 
 void Node::setActionManager(ActionManager* actionManager)
 {
-    if( actionManager != _actionManager )
+    if(actionManager != _actionManager)
     {
         this->stopAllActions();
         CC_SAFE_RETAIN(actionManager);
@@ -1025,8 +1005,7 @@ void Node::setActionManager(ActionManager* actionManager)
 }
 
 // MARK: actions
-
-Action * Node::runAction(Action* action)
+Action* Node::runAction(Action* action)
 {
     CCASSERT( action != nullptr, "Argument must be non-nil");
     _actionManager->addAction(action, this, !_running);
@@ -1035,12 +1014,18 @@ Action * Node::runAction(Action* action)
 
 void Node::stopAllActions()
 {
-    _actionManager->removeAllActionsFromTarget(this);
+    if (this->_actionManager != nullptr)
+    {
+        this->_actionManager->removeAllActionsFromTarget(this);
+    }
 }
 
 void Node::stopAction(Action* action)
 {
-    _actionManager->removeAction(action);
+    if (this->_actionManager != nullptr)
+    {
+        this->_actionManager->removeAction(action);
+    }
 }
 
 ssize_t Node::getNumberOfRunningActions() const
@@ -1052,7 +1037,7 @@ ssize_t Node::getNumberOfRunningActions() const
 
 void Node::setScheduler(Scheduler* scheduler)
 {
-    if( scheduler != _scheduler )
+    if(scheduler != _scheduler)
     {
         this->unscheduleAllCallbacks();
         CC_SAFE_RETAIN(scheduler);
@@ -1506,24 +1491,6 @@ bool isScreenPointInRect(const Vec2 &pt, const Camera* camera, const Mat4& w2l, 
         *p = P;
     }
     return rect.containsPoint(Vec2(P.x, P.y));
-}
-
-// MARK: Camera
-void Node::setCameraMask(unsigned short mask, bool applyChildren)
-{
-    _cameraMask = mask;
-    if (applyChildren)
-    {
-        for (const auto& child : _children)
-        {
-            child->setCameraMask(mask, applyChildren);
-        }
-    }
-}
-
-int Node::getAttachedNodeCount()
-{
-    return __attachedNodeCount;
 }
 
 // MARK: Deprecated

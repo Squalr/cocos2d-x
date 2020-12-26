@@ -269,15 +269,16 @@ protected:
     void removeHashElement(struct ScheduledTask *element);
 
     // Tasks that must be explicitly unscheduled
-    std::unordered_map<Node*, ScheduledUpdateTask> taskTable;  // hash used to fetch quickly the list entries for pause, delete, etc
-    std::vector<Node*> scheduledDeletionTable;      // the vector holds list entries that needs to be deleted after update
+    std::unordered_map<Node*, ScheduledUpdateTask> taskTable;           // hash used to fetch quickly the list entries for pause, delete, etc
+    std::set<Node*> scheduledDeleteTable;                               // the vector holds list entries that needs to be deleted after update
+    std::unordered_map<Node*, ScheduledUpdateTask> scheduledAddTable;   // the vector holds list entries that needs to be deleted after update
 
     // Used for "selectors with interval"
     struct ScheduledTask* _hashForTimers;
     struct ScheduledTask* _currentTarget;
     bool _currentTargetSalvaged;
     // If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
-    bool _updateHashLocked;
+    bool updateHashLocked;
     
     // Used for "perform Function"
     std::vector<std::function<void()>> _functionsToPerform;

@@ -1058,8 +1058,6 @@ void Label::createSpriteForSystemFont(const FontDefinition& fontDef)
     texture->initWithString(_utf8Text.c_str(), fontDef);
 
     _textSprite = Sprite::createWithTexture(texture);
-    //set camera mask using label's camera mask, because _textSprite may be null when setting camera mask to label
-    _textSprite->setCameraMask(getCameraMask());
     _textSprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     this->setContentSize(_textSprite->getContentSize());
     texture->release();
@@ -1103,27 +1101,13 @@ void Label::createShadowSpriteForSystemFont(const FontDefinition& fontDef)
         {
             _shadowNode->setBlendFunc(_blendFunc);
         }
-        _shadowNode->setCameraMask(getCameraMask());
+
         _shadowNode->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
         _shadowNode->setPosition(_shadowOffset.width, _shadowOffset.height);
 
         _shadowNode->retain();
         _shadowNode->updateDisplayedColor(_displayedColor);
         _shadowNode->updateDisplayedOpacity(_displayedOpacity);
-    }
-}
-
-void Label::setCameraMask(unsigned short mask, bool applyChildren)
-{
-    Node::setCameraMask(mask, applyChildren);
-    
-    if (_textSprite)
-    {
-        _textSprite->setCameraMask(mask, applyChildren);
-    }
-    if (_shadowNode)
-    {
-        _shadowNode->setCameraMask(mask, applyChildren);
     }
 }
 
