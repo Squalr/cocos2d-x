@@ -598,31 +598,14 @@ void Node::addChildHelper(Node* child, int localZOrder, const std::string &name,
 	{
 		return;
 	}
-
-    auto assertNotSelfChild
-        ( [ this, child ]() -> bool
-          {
-              for ( Node* parent( getParent() ); parent != nullptr;
-                    parent = parent->getParent() )
-                  if ( parent == child )
-                      return false;
-              
-              return true;
-          } );
-    (void)assertNotSelfChild;
-    
-    CCASSERT( assertNotSelfChild(),
-              "A node cannot be the child of his own children" );
     
     this->insertChild(child, localZOrder);
     
     child->setName(name);
-    
     child->setParent(this);
-
     child->updateOrderOfArrival();
 
-    if( _running)
+    if(this->_running)
     {
 		if (!isReentry)
 		{
