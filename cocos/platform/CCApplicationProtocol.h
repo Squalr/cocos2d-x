@@ -118,7 +118,7 @@ public:
      * @js NA
      * @lua NA
      */
-    virtual const char * getCurrentLanguageCode() = 0;
+    virtual const char* getCurrentLanguageCode() = 0;
     
     /**
      @brief Get target platform.

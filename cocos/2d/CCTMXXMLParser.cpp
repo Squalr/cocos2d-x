@@ -696,7 +696,8 @@ void TMXMapInfo::endElement(void* /*ctx*/, const char *name)
             
             std::string currentString = tmxMapInfo->getCurrentString();
             unsigned char *buffer;
-            auto len = base64Decode((unsigned char*)currentString.c_str(), (unsigned int)currentString.length(), &buffer);
+            base64Decode((unsigned char*)currentString.c_str(), (unsigned int)currentString.length(), &buffer);
+            
             if (!buffer)
             {
                 CCLOG("cocos2d: TiledMap: decode data error");

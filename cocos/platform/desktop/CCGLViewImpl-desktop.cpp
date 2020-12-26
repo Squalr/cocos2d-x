@@ -820,8 +820,6 @@ void GLViewImpl::onGLFWKeyCallback(GLFWwindow* /*window*/, int key, int /*scanco
     {
         bool isPressed = GLFW_PRESS == action;
 
-        InputEvents::KeyboardEventArgs event = InputEvents::KeyboardEventArgs(g_keyCodeMap[key]);
-
         if (isPressed)
         {
             InputEvents::TriggerKeyJustPressedInternal(InputEvents::KeyboardEventArgs(g_keyCodeMap[key]));

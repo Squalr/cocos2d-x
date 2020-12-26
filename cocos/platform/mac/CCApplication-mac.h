@@ -104,7 +104,7 @@ public:
     const std::string& getStartupScriptFilename(void);
     
 protected:
-    static Application * sm_pSharedApplication;
+    static Application* sm_pSharedApplication;
     
     long _animationInterval;  //micro second
     std::string _resourceRootPath;

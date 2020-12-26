@@ -33,7 +33,6 @@
 #include "base/CCConsole.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventController.h"
-#include "base/CCEventListenerController.h"
 #include "base/CCDirector.h"
 #include "base/ccMacros.h"
 
