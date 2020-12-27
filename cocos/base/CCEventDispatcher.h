@@ -103,7 +103,7 @@ private:
     std::unordered_map<std::string, std::set<EventListenerCustom*>> listenerMap;
 
     // Assisting data structures for adding/removing events without disrupting iterators
-    std::unordered_map<std::string, std::vector<EventListenerCustom*>> toRemove;
+    std::unordered_map<std::string, std::set<EventListenerCustom*>> toRemove;
     std::unordered_map<std::string, std::vector<EventListenerCustom*>> toAdd;
 };
 

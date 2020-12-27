@@ -38,7 +38,7 @@ NS_CC_BEGIN
 EventDispatcher::EventDispatcher()
 {
     this->listenerMap = std::unordered_map<std::string, std::set<EventListenerCustom*>>();
-    this->toRemove = std::unordered_map<std::string, std::vector<EventListenerCustom*>>();
+    this->toRemove = std::unordered_map<std::string, std::set<EventListenerCustom*>>();
     this->toAdd = std::unordered_map<std::string, std::vector<EventListenerCustom*>>();
     
     this->scheduleSlowClean();
@@ -77,6 +77,11 @@ void EventDispatcher::dispatchEvent(EventCustom* event)
     {
         for (const auto& listener : this->listenerMap[eventName])
         {
+            if (this->toRemove.find(eventName)  != this->toRemove.end() && this->toRemove[eventName].contains(listener))
+            {
+                break;
+            }
+
             if (event->isPropagationStopped())
             {
                 break;
@@ -99,7 +104,7 @@ void EventDispatcher::removeEventListener(EventListenerCustom* listener)
     
     const std::string& eventName = listener->getListenerID();
 
-    this->toRemove[eventName].push_back(listener);
+    this->toRemove[eventName].insert(listener);
 }
 
 void EventDispatcher::removeAllEventListeners()

@@ -90,6 +90,7 @@ Director::Director()
 : _isStatusLabelUpdated(true)
 , _invalid(true)
 , _deltaTimePassedByCaller(false)
+, _actionManager(nullptr)
 {
     const int MaxStackSize = 2048;
 
