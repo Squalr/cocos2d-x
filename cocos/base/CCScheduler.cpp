@@ -443,7 +443,7 @@ void Scheduler::update(float dt)
 
     for (const auto&[key, task] : this->taskTable)
     {
-        if (!task.paused && this->scheduledDeleteTable.find(key) == this->scheduledDeleteTable.end())
+        if (!task.paused && !this->scheduledDeleteTable.contains(key))
         {
             task.callback(dt);
         }

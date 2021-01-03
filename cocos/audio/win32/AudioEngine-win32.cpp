@@ -266,20 +266,26 @@ void AudioEngineImpl::_play2d(AudioCache *cache, int audioID)
     {
         _threadMutex.lock();
         auto playerIt = _audioPlayers.find(audioID);
-        if (playerIt != _audioPlayers.end() && playerIt->second->play2d()) {
-            _scheduler->performFunctionInCocosThread([audioID](){
 
-                if (AudioEngine::_audioIDInfoMap.find(audioID) != AudioEngine::_audioIDInfoMap.end()) {
+        if (playerIt != _audioPlayers.end() && playerIt->second->play2d())
+        {
+            _scheduler->performFunctionInCocosThread([audioID]()
+            {
+
+                if (AudioEngine::_audioIDInfoMap.find(audioID) != AudioEngine::_audioIDInfoMap.end())
+                {
                     AudioEngine::_audioIDInfoMap[audioID].state = AudioEngine::AudioState::PLAYING;
                 }
             });
         }
+        
         _threadMutex.unlock();
     }
     else
     {
         ALOGD("AudioEngineImpl::_play2d, cache was destroyed or not ready!");
         auto iter = _audioPlayers.find(audioID);
+        
         if (iter != _audioPlayers.end())
         {
             iter->second->_removeByAudioEngine = true;
