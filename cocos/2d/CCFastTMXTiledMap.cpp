@@ -243,21 +243,21 @@ TMXObjectGroup * TMXTiledMap::getObjectGroup(const std::string& groupName) const
 
 Value TMXTiledMap::getProperty(const std::string& propertyName) const
 {
-    if (_properties.contains(propertyName))
+    if (_properties.find(propertyName) != _properties.end())
     {
         return _properties.at(propertyName);
     }
-
+    
     return Value();
 }
 
 Value TMXTiledMap::getPropertiesForGID(int GID) const
 {
-    if (_tileProperties.contians(GID))
+    if (_tileProperties.find(GID) != _tileProperties.end())
     {
         return _tileProperties.at(GID);
     }
-
+    
     return Value();
 }
 
