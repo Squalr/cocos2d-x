@@ -1266,7 +1266,7 @@ GLubyte Node::getDisplayedOpacity() const
 
 void Node::setOpacity(GLubyte opacity)
 {
-    if (opacity == _displayedOpacity && opacity == _realOpacity)
+    if (opacity == _realOpacity)
     {
         return;
     }
