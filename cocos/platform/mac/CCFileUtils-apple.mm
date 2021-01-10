@@ -58,7 +58,7 @@ private:
 static id convertCCValueToNSObject(const cocos2d::Value &value);
 static cocos2d::Value convertNSObjectToCCValue(id object);
 
-static void addNSObjectToCCMap(id nsKey, id nsValue, ValueMap& dict);
+static void addNSObjectToValueMap(id nsKey, id nsValue, ValueMap& dict);
 static void addCCValueToNSDictionary(const std::string& key, const Value& value, NSMutableDictionary *dict);
 static void addNSObjectToCCVector(id item, ValueVector& array);
 static void addCCValueToNSArray(const Value& value, NSMutableArray *array);
@@ -160,7 +160,7 @@ static cocos2d::Value convertNSObjectToCCValue(id item)
         for (id subKey in [item allKeys])
         {
             id subValue = [item objectForKey:subKey];
-            addNSObjectToCCMap(subKey, subValue, dict);
+            addNSObjectToValueMap(subKey, subValue, dict);
         }
         
         return Value(dict);
@@ -190,7 +190,7 @@ static void addCCValueToNSArray(const Value& value, NSMutableArray *array)
     [array addObject:convertCCValueToNSObject(value)];
 }
 
-static void addNSObjectToCCMap(id nsKey, id nsValue, ValueMap& dict)
+static void addNSObjectToValueMap(id nsKey, id nsValue, ValueMap& dict)
 {
     // the key must be a string
     CCASSERT([nsKey isKindOfClass:[NSString class]], "The key should be a string!");
@@ -390,7 +390,7 @@ ValueMap FileUtilsApple::getValueMapFromData(const char* filedata, int filesize)
         for (id key in [dict allKeys])
         {
             id value = [dict objectForKey:key];
-            addNSObjectToCCMap(key, value, ret);
+            addNSObjectToValueMap(key, value, ret);
         }
     }
     return ret;
