@@ -929,12 +929,6 @@ void Director::reset()
     // cleanup scheduler
     getScheduler()->unscheduleAll();
     
-    // Remove all events
-    if (_eventDispatcher)
-    {
-        _eventDispatcher->removeAllEventListeners();
-    }
-    
     if(_notificationNode)
     {
         _notificationNode->onExit();
