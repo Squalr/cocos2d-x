@@ -26,9 +26,10 @@ THE SOFTWARE.
 #ifndef __CCGLPROGRAMSTATECACHE_H__
 #define __CCGLPROGRAMSTATECACHE_H__
 
+#include <map>
+
 #include "base/ccTypes.h"
 #include "base/CCVector.h"
-#include "base/CCMap.h"
 #include "math/Vec2.h"
 #include "math/Vec3.h"
 #include "math/Vec4.h"
@@ -67,7 +68,7 @@ protected:
     GLProgramStateCache();
     ~GLProgramStateCache();
     
-    Map<GLProgram*, GLProgramState*> _glProgramStates;
+    std::map<GLProgram*, GLProgramState*> _glProgramStates;
     static GLProgramStateCache* s_instance;
 };
 

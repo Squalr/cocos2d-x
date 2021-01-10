@@ -28,7 +28,6 @@ THE SOFTWARE.
 
 #include "2d/CCNode.h"
 #include "ui/UIWidget.h"
-#include "base/CCMap.h"
 
 /**
  * @addtogroup ui

@@ -34,7 +34,6 @@ set(COCOS_BASE_HEADER
     base/CCRefPtr.h
     base/CCDirector.h
     base/ccConfig.h
-    base/CCMap.h
     base/ccUTF8.h
     base/CCEventFocus.h
     base/CCConfiguration.h

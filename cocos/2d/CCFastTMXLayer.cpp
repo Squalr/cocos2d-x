@@ -141,7 +141,11 @@ TMXLayer::~TMXLayer()
     CC_SAFE_RELEASE(_vData);
     CC_SAFE_RELEASE(_vertexBuffer);
     CC_SAFE_RELEASE(_indexBuffer);
-    
+
+    for (const auto& [key, value]: _primitives)
+    {
+        CC_SAFE_RELEASE(value);
+    }
 }
 
 void TMXLayer::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)
@@ -451,14 +455,21 @@ void TMXLayer::updatePrimitives()
     {
         int start = _indicesVertexZOffsets.at(iter.first);
         
-        auto primitiveIter= _primitives.find(iter.first);
+        auto primitiveIter = _primitives.find(iter.first);
+
         if(primitiveIter == _primitives.end())
         {
-            auto primitive = Primitive::create(_vData, _indexBuffer, GL_TRIANGLES);
+            Primitive* primitive = Primitive::create(_vData, _indexBuffer, GL_TRIANGLES);
+
             primitive->setCount(iter.second * 6);
             primitive->setStart(start * 6);
+
+            if (_primitives.contains(iter.first))
+            {
+                _primitives[iter.first]->release();
+            }
             
-            _primitives.insert(iter.first, primitive);
+            _primitives[iter.first] = primitive;
         }
         else
         {
