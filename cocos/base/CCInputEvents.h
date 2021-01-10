@@ -45,6 +45,7 @@ public:
 	static const std::string EventMouseMove;
 	static const std::string EventMouseDown;
 	static const std::string EventMouseUp;
+	static const std::string EventMouseRequestRefresh;
 	static const std::string EventMouseRefresh;
 	static const std::string EventMouseScroll;
 	static const std::string EventMouseStateUpdate;
@@ -318,6 +319,7 @@ public:
 	static void TriggerMouseMove(MouseEventArgs args);
 	static void TriggerMouseDown(MouseEventArgs args);
 	static void TriggerMouseUp(MouseEventArgs args);
+	static void TriggerMouseRequestRefresh();
 	static void TriggerMouseRefresh(MouseEventArgs args);
 	static void TriggerMouseScroll(MouseEventArgs args);
 	static void TriggerStateChange(MouseEventArgs args);

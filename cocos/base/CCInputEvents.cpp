@@ -38,6 +38,7 @@ const std::string InputEvents::EventKeyJustPressedInternal = "EVENT_KEY_JUST_PRE
 const std::string InputEvents::EventKeyJustReleasedInternal = "EVENT_KEY_JUST_RELEASED_INTERNAL";
 
 const std::string InputEvents::EventMouseMove = "EVENT_MOUSE_MOVE";
+const std::string InputEvents::EventMouseRequestRefresh = "EVENT_MOUSE_REQUEST_REFRESH";
 const std::string InputEvents::EventMouseRefresh = "EVENT_MOUSE_REFRESH";
 const std::string InputEvents::EventMouseDown = "EVENT_MOUSE_DOWN";
 const std::string InputEvents::EventMouseUp = "EVENT_MOUSE_UP";
@@ -102,6 +103,13 @@ void InputEvents::TriggerMouseMove(MouseEventArgs args)
 	Director::getInstance()->getEventDispatcher()->dispatchEvent(
 		InputEvents::EventMouseMove,
 		&args
+	);
+}
+
+void InputEvents::TriggerMouseRequestRefresh()
+{
+	Director::getInstance()->getEventDispatcher()->dispatchEvent(
+		InputEvents::EventMouseRequestRefresh
 	);
 }
 

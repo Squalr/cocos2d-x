@@ -39,7 +39,6 @@ set(COCOS_BASE_HEADER
     base/CCConfiguration.h
     base/CCProtocols.h
     base/CCIMEDelegate.h
-    base/CCNS.h
     base/CCAutoreleasePool.h
     base/CCStencilStateManager.h
     base/ccCArray.h
@@ -65,7 +64,6 @@ set(COCOS_BASE_SRC
     base/CCEventListenerCustom.cpp
     base/CCInputEvents.cpp
     base/CCIMEDispatcher.cpp
-    base/CCNS.cpp
     base/CCProperties.cpp
     base/CCRef.cpp
     base/CCScheduler.cpp
