@@ -37,6 +37,7 @@ const std::string InputEvents::EventMouseScrollInternal = "EVENT_MOUSE_SCROLL_IN
 const std::string InputEvents::EventKeyJustPressedInternal = "EVENT_KEY_JUST_PRESSED_INTERNAL";
 const std::string InputEvents::EventKeyJustReleasedInternal = "EVENT_KEY_JUST_RELEASED_INTERNAL";
 
+const std::string InputEvents::EventMouseHitTest = "EVENT_MOUSE_HIT_TEST";
 const std::string InputEvents::EventMouseMove = "EVENT_MOUSE_MOVE";
 const std::string InputEvents::EventMouseRequestRefresh = "EVENT_MOUSE_REQUEST_REFRESH";
 const std::string InputEvents::EventMouseRefresh = "EVENT_MOUSE_REFRESH";
@@ -94,6 +95,14 @@ void InputEvents::TriggerKeyJustReleasedInternal(KeyboardEventArgs args)
 {
 	Director::getInstance()->getEventDispatcher()->dispatchEvent(
 		InputEvents::EventKeyJustReleasedInternal,
+		&args
+	);
+}
+
+void InputEvents::TriggerMouseHitTest(MouseHitTestArgs args)
+{
+	Director::getInstance()->getEventDispatcher()->dispatchEvent(
+		InputEvents::EventMouseHitTest,
 		&args
 	);
 }

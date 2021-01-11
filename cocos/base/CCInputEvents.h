@@ -32,6 +32,8 @@
 
 NS_CC_BEGIN
 
+class Node;
+
 class CC_DLL InputEvents
 {
 public:
@@ -42,6 +44,7 @@ public:
 	static const std::string EventKeyJustPressedInternal;
 	static const std::string EventKeyJustReleasedInternal;
 
+    static const std::string EventMouseHitTest;
 	static const std::string EventMouseMove;
 	static const std::string EventMouseDown;
 	static const std::string EventMouseUp;
@@ -307,6 +310,30 @@ public:
             bool handled;
     };
 
+    struct MouseHitTestArgs
+    {
+        Vec2 mouseCoords;
+        std::function<void(Node*)> onHit;
+        bool handleOnHit;
+        bool ignoreEnabled;
+
+        MouseHitTestArgs(Vec2 mouseCoords, std::function<void(Node*)> onHit, bool handleOnHit = true, bool ignoreEnabled = false)
+            : mouseCoords(mouseCoords), onHit(onHit), handleOnHit(handleOnHit), ignoreEnabled(ignoreEnabled), handled(false) { }
+
+        void handle()
+        {
+            this->handled = true;
+        }
+
+        bool isHandled()
+        {
+            return this->handled;
+        }
+
+        private:
+            bool handled;
+    };
+
     // These are called from within cocos and expected to be handled by user code
 	static void TriggerMouseMoveInternal(MouseEventArgs args);
 	static void TriggerMouseDownInternal(MouseEventArgs args);
@@ -316,6 +343,7 @@ public:
 	static void TriggerKeyJustReleasedInternal(KeyboardEventArgs args);
 
     // These are to be called from outside cocos
+	static void TriggerMouseHitTest(MouseHitTestArgs args);
 	static void TriggerMouseMove(MouseEventArgs args);
 	static void TriggerMouseDown(MouseEventArgs args);
 	static void TriggerMouseUp(MouseEventArgs args);
