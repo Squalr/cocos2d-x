@@ -330,7 +330,7 @@ public:
      * Changes the size that is widget's size
      * @param contentSize A content size in `Size`.
      */
-    virtual void setContentSize(const Size& contentSize) override;
+    virtual void setContentSize(const CSize& contentSize) override;
 
     /**
      * Changes the percent that is widget's percent size
@@ -359,14 +359,14 @@ public:
      * Get the user defined widget size.
      *@return User defined size.
      */
-    const Size& getCustomSize() const;
+    const CSize& getCustomSize() const;
     
     /**
      * Get the content size of widget.
      * @warning This API exists mainly for keeping back compatibility.
      * @return 
      */
-    virtual const Size& getLayoutSize() {return _contentSize;};
+    virtual const CSize& getLayoutSize() {return _contentSize;};
 
     /**
      * Get size percent of widget.
@@ -423,7 +423,7 @@ public:
      *  Get the virtual renderer's size
      *@return Widget virtual renderer size.
      */
-    virtual Size getVirtualRendererSize() const;
+    virtual CSize getVirtualRendererSize() const;
     
 
     /**
@@ -449,14 +449,14 @@ public:
 
     /**
      * Update all children's contents size and position recursively.
-     * @see `updateSizeAndPosition(const Size&)`
+     * @see `updateSizeAndPosition(const CSize&)`
      */
     void updateSizeAndPosition();
 
     /**
      * Update all children's contents size and position recursively.
      */
-    void updateSizeAndPosition(const Size& parentSize);
+    void updateSizeAndPosition(const CSize& parentSize);
     
     /**
      * Set the tag of action.
@@ -642,7 +642,7 @@ protected:
     virtual void copyClonedWidgetChildren(Widget* model);
     
     Widget* getWidgetParent();
-    void updateContentSizeWithTextureSize(const Size& size);
+    void updateContentSizeWithTextureSize(const CSize& size);
     
     bool isAncestorsEnabled();
     Widget* getAncestorWidget(Node* node);
@@ -667,7 +667,7 @@ protected:
     //used for search widget by action tag in UIHelper class
     int _actionTag;
 
-    Size _customSize;
+    CSize _customSize;
 
     Vec2 _sizePercent;
     Vec2 _positionPercent;

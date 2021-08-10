@@ -764,8 +764,6 @@ public:
  */
 inline Vec2 operator*(float x, const Vec2& v);
 
-typedef Vec2 Point;
-
 NS_CC_MATH_END
 
 /**

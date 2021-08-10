@@ -44,9 +44,9 @@ NS_CC_BEGIN
 // implementation RenderTexture
 RenderTexture::RenderTexture()
 : _keepMatrix(false)
-, _rtTextureRect(Rect::ZERO)
-, _fullRect(Rect::ZERO)
-, _fullviewPort(Rect::ZERO)
+, _rtTextureRect(CRect::ZERO)
+, _fullRect(CRect::ZERO)
+, _fullviewPort(CRect::ZERO)
 , _FBO(0)
 , _depthRenderBuffer(0)
 , _stencilRenderBuffer(0)
@@ -144,12 +144,12 @@ bool RenderTexture::initWithWidthAndHeight(int w, int h, Texture2D::PixelFormat 
     void *data = nullptr;
     do 
     {
-        _fullRect = _rtTextureRect = Rect(0,0,w,h);
+        _fullRect = _rtTextureRect = CRect(0,0,w,h);
         //Size size = Director::getInstance()->getWinSizeInPixels();
-        //_fullviewPort = Rect(0,0,size.width,size.height);
+        //_fullviewPort = CRect(0,0,size.width,size.height);
         w = (int)(w * CC_CONTENT_SCALE_FACTOR());
         h = (int)(h * CC_CONTENT_SCALE_FACTOR());
-        _fullviewPort = Rect(0,0,w,h);
+        _fullviewPort = CRect(0,0,w,h);
         
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_oldFBO);
 
@@ -178,7 +178,7 @@ bool RenderTexture::initWithWidthAndHeight(int w, int h, Texture2D::PixelFormat 
         _texture = new (std::nothrow) Texture2D();
         if (_texture)
         {
-            _texture->initWithData(data, dataLen, (Texture2D::PixelFormat)_pixelFormat, powW, powH, Size((float)w, (float)h));
+            _texture->initWithData(data, dataLen, (Texture2D::PixelFormat)_pixelFormat, powW, powH, CSize((float)w, (float)h));
         }
         else
         {
@@ -192,7 +192,7 @@ bool RenderTexture::initWithWidthAndHeight(int w, int h, Texture2D::PixelFormat 
             _textureCopy = new (std::nothrow) Texture2D();
             if (_textureCopy)
             {
-                _textureCopy->initWithData(data, dataLen, (Texture2D::PixelFormat)_pixelFormat, powW, powH, Size((float)w, (float)h));
+                _textureCopy->initWithData(data, dataLen, (Texture2D::PixelFormat)_pixelFormat, powW, powH, CSize((float)w, (float)h));
             }
             else
             {
@@ -275,7 +275,7 @@ void RenderTexture::setKeepMatrix(bool keepMatrix)
     _keepMatrix = keepMatrix;
 }
 
-void RenderTexture::setVirtualViewport(const Vec2& rtBegin, const Rect& fullRect, const Rect& fullViewport)
+void RenderTexture::setVirtualViewport(const Vec2& rtBegin, const CRect& fullRect, const CRect& fullViewport)
 {
     _rtTextureRect.origin.x = rtBegin.x;
     _rtTextureRect.origin.y = rtBegin.y;
@@ -384,7 +384,7 @@ Image* RenderTexture::newImage(bool flipImage)
         return nullptr;
     }
 
-    const Size& s = _texture->getContentSizeInPixels();
+    const CSize& s = _texture->getContentSizeInPixels();
 
     // to get the image size to save
     //        if the saving image domain exceeds the buffer texture domain,
@@ -465,10 +465,10 @@ void RenderTexture::onBegin()
     if(!_keepMatrix)
     {
         director->setProjection(director->getProjection());
-        const Size& texSize = _texture->getContentSizeInPixels();
+        const CSize& texSize = _texture->getContentSizeInPixels();
         
         // Calculate the adjustment ratios based on the old and new projections
-        Size size = director->getWinSizeInPixels();
+        CSize size = director->getWinSizeInPixels();
         float widthRatio = size.width / texSize.width;
         float heightRatio = size.height / texSize.height;
         
@@ -479,7 +479,7 @@ void RenderTexture::onBegin()
     
     //calculate viewport
     {
-        Rect viewport;
+        CRect viewport;
         viewport.size.width = _fullviewPort.size.width;
         viewport.size.height = _fullviewPort.size.height;
         float viewPortRectWidthRatio = float(viewport.size.width)/_fullRect.size.width;
@@ -627,10 +627,10 @@ void RenderTexture::begin()
     {
         director->setProjection(director->getProjection());
         
-        const Size& texSize = _texture->getContentSizeInPixels();
+        const CSize& texSize = _texture->getContentSizeInPixels();
         
         // Calculate the adjustment ratios based on the old and new projections
-        Size size = director->getWinSizeInPixels();
+        CSize size = director->getWinSizeInPixels();
         
         float widthRatio = size.width / texSize.width;
         float heightRatio = size.height / texSize.height;

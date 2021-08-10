@@ -98,7 +98,7 @@ bool RenderTarget::init(unsigned int width, unsigned int height, Texture2D::Pixe
     if( nullptr == data) return false;
     
     memset(data, 0, dataLen);
-    if(_texture->initWithData(data, dataLen, format, width, height, Size(width, height)))
+    if(_texture->initWithData(data, dataLen, format, width, height, CSize(width, height)))
     {
         _texture->autorelease();
         CC_SAFE_RETAIN(_texture);

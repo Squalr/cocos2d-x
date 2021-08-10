@@ -527,9 +527,9 @@ public:
      *
      * @return A delimitation zone.
      */
-    virtual Size getAutoRenderSize();
+    virtual CSize getAutoRenderSize();
     //override functions.
-    virtual Size getVirtualRendererSize() const override;
+    virtual CSize getVirtualRendererSize() const override;
     virtual Node* getVirtualRenderer() override;
     virtual void onEnter() override;
     
@@ -544,7 +544,7 @@ public:
      *
      * @param size A delimitation zone.
      */
-    void setTextAreaSize(const Size &size);
+    void setTextAreaSize(const CSize &size);
     
     /**
      * @brief Change horizontal text alignment.

@@ -75,7 +75,7 @@ Sprite* Sprite::createWithTexture(Texture2D *texture)
     return nullptr;
 }
 
-Sprite* Sprite::createWithTexture(Texture2D *texture, const Rect& rect, bool rotated)
+Sprite* Sprite::createWithTexture(Texture2D *texture, const CRect& rect, bool rotated)
 {
     Sprite *sprite = new (std::nothrow) Sprite();
     if (sprite)
@@ -117,7 +117,7 @@ Sprite* Sprite::create(const std::string& filename)
     return nullptr;
 }
 
-Sprite* Sprite::create(const std::string& filename, const Rect& rect)
+Sprite* Sprite::create(const std::string& filename, const CRect& rect)
 {
     Sprite *sprite = new (std::nothrow) Sprite();
     if (sprite)
@@ -161,7 +161,7 @@ Sprite* Sprite::create()
 
 bool Sprite::init()
 {
-    initWithTexture(nullptr, Rect::ZERO);
+    initWithTexture(nullptr, CRect::ZERO);
 
     return true;
 }
@@ -170,7 +170,7 @@ bool Sprite::initWithTexture(Texture2D *texture)
 {
     CCASSERT(texture != nullptr, "Invalid texture for sprite");
 
-    Rect rect = Rect::ZERO;
+    CRect rect = CRect::ZERO;
     if (texture) {
         rect.size = texture->getContentSize();
     }
@@ -178,7 +178,7 @@ bool Sprite::initWithTexture(Texture2D *texture)
     return initWithTexture(texture, rect, false);
 }
 
-bool Sprite::initWithTexture(Texture2D *texture, const Rect& rect)
+bool Sprite::initWithTexture(Texture2D *texture, const CRect& rect)
 {
     return initWithTexture(texture, rect, false);
 }
@@ -197,7 +197,7 @@ bool Sprite::initWithFile(const std::string& filename)
     Texture2D *texture = _director->getTextureCache()->addImage(filename);
     if (texture)
     {
-        Rect rect = Rect::ZERO;
+        CRect rect = CRect::ZERO;
         rect.size = texture->getContentSize();
         return initWithTexture(texture, rect);
     }
@@ -208,7 +208,7 @@ bool Sprite::initWithFile(const std::string& filename)
     return false;
 }
 
-bool Sprite::initWithFile(const std::string &filename, const Rect& rect)
+bool Sprite::initWithFile(const std::string &filename, const CRect& rect)
 {
     CCASSERT(!filename.empty(), "Invalid filename");
     if (filename.empty())
@@ -232,7 +232,7 @@ bool Sprite::initWithFile(const std::string &filename, const Rect& rect)
 }
 
 // designated initializer
-bool Sprite::initWithTexture(Texture2D *texture, const Rect& rect, bool rotated)
+bool Sprite::initWithTexture(Texture2D *texture, const CRect& rect, bool rotated)
 {
     bool result = false;
     if (Node::init())
@@ -290,7 +290,7 @@ Sprite::Sprite(void)
 , _trianglesVertex(nullptr)
 , _trianglesIndex(nullptr)
 , _stretchFactor(Vec2::ONE)
-, _originalContentSize(Size::ZERO)
+, _originalContentSize(CSize::ZERO)
 , _stretchEnabled(true)
 {
 }
@@ -332,7 +332,7 @@ void Sprite::setTexture(const std::string &filename)
     Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(filename);
     setTexture(texture);
     _unflippedOffsetPositionFromCenter = Vec2::ZERO;
-    Rect rect = Rect::ZERO;
+    CRect rect = CRect::ZERO;
     if (texture)
         rect.size = texture->getContentSize();
     setTextureRect(rect);
@@ -380,12 +380,12 @@ Texture2D* Sprite::getTexture() const
     return _texture;
 }
 
-void Sprite::setTextureRect(const Rect& rect)
+void Sprite::setTextureRect(const CRect& rect)
 {
     setTextureRect(rect, false, rect.size);
 }
 
-void Sprite::setTextureRect(const Rect& rect, bool rotated, const Size& untrimmedSize)
+void Sprite::setTextureRect(const CRect& rect, bool rotated, const CSize& untrimmedSize)
 {
     _rectRotated = rotated;
 
@@ -412,17 +412,17 @@ void Sprite::updatePoly()
     //    the sprite is 9-sliced and stretched.
     if (_renderMode == RenderMode::QUAD || _renderMode == RenderMode::QUAD_BATCHNODE)
     {
-        Rect copyRect;
+        CRect copyRect;
         if (_stretchEnabled)
         {
             // case B)
-            copyRect = Rect(0, 0, _rect.size.width * _stretchFactor.x, _rect.size.height * _stretchFactor.y);
+            copyRect = CRect(0, 0, _rect.size.width * _stretchFactor.x, _rect.size.height * _stretchFactor.y);
         }
         else
         {
             // case A)
             // modify origin to put the sprite in the correct offset
-            copyRect = Rect((_contentSize.width - _originalContentSize.width) / 2.0f,
+            copyRect = CRect((_contentSize.width - _originalContentSize.width) / 2.0f,
                             (_contentSize.height - _originalContentSize.height) / 2.0f,
                             _rect.size.width,
                             _rect.size.height);
@@ -439,17 +439,17 @@ void Sprite::updatePoly()
 }
 
 // override this method to generate "double scale" sprites
-void Sprite::setVertexRect(const Rect& rect)
+void Sprite::setVertexRect(const CRect& rect)
 {
     _rect = rect;
 }
 
-void Sprite::setTextureCoords(const Rect& rectInPoints)
+void Sprite::setTextureCoords(const CRect& rectInPoints)
 {
     setTextureCoords(rectInPoints, &_quad);
 }
 
-void Sprite::setTextureCoords(const Rect& rectInPoints, V3F_C4B_T2F_Quad* outQuad)
+void Sprite::setTextureCoords(const CRect& rectInPoints, V3F_C4B_T2F_Quad* outQuad)
 {
     Texture2D *tex = (_renderMode == RenderMode::QUAD_BATCHNODE) ? _textureAtlas->getTexture() : _texture;
     if (tex == nullptr)
@@ -525,7 +525,7 @@ void Sprite::setTextureCoords(const Rect& rectInPoints, V3F_C4B_T2F_Quad* outQua
     }
 }
 
-void Sprite::setVertexCoords(const Rect& rect, V3F_C4B_T2F_Quad* outQuad)
+void Sprite::setVertexCoords(const CRect& rect, V3F_C4B_T2F_Quad* outQuad)
 {
     float relativeOffsetX = _unflippedOffsetPositionFromCenter.x;
     float relativeOffsetY = _unflippedOffsetPositionFromCenter.y;
@@ -668,7 +668,7 @@ void Sprite::updateTransform(void)
             // calculate the Quad based on the Affine Matrix
             //
 
-            Size &size = _rect.size;
+            CSize &size = _rect.size;
 
             float x1 = _offsetPosition.x;
             float y1 = _offsetPosition.y;
@@ -951,7 +951,7 @@ void Sprite::setVisible(bool bVisible)
     SET_DIRTY_RECURSIVELY();
 }
 
-void Sprite::setContentSize(const Size& size)
+void Sprite::setContentSize(const CSize& size)
 {
     if (_renderMode == RenderMode::QUAD_BATCHNODE || _renderMode == RenderMode::POLYGON)
         CCLOGWARN("Sprite::setContentSize() doesn't stretch the sprite when using QUAD_BATCHNODE or POLYGON render modes");
@@ -964,7 +964,7 @@ void Sprite::setContentSize(const Size& size)
 
 void Sprite::updateStretchFactor()
 {
-    const Size size = getContentSize();
+    const CSize size = getContentSize();
 
     if (_renderMode == RenderMode::QUAD)
     {

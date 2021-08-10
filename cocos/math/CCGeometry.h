@@ -38,7 +38,7 @@ THE SOFTWARE.
 
 NS_CC_BEGIN
 
-class CC_DLL Size
+class CC_DLL CSize
 {
 public:
     /**Width of the Size.*/
@@ -61,42 +61,42 @@ public:
     @param other Copy constructor.
     @param point Conversion from a point.
      */
-    Size();
-    Size(float width, float height);
-    Size(const Size& other);
-    explicit Size(const Vec2& point);
+    CSize();
+    CSize(float width, float height);
+    CSize(const CSize& other);
+    explicit CSize(const Vec2& point);
     /**@}*/
 
     /**
      * @js NA
      * @lua NA
      */
-    Size& operator= (const Size& other);
+    CSize& operator= (const CSize& other);
     /**
      * @js NA
      * @lua NA
      */
-    Size& operator= (const Vec2& point);
+    CSize& operator= (const Vec2& CSize);
     /**
      * @js NA
      * @lua NA
      */
-    Size operator+(const Size& right) const;
+    CSize operator+(const CSize& right) const;
     /**
      * @js NA
      * @lua NA
      */
-    Size operator-(const Size& right) const;
+    CSize operator-(const CSize& right) const;
     /**
      * @js NA
      * @lua NA
      */
-    Size operator*(float a) const;
+    CSize operator*(float a) const;
     /**
      * @js NA
      * @lua NA
      */
-    Size operator/(float a) const;
+    CSize operator/(float a) const;
     /**
     Set the width and height of Size.
      * @js NA
@@ -107,47 +107,47 @@ public:
     Check if two size is the same.
      * @js NA
      */
-    bool equals(const Size& target) const;
+    bool equals(const CSize& target) const;
     /**Size(0,0).*/
-    static const Size ZERO;
+    static const CSize ZERO;
 };
 
 /**Rectangle area.*/
-class CC_DLL Rect
+class CC_DLL CRect
 {
 public:
     /**Low left point of rect.*/
     Vec2 origin;
     /**Width and height of the rect.*/
-    Size  size;
+    CSize  size;
 
 public:
     /**
     Constructor an empty Rect.
      * @js NA
      */
-    Rect();
+    CRect();
     /**
     Constructor a rect.
      * @js NA
      */
-    Rect(float x, float y, float width, float height);
+    CRect(float x, float y, float width, float height);
     /**
      Constructor a rect.
      * @js NA
      */
-    Rect(const Vec2& pos, const Size& dimension);
+    CRect(const Vec2& pos, const CSize& dimension);
     /**
     Copy constructor.
      * @js NA
      * @lua NA
      */
-    Rect(const Rect& other);
+    CRect(const CRect& other);
     /**
      * @js NA
      * @lua NA
      */
-    Rect& operator= (const Rect& other);
+    CRect& operator= (const CRect& other);
     /**
     Set the x, y, width and height of Rect.
      * @js NA
@@ -188,7 +188,7 @@ public:
     Compare two rects.
      * @js NA
      */
-    bool equals(const Rect& rect) const;
+    bool equals(const CRect& rect) const;
     /**
     Check if the points is contained in the rect.
      * @js NA
@@ -198,7 +198,7 @@ public:
     Check the intersect status of two rects.
      * @js NA
      */
-    bool intersectsRect(const Rect& rect) const;
+    bool intersectsRect(const CRect& rect) const;
     /**
     Check the intersect status of the rect and a circle.
      * @js NA
@@ -209,11 +209,11 @@ public:
      * @js NA
      * @lua NA
      */
-    Rect unionWithRect(const Rect & rect) const;
+    CRect unionWithRect(const CRect & rect) const;
     /**Compute the min rect which can contain this and rect, assign it to this.*/
-    void merge(const Rect& rect);
+    void merge(const CRect& rect);
     /**An empty Rect.*/
-    static const Rect ZERO;
+    static const CRect ZERO;
 };
 
 NS_CC_END

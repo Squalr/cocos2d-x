@@ -978,7 +978,7 @@ void DrawNode::updateBoundsToPoint(const Vec2& point)
     this->_highestPoint.x = std::max(this->_highestPoint.x, point.x);
     this->_highestPoint.y = std::max(this->_highestPoint.y, point.y);
 
-    this->setContentSize(Size(_highestPoint - _lowestPoint));
+    this->setContentSize(CSize(_highestPoint - _lowestPoint));
 }
 
 NS_CC_END

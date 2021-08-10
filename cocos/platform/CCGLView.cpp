@@ -129,44 +129,44 @@ void GLView::setDesignResolutionSize(float width, float height, ResolutionPolicy
     updateDesignResolutionSize();
  }
 
-const Size& GLView::getDesignResolutionSize() const 
+const CSize& GLView::getDesignResolutionSize() const 
 {
     return _designResolutionSize;
 }
 
-Size GLView::getFrameSize() const
+CSize GLView::getFrameSize() const
 {
     return _screenSize;
 }
 
 void GLView::setFrameSize(float width, float height)
 {
-    _screenSize = Size(width, height);
+    _screenSize = CSize(width, height);
 
     // Github issue #16003 and #16485
     // only update the designResolution if it wasn't previously set
-    if (_designResolutionSize.equals(Size::ZERO))
+    if (_designResolutionSize.equals(CSize::ZERO))
         _designResolutionSize = _screenSize;
 }
 
-Rect GLView::getVisibleRect() const
+CRect GLView::getVisibleRect() const
 {
-    Rect ret;
+    CRect ret;
     ret.size = getVisibleSize();
     ret.origin = getVisibleOrigin();
     return ret;
 }
 
-Rect GLView::getSafeAreaRect() const
+CRect GLView::getSafeAreaRect() const
 {
     return getVisibleRect();
 }
 
-Size GLView::getVisibleSize() const
+CSize GLView::getVisibleSize() const
 {
     if (_resolutionPolicy == ResolutionPolicy::NO_BORDER)
     {
-        return Size(_screenSize.width/_scaleX, _screenSize.height/_scaleY);
+        return CSize(_screenSize.width/_scaleX, _screenSize.height/_scaleY);
     }
     else 
     {
@@ -209,7 +209,7 @@ bool GLView::isScissorEnabled()
     return (GL_FALSE == glIsEnabled(GL_SCISSOR_TEST)) ? false : true;
 }
 
-Rect GLView::getScissorRect() const
+CRect GLView::getScissorRect() const
 {
     GLfloat params[4];
     glGetFloatv(GL_SCISSOR_BOX, params);
@@ -217,7 +217,7 @@ Rect GLView::getScissorRect() const
     float y = (params[1] - _viewPortRect.origin.y) / _scaleY;
     float w = params[2] / _scaleX;
     float h = params[3] / _scaleY;
-    return Rect(x, y, w, h);
+    return CRect(x, y, w, h);
 }
 
 void GLView::setViewName(const std::string& viewname )
@@ -230,7 +230,7 @@ const std::string& GLView::getViewName() const
     return _viewName;
 }
 
-const Rect& GLView::getViewPortRect() const
+const CRect& GLView::getViewPortRect() const
 {
     return _viewPortRect;
 }

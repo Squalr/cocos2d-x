@@ -455,16 +455,16 @@ GLuint Texture2D::getAlphaTextureName() const
     return _alphaTexture == nullptr ? 0 : _alphaTexture->getName();
 }
 
-Size Texture2D::getContentSize() const
+CSize Texture2D::getContentSize() const
 {
-    Size ret;
+    CSize ret;
     ret.width = _contentSize.width / CC_CONTENT_SCALE_FACTOR();
     ret.height = _contentSize.height / CC_CONTENT_SCALE_FACTOR();
     
     return ret;
 }
 
-const Size& Texture2D::getContentSizeInPixels()
+const CSize& Texture2D::getContentSizeInPixels()
 {
     return _contentSize;
 }
@@ -506,7 +506,7 @@ bool Texture2D::hasPremultipliedAlpha() const
     return _hasPremultipliedAlpha;
 }
 
-bool Texture2D::initWithData(const void *data, ssize_t dataLen, Texture2D::PixelFormat pixelFormat, int pixelsWide, int pixelsHigh, const Size& /*contentSize*/)
+bool Texture2D::initWithData(const void *data, ssize_t dataLen, Texture2D::PixelFormat pixelFormat, int pixelsWide, int pixelsHigh, const CSize& /*contentSize*/)
 {
     CCASSERT(dataLen>0 && pixelsWide>0 && pixelsHigh>0, "Invalid size");
 
@@ -631,7 +631,7 @@ bool Texture2D::initWithMipmaps(MipmapInfo* mipmaps, int mipmapsNum, PixelFormat
         height = MAX(height >> 1, 1);
     }
 
-    _contentSize = Size((float)pixelsWide, (float)pixelsHigh);
+    _contentSize = CSize((float)pixelsWide, (float)pixelsHigh);
     _pixelsWide = pixelsWide;
     _pixelsHigh = pixelsHigh;
     _pixelFormat = pixelFormat;
@@ -691,7 +691,7 @@ bool Texture2D::initWithImage(Image *image, PixelFormat format)
     }
 
     unsigned char*   tempData = image->getData();
-    Size             imageSize = Size((float)imageWidth, (float)imageHeight);
+    CSize             imageSize = CSize((float)imageWidth, (float)imageHeight);
     PixelFormat      pixelFormat = ((PixelFormat::NONE == format) || (PixelFormat::AUTO == format)) ? image->getRenderFormat() : format;
     PixelFormat      renderFormat = image->getRenderFormat();
     size_t           tempDataLen = image->getDataLen();
@@ -1006,7 +1006,7 @@ Texture2D::PixelFormat Texture2D::convertDataToFormat(const unsigned char* data,
 }
 
 // implementation Texture2D (Text)
-bool Texture2D::initWithString(const char *text, const std::string& fontName, float fontSize, const Size& dimensions/* = Size(0, 0)*/, TextHAlignment hAlignment/* =  TextHAlignment::CENTER */, TextVAlignment vAlignment/* =  TextVAlignment::TOP */, bool enableWrap /* = false */, int overflow /* = 0 */)
+bool Texture2D::initWithString(const char *text, const std::string& fontName, float fontSize, const CSize& dimensions/* = CSize(0, 0)*/, TextHAlignment hAlignment/* =  TextHAlignment::CENTER */, TextVAlignment vAlignment/* =  TextVAlignment::TOP */, bool enableWrap /* = false */, int overflow /* = 0 */)
 {
     FontDefinition tempDef;
     
@@ -1080,7 +1080,7 @@ bool Texture2D::initWithString(const char *text, const FontDefinition& textDefin
         return false;
     }
 
-    Size  imageSize = Size((float)imageWidth, (float)imageHeight);
+    CSize  imageSize = CSize((float)imageWidth, (float)imageHeight);
     pixelFormat = convertDataToFormat(outData.getBytes(), imageWidth*imageHeight*4, PixelFormat::RGBA8888, pixelFormat, &outTempData, &outTempDataLen);
 
     ret = initWithData(outTempData, outTempDataLen, pixelFormat, imageWidth, imageHeight, imageSize);
@@ -1127,7 +1127,7 @@ void Texture2D::drawAtPoint(const Vec2& point)
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-void Texture2D::drawInRect(const Rect& rect)
+void Texture2D::drawInRect(const CRect& rect)
 {
     GLfloat    coordinates[] = {    
         0.0f,    _maxT,

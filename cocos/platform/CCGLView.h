@@ -160,7 +160,7 @@ public:
      *
      * @return The frame size of EGL view.
      */
-    virtual Size getFrameSize() const;
+    virtual CSize getFrameSize() const;
 
     /**
      * Set the frame size of EGL view.
@@ -214,7 +214,7 @@ public:
      *
      * @return The visible area size of opengl viewport.
      */
-    virtual Size getVisibleSize() const;
+    virtual CSize getVisibleSize() const;
 
     /**
      * Get the visible origin point of opengl viewport.
@@ -228,12 +228,12 @@ public:
      *
      * @return The visible rectangle of opengl viewport.
      */
-    virtual Rect getVisibleRect() const;
+    virtual CRect getVisibleRect() const;
 
     /**
      * Gets safe area rectangle
      */
-    virtual Rect getSafeAreaRect() const;
+    virtual CRect getSafeAreaRect() const;
 
     /**
      * Set the design resolution size.
@@ -251,7 +251,7 @@ public:
      *
      * @return The design resolution size.
      */
-    virtual const Size&  getDesignResolutionSize() const;
+    virtual const CSize&  getDesignResolutionSize() const;
 
     /**
      * Set opengl view port rectangle with points.
@@ -285,7 +285,7 @@ public:
      *
      * @return The current scissor rectangle.
      */
-    virtual Rect getScissorRect() const;
+    virtual CRect getScissorRect() const;
 
     /** Set the view name. 
      *
@@ -304,7 +304,7 @@ public:
      *
      * @return Return the opengl view port rectangle.
      */
-    const Rect& getViewPortRect() const;
+    const CRect& getViewPortRect() const;
 
     /**
      * Get scale factor of the horizontal direction.
@@ -344,11 +344,11 @@ protected:
     void updateDesignResolutionSize();
 
     // real screen size
-    Size _screenSize;
+    CSize _screenSize;
     // resolution size, it is the size appropriate for the app resources.
-    Size _designResolutionSize;
+    CSize _designResolutionSize;
     // the view port size
-    Rect _viewPortRect;
+    CRect _viewPortRect;
     // the view name
     std::string _viewName;
 

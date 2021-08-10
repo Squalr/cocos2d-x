@@ -162,25 +162,25 @@ public:
      *
      * @return Size of the layer in tiles.
      */
-    const Size& getLayerSize() const { return _layerSize; }
+    const CSize& getLayerSize() const { return _layerSize; }
     
     /** Set the size of the layer in tiles. 
      *
      * @param size The new size of the layer in tiles.
      */
-    void setLayerSize(const Size& size) { _layerSize = size; }
+    void setLayerSize(const CSize& size) { _layerSize = size; }
     
     /** Size of the map's tile (could be different from the tile's size).
      *
      * @return Size of the map's tile (could be different from the tile's size).
      */
-    const Size& getMapTileSize() const { return _mapTileSize; }
+    const CSize& getMapTileSize() const { return _mapTileSize; }
     
     /** Set the size of the map's tile. 
      *
      * @param size The new size of the map's tile.
      */
-    void setMapTileSize(const Size& size) { _mapTileSize = size; }
+    void setMapTileSize(const CSize& size) { _mapTileSize = size; }
     
     /** Pointer to the map of tiles.
      * @js NA
@@ -274,14 +274,14 @@ public:
 protected:
 
     bool initWithTilesetInfo(TMXTilesetInfo *tilesetInfo, TMXLayerInfo *layerInfo, TMXMapInfo *mapInfo);
-    void updateTiles(const Rect& culledRect);
+    void updateTiles(const CRect& culledRect);
     Vec2 calculateLayerOffset(const Vec2& offset);
 
     /* The layer recognizes some special properties, like cc_vertexz */
     void parseInternalProperties();
     
     Mat4 tileToNodeTransform();
-    Rect tileBoundsForClipTransform(const Mat4 &tileToClip);
+    CRect tileBoundsForClipTransform(const Mat4 &tileToClip);
     
     int getVertexZForPos(const Vec2& pos);
     
@@ -303,9 +303,9 @@ protected:
     std::string _layerName;
 
     /** size of the layer in tiles */
-    Size _layerSize;
+    CSize _layerSize;
     /** size of the map's tile (could be different from the tile's size) */
-    Size _mapTileSize;
+    CSize _mapTileSize;
     /** pointer to the map of tiles */
     uint32_t* _tiles;
     /** Tileset information for the layer */
@@ -322,8 +322,8 @@ protected:
 
     //GLuint _buffersVBO; //0: vertex, 1: indices
 
-    Size _screenGridSize;
-    Rect _screenGridRect;
+    CSize _screenGridSize;
+    CRect _screenGridRect;
     int _screenTileCount;
     
     int _vertexZvalue;

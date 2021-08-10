@@ -50,7 +50,7 @@ typedef struct _DataRef
 
 static std::unordered_map<std::string, DataRef> s_cacheFontData;
 
-FontFreeType * FontFreeType::create(const std::string &fontName, float fontSize, GlyphCollection glyphs, const char *customGlyphs,bool distanceFieldEnabled /* = false */,float outline /* = 0 */)
+FontFreeType * FontFreeType::create(const std::string &fontName, float fontSize, CGlyphCollection glyphs, const char *customGlyphs,bool distanceFieldEnabled /* = false */,float outline /* = 0 */)
 {
     FontFreeType *tempFont =  new (std::nothrow) FontFreeType(distanceFieldEnabled,outline);
 
@@ -106,7 +106,7 @@ FontFreeType::FontFreeType(bool distanceFieldEnabled /* = false */, float outlin
 , _lineHeight(0)
 , _fontAtlas(nullptr)
 , _encoding(FT_ENCODING_UNICODE)
-, _usedGlyphs(GlyphCollection::ASCII)
+, _usedGlyphs(CGlyphCollection::ASCII)
 {
     if (outline > 0.0f)
     {
@@ -213,7 +213,7 @@ FontAtlas * FontFreeType::createFontAtlas()
     if (_fontAtlas == nullptr)
     {
         _fontAtlas = new (std::nothrow) FontAtlas(*this);
-        if (_fontAtlas && _usedGlyphs != GlyphCollection::DYNAMIC)
+        if (_fontAtlas && _usedGlyphs != CGlyphCollection::DYNAMIC)
         {
             std::u32string utf32;
             if (StringUtils::UTF8ToUTF32(getGlyphCollection(), utf32))
@@ -289,7 +289,7 @@ const char* FontFreeType::getFontFamily() const
     return _fontRef->family_name;
 }
 
-unsigned char* FontFreeType::getGlyphBitmap(uint64_t theChar, long &outWidth, long &outHeight, Rect &outRect,int &xAdvance)
+unsigned char* FontFreeType::getGlyphBitmap(uint64_t theChar, long &outWidth, long &outHeight, CRect &outRect,int &xAdvance)
 {
     bool invalidChar = true;
     unsigned char* ret = nullptr;
@@ -621,10 +621,10 @@ void FontFreeType::renderCharAt(unsigned char *dest,int posX, int posY, unsigned
     } 
 }
 
-void FontFreeType::setGlyphCollection(GlyphCollection glyphs, const char* customGlyphs /* = nullptr */)
+void FontFreeType::setGlyphCollection(CGlyphCollection glyphs, const char* customGlyphs /* = nullptr */)
 {
     _usedGlyphs = glyphs;
-    if (glyphs == GlyphCollection::CUSTOM)
+    if (glyphs == CGlyphCollection::CUSTOM)
     {
         _customGlyphs = customGlyphs;
     }
@@ -635,15 +635,15 @@ const char* FontFreeType::getGlyphCollection() const
     const char* glyphCollection = nullptr;
     switch (_usedGlyphs)
     {
-    case cocos2d::GlyphCollection::DYNAMIC:
+    case cocos2d::CGlyphCollection::DYNAMIC:
         break;
-    case cocos2d::GlyphCollection::NEHE:
+    case cocos2d::CGlyphCollection::NEHE:
         glyphCollection = _glyphNEHE;
         break;
-    case cocos2d::GlyphCollection::ASCII:
+    case cocos2d::CGlyphCollection::ASCII:
         glyphCollection = _glyphASCII;
         break;
-    case cocos2d::GlyphCollection::CUSTOM:
+    case cocos2d::CGlyphCollection::CUSTOM:
         glyphCollection = _customGlyphs.c_str();
         break;
     default:

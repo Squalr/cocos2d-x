@@ -186,12 +186,12 @@ Follow::~Follow()
     CC_SAFE_RELEASE(_followedNode);
 }
 
-Follow* Follow::create(Node *followedNode, const Rect& rect/* = Rect::ZERO*/)
+Follow* Follow::create(Node *followedNode, const CRect& rect/* = CRect::ZERO*/)
 {
     return createWithOffset(followedNode, 0.0, 0.0,rect);
 }
 
-Follow* Follow::createWithOffset(Node* followedNode,float xOffset,float yOffset,const Rect& rect/*= Rect::ZERO*/){
+Follow* Follow::createWithOffset(Node* followedNode,float xOffset,float yOffset,const CRect& rect/*= CRect::ZERO*/){
     
     
     Follow *follow = new (std::nothrow) Follow();
@@ -223,7 +223,7 @@ Follow* Follow::reverse() const
     return clone();
 }
 
-bool Follow::initWithTargetAndOffset(Node *followedNode, float xOffset,float yOffset,const Rect& rect)
+bool Follow::initWithTargetAndOffset(Node *followedNode, float xOffset,float yOffset,const CRect& rect)
 {
     CCASSERT(followedNode != nullptr, "FollowedNode can't be NULL");
     if(followedNode == nullptr)
@@ -235,10 +235,10 @@ bool Follow::initWithTargetAndOffset(Node *followedNode, float xOffset,float yOf
     followedNode->retain();
     _followedNode = followedNode;
     _worldRect = rect;
-    _boundarySet = !rect.equals(Rect::ZERO);
+    _boundarySet = !rect.equals(CRect::ZERO);
     _boundaryFullyCovered = false;
 
-    Size winSize = Director::getInstance()->getWinSize();
+    CSize winSize = Director::getInstance()->getWinSize();
     _fullScreenSize.set(winSize.width, winSize.height);
     _halfScreenSize = _fullScreenSize * 0.5f;
     _offsetX=xOffset;
@@ -275,7 +275,7 @@ bool Follow::initWithTargetAndOffset(Node *followedNode, float xOffset,float yOf
     return true;
 }
 
-bool Follow::initWithTarget(Node *followedNode, const Rect& rect /*= Rect::ZERO*/){
+bool Follow::initWithTarget(Node *followedNode, const CRect& rect /*= CRect::ZERO*/){
     
     return initWithTargetAndOffset(followedNode, 0.0, 0.0,rect);
     

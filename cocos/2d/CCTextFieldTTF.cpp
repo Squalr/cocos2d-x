@@ -109,7 +109,7 @@ TextFieldTTF::~TextFieldTTF()
 // static constructor
 //////////////////////////////////////////////////////////////////////////
 
-TextFieldTTF * TextFieldTTF::textFieldWithPlaceHolder(const std::string& placeholder, const Size& dimensions, TextHAlignment alignment, const std::string& fontName, float fontSize)
+TextFieldTTF * TextFieldTTF::textFieldWithPlaceHolder(const std::string& placeholder, const CSize& dimensions, TextHAlignment alignment, const std::string& fontName, float fontSize)
 {
     TextFieldTTF *ret = new (std::nothrow) TextFieldTTF();
     if(ret && ret->initWithPlaceHolder("", dimensions, alignment, fontName, fontSize))
@@ -145,7 +145,7 @@ TextFieldTTF * TextFieldTTF::textFieldWithPlaceHolder(const std::string& placeho
 // initialize
 //////////////////////////////////////////////////////////////////////////
 
-bool TextFieldTTF::initWithPlaceHolder(const std::string& placeholder, const Size& dimensions, TextHAlignment alignment, const std::string& fontName, float fontSize)
+bool TextFieldTTF::initWithPlaceHolder(const std::string& placeholder, const CSize& dimensions, TextHAlignment alignment, const std::string& fontName, float fontSize)
 {
     setDimensions(dimensions.width, dimensions.height);
     setAlignment(alignment, TextVAlignment::CENTER);
@@ -161,7 +161,7 @@ bool TextFieldTTF::initWithPlaceHolder(const std::string& placeholder, const std
         // If fontName is ttf file and it corrected, use TTFConfig
         if (FileUtils::getInstance()->isFileExist(fontName))
         {
-            TTFConfig ttfConfig(fontName, fontSize, GlyphCollection::DYNAMIC);
+            TTFConfig ttfConfig(fontName, fontSize, CGlyphCollection::DYNAMIC);
             if (setTTFConfig(ttfConfig))
             {
                 break;
@@ -377,7 +377,7 @@ void TextFieldTTF::setCursorFromPoint(const Vec2 &point, const Camera* camera)
         _isAttachWithIME = false;
         updateCursorDisplayText();
 
-        Rect rect;
+        CRect rect;
         rect.size = getContentSize();
         if (isScreenPointInRect(point, camera, getWorldToNodeTransform(), rect, nullptr))
         {

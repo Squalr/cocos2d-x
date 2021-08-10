@@ -59,7 +59,7 @@ public:
         _letterVisible = true;
     }
 
-    static LabelLetter* createWithTexture(Texture2D *texture, const Rect& rect, bool rotated = false)
+    static LabelLetter* createWithTexture(Texture2D *texture, const CRect& rect, bool rotated = false)
     {
         auto letter = new (std::nothrow) LabelLetter();
         if (letter && letter->initWithTexture(texture, rect, rotated))
@@ -79,7 +79,7 @@ public:
         if (isDirty())
         {
             _transformToBatch = getNodeToParentTransform();
-            Size &size = _rect.size;
+            CSize& size = _rect.size;
 
             float x1 = _offsetPosition.x;
             float y1 = _offsetPosition.y;
@@ -179,7 +179,7 @@ Label* Label::create()
     return ret;
 }
 
-Label* Label::createWithSystemFont(const std::string& text, const std::string& font, float fontSize, const Size& dimensions /* = Size::ZERO */, TextHAlignment hAlignment /* = TextHAlignment::LEFT */, TextVAlignment vAlignment /* = TextVAlignment::TOP */)
+Label* Label::createWithSystemFont(const std::string& text, const std::string& font, float fontSize, const CSize& dimensions /* = CSize::ZERO */, TextHAlignment hAlignment /* = TextHAlignment::LEFT */, TextVAlignment vAlignment /* = TextVAlignment::TOP */)
 {
     auto ret = new (std::nothrow) Label(hAlignment,vAlignment);
 
@@ -198,7 +198,7 @@ Label* Label::createWithSystemFont(const std::string& text, const std::string& f
     return nullptr;
 }
 
-Label* Label::createWithTTF(const std::string& text, const std::string& fontFile, float fontSize, const Size& dimensions /* = Size::ZERO */, TextHAlignment hAlignment /* = TextHAlignment::LEFT */, TextVAlignment vAlignment /* = TextVAlignment::TOP */)
+Label* Label::createWithTTF(const std::string& text, const std::string& fontFile, float fontSize, const CSize& dimensions /* = CSize::ZERO */, TextHAlignment hAlignment /* = TextHAlignment::LEFT */, TextVAlignment vAlignment /* = TextVAlignment::TOP */)
 {
     auto ret = new (std::nothrow) Label(hAlignment,vAlignment);
 
@@ -228,12 +228,12 @@ Label* Label::createWithTTF(const TTFConfig& ttfConfig, const std::string& text,
 
 bool Label::initWithTTF(const std::string& text,
                         const std::string& fontFilePath, float fontSize,
-                        const Size& dimensions,
+                        const CSize& dimensions,
                         TextHAlignment /*hAlignment*/, TextVAlignment /*vAlignment*/)
 {
     if (FileUtils::getInstance()->isFileExist(fontFilePath))
     {
-        TTFConfig ttfConfig(fontFilePath, fontSize, GlyphCollection::DYNAMIC);
+        TTFConfig ttfConfig(fontFilePath, fontSize, CGlyphCollection::DYNAMIC);
         if (setTTFConfig(ttfConfig))
         {
             setDimensions(dimensions.width, dimensions.height);
@@ -558,7 +558,7 @@ void Label::updateLabelLetters()
 {
     if (!_letters.empty())
     {
-        Rect uvRect;
+        CRect uvRect;
         LabelLetter* letterSprite;
         int letterIndex;
 
@@ -610,7 +610,7 @@ bool Label::alignText()
 {
     if (_fontAtlas == nullptr || _utf32Text.empty())
     {
-        setContentSize(Size::ZERO);
+        setContentSize(CSize::ZERO);
         return true;
     }
 
@@ -895,7 +895,7 @@ void Label::enableOutline(const Color4B& outlineColor,int outlineSize /* = -1 */
 }
 
 void Label::enableShadow(const Color4B& shadowColor /* = Color4B::BLACK */,
-                         const Size &offset /* = Size(2 ,-2)*/,
+                         const CSize &offset /* = CSize(2 ,-2)*/,
                          int /* blurRadius = 0 */)
 {
     _shadowEnabled = true;
@@ -948,7 +948,7 @@ void Label::enableBold()
     if (!_boldEnabled)
     {
         // bold is implemented with outline
-        enableShadow(Color4B::WHITE, Size(0.9f, 0), 0);
+        enableShadow(Color4B::WHITE, CSize(0.9f, 0), 0);
         // add one to kerning
         setAdditionalKerning(_additionalKerning+1);
         _boldEnabled = true;
@@ -1448,7 +1448,7 @@ Sprite* Label::getLetter(int letterIndex, bool applyCursorOffset)
     {
         const auto& letterDef = _fontAtlas->_letterDefinitions[letterInfo.utf32Char];
         auto textureID = letterDef.textureID;
-        Rect uvRect;
+        CRect uvRect;
         uvRect.size.height = letterDef.height;
         uvRect.size.width = letterDef.width;
         uvRect.origin.x = letterDef.U;
@@ -1518,7 +1518,7 @@ Sprite* Label::getLetter(int letterIndex, bool applyCursorOffset)
             {
                 const auto &letterInfoSeek = _lettersInfo[seekIndex];
                 const auto& letterDefSeek = _fontAtlas->_letterDefinitions[letterInfoSeek.utf32Char];
-                Rect uvRectSeek;
+                CRect uvRectSeek;
                 uvRectSeek.size.height = letterDefSeek.height;
                 uvRectSeek.size.width = letterDefSeek.width;
                 uvRectSeek.origin.x = letterDefSeek.U;
@@ -1780,7 +1780,7 @@ std::string Label::getDescription() const
     return ret;
 }
 
-const Size& Label::getContentSize() const
+const CSize& Label::getContentSize() const
 {
     if (_systemFontDirty || _contentDirty)
     {
@@ -1789,7 +1789,7 @@ const Size& Label::getContentSize() const
     return _contentSize;
 }
 
-Rect Label::getBoundingBox() const
+CRect Label::getBoundingBox() const
 {
     const_cast<Label*>(this)->getContentSize();
 
@@ -2165,7 +2165,7 @@ bool Label::multilineTextWrap(const std::function<int(const std::u32string&, int
     _textDesiredHeight = (_numberOfLines * _lineHeight) / contentScaleFactor;
     if (_numberOfLines > 1)
         _textDesiredHeight += (_numberOfLines - 1) * _lineSpacing;
-    Size contentSize(_labelWidth, _labelHeight);
+    CSize contentSize(_labelWidth, _labelHeight);
     if (_labelWidth <= 0.f)
         contentSize.width = longestLine;
     if (_labelHeight <= 0.f)

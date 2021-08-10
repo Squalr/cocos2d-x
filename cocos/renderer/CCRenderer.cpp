@@ -648,7 +648,7 @@ void Renderer::flush()
 }
 
 // helpers
-bool Renderer::checkVisibility(const Mat4 &transform, const Size &size)
+bool Renderer::checkVisibility(const Mat4 &transform, const CSize &size)
 {
     auto director = Director::getInstance();
     auto scene = director->getRunningScene();
@@ -658,7 +658,7 @@ bool Renderer::checkVisibility(const Mat4 &transform, const Size &size)
     if (!scene || (scene && scene->_defaultCamera != Camera::getVisitingCamera()))
         return true;
 
-    Rect visibleRect(director->getVisibleOrigin(), director->getVisibleSize());
+    CRect visibleRect(director->getVisibleOrigin(), director->getVisibleSize());
     
     // transform center point to screen space
     float hSizeX = size.width/2;

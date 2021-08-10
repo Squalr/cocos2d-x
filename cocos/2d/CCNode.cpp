@@ -69,7 +69,7 @@ Node::Node()
 , _usingNormalizedPosition(false)
 , _normalizedPositionDirty(false)
 , _selfFlags(FLAGS_DIRTY_MASK)
-, _contentSize(Size::ZERO)
+, _contentSize(CSize::ZERO)
 , _transformDirty(true)
 , _inverseDirty(true)
 // children (lazy allocs)
@@ -456,12 +456,12 @@ void Node::setAnchorPoint(const Vec2& point)
 }
 
 /// contentSize getter
-const Size& Node::getContentSize() const
+const CSize& Node::getContentSize() const
 {
     return _contentSize;
 }
 
-void Node::setContentSize(const Size & size)
+void Node::setContentSize(const CSize & size)
 {
     if (! size.equals(_contentSize))
     {
@@ -565,15 +565,15 @@ Scene* Node::getScene() const
     return dynamic_cast<Scene*>(sceneNode);
 }
 
-Rect Node::getBoundingBox() const
+CRect Node::getBoundingBox() const
 {
-	Rect rect(0, 0, _contentSize.width, _contentSize.height);
+	CRect rect(0, 0, _contentSize.width, _contentSize.height);
 	return RectApplyAffineTransform(rect, getNodeToParentAffineTransform());
 }
 
-Rect Node::getBoundingBoxNoTransform() const
+CRect Node::getBoundingBoxNoTransform() const
 {
-	return Rect(0, 0, _contentSize.width, _contentSize.height);
+	return CRect(0, 0, _contentSize.width, _contentSize.height);
 }
 
 // MARK: Children logic
@@ -1420,7 +1420,7 @@ void Node::disableCascadeColor()
     }
 }
 
-bool isScreenPointInRect(const Vec2 &pt, const Camera* camera, const Mat4& w2l, const Rect& rect, Vec3 *p)
+bool isScreenPointInRect(const Vec2 &pt, const Camera* camera, const Mat4& w2l, const CRect& rect, Vec3 *p)
 {
     if (nullptr == camera || rect.size.width <= 0 || rect.size.height <= 0)
     {

@@ -238,7 +238,7 @@ GLViewImpl* GLViewImpl::create(const std::string& viewName, bool resizable)
 {
     auto ret = new (std::nothrow) GLViewImpl;
     
-    if(ret && ret->initWithRect(viewName, Rect(0, 0, 960, 640), 1.0f, resizable))
+    if(ret && ret->initWithRect(viewName, CRect(0, 0, 960, 640), 1.0f, resizable))
     {
         ret->autorelease();
         return ret;
@@ -248,7 +248,7 @@ GLViewImpl* GLViewImpl::create(const std::string& viewName, bool resizable)
     return nullptr;
 }
 
-GLViewImpl* GLViewImpl::createWithRect(const std::string& viewName, Rect rect, float frameZoomFactor, bool resizable)
+GLViewImpl* GLViewImpl::createWithRect(const std::string& viewName, CRect rect, float frameZoomFactor, bool resizable)
 {
     auto ret = new (std::nothrow) GLViewImpl;
 
@@ -290,7 +290,7 @@ GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName, const 
     return nullptr;
 }
 
-bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor, bool resizable)
+bool GLViewImpl::initWithRect(const std::string& viewName, CRect rect, float frameZoomFactor, bool resizable)
 {
     setViewName(viewName);
 
@@ -405,7 +405,7 @@ bool GLViewImpl::initWithFullScreen(const std::string& viewName)
     }
 
     const GLFWvidmode* videoMode = glfwGetVideoMode(_monitor);
-    return initWithRect(viewName, Rect(0, 0, videoMode->width, videoMode->height), 1.0f, false);
+    return initWithRect(viewName, CRect(0, 0, videoMode->width, videoMode->height), 1.0f, false);
 }
 
 bool GLViewImpl::initWithFullscreen(const std::string &viewname, const GLFWvidmode &videoMode, GLFWmonitor *monitor)
@@ -424,7 +424,7 @@ bool GLViewImpl::initWithFullscreen(const std::string &viewname, const GLFWvidmo
     glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits);
     glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits);
     
-    return initWithRect(viewname, Rect(0, 0, videoMode.width, videoMode.height), 1.0f, false);
+    return initWithRect(viewname, CRect(0, 0, videoMode.width, videoMode.height), 1.0f, false);
 }
 
 bool GLViewImpl::isOpenGLReady()
@@ -582,7 +582,7 @@ int GLViewImpl::getMonitorCount() const {
     return count;
 }
 
-Size GLViewImpl::getMonitorSize() const {
+CSize GLViewImpl::getMonitorSize() const {
     GLFWmonitor* monitor = _monitor;
     if (nullptr == monitor) {
         GLFWwindow* window = this->getWindow();
@@ -593,10 +593,10 @@ Size GLViewImpl::getMonitorSize() const {
     }
     if (nullptr != monitor) {
         const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
-        Size size = Size(videoMode->width, videoMode->height);
+        CSize size = CSize(videoMode->width, videoMode->height);
         return size;
     }
-    return Size::ZERO;
+    return CSize::ZERO;
 }
 
 void GLViewImpl::updateFrameSize()
@@ -659,7 +659,7 @@ void GLViewImpl::setScissorInPoints(float x , float y , float w , float h)
                (GLsizei)(h * _scaleY * _retinaFactor * _frameZoomFactor));
 }
 
-Rect GLViewImpl::getScissorRect() const
+CRect GLViewImpl::getScissorRect() const
 {
     GLfloat params[4];
     glGetFloatv(GL_SCISSOR_BOX, params);
@@ -668,7 +668,7 @@ Rect GLViewImpl::getScissorRect() const
     float w = params[2] / (_scaleX * _retinaFactor * _frameZoomFactor);
     float h = params[3] / (_scaleY * _retinaFactor  * _frameZoomFactor);
 
-    return Rect(x, y, w, h);
+    return CRect(x, y, w, h);
 }
 
 void GLViewImpl::onGLFWError(int errorID, const char* errorDesc)
@@ -927,7 +927,7 @@ void GLViewImpl::onGLFWWindowSizeFunCallback(GLFWwindow* /*window*/, int width, 
 {
     if (width && height && _resolutionPolicy != ResolutionPolicy::UNKNOWN)
     {
-        Size baseDesignSize = _designResolutionSize;
+        CSize baseDesignSize = _designResolutionSize;
         ResolutionPolicy baseResolutionPolicy = _resolutionPolicy;
 
         int frameWidth = width / _frameZoomFactor;

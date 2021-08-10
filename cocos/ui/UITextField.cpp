@@ -353,7 +353,7 @@ bool TextField::hitTest(const Vec2 &pt, const Camera* camera, Vec3* /*p*/) const
 
     auto size = getContentSize();
     auto anch = getAnchorPoint();
-    Rect rect((size.width - _touchWidth) * anch.x, (size.height - _touchHeight) * anch.y, _touchWidth, _touchHeight);
+    CRect rect((size.width - _touchWidth) * anch.x, (size.height - _touchHeight) * anch.y, _touchWidth, _touchHeight);
     return isScreenPointInRect(pt, camera, getWorldToNodeTransform(), rect, nullptr);
 }
 
@@ -705,9 +705,9 @@ void TextField::textfieldRendererScaleChangedWithSize()
     _textFieldRenderer->setPosition(_contentSize.width / 2.0f, _contentSize.height / 2.0f);
 }
 
-Size TextField::getAutoRenderSize()
+CSize TextField::getAutoRenderSize()
 {
-    Size virtualSize = _textFieldRenderer->getContentSize();
+    CSize virtualSize = _textFieldRenderer->getContentSize();
     if (!_ignoreSize)
     {
         _textFieldRenderer->setDimensions(0, 0);
@@ -718,7 +718,7 @@ Size TextField::getAutoRenderSize()
     return virtualSize;
 }
 
-Size TextField::getVirtualRendererSize() const
+CSize TextField::getVirtualRendererSize() const
 {
     return _textFieldRenderer->getContentSize();
 }
@@ -767,7 +767,7 @@ void TextField::copySpecialProperties(Widget *widget)
     }
 }
     
-void TextField::setTextAreaSize(const Size &size)
+void TextField::setTextAreaSize(const CSize &size)
 {
     this->setContentSize(size);
 }

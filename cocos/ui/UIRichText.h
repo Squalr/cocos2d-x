@@ -146,7 +146,7 @@ public:
     bool init(int tag, const Color3B& color, GLubyte opacity, const std::string& text,
               const std::string& fontName, float fontSize, uint32_t flags, const std::string& url,
               const Color3B& outlineColor = Color3B::WHITE, int outlineSize = -1,
-              const Color3B& shadowColor = Color3B::BLACK, const cocos2d::Size& shadowOffset = Size(2.0, -2.0), int shadowBlurRadius = 0,
+              const Color3B& shadowColor = Color3B::BLACK, const cocos2d::CSize& shadowOffset = CSize(2.0, -2.0), int shadowBlurRadius = 0,
               const Color3B& glowColor = Color3B::WHITE);
     
     /**
@@ -171,7 +171,7 @@ public:
     static RichElementText* create(int tag, const Color3B& color, GLubyte opacity, const std::string& text,
                                    const std::string& fontName, float fontSize, uint32_t flags=0, const std::string& url="",
                                    const Color3B& outlineColor = Color3B::WHITE, int outlineSize = -1,
-                                   const Color3B& shadowColor = Color3B::BLACK, const cocos2d::Size& shadowOffset = Size(2.0, -2.0), int shadowBlurRadius = 0,
+                                   const Color3B& shadowColor = Color3B::BLACK, const cocos2d::CSize& shadowOffset = CSize(2.0, -2.0), int shadowBlurRadius = 0,
                                    const Color3B& glowColor = Color3B::WHITE);
 
                                    
@@ -186,7 +186,7 @@ protected:
     Color3B _outlineColor;                  /*!< the color of the outline */
     int _outlineSize;                       /*!< the outline effect size value */
     Color3B _shadowColor;                   /*!< the shadow effect color value */
-    cocos2d::Size _shadowOffset;            /*!< shadow effect offset value */
+    cocos2d::CSize _shadowOffset;            /*!< shadow effect offset value */
     int _shadowBlurRadius;                  /*!< the shadow effect blur radius */
     Color3B _glowColor;                     /*!< attributes of glow tag */
     int _newlineCount;
@@ -249,7 +249,7 @@ public:
     void setUrl(const std::string& url);
 protected:
     std::string _filePath;
-    Rect _textureRect;
+    CRect _textureRect;
     Widget::TextureResType _textureType;
     friend class RichText;
     int _width;
@@ -514,10 +514,10 @@ public:
     Color3B getAnchorTextOutlineColor3B();              /*!< return the current text outline color of a-tag */
     int getAnchorTextOutlineSize();                     /*!< return the current text outline size of a-tag */
     /** @brief enable the shadow of a-tag */
-    void setAnchorTextShadow(bool enable, const Color3B& shadowColor = Color3B::BLACK, const Size& offset = Size(2.0, -2.0), int blurRadius = 0);
+    void setAnchorTextShadow(bool enable, const Color3B& shadowColor = Color3B::BLACK, const CSize& offset = CSize(2.0, -2.0), int blurRadius = 0);
     bool isAnchorTextShadowEnabled();                   /*!< valid shadow of a-tag? */
     Color3B getAnchorTextShadowColor3B();               /*!< return the current text shadow color of a-tag */
-    Size getAnchorTextShadowOffset();                   /*!< return the current text shadow offset of a-tag */
+    CSize getAnchorTextShadowOffset();                  /*!< return the current text shadow offset of a-tag */
     int getAnchorTextShadowBlurRadius();                /*!< return the current text shadow blur radius of a-tag */
     void setAnchorTextGlow(bool enable, const Color3B& glowColor = Color3B::WHITE); /*!< enable the glow of a-tag */
     bool isAnchorTextGlowEnabled();                     /*!< valid glow of a-tag? */
@@ -564,7 +564,7 @@ protected:
     void handleTextRenderer(RichElementText* elmtText, const std::string& text, const std::string& fontName, float fontSize, const Color3B& color,
                             GLubyte opacity, uint32_t flags, const std::string& url = "",
                             const Color3B& outlineColor = Color3B::WHITE, int outlineSize = -1,
-                            const Color3B& shadowColor = Color3B::BLACK, const cocos2d::Size& shadowOffset = Size(2.0, -2.0), int shadowBlurRadius = 0,
+                            const Color3B& shadowColor = Color3B::BLACK, const cocos2d::CSize& shadowOffset = CSize(2.0, -2.0), int shadowBlurRadius = 0,
                             const Color3B& glowColor = Color3B::WHITE);
     void handleImageRenderer(const std::string& filePath, const Color3B& color, GLubyte opacity, int width, int height, const std::string& url);
     void handleCustomRenderer(Node* renderer);

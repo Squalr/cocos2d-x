@@ -101,7 +101,7 @@ void FontAtlas::reinit()
     
     auto  pixelFormat = outlineSize > 0 ? Texture2D::PixelFormat::AI88 : Texture2D::PixelFormat::A8;
     texture->initWithData(_currentPageData, _currentPageDataSize,
-                          pixelFormat, CacheTextureWidth, CacheTextureHeight, Size(CacheTextureWidth,CacheTextureHeight) );
+                          pixelFormat, CacheTextureWidth, CacheTextureHeight, CSize(CacheTextureWidth,CacheTextureHeight) );
     
     addTexture(texture,0);
     texture->release();
@@ -339,7 +339,7 @@ bool FontAtlas::prepareLetterDefinitions(const std::u32string& utf32Text)
     long bitmapWidth;
     long bitmapHeight;
     int glyphHeight;
-    Rect tempRect;
+    CRect tempRect;
     FontLetterDefinition tempDef;
 
     auto scaleFactor = CC_CONTENT_SCALE_FACTOR();
@@ -392,7 +392,7 @@ bool FontAtlas::prepareLetterDefinitions(const std::u32string& utf32Text)
                         tex->setAliasTexParameters();
                     }
                     tex->initWithData(_currentPageData, _currentPageDataSize,
-                        pixelFormat, CacheTextureWidth, CacheTextureHeight, Size(CacheTextureWidth, CacheTextureHeight));
+                        pixelFormat, CacheTextureWidth, CacheTextureHeight, CSize(CacheTextureWidth, CacheTextureHeight));
                     addTexture(tex, _currentPage);
                     tex->release();
                 }

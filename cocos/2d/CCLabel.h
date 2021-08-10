@@ -43,14 +43,14 @@ NS_CC_BEGIN
 
 /**
  * @struct TTFConfig
- * @see `GlyphCollection`
+ * @see `CGlyphCollection`
  */
 typedef struct _ttfConfig
 {
     std::string fontFilePath;
     float fontSize;
 
-    GlyphCollection glyphs;
+    CGlyphCollection glyphs;
     const char *customGlyphs;
 
     bool distanceFieldEnabled;
@@ -61,7 +61,7 @@ typedef struct _ttfConfig
     bool underline;
     bool strikethrough;
 
-    _ttfConfig(const std::string& filePath = "",float size = 12, const GlyphCollection& glyphCollection = GlyphCollection::DYNAMIC,
+    _ttfConfig(const std::string& filePath = "",float size = 12, const CGlyphCollection& glyphCollection = CGlyphCollection::DYNAMIC,
         const char *customGlyphCollection = nullptr, bool useDistanceField = false, int outline = 0,
                bool useItalics = false, bool useBold = false, bool useUnderline = false, bool useStrikethrough = false)
         : fontFilePath(filePath)
@@ -155,7 +155,7 @@ public:
      * @return An automatically released Label object.
      */
     static Label* createWithSystemFont(const std::string& text, const std::string& font, float fontSize,
-        const Size& dimensions = Size::ZERO, TextHAlignment hAlignment = TextHAlignment::LEFT,
+        const CSize& dimensions = CSize::ZERO, TextHAlignment hAlignment = TextHAlignment::LEFT,
         TextVAlignment vAlignment = TextVAlignment::TOP);
 
     /**
@@ -171,7 +171,7 @@ public:
     * @return An automatically released Label object.
     */
     static Label * createWithTTF(const std::string& text, const std::string& fontFilePath, float fontSize,
-        const Size& dimensions = Size::ZERO, TextHAlignment hAlignment = TextHAlignment::LEFT,
+        const CSize& dimensions = CSize::ZERO, TextHAlignment hAlignment = TextHAlignment::LEFT,
         TextVAlignment vAlignment = TextVAlignment::TOP);
 
     /**
@@ -269,7 +269,7 @@ public:
      *
      * @todo Support blur for shadow effect.
      */
-    virtual void enableShadow(const Color4B& shadowColor = Color4B::BLACK,const Size &offset = Size(2,-2), int blurRadius = 0);
+    virtual void enableShadow(const Color4B& shadowColor = Color4B::BLACK,const CSize &offset = CSize(2,-2), int blurRadius = 0);
 
     /**
      * Enable outline effect to Label.
@@ -325,7 +325,7 @@ public:
     /**
     * Return shadow effect offset value.
     */
-    Size getShadowOffset() const { return _shadowOffset; }
+    CSize getShadowOffset() const { return _shadowOffset; }
 
     /**
     * Return the shadow effect blur radius.
@@ -435,7 +435,7 @@ public:
 
     /** Sets the untransformed size of the Label in a more efficient way. */
     void setDimensions(float width, float height);
-    const Size& getDimensions() const{ return _labelDimensions;}
+    const CSize& getDimensions() const{ return _labelDimensions;}
 
     /** Update content immediately.*/
     virtual void updateContent();
@@ -495,8 +495,8 @@ public:
 
     virtual std::string getDescription() const override;
 
-    virtual const Size& getContentSize() const override;
-    virtual Rect getBoundingBox() const override;
+    virtual const CSize& getContentSize() const override;
+    virtual CRect getBoundingBox() const override;
 
     virtual void visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags) override;
     virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
@@ -520,7 +520,7 @@ public:
     virtual ~Label();
 
     bool initWithTTF(const std::string& text, const std::string& fontFilePath, float fontSize,
-                     const Size& dimensions = Size::ZERO, TextHAlignment hAlignment = TextHAlignment::LEFT,
+                     const CSize& dimensions = CSize::ZERO, TextHAlignment hAlignment = TextHAlignment::LEFT,
                      TextVAlignment vAlignment = TextVAlignment::TOP);
 
     bool initWithTTF(const TTFConfig& ttfConfig, const std::string& text,
@@ -608,7 +608,7 @@ protected:
 
     //! used for optimization
     Sprite *_reusedLetter;
-    Rect _reusedRect;
+    CRect _reusedRect;
     int _lengthOfString;
 
     //layout relevant properties.
@@ -618,7 +618,7 @@ protected:
     int* _horizontalKernings;
     bool _lineBreakWithoutSpaces;
     float _maxLineWidth;
-    Size _labelDimensions;
+    CSize _labelDimensions;
     float _labelWidth;
     float _labelHeight;
     TextHAlignment _hAlignment;
@@ -647,7 +647,7 @@ protected:
 
     bool _shadowDirty;
     bool _shadowEnabled;
-    Size _shadowOffset;
+    CSize _shadowOffset;
     
     Color4F _shadowColor4F;
     Color3B _shadowColor3B;

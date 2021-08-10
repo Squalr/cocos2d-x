@@ -84,7 +84,7 @@ namespace utils
      * Calculate unionof bounding box of a node and its children.
      * @return Returns unionof bounding box of a node and its children.
      */
-    CC_DLL Rect getCascadeBoundingBox(Node *node);
+    CC_DLL CRect getCascadeBoundingBox(Node *node);
 
     /**
      * Create a sprite instance from base64 encoded image and adds the texture to the Texture Cache.

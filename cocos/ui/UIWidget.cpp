@@ -121,7 +121,7 @@ _brightStyle(BrightStyle::NONE),
 _sizeType(SizeType::ABSOLUTE),
 _positionType(PositionType::ABSOLUTE),
 _actionTag(0),
-_customSize(Size::ZERO),
+_customSize(CSize::ZERO),
 _hitted(false),
 _hittedByCamera(nullptr),
 _flippedX(false),
@@ -238,9 +238,9 @@ void Widget::initRenderer()
 {
 }
 
-void Widget::setContentSize(const cocos2d::Size &contentSize)
+void Widget::setContentSize(const cocos2d::CSize &contentSize)
 {
-    Size previousSize = Node::getContentSize();
+    CSize previousSize = Node::getContentSize();
     if(previousSize.equals(contentSize))
     {
         return;
@@ -259,7 +259,7 @@ void Widget::setContentSize(const cocos2d::Size &contentSize)
     if (_running)
     {
         Widget* widgetParent = getWidgetParent();
-        Size pSize;
+        CSize pSize;
         if (widgetParent)
         {
             pSize = widgetParent->getContentSize();
@@ -286,17 +286,17 @@ void Widget::setContentSize(const cocos2d::Size &contentSize)
 void Widget::setSizePercent(const Vec2 &percent)
 {
     _sizePercent = percent;
-    Size cSize = _customSize;
+    CSize cSize = _customSize;
     if (_running)
     {
         Widget* widgetParent = getWidgetParent();
         if (widgetParent)
         {
-            cSize = Size(widgetParent->getContentSize().width * percent.x, widgetParent->getContentSize().height * percent.y);
+            cSize = CSize(widgetParent->getContentSize().width * percent.x, widgetParent->getContentSize().height * percent.y);
         }
         else
         {
-            cSize = Size(_parent->getContentSize().width * percent.x, _parent->getContentSize().height * percent.y);
+            cSize = CSize(_parent->getContentSize().width * percent.x, _parent->getContentSize().height * percent.y);
         }
     }
     if (_ignoreSize)
@@ -312,12 +312,12 @@ void Widget::setSizePercent(const Vec2 &percent)
 
 void Widget::updateSizeAndPosition()
 {
-    Size pSize = _parent->getContentSize();
+    CSize pSize = _parent->getContentSize();
 
     updateSizeAndPosition(pSize);
 }
 
-void Widget::updateSizeAndPosition(const cocos2d::Size &parentSize)
+void Widget::updateSizeAndPosition(const cocos2d::CSize &parentSize)
 {
     switch (_sizeType)
     {
@@ -346,7 +346,7 @@ void Widget::updateSizeAndPosition(const cocos2d::Size &parentSize)
         }
         case SizeType::PERCENT:
         {
-            Size cSize = Size(parentSize.width * _sizePercent.x , parentSize.height * _sizePercent.y);
+            CSize cSize = CSize(parentSize.width * _sizePercent.x , parentSize.height * _sizePercent.y);
             if (_ignoreSize)
             {
                 this->setContentSize(getVirtualRendererSize());
@@ -412,7 +412,7 @@ void Widget::ignoreContentAdaptWithSize(bool ignore)
     _ignoreSize = ignore;
     if (_ignoreSize)
     {
-        Size s = getVirtualRendererSize();
+        CSize s = getVirtualRendererSize();
         this->setContentSize(s);
     }
     else
@@ -426,7 +426,7 @@ bool Widget::isIgnoreContentAdaptWithSize() const
     return _ignoreSize;
 }
 
-const Size& Widget::getCustomSize() const
+const CSize& Widget::getCustomSize() const
 {
     return _customSize;
 }
@@ -458,12 +458,12 @@ void Widget::onSizeChanged()
     }
 }
 
-Size Widget::getVirtualRendererSize() const
+CSize Widget::getVirtualRendererSize() const
 {
     return _contentSize;
 }
 
-void Widget::updateContentSizeWithTextureSize(const cocos2d::Size &size)
+void Widget::updateContentSizeWithTextureSize(const cocos2d::CSize &size)
 {
     if (_unifySize)
     {
@@ -664,7 +664,7 @@ void Widget::addCCSEventListener(const ccWidgetEventCallback &callback)
 
 bool Widget::hitTest(const Vec2 &pt, const Camera* camera, Vec3 *p) const
 {
-    Rect rect;
+    CRect rect;
     rect.size = getContentSize();
     return isScreenPointInRect(pt, camera, getWorldToNodeTransform(), rect, p);
 }
@@ -710,7 +710,7 @@ void Widget::setPosition(const Vec2 &pos)
         Widget* widgetParent = getWidgetParent();
         if (widgetParent)
         {
-            Size pSize = widgetParent->getContentSize();
+            CSize pSize = widgetParent->getContentSize();
             if (pSize.width <= 0.0f || pSize.height <= 0.0f)
             {
                 _positionPercent.setZero();
@@ -732,7 +732,7 @@ void Widget::setPositionPercent(const Vec2 &percent)
         Widget* widgetParent = getWidgetParent();
         if (widgetParent)
         {
-            Size parentSize = widgetParent->getContentSize();
+            CSize parentSize = widgetParent->getContentSize();
             Vec2 absPos(parentSize.width * _positionPercent.x, parentSize.height * _positionPercent.y);
             setPosition(absPos);
         }

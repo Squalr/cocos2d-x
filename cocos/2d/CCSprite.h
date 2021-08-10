@@ -39,10 +39,10 @@ THE SOFTWARE.
 
 NS_CC_BEGIN
 
-class SpriteBatchNode;
 class Animation;
-class Rect;
-class Size;
+class CSize;
+class CRect;
+class SpriteBatchNode;
 class Texture2D;
 struct transformValues_;
 
@@ -129,7 +129,7 @@ public:
      * @param   rect     A subrect of the image file.
      * @return  An autoreleased sprite object.
      */
-    static Sprite* create(const std::string& filename, const Rect& rect);
+    static Sprite* create(const std::string& filename, const CRect& rect);
 
     /**
      * Creates a sprite with a Texture2D object.
@@ -152,7 +152,7 @@ public:
      * @param   rotated     Whether or not the rect is rotated.
      * @return  An autoreleased sprite object.
      */
-    static Sprite* createWithTexture(Texture2D *texture, const Rect& rect, bool rotated=false);
+    static Sprite* createWithTexture(Texture2D *texture, const CRect& rect, bool rotated=false);
 
     //  end of creators group
     /// @}
@@ -178,7 +178,7 @@ public:
      * @warning This method is not recommended for game developers. Sample code for using batch node
      * @code
      * SpriteBatchNode *batch = SpriteBatchNode::create("Images/grossini_dance_atlas.png", 15);
-     * Sprite *sprite = Sprite::createWithTexture(batch->getTexture(), Rect(0, 0, 57, 57));
+     * Sprite *sprite = Sprite::createWithTexture(batch->getTexture(), CRect(0, 0, 57, 57));
      * batch->addChild(sprite);
      * layer->addChild(batch);
      * @endcode
@@ -210,15 +210,15 @@ public:
     /**
      * Updates the texture rect of the Sprite in points.
      *
-     * It will call setTextureRect(const Rect& rect, bool rotated, const Size& untrimmedSize) with \p rotated = false, and \p utrimmedSize = rect.size.
+     * It will call setTextureRect(const CRect& rect, bool rotated, const CSize& untrimmedSize) with \p rotated = false, and \p utrimmedSize = rect.size.
      */
-    virtual void setTextureRect(const Rect& rect);
+    virtual void setTextureRect(const CRect& rect);
 
     /** @overload
      *
      * It will update the texture coordinates and the vertex rectangle.
      */
-    virtual void setTextureRect(const Rect& rect, bool rotated, const Size& untrimmedSize);
+    virtual void setTextureRect(const CRect& rect, bool rotated, const CSize& untrimmedSize);
 
     /**
      * Sets the vertex rect.
@@ -227,7 +227,7 @@ public:
      * Useful if you want to create 2x images from SD images in Retina Display.
      * Do not call it manually. Use setTextureRect instead.
      */
-    virtual void setVertexRect(const Rect& rect);
+    virtual void setVertexRect(const CRect& rect);
     
     /// @{
     /// @name Sprite Properties' setter/getters.
@@ -283,7 +283,7 @@ public:
     /**
      * Returns the rect of the Sprite in points.
      */
-    const Rect& getTextureRect() const { return _rect; }
+    const CRect& getTextureRect() const { return _rect; }
 
     /**
      * Gets the weak reference of the TextureAtlas when the sprite is rendered using via SpriteBatchNode.
@@ -387,7 +387,7 @@ public:
     virtual void sortAllChildren() override;
     virtual void setPositionZ(float positionZ) override;
     virtual void setAnchorPoint(const Vec2& anchor) override;
-    virtual void setContentSize(const Size& size) override;
+    virtual void setContentSize(const CSize& size) override;
     
     virtual void setIgnoreAnchorPointForPosition(bool value) override;
     
@@ -430,7 +430,7 @@ public:
      * @param   rect        Only the contents inside rect of this texture will be applied for this sprite.
      * @return  True if the sprite is initialized properly, false otherwise.
      */
-    virtual bool initWithTexture(Texture2D *texture, const Rect& rect);
+    virtual bool initWithTexture(Texture2D *texture, const CRect& rect);
 
     /**
      * Initializes a sprite with a texture and a rect in points, optionally rotated.
@@ -443,7 +443,7 @@ public:
      * @param   rotated     Whether or not the texture rectangle is rotated.
      * @return  True if the sprite is initialized properly, false otherwise.
      */
-    virtual bool initWithTexture(Texture2D *texture, const Rect& rect, bool rotated);
+    virtual bool initWithTexture(Texture2D *texture, const CRect& rect, bool rotated);
 
     /**
      * Initializes a sprite with an image filename.
@@ -470,14 +470,14 @@ public:
      * @return  True if the sprite is initialized properly, false otherwise.
      * @lua     init
      */
-    virtual bool initWithFile(const std::string& filename, const Rect& rect);
+    virtual bool initWithFile(const std::string& filename, const CRect& rect);
     
 protected:
 
     virtual void updateColor() override;
-    virtual void setTextureCoords(const Rect& rect);
-    virtual void setTextureCoords(const Rect& rect, V3F_C4B_T2F_Quad* outQuad);
-    virtual void setVertexCoords(const Rect& rect, V3F_C4B_T2F_Quad* outQuad);
+    virtual void setTextureCoords(const CRect& rect);
+    virtual void setTextureCoords(const CRect& rect, V3F_C4B_T2F_Quad* outQuad);
+    virtual void setVertexCoords(const CRect& rect, V3F_C4B_T2F_Quad* outQuad);
     void populateTriangle(int quadIndex, const V3F_C4B_T2F_Quad& quad);
     virtual void updateBlendFunc();
     virtual void setReorderChildDirtyRecursively();
@@ -513,13 +513,13 @@ protected:
     //
 
     // texture
-    Rect _rect;                             /// Rectangle of Texture2D
+    CRect _rect;                            /// Rectangle of Texture2D
     bool _rectRotated;                      /// Whether the texture is rotated
 
-    Rect _centerRectNormalized;             /// Rectangle to implement "slice 9"
+    CRect _centerRectNormalized;            /// Rectangle to implement "slice 9"
     RenderMode _renderMode;                 /// render mode used by the Sprite: Quad, Slice9, Polygon or Quad_Batchnode
     Vec2 _stretchFactor;                    /// stretch factor to match the contentSize. for 1- and 9- slice sprites
-    Size _originalContentSize;              /// original content size
+    CSize _originalContentSize;             /// original content size
 
 
     // Offset Position (used by Zwoptex)

@@ -134,7 +134,7 @@ protected:
     FontFreeType* _fontFreeType;
     void* _iconv;
 
-    // Dynamic GlyphCollection related stuff
+    // Dynamic CGlyphCollection related stuff
     int _currentPage;
     unsigned char *_currentPageData;
     int _currentPageDataSize;

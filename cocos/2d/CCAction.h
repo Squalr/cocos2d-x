@@ -315,17 +315,17 @@ public:
      * Creates the action with a set boundary or with no boundary.
      *
      * @param followedNode  The node to be followed.
-     * @param rect  The boundary. If \p rect is equal to Rect::ZERO, it'll work
+     * @param rect  The boundary. If \p rect is equal to CRect::ZERO, it'll work
      *              with no boundary.
     */
     
-    static Follow* create(Node *followedNode, const Rect& rect = Rect::ZERO);
+    static Follow* create(Node *followedNode, const CRect& rect = CRect::ZERO);
     
     /**
      * Creates the action with a set boundary or with no boundary with offsets.
      *
      * @param followedNode  The node to be followed.
-     * @param rect  The boundary. If \p rect is equal to Rect::ZERO, it'll work
+     * @param rect  The boundary. If \p rect is equal to CRect::ZERO, it'll work
      *              with no boundary.
      * @param xOffset The horizontal offset from the center of the screen from which the
      *               node  is to be followed.It can be positive,negative or zero.If
@@ -336,7 +336,7 @@ public:
      *   If both xOffset and yOffset are set to zero,then the node will be horizontally and vertically centered followed.
      */
 
-    static Follow* createWithOffset(Node* followedNode,float xOffset,float yOffset,const Rect& rect = Rect::ZERO);
+    static Follow* createWithOffset(Node* followedNode,float xOffset,float yOffset,const CRect& rect = CRect::ZERO);
     
     /** Return boundarySet.
      *
@@ -375,7 +375,7 @@ public:
     , _bottomBoundary(0.0)
     , _offsetX(0.0)
     , _offsetY(0.0)
-    , _worldRect(Rect::ZERO)
+    , _worldRect(CRect::ZERO)
     {}
     /**
      * @js NA
@@ -387,17 +387,17 @@ public:
      * Initializes the action with a set boundary or with no boundary.
      *
      * @param followedNode  The node to be followed.
-     * @param rect  The boundary. If \p rect is equal to Rect::ZERO, it'll work
+     * @param rect  The boundary. If \p rect is equal to CRect::ZERO, it'll work
      *              with no boundary.
     */
-    bool initWithTarget(Node *followedNode, const Rect& rect = Rect::ZERO);
+    bool initWithTarget(Node *followedNode, const CRect& rect = CRect::ZERO);
     
     
     /**
      * Initializes the action with a set boundary or with no boundary with offsets.
      *
      * @param followedNode  The node to be followed.
-     * @param rect  The boundary. If \p rect is equal to Rect::ZERO, it'll work
+     * @param rect  The boundary. If \p rect is equal to CRect::ZERO, it'll work
      *              with no boundary.
      * @param xOffset The horizontal offset from the center of the screen from which the
      *                node  is to be followed.It can be positive,negative or zero.If
@@ -408,7 +408,7 @@ public:
      *   If both xOffset and yOffset are set to zero,then the node will be horizontally and vertically centered followed.
 
      */
-    bool initWithTargetAndOffset(Node *followedNode,float xOffset,float yOffset,const Rect& rect = Rect::ZERO);
+    bool initWithTargetAndOffset(Node *followedNode,float xOffset,float yOffset,const CRect& rect = CRect::ZERO);
 
 protected:
     /** Node to follow. */
@@ -434,7 +434,7 @@ protected:
     float _offsetX;
     float _offsetY;
     
-    Rect _worldRect;
+    CRect _worldRect;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Follow);

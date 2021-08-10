@@ -1133,12 +1133,12 @@ void Console::commandResolution(int /*fd*/, const std::string& args)
 void Console::commandResolutionSubCommandEmpty(int fd, const std::string& /*args*/)
 {
     auto director = Director::getInstance();
-    Size points = director->getWinSize();
-    Size pixels = director->getWinSizeInPixels();
+    CSize points = director->getWinSize();
+    CSize pixels = director->getWinSizeInPixels();
     auto glview = director->getOpenGLView();
-    Size design = glview->getDesignResolutionSize();
+    CSize design = glview->getDesignResolutionSize();
     ResolutionPolicy res = glview->getResolutionPolicy();
-    Rect visibleRect = glview->getVisibleRect();
+    CRect visibleRect = glview->getVisibleRect();
     
     Console::Utility::mydprintf(fd, "Window Size:\n"
               "\t%d x %d (points)\n"

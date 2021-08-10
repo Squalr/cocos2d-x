@@ -300,7 +300,7 @@ Vec3 Camera::unprojectGL(const Vec3& src) const
     return dst;
 }
 
-void Camera::unproject(const Size& viewport, const Vec3* src, Vec3* dst) const
+void Camera::unproject(const CSize& viewport, const Vec3* src, Vec3* dst) const
 {
     CCASSERT(src && dst, "vec3 can not be null");
     
@@ -320,7 +320,7 @@ void Camera::unproject(const Size& viewport, const Vec3* src, Vec3* dst) const
     dst->set(screen.x, screen.y, screen.z);
 }
 
-void Camera::unprojectGL(const Size& viewport, const Vec3* src, Vec3* dst) const
+void Camera::unprojectGL(const CSize& viewport, const Vec3* src, Vec3* dst) const
 {
     CCASSERT(src && dst, "vec3 can not be null");
     

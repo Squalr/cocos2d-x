@@ -188,7 +188,7 @@ public:
      * @param src  The screen-space position.
      * @param dst  The 3D world-space position.
      */
-    void unproject(const Size& size, const Vec3* src, Vec3* dst) const;
+    void unproject(const CSize& size, const Vec3* src, Vec3* dst) const;
     
     /**
      * Convert the specified point of GL-screen-space coordinate into the 3D world-space coordinate.
@@ -198,7 +198,7 @@ public:
      * @param src  The GL-screen-space position.
      * @param dst  The 3D world-space position.
      */
-    void unprojectGL(const Size& size, const Vec3* src, Vec3* dst) const;
+    void unprojectGL(const CSize& size, const Vec3* src, Vec3* dst) const;
     
     /**
      * Get object depth towards camera

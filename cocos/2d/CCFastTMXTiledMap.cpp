@@ -64,7 +64,7 @@ bool TMXTiledMap::initWithTMXFile(const std::string& tmxFile)
 {
     CCASSERT(tmxFile.size()>0, "FastTMXTiledMap: tmx file should not be empty");
     
-    setContentSize(Size::ZERO);
+    setContentSize(CSize::ZERO);
 
     TMXMapInfo *mapInfo = TMXMapInfo::create(tmxFile);
 
@@ -80,7 +80,7 @@ bool TMXTiledMap::initWithTMXFile(const std::string& tmxFile)
 
 bool TMXTiledMap::initWithXML(const std::string& tmxString, const std::string& resourcePath)
 {
-    setContentSize(Size::ZERO);
+    setContentSize(CSize::ZERO);
 
     TMXMapInfo *mapInfo = TMXMapInfo::createWithXML(tmxString, resourcePath);
 
@@ -91,8 +91,8 @@ bool TMXTiledMap::initWithXML(const std::string& tmxString, const std::string& r
 }
 
 TMXTiledMap::TMXTiledMap()
-    :_mapSize(Size::ZERO)
-    ,_tileSize(Size::ZERO)        
+    :_mapSize(CSize::ZERO)
+    ,_tileSize(CSize::ZERO)        
 {
 }
 
@@ -118,7 +118,7 @@ TMXLayer * TMXTiledMap::parseLayer(TMXLayerInfo *layerInfo, TMXMapInfo *mapInfo)
 
 TMXTilesetInfo * TMXTiledMap::tilesetForLayer(TMXLayerInfo *layerInfo, TMXMapInfo *mapInfo)
 {
-    Size size = layerInfo->_layerSize;
+    CSize size = layerInfo->_layerSize;
     auto& tilesets = mapInfo->getTilesets();
 
     for (auto iter = tilesets.crbegin(), iterCrend = tilesets.crend(); iter != iterCrend; ++iter)
@@ -190,8 +190,8 @@ void TMXTiledMap::buildWithMapInfo(TMXMapInfo* mapInfo)
             addChild(child, idx);
             
             // update content size with the max size
-            const Size& childSize = child->getContentSize();
-            Size currentSize = this->getContentSize();
+            const CSize& childSize = child->getContentSize();
+            CSize currentSize = this->getContentSize();
             currentSize.width = std::max( currentSize.width, childSize.width );
             currentSize.height = std::max( currentSize.height, childSize.height );
             this->setContentSize(currentSize);

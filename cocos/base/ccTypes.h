@@ -460,12 +460,12 @@ enum class CC_DLL TextHAlignment
 };
 
 /**
-* @brief Possible GlyphCollection used by Label.
+* @brief Possible CGlyphCollection used by Label.
 *
 * Specify a collections of characters to be load when Label created.
 * Consider using DYNAMIC.
 */
-enum class GlyphCollection {
+enum class CGlyphCollection {
     DYNAMIC,
     NEHE,
     ASCII,
@@ -496,7 +496,7 @@ struct CC_DLL AnimationFrameData
 {
     T2F_Quad texCoords;
     float delay;
-    Size size;
+    CSize size;
 };
 
 /**
@@ -520,7 +520,7 @@ public:
     /// true if shadow enabled
     bool   _shadowEnabled;
     /// shadow x and y offset
-    Size   _shadowOffset;
+    CSize   _shadowOffset;
     /// shadow blurriness
     float  _shadowBlur;
     /// shadow opacity
@@ -567,7 +567,7 @@ public:
         : _fontSize(0)
         , _alignment(TextHAlignment::CENTER)
         , _vertAlignment(TextVAlignment::TOP)
-        , _dimensions(Size::ZERO)
+        , _dimensions(CSize::ZERO)
         , _fontFillColor(Color3B::WHITE)
         , _fontAlpha(255)
         , _enableWrap(true)
@@ -583,7 +583,7 @@ public:
     /// vertical alignment
     TextVAlignment _vertAlignment;
     /// rendering box
-    Size                  _dimensions;
+    CSize                  _dimensions;
     /// font color
     Color3B               _fontFillColor;
     /// font alpha

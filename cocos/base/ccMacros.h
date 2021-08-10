@@ -146,14 +146,14 @@ On iPhone it returns 2 if RetinaDisplay is On. Otherwise it returns 1
  Converts a rect in pixels to points
  */
 #define CC_RECT_PIXELS_TO_POINTS(__rect_in_pixels__)                                                                        \
-    cocos2d::Rect( (__rect_in_pixels__).origin.x / CC_CONTENT_SCALE_FACTOR(), (__rect_in_pixels__).origin.y / CC_CONTENT_SCALE_FACTOR(),    \
+    cocos2d::CRect( (__rect_in_pixels__).origin.x / CC_CONTENT_SCALE_FACTOR(), (__rect_in_pixels__).origin.y / CC_CONTENT_SCALE_FACTOR(),    \
             (__rect_in_pixels__).size.width / CC_CONTENT_SCALE_FACTOR(), (__rect_in_pixels__).size.height / CC_CONTENT_SCALE_FACTOR() )
 
 /** @def CC_RECT_POINTS_TO_PIXELS
  Converts a rect in points to pixels
  */
 #define CC_RECT_POINTS_TO_PIXELS(__rect_in_points_points__)                                                                        \
-    cocos2d::Rect( (__rect_in_points_points__).origin.x * CC_CONTENT_SCALE_FACTOR(), (__rect_in_points_points__).origin.y * CC_CONTENT_SCALE_FACTOR(),    \
+    cocos2d::CRect( (__rect_in_points_points__).origin.x * CC_CONTENT_SCALE_FACTOR(), (__rect_in_points_points__).origin.y * CC_CONTENT_SCALE_FACTOR(),    \
             (__rect_in_points_points__).size.width * CC_CONTENT_SCALE_FACTOR(), (__rect_in_points_points__).size.height * CC_CONTENT_SCALE_FACTOR() )
 
 /** @def CC_POINT_PIXELS_TO_POINTS
@@ -172,13 +172,13 @@ cocos2d::Vec2( (__points__).x * CC_CONTENT_SCALE_FACTOR(), (__points__).y * CC_C
  Converts a rect in pixels to points
  */
 #define CC_SIZE_PIXELS_TO_POINTS(__size_in_pixels__)                                                                        \
-cocos2d::Size( (__size_in_pixels__).width / CC_CONTENT_SCALE_FACTOR(), (__size_in_pixels__).height / CC_CONTENT_SCALE_FACTOR())
+cocos2d::CSize( (__size_in_pixels__).width / CC_CONTENT_SCALE_FACTOR(), (__size_in_pixels__).height / CC_CONTENT_SCALE_FACTOR())
 
 /** @def CC_POINT_POINTS_TO_PIXELS
  Converts a rect in points to pixels
  */
 #define CC_SIZE_POINTS_TO_PIXELS(__size_in_points__)                                                                        \
-cocos2d::Size( (__size_in_points__).width * CC_CONTENT_SCALE_FACTOR(), (__size_in_points__).height * CC_CONTENT_SCALE_FACTOR())
+cocos2d::CSize( (__size_in_points__).width * CC_CONTENT_SCALE_FACTOR(), (__size_in_points__).height * CC_CONTENT_SCALE_FACTOR())
 
 
 #ifndef FLT_EPSILON

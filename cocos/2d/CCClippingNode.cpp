@@ -152,7 +152,7 @@ void ClippingNode::visit(Renderer *renderer, const Mat4 &parentTransform, uint32
         _modelViewTransform = parentTransform * getNodeToParentTransform();
     }
 
-    this->setContentSize(_stencil == nullptr ? Size::ZERO : _stencil->getContentSize());
+    this->setContentSize(_stencil == nullptr ? CSize::ZERO : _stencil->getContentSize());
 
     _beforeVisitCmd.init(0.0f);
     _beforeVisitCmd.func = CC_CALLBACK_0(StencilStateManager::onBeforeVisit, _stencilStateManager);

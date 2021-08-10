@@ -439,16 +439,16 @@ public:
      *
      * @param contentSize   The untransformed size of the node.
      */
-    virtual void setContentSize(const Size& contentSize);
+    virtual void setContentSize(const CSize& contentSize);
 
     /**
      * Returns the untransformed size of the node.
      *
-     * @see `setContentSize(const Size&)`
+     * @see `setContentSize(const CSize&)`
      *
      * @return The untransformed size of the node.
      */
-    virtual const Size& getContentSize() const;
+    virtual const CSize& getContentSize() const;
 
     /**
      * Sets whether the node is visible.
@@ -840,8 +840,8 @@ public:
      *
      * @return An AABB (axis-aligned bounding-box) in its parent's coordinate system
      */
-	virtual Rect getBoundingBox() const;
-	virtual Rect getBoundingBoxNoTransform() const;
+	virtual CRect getBoundingBox() const;
+	virtual CRect getBoundingBoxNoTransform() const;
     
     /** Get the event dispatcher of scene.
      *
@@ -1239,7 +1239,7 @@ protected:
     Vec2 _anchorPointInPoints;      ///< anchor point in points
     Vec2 _anchorPoint;              ///< anchor point normalized (NOT in points)
 
-    Size _contentSize;              ///< untransformed size of the node
+    CSize _contentSize;              ///< untransformed size of the node
     
     // "cache" variables are allowed to be mutable
     Mat4 _modelViewTransform;       ///< ModelView transform of the Node.
@@ -1310,7 +1310,7 @@ private:
  * @parma p         Point to a Vec3 for store the intersect point, if don't need them set to nullptr.
  * @return true if the point is in content rectangle, false otherwise.
  */
-bool CC_DLL isScreenPointInRect(const Vec2 &pt, const Camera* camera, const Mat4& w2l, const Rect& rect, Vec3 *p);
+bool CC_DLL isScreenPointInRect(const Vec2 &pt, const Camera* camera, const Mat4& w2l, const CRect& rect, Vec3 *p);
 
 // NodeRGBA
 

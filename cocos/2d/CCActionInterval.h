@@ -608,7 +608,7 @@ public:
     * @param final_size The target size to reach
     * @return An autoreleased RotateTo object.
     */
-    static ResizeTo* create(float duration, const cocos2d::Size& final_size);
+    static ResizeTo* create(float duration, const cocos2d::CSize& final_size);
 
     //
     // Overrides
@@ -625,12 +625,12 @@ public:
     * @param duration in seconds
     * @param final_size in Size type
     */
-    bool initWithDuration(float duration, const cocos2d::Size& final_size);
+    bool initWithDuration(float duration, const cocos2d::CSize& final_size);
 
 protected:
-    cocos2d::Size _initialSize;
-    cocos2d::Size _finalSize;
-    cocos2d::Size _sizeDelta;
+    cocos2d::CSize _initialSize;
+    cocos2d::CSize _finalSize;
+    cocos2d::CSize _sizeDelta;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(ResizeTo);
@@ -650,7 +650,7 @@ public:
     * @param deltaSize The delta size.
     * @return An autoreleased ResizeBy object.
     */
-    static ResizeBy* create(float duration, const cocos2d::Size& deltaSize);
+    static ResizeBy* create(float duration, const cocos2d::CSize& deltaSize);
     
     //
     // Overrides
@@ -667,12 +667,12 @@ public:
     virtual ~ResizeBy() {}
     
     /** initializes the action */
-    bool initWithDuration(float duration, const cocos2d::Size& deltaSize);
+    bool initWithDuration(float duration, const cocos2d::CSize& deltaSize);
 
 protected:
-    cocos2d::Size _sizeDelta;
-    cocos2d::Size _startSize;
-    cocos2d::Size _previousSize;
+    cocos2d::CSize _sizeDelta;
+    cocos2d::CSize _startSize;
+    cocos2d::CSize _previousSize;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(ResizeBy);

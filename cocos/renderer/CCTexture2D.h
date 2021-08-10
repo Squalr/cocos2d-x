@@ -189,7 +189,7 @@ public:
      * @js NA
      * @lua NA
      */
-    bool initWithData(const void *data, ssize_t dataLen, Texture2D::PixelFormat pixelFormat, int pixelsWide, int pixelsHigh, const Size& contentSize);
+    bool initWithData(const void *data, ssize_t dataLen, Texture2D::PixelFormat pixelFormat, int pixelsWide, int pixelsHigh, const CSize& contentSize);
 
     /** Initializes with mipmaps. 
      
@@ -217,7 +217,7 @@ public:
     /** Draws a texture at a given point. */
     void drawAtPoint(const Vec2& point);
     /** Draws a texture inside a rect.*/
-    void drawInRect(const Rect& rect);
+    void drawInRect(const CRect& rect);
 
     /**
     Extensions to make it easy to create a Texture2D object from an image file.
@@ -252,7 +252,7 @@ public:
      @param enableWrap Whether enable text wrap or not.
      @param overflow Whether shrink font size when content larger than the dimensions.
      */
-    bool initWithString(const char *text,  const std::string &fontName, float fontSize, const Size& dimensions = Size(0, 0), TextHAlignment hAlignment = TextHAlignment::CENTER, TextVAlignment vAlignment = TextVAlignment::TOP, bool enableWrap = true, int overflow = 0);
+    bool initWithString(const char *text,  const std::string &fontName, float fontSize, const CSize& dimensions = CSize(0, 0), TextHAlignment hAlignment = TextHAlignment::CENTER, TextVAlignment vAlignment = TextVAlignment::TOP, bool enableWrap = true, int overflow = 0);
 
     /** Initializes a texture from a string using a text definition.
      
@@ -318,7 +318,7 @@ public:
     unsigned int getBitsPerPixelForFormat(Texture2D::PixelFormat format) const;
 
     /** Get content size. */
-    const Size& getContentSizeInPixels();
+    const CSize& getContentSizeInPixels();
 
     /** Whether or not the texture has their Alpha premultiplied. */
     bool hasPremultipliedAlpha() const;
@@ -349,7 +349,7 @@ public:
     void setMaxT(GLfloat maxT);
     
     /** Get the texture content size.*/
-    Size getContentSize() const;
+    CSize getContentSize() const;
     
     /** Set a shader program to the texture.
 
@@ -439,7 +439,7 @@ protected:
     GLfloat _maxT;
 
     /** content size */
-    Size _contentSize;
+    CSize _contentSize;
 
     /** whether or not the texture has their Alpha premultiplied */
     bool _hasPremultipliedAlpha;

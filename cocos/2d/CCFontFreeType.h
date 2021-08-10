@@ -44,7 +44,7 @@ class CC_DLL FontFreeType : public Font
 public:
     static const int DistanceMapSpread;
 
-    static FontFreeType* create(const std::string &fontName, float fontSize, GlyphCollection glyphs,
+    static FontFreeType* create(const std::string &fontName, float fontSize, CGlyphCollection glyphs,
         const char *customGlyphs,bool distanceFieldEnabled = false, float outline = 0);
 
     static void shutdownFreeType();
@@ -59,7 +59,7 @@ public:
 
     int* getHorizontalKerningForTextUTF32(const std::u32string& text, int &outNumLetters) const override;
     
-    unsigned char* getGlyphBitmap(uint64_t theChar, long &outWidth, long &outHeight, Rect &outRect,int &xAdvance);
+    unsigned char* getGlyphBitmap(uint64_t theChar, long &outWidth, long &outHeight, CRect &outRect,int &xAdvance);
     
     int getFontAscender() const;
     const char* getFontFamily() const;
@@ -86,7 +86,7 @@ private:
     int getHorizontalKerningForChars(uint64_t firstChar, uint64_t secondChar) const;
     unsigned char* getGlyphBitmapWithOutline(uint64_t code, FT_BBox &bbox);
 
-    void setGlyphCollection(GlyphCollection glyphs, const char* customGlyphs = nullptr);
+    void setGlyphCollection(CGlyphCollection glyphs, const char* customGlyphs = nullptr);
     const char* getGlyphCollection() const;
     
     FT_Face _fontRef;
@@ -99,7 +99,7 @@ private:
     int _lineHeight;
     FontAtlas* _fontAtlas;
 
-    GlyphCollection _usedGlyphs;
+    CGlyphCollection _usedGlyphs;
     std::string _customGlyphs;
 };
 

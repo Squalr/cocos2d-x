@@ -143,11 +143,11 @@ bool ParticleSystemQuad::initWithTotalParticles(int numberOfParticles)
 }
 
 // pointRect should be in Texture coordinates, not pixel coordinates
-void ParticleSystemQuad::initTexCoordsWithRect(const Rect& pointRect)
+void ParticleSystemQuad::initTexCoordsWithRect(const CRect& pointRect)
 {
     // convert to Tex coords
 
-    Rect rect = Rect(
+    CRect rect = CRect(
         pointRect.origin.x * CC_CONTENT_SCALE_FACTOR(),
         pointRect.origin.y * CC_CONTENT_SCALE_FACTOR(),
         pointRect.size.width * CC_CONTENT_SCALE_FACTOR(),
@@ -213,12 +213,12 @@ void ParticleSystemQuad::updateTexCoords()
 {
     if (_texture)
     {
-        const Size& s = _texture->getContentSize();
-        initTexCoordsWithRect(Rect(0, 0, s.width, s.height));
+        const CSize& s = _texture->getContentSize();
+        initTexCoordsWithRect(CRect(0, 0, s.width, s.height));
     }
 }
 
-void ParticleSystemQuad::setTextureWithRect(Texture2D *texture, const Rect& rect)
+void ParticleSystemQuad::setTextureWithRect(Texture2D *texture, const CRect& rect)
 {
     // Only update the texture if is different from the current one
     if( !_texture || texture->getName() != _texture->getName() )
@@ -231,8 +231,8 @@ void ParticleSystemQuad::setTextureWithRect(Texture2D *texture, const Rect& rect
 
 void ParticleSystemQuad::setTexture(Texture2D* texture)
 {
-    const Size& s = texture->getContentSize();
-    this->setTextureWithRect(texture, Rect(0, 0, s.width, s.height));
+    const CSize& s = texture->getContentSize();
+    this->setTextureWithRect(texture, CRect(0, 0, s.width, s.height));
 }
 
 void ParticleSystemQuad::initIndices()

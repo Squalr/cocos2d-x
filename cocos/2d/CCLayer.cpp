@@ -154,7 +154,7 @@ LayerColor * LayerColor::create(const Color4B& color)
 
 bool LayerColor::init()
 {
-    Size s = Director::getInstance()->getWinSize();
+    CSize s = Director::getInstance()->getWinSize();
     return initWithColor(Color4B(0,0,0,0), s.width, s.height);
 }
 
@@ -178,7 +178,7 @@ bool LayerColor::initWithColor(const Color4B& color, GLfloat w, GLfloat h)
         }
 
         updateColor();
-        setContentSize(Size(w, h));
+        setContentSize(CSize(w, h));
 
         setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_COLOR_NO_MVP));
         return true;
@@ -188,12 +188,12 @@ bool LayerColor::initWithColor(const Color4B& color, GLfloat w, GLfloat h)
 
 bool LayerColor::initWithColor(const Color4B& color)
 {
-    Size s = Director::getInstance()->getWinSize();
+    CSize s = Director::getInstance()->getWinSize();
     return initWithColor(color, s.width, s.height);
 }
 
 /// override contentSize
-void LayerColor::setContentSize(const Size & size)
+void LayerColor::setContentSize(const CSize & size)
 {
 	_squareVertices[0] = Vec2(0.0f, 0.0f);
 	_squareVertices[1] = Vec2(size.width, 0.0f);
@@ -205,17 +205,17 @@ void LayerColor::setContentSize(const Size & size)
 
 void LayerColor::changeWidthAndHeight(GLfloat w ,GLfloat h)
 {
-    this->setContentSize(Size(w, h));
+    this->setContentSize(CSize(w, h));
 }
 
 void LayerColor::changeWidth(GLfloat w)
 {
-    this->setContentSize(Size(w, _contentSize.height));
+    this->setContentSize(CSize(w, _contentSize.height));
 }
 
 void LayerColor::changeHeight(GLfloat h)
 {
-    this->setContentSize(Size(_contentSize.width, h));
+    this->setContentSize(CSize(_contentSize.width, h));
 }
 
 void LayerColor::updateColor()
@@ -595,7 +595,7 @@ void LayerRadialGradient::onDraw(const Mat4& transform, uint32_t /*flags*/)
     CC_INCREMENT_GL_DRAWN_BATCHES_AND_VERTICES(1,4);
 }
 
-void LayerRadialGradient::setContentSize(const Size& size)
+void LayerRadialGradient::setContentSize(const CSize& size)
 {
     _vertices[1].x = size.width;
     _vertices[2].y = size.height;

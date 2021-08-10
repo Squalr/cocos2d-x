@@ -131,7 +131,7 @@ bool Director::init(void)
     // invalid ?
     _invalid = false;
 
-    _winSizeInPoints = Size::ZERO;
+    _winSizeInPoints = CSize::ZERO;
 
     _openGLView = nullptr;
     _defaultFBO = nullptr;
@@ -576,7 +576,7 @@ const Mat4& Director::getProjectionMatrix(size_t index) const
 
 void Director::setProjection(Projection projection)
 {
-    Size size = _winSizeInPoints;
+    CSize size = _winSizeInPoints;
 
     if (size.width == 0 || size.height == 0)
     {
@@ -703,7 +703,7 @@ Vec2 Director::convertToGL(const Vec2& uiPoint)
     // Calculate z=0 using -> transform*[0, 0, 0, 1]/w
     float zClip = transform.m[14]/transform.m[15];
 
-    Size glSize = _openGLView->getDesignResolutionSize();
+    CSize glSize = _openGLView->getDesignResolutionSize();
     Vec4 clipCoord(2.0f*uiPoint.x/glSize.width - 1.0f, 1.0f - 2.0f*uiPoint.y/glSize.height, zClip, 1);
 
     Vec4 glCoord;
@@ -735,22 +735,22 @@ Vec2 Director::convertToUI(const Vec2& glPoint)
     clipCoord.y = clipCoord.y / clipCoord.w;
     clipCoord.z = clipCoord.z / clipCoord.w;
 
-    Size glSize = _openGLView->getDesignResolutionSize();
+    CSize glSize = _openGLView->getDesignResolutionSize();
     float factor = 1.0f / glCoord.w;
     return Vec2(glSize.width * (clipCoord.x * 0.5f + 0.5f) * factor, glSize.height * (-clipCoord.y * 0.5f + 0.5f) * factor);
 }
 
-const Size& Director::getWinSize(void) const
+const CSize& Director::getWinSize(void) const
 {
     return _winSizeInPoints;
 }
 
-Size Director::getWinSizeInPixels() const
+CSize Director::getWinSizeInPixels() const
 {
-    return Size(_winSizeInPoints.width * _contentScaleFactor, _winSizeInPoints.height * _contentScaleFactor);
+    return CSize(_winSizeInPoints.width * _contentScaleFactor, _winSizeInPoints.height * _contentScaleFactor);
 }
 
-Size Director::getVisibleSize() const
+CSize Director::getVisibleSize() const
 {
     if (_openGLView)
     {
@@ -758,7 +758,7 @@ Size Director::getVisibleSize() const
     }
     else
     {
-        return Size::ZERO;
+        return CSize::ZERO;
     }
 }
 
@@ -774,7 +774,7 @@ Vec2 Director::getVisibleOrigin() const
     }
 }
 
-Rect Director::getSafeAreaRect() const
+CRect Director::getSafeAreaRect() const
 {
     if (_openGLView)
     {
@@ -782,7 +782,7 @@ Rect Director::getSafeAreaRect() const
     }
     else
     {
-        return Rect::ZERO;
+        return CRect::ZERO;
     }
 }
 

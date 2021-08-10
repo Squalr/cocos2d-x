@@ -114,7 +114,7 @@ bool AtlasNode::initWithTexture(Texture2D* texture, int tileWidth, int tileHeigh
 
 void AtlasNode::calculateMaxItems()
 {
-    Size s = _textureAtlas->getTexture()->getContentSize();
+    CSize s = _textureAtlas->getTexture()->getContentSize();
     _itemsPerColumn = (int)(s.height / _itemHeight);
     _itemsPerRow = (int)(s.width / _itemWidth);
 }

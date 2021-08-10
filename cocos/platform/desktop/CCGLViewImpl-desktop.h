@@ -61,7 +61,7 @@ class CC_DLL GLViewImpl : public GLView
 public:
     static GLViewImpl* create(const std::string& viewName);
     static GLViewImpl* create(const std::string& viewName, bool resizable);
-    static GLViewImpl* createWithRect(const std::string& viewName, Rect size, float frameZoomFactor = 1.0f, bool resizable = false);
+    static GLViewImpl* createWithRect(const std::string& viewName, CRect size, float frameZoomFactor = 1.0f, bool resizable = false);
     static GLViewImpl* createWithFullScreen(const std::string& viewName);
     static GLViewImpl* createWithFullScreen(const std::string& viewName, const GLFWvidmode &videoMode, GLFWmonitor *monitor);
 
@@ -76,7 +76,7 @@ public:
 
     virtual void setViewPortInPoints(float x , float y , float w , float h) override;
     virtual void setScissorInPoints(float x , float y , float w , float h) override;
-    virtual Rect getScissorRect() const override;
+    virtual CRect getScissorRect() const override;
 
     bool windowShouldClose() override;
     void pollEvents() override;
@@ -88,7 +88,7 @@ public:
     void setFullscreen(const GLFWvidmode &videoMode, GLFWmonitor *monitor);
     void setWindowed(int width, int height);
     int getMonitorCount() const;
-    Size getMonitorSize() const;
+    CSize getMonitorSize() const;
 
     /* override functions */
     virtual bool isOpenGLReady() override;
@@ -127,7 +127,7 @@ protected:
     GLViewImpl(bool initglfw = true);
     virtual ~GLViewImpl();
 
-    bool initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor, bool resizable);
+    bool initWithRect(const std::string& viewName, CRect rect, float frameZoomFactor, bool resizable);
     bool initWithFullScreen(const std::string& viewName);
     bool initWithFullscreen(const std::string& viewname, const GLFWvidmode &videoMode, GLFWmonitor *monitor);
 

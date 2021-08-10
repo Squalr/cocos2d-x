@@ -172,7 +172,7 @@ public:
     //
     virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
 
-    virtual void setContentSize(const Size & var) override;
+    virtual void setContentSize(const CSize & var) override;
 
     /** BlendFunction. Conforms to BlendProtocol protocol */
     /**
@@ -381,7 +381,7 @@ public:
     // overrides
     //
     virtual void draw(Renderer *renderer, const Mat4 &transform, uint32_t flags) override;
-    virtual void setContentSize(const Size& size) override;
+    virtual void setContentSize(const CSize& size) override;
     
     void setStartOpacity(GLubyte opacity);
     GLubyte getStartOpacity() const;
