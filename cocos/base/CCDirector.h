@@ -570,10 +570,7 @@ protected:
 
     std::vector<Mat4> _modelViewMatrixStack;
     int _matrixStackIndex;
-    /** In order to support GL MultiView features, we need to use the matrix array,
-        but we don't know the number of MultiView, so using the vector instead.
-     */
-    std::vector< std::stack<Mat4> > _projectionMatrixStackList;
+    std::stack<Mat4> _projectionMatrixStack;
     std::stack<Mat4> _textureMatrixStack;
 
     /** Scheduler associated with this director
