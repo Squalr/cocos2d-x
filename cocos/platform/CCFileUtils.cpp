@@ -1062,7 +1062,7 @@ bool FileUtils::isAbsolutePath(const std::string& path) const
 
 bool FileUtils::isDirectoryExist(const std::string& dirPath) const
 {
-    CCASSERT(!dirPath.empty(), "Invalid path");
+    CCASSERT(!dirPath.empty(), "Invalid path. If this is erroring on Windows, try running the CopyResources.py script.");
 
     if (isAbsolutePath(dirPath))
     {

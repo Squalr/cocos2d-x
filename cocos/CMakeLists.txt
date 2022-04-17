@@ -33,7 +33,6 @@ include(math/CMakeLists.txt)
 include(renderer/CMakeLists.txt)
 include(base/CMakeLists.txt)
 include(ui/CMakeLists.txt)
-include(audio/CMakeLists.txt)
 
 add_library(cocos2d STATIC
     cocos2d.h
@@ -44,7 +43,6 @@ add_library(cocos2d STATIC
     ${COCOS_MATH_HEADER}
     ${COCOS_RENDERER_HEADER}
     ${COCOS_BASE_HEADER}
-    ${COCOS_AUDIO_HEADER}
     ${COCOS_UI_HEADER}
     ${COCOS_EXTENSIONS_HEADER}
     ${COCOS_2D_SRC}
@@ -53,7 +51,6 @@ add_library(cocos2d STATIC
     ${COCOS_MATH_SRC}
     ${COCOS_RENDERER_SRC}
     ${COCOS_BASE_SRC}
-    ${COCOS_AUDIO_SRC}
     ${COCOS_UI_SRC}
     ${COCOS_EXTENSIONS_SRC}
 )
@@ -101,13 +98,10 @@ target_link_libraries(cocos2d
         Freetype::Freetype
         tinyxml2::tinyxml2
         cereal
-        MPG123::MPG123
-        Vorbis::File
 
         # required platform dependencies
         $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
         $<$<PLATFORM_ID:Darwin>:Iconv::Iconv>
-        $<$<PLATFORM_ID:Darwin>:AudioToolbox::AudioToolbox>
         $<$<PLATFORM_ID:Windows>:ws2_32>
         $<$<PLATFORM_ID:Windows>:winmm>
         $<$<PLATFORM_ID:Windows>:version>
@@ -117,8 +111,6 @@ target_link_libraries(cocos2d
 target_compile_definitions(cocos2d
     PRIVATE
         $<$<BOOL:${USE_SYSTEM_MINIZIP}>:MINIZIP_FROM_SYSTEM>
-
-        $<$<PLATFORM_ID:Windows>:MPG123_DEF_SSIZE_T>
         $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
         $<$<PLATFORM_ID:Windows>:_SCL_SECURE_NO_WARNINGS>
 

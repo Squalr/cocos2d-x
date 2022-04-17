@@ -77,7 +77,7 @@ void EventDispatcher::dispatchEvent(EventCustom* event)
     {
         for (const auto& listener : this->listenerMap[eventName])
         {
-            if (this->toRemove.find(eventName) != this->toRemove.end() && this->toRemove[eventName].contains(listener))
+            if (this->toRemove.find(eventName) != this->toRemove.end() && this->toRemove[eventName].find(listener) != this->toRemove[eventName].end())
             {
                 break;
             }

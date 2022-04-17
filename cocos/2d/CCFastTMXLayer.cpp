@@ -464,7 +464,7 @@ void TMXLayer::updatePrimitives()
             primitive->setCount(iter.second * 6);
             primitive->setStart(start * 6);
 
-            if (_primitives.contains(iter.first))
+            if (_primitives.find(iter.first) != _primitives.end())
             {
                 _primitives[iter.first]->release();
             }
@@ -762,7 +762,7 @@ void TMXLayer::removeChild(Node* node, bool cleanup)
 // TMXLayer - Properties
 Value TMXLayer::getProperty(const std::string& propertyName) const
 {
-    if (_properties.contains(propertyName))
+    if (_properties.find(propertyName) != _properties.end())
     {
         return _properties.at(propertyName);
     }

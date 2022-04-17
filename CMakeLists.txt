@@ -60,8 +60,6 @@ find_package(Freetype REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(tinyxml2 REQUIRED)
 find_package(cereal REQUIRED)
-find_package(Vorbis REQUIRED)
-find_package(MPG123 REQUIRED)
 
 # Optional Dependencies
 find_package(JPEG QUIET)
@@ -76,7 +74,6 @@ elseif(WINDOWS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 elseif(APPLE)
     find_package(Iconv REQUIRED)
-    find_package(AudioToolbox REQUIRED)
 endif()
 
 # wrap openal vars in a target

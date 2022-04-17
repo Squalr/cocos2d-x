@@ -1439,7 +1439,7 @@ Sprite* Label::getLetter(int letterIndex, bool applyCursorOffset)
 
     Sprite* letter = nullptr;
 
-    if (_letters.contains(letterIndex))
+    if (_letters.find(letterIndex) != _letters.end())
     {
         letter = _letters[letterIndex];
     }
