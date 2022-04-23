@@ -35,7 +35,6 @@ set(COCOS_BASE_HEADER
     base/CCDirector.h
     base/ccConfig.h
     base/ccUTF8.h
-    base/CCEventFocus.h
     base/CCConfiguration.h
     base/CCProtocols.h
     base/CCIMEDelegate.h
@@ -59,7 +58,6 @@ set(COCOS_BASE_SRC
     base/CCEventController.cpp
     base/CCEventCustom.cpp
     base/CCEventDispatcher.cpp
-    base/CCEventFocus.cpp
     base/CCEventListener.cpp
     base/CCEventListenerCustom.cpp
     base/CCInputEvents.cpp

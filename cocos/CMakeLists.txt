@@ -32,7 +32,6 @@ include(platform/CMakeLists.txt)
 include(math/CMakeLists.txt)
 include(renderer/CMakeLists.txt)
 include(base/CMakeLists.txt)
-include(ui/CMakeLists.txt)
 
 add_library(cocos2d STATIC
     cocos2d.h

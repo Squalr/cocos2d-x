@@ -56,7 +56,6 @@
 // EventDispatcher
 #include "base/CCEventCustom.h"
 #include "base/CCEventDispatcher.h"
-#include "base/CCEventFocus.h"
 #include "base/CCEventListenerCustom.h"
 #include "base/CCInputEvents.h"
 #include "base/CCEventController.h"
