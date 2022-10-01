@@ -417,7 +417,7 @@ void ParticleSystemQuad::postStep()
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
-    CHECK_GL_ERROR_DEBUG();
+    // CHECK_GL_ERROR_DEBUG();
 }
 
 // overriding draw method

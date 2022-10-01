@@ -155,7 +155,9 @@ void TMXLayer::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)
     bool isViewProjectionUpdated = true;
     auto visitingCamera = Camera::getVisitingCamera();
     auto defaultCamera = Camera::getDefaultCamera();
-    if (visitingCamera == defaultCamera) {
+
+    if (visitingCamera == defaultCamera)
+    {
         isViewProjectionUpdated = visitingCamera->isViewProjectionUpdated();
     }
     
@@ -225,6 +227,11 @@ void TMXLayer::onDraw(Primitive *primitive)
 
 void TMXLayer::updateTiles(const CRect& culledRect)
 {
+    if (_tileSet == nullptr)
+    {
+        return;
+    }
+    
     CRect visibleTiles = CRect(culledRect.origin, culledRect.size * Director::getInstance()->getContentScaleFactor());
     CSize mapTileSize = CC_SIZE_PIXELS_TO_POINTS(_mapTileSize);
     CSize tileSize = CC_SIZE_PIXELS_TO_POINTS(_tileSet->_tileSize);
@@ -347,7 +354,11 @@ void TMXLayer::updateIndexBuffer()
 #endif
         CC_SAFE_RETAIN(_indexBuffer);
     }
-    _indexBuffer->updateIndices(&_indices[0], (int)_indices.size(), 0);
+
+    if (_indexBuffer != nullptr && _indices.size() > 0)
+    {
+        _indexBuffer->updateIndices(&_indices[0], (int)_indices.size(), 0);
+    }
     
 }
 
@@ -457,7 +468,12 @@ void TMXLayer::updatePrimitives()
         
         auto primitiveIter = _primitives.find(iter.first);
 
-        if(primitiveIter == _primitives.end())
+        if(primitiveIter != _primitives.end())
+        {
+            primitiveIter->second->setCount(iter.second * 6);
+            primitiveIter->second->setStart(start * 6);
+        }
+        else
         {
             Primitive* primitive = Primitive::create(_vData, _indexBuffer, GL_TRIANGLES);
 
@@ -471,17 +487,12 @@ void TMXLayer::updatePrimitives()
             
             _primitives[iter.first] = primitive;
         }
-        else
-        {
-            primitiveIter->second->setCount(iter.second * 6);
-            primitiveIter->second->setStart(start * 6);
-        }
     }
 }
 
 void TMXLayer::updateTotalQuads()
 {
-    if(_quadsDirty)
+    if(_quadsDirty && _tileSet != nullptr)
     {
         CSize tileSize = CC_SIZE_PIXELS_TO_POINTS(_tileSet->_tileSize);
         CSize texSize = _tileSet->_imageSize;

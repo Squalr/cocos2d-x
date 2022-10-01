@@ -273,7 +273,7 @@ void TextureAtlas::setupVBOandVAO()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    CHECK_GL_ERROR_DEBUG();
+    // CHECK_GL_ERROR_DEBUG();
 }
 
 void TextureAtlas::setupVBO()
@@ -296,7 +296,7 @@ void TextureAtlas::mapBuffers()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(_indices[0]) * _capacity * 6, _indices, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    CHECK_GL_ERROR_DEBUG();
+    // CHECK_GL_ERROR_DEBUG();
 }
 
 // TextureAtlas - Update, Insert, Move & Remove
@@ -698,7 +698,7 @@ void TextureAtlas::drawNumberOfQuads(ssize_t numberOfQuads, ssize_t start)
 
     CC_INCREMENT_GL_DRAWN_BATCHES_AND_VERTICES(1,numberOfQuads*6);
     
-    CHECK_GL_ERROR_DEBUG();
+    // CHECK_GL_ERROR_DEBUG();
 }
 
 

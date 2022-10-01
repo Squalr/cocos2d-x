@@ -361,11 +361,11 @@ void FrameBuffer::attachRenderTarget(RenderTargetBase* rt)
 
 void FrameBuffer::applyFBO()
 {
-    CHECK_GL_ERROR_DEBUG();
+    // CHECK_GL_ERROR_DEBUG();
     // glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&_previousFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
     // CCASSERT(_fbo==0 || _fbo != _previousFBO, "calling applyFBO without restoring the previous one");
-    CHECK_GL_ERROR_DEBUG();
+    // CHECK_GL_ERROR_DEBUG();
     if(_fboBindingDirty && !isDefaultFBO())
     {
         CHECK_GL_ERROR_DEBUG();
@@ -373,11 +373,11 @@ void FrameBuffer::applyFBO()
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _rt->getTexture()->getName(), 0);
         else
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _rt->getBuffer());
-        CHECK_GL_ERROR_DEBUG();
+        // CHECK_GL_ERROR_DEBUG();
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, nullptr == _rtDepthStencil ? 0 : _rtDepthStencil->getBuffer());
-        CHECK_GL_ERROR_DEBUG();
+        // CHECK_GL_ERROR_DEBUG();
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, nullptr == _rtDepthStencil ? 0 : _rtDepthStencil->getBuffer());
-        CHECK_GL_ERROR_DEBUG();
+        // CHECK_GL_ERROR_DEBUG();
         CCLOG("FBO is %d _fbo %d color, %d ds", _fbo, RenderTargetBase::Type::Texture2D == _rt->getType() ? _rt->getTexture()->getName() : _rt->getBuffer(), nullptr == _rtDepthStencil ? 0 : _rtDepthStencil->getBuffer());
         _fboBindingDirty = false;
     }
@@ -389,7 +389,7 @@ void FrameBuffer::applyFBO()
     }
     */
 
-    CHECK_GL_ERROR_DEBUG();
+    // CHECK_GL_ERROR_DEBUG();
 }
 
 void FrameBuffer::restoreFBO()
