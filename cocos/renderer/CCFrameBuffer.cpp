@@ -348,7 +348,7 @@ void FrameBuffer::attachRenderTarget(RenderTargetBase* rt)
         return;
     }
     CC_ASSERT(rt);
-    if(rt->getWidth() != _width || rt->getHeight() != _height)
+    if(int(rt->getWidth()) != _width || int(rt->getHeight()) != _height)
     {
         CCLOG("Error, attach a render target with different size, Skip.");
         return;
@@ -405,7 +405,7 @@ void FrameBuffer::attachDepthStencilTarget(RenderTargetDepthStencil* rt)
         return;
     }
     
-    if(nullptr != rt && (rt->getWidth() != _width || rt->getHeight() != _height))
+    if(nullptr != rt && (int(rt->getWidth()) != _width || int(rt->getHeight()) != _height))
     {
         CCLOG("Error, attach a render target Depth stencil with different size, Skip.");
         return;

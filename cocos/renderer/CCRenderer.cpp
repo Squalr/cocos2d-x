@@ -524,7 +524,7 @@ void Renderer::drawBatchedTriangles()
         fillVerticesAndIndices(cmd);
 
         // in the same batch ?
-        if (batchable && (prevMaterialID == currentMaterialID || firstCommand))
+        if (batchable && (prevMaterialID == int(currentMaterialID) || firstCommand))
         {
             CC_ASSERT((firstCommand || _triBatchesToDraw[batchesTotal].cmd->getMaterialID() == cmd->getMaterialID()) && "argh... error in logic");
             _triBatchesToDraw[batchesTotal].indicesToDraw += cmd->getIndexCount();

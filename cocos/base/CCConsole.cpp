@@ -1189,7 +1189,7 @@ void Console::commandUpload(int fd)
     char c = 0;
     char *ptr = buf;
     //read file name
-    for( n = 0; n < sizeof(buf) - 1; n++ )
+    for( n = 0; n < int(sizeof(buf)) - 1; n++ )
     {
         if( (rc = recv(fd, &c, 1, 0)) == 1 )
         {

@@ -4897,12 +4897,12 @@ void Controller::startDiscoveryController()
 	glfwSetJoystickCallback(ControllerImpl::handleConnectionsAndDisconnections);
 
 	// Poll the joystick axis and buttons
-	Director::getInstance()->getScheduler()->scheduleUpdate(ControllerImpl::getInstance(), 0, false);
+	// Director::getInstance()->getScheduler()->scheduleUpdate(ControllerImpl::getInstance());
 }
 
 void Controller::stopDiscoveryController()
 {
-	Director::getInstance()->getScheduler()->unscheduleUpdate(ControllerImpl::getInstance());
+	// Director::getInstance()->getScheduler()->unscheduleUpdate(ControllerImpl::getInstance());
 	glfwSetJoystickCallback(nullptr);
 
 	// Also remove all the connected controllers:

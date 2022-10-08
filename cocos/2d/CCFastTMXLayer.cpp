@@ -142,8 +142,10 @@ TMXLayer::~TMXLayer()
     CC_SAFE_RELEASE(_vertexBuffer);
     CC_SAFE_RELEASE(_indexBuffer);
 
-    for (const auto& [key, value]: _primitives)
+    for (const auto& next: _primitives)
     {
+        auto value = next.second;
+
         CC_SAFE_RELEASE(value);
     }
 }

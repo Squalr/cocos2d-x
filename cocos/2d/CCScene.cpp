@@ -141,7 +141,6 @@ void Scene::render(Renderer* renderer, const Mat4& eyeTransform, const Mat4* eye
 void Scene::render(Renderer* renderer, const Mat4* eyeTransforms, const Mat4* eyeProjections, unsigned int multiViewCount)
 {
     auto director = Director::getInstance();
-    Camera* defaultCamera = nullptr;
     const auto& transform = getNodeToParentTransform();
 
     for (const auto& camera : getCameras())
@@ -150,10 +149,6 @@ void Scene::render(Renderer* renderer, const Mat4* eyeTransforms, const Mat4* ey
             continue;
 
         Camera::_visitingCamera = camera;
-        if (Camera::_visitingCamera->getCameraFlag() == CameraFlag::DEFAULT)
-        {
-            defaultCamera = Camera::_visitingCamera;
-        }
 
         // There are two ways to modify the "default camera" with the eye Transform:
         // a) modify the "nodeToParentTransform" matrix
