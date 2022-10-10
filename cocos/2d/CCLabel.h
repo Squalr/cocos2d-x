@@ -444,7 +444,7 @@ public:
      * Provides a way to treat each character like a Sprite.
      * @warning No support system font.
      */
-    virtual Sprite * getLetter(int lettetIndex, bool applyCursorOffset = false);
+    virtual Sprite * getLetter(int lettetIndex, bool applyCursorOffset = false, bool offsetUnicodeCombines = true);
 
     /** Clips upper and lower margin to reduce height of Label.*/
     void setClipMarginEnabled(bool clipEnabled) { _clipEnabled = clipEnabled; }

@@ -1411,7 +1411,7 @@ void Label::setSystemFontSize(float fontSize)
 }
 
 ///// PROTOCOL STUFF
-Sprite* Label::getLetter(int letterIndex, bool applyCursorOffset)
+Sprite* Label::getLetter(int letterIndex, bool applyCursorOffset, bool offsetUnicodeCombines)
 {
     if (_systemFontDirty || _currentLabelType == LabelType::STRING_TEXTURE)
     {
@@ -1478,7 +1478,7 @@ Sprite* Label::getLetter(int letterIndex, bool applyCursorOffset)
         float px = 0.0f;
         float py = 0.0f;
 
-        if (!StringUtils::isUnicodeCombine(letterInfo.utf32Char))
+        if (!offsetUnicodeCombines || !StringUtils::isUnicodeCombine(letterInfo.utf32Char))
         {
             px = letterInfo.positionX + (applyCursorOffset ? 0.0f : uvRect.size.width / 2.0f) + _linesOffsetX[letterInfo.lineIndex];
             py = letterInfo.positionY - uvRect.size.height / 2.0f + _letterOffsetY;
@@ -1514,22 +1514,32 @@ Sprite* Label::getLetter(int letterIndex, bool applyCursorOffset)
 
             } while (StringUtils::isUnicodeCombine(_lettersInfo[seekIndex].utf32Char));
 
-            if (seekIndex >= 0)
+            if (seekIndex >= 0 && seekIndex < int(_lettersInfo.size()))
             {
                 const auto &letterInfoSeek = _lettersInfo[seekIndex];
-                const auto& letterDefSeek = _fontAtlas->_letterDefinitions[letterInfoSeek.utf32Char];
-                CRect uvRectSeek;
-                uvRectSeek.size.height = letterDefSeek.height;
-                uvRectSeek.size.width = letterDefSeek.width;
-                uvRectSeek.origin.x = letterDefSeek.U;
-                uvRectSeek.origin.y = letterDefSeek.V;
 
-                px += letterInfoSeek.positionX + (applyCursorOffset ? 0.0f : uvRectSeek.size.width / 2) + _linesOffsetX[letterInfoSeek.lineIndex];
-                py += letterInfoSeek.positionY - uvRectSeek.size.height / 2 + _letterOffsetY;
+                if (_fontAtlas->_letterDefinitions.find(letterInfoSeek.utf32Char) != _fontAtlas->_letterDefinitions.end())
+                {
+                    const auto& letterDefSeek = _fontAtlas->_letterDefinitions[letterInfoSeek.utf32Char];
+                    CRect uvRectSeek;
+                    uvRectSeek.size.height = letterDefSeek.height;
+                    uvRectSeek.size.width = letterDefSeek.width;
+                    uvRectSeek.origin.x = letterDefSeek.U;
+                    uvRectSeek.origin.y = letterDefSeek.V;
+
+                    if (letterInfoSeek.lineIndex >= 0 && letterInfoSeek.lineIndex < int(_linesOffsetX.size()))
+                    {
+                        px += letterInfoSeek.positionX + (applyCursorOffset ? 0.0f : uvRectSeek.size.width / 2) + _linesOffsetX[letterInfoSeek.lineIndex];
+                    }
+                    py += letterInfoSeek.positionY - uvRectSeek.size.height / 2 + _letterOffsetY;
+                }
             }
             else
             {
-                px += letterInfo.positionX + (applyCursorOffset ? 0.0f : uvRect.size.width / 2) + _linesOffsetX[letterInfo.lineIndex];
+                if (letterInfo.lineIndex >= 0 && letterInfo.lineIndex < int(_linesOffsetX.size()))
+                {
+                    px += letterInfo.positionX + (applyCursorOffset ? 0.0f : uvRect.size.width / 2) + _linesOffsetX[letterInfo.lineIndex];
+                }
                 py += letterInfo.positionY - uvRect.size.height / 2 + _letterOffsetY;
             }
         }
