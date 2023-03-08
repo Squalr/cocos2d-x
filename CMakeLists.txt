@@ -59,7 +59,17 @@ find_package(glfw3 REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(tinyxml2 REQUIRED)
-find_package(cereal REQUIRED)
+
+include(ExternalProject)
+ExternalProject_Add(cereal
+  GIT_REPOSITORY    git@github.com:USCiLab/cereal.git
+  PREFIX cereal
+  SOURCE_DIR "${CMAKE_BINARY_DIR}/third-party/cereal"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ""
+)
+include_directories(${CMAKE_BINARY_DIR}/third-party/cereal/include) 
 
 # Optional Dependencies
 find_package(JPEG QUIET)
