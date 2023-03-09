@@ -62,7 +62,8 @@ find_package(tinyxml2 REQUIRED)
 
 include(ExternalProject)
 ExternalProject_Add(cereal
-  GIT_REPOSITORY    git@github.com:USCiLab/cereal.git
+  GIT_REPOSITORY git@github.com:USCiLab/cereal.git
+  GIT_TAG v1.3.2
   PREFIX cereal
   SOURCE_DIR "${CMAKE_BINARY_DIR}/third-party/cereal"
   CONFIGURE_COMMAND ""
