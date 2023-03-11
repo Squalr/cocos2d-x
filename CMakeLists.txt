@@ -60,17 +60,16 @@ find_package(Freetype REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(tinyxml2 REQUIRED)
 
-include(ExternalProject)
-ExternalProject_Add(cereal
-  GIT_REPOSITORY git@github.com:USCiLab/cereal.git
-  GIT_TAG v1.3.2
-  PREFIX cereal
-  SOURCE_DIR "${CMAKE_BINARY_DIR}/third-party/cereal"
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ""
+include(FetchContent)
+set(SKIP_PERFORMANCE_COMPARISON ON)
+set(BUILD_SANDBOX OFF)
+set(BUILD_DOC OFF)
+FetchContent_Declare(
+ cereal
+ GIT_REPOSITORY git@github.com:USCiLab/cereal.git
+ GIT_TAG v1.3.2
 )
-include_directories(${CMAKE_BINARY_DIR}/third-party/cereal/include) 
+FetchContent_MakeAvailable(cereal)
 
 # Optional Dependencies
 find_package(JPEG QUIET)
