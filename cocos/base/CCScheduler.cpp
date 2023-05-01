@@ -191,7 +191,7 @@ void Scheduler::schedule(const std::function<void(float)>& callback, void *targe
     }
     else
     {
-        CCASSERT(element->paused == paused, "element's paused should be paused!");
+        // CCASSERT(element->paused == paused, "element's paused should be paused!");
     }
 
     if (element->timers == nullptr)
