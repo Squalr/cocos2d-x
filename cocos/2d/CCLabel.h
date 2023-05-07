@@ -352,9 +352,6 @@ public:
     */
     Color4F getEffectColor() const { return _effectColorF; }
 
-    /** Sets the Label's text horizontal alignment.*/
-    void setAlignment(TextHAlignment hAlignment) { setAlignment(hAlignment,_vAlignment);}
-
     /** Returns the Label's text horizontal alignment.*/
     TextHAlignment getTextAlignment() const { return _hAlignment;}
 
