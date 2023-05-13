@@ -37,21 +37,70 @@ NS_CC_BEGIN
 #define CURSOR_TIME_SHOW_HIDE 0.5f
 #define CURSOR_DEFAULT_CHAR '|'
 #define PASSWORD_STYLE_TEXT_DEFAULT "\xe2\x80\xa2"
-static std::size_t _calcCharCount(const char * text)
-{
-    int n = 0;
-    char ch = 0;
-    while ((ch = *text))
-    {
-        CC_BREAK_IF(! ch);
 
-        if (0x80 != (0xC0 & ch))
+static std::size_t _calcCharCount(const char* textPtr)
+{
+    int charCount = 0;
+
+    while (char nextChar = *textPtr)
+    {
+        if (0x80 != (0xC0 & nextChar))
         {
-            ++n;
+            charCount++;
         }
-        ++text;
+
+        textPtr++;
     }
-    return n;
+
+    return charCount;
+}
+
+static std::size_t _cursorPositionToCharPosition(const char* textPtr, int cursorPos)
+{
+    int byteCount = 0;
+    int charCount = 0;
+
+    while (char nextChar = *textPtr)
+    {
+        if (charCount >= cursorPos)
+        {
+            break;
+        }
+
+        if (0x80 != (0xC0 & nextChar))
+        {
+            charCount++;
+        }
+
+        textPtr++;
+        byteCount++;
+    }
+
+    return byteCount;
+}
+
+static std::size_t _charPositionToCursorPosition(const char* textPtr, int bytePos)
+{
+    int byteCount = 0;
+    int charCount = 0;
+
+    while (char nextChar = *textPtr)
+    {
+        if (byteCount >= bytePos)
+        {
+            break;
+        }
+
+        if (0x80 != (0xC0 & nextChar))
+        {
+            charCount++;
+        }
+
+        textPtr++;
+        byteCount++;
+    }
+
+    return charCount;
 }
 
 bool TextFieldDelegate::onTextFieldAttachWithIME(TextFieldTTF* /*sender*/)
@@ -508,14 +557,16 @@ void TextFieldTTF::setString(const std::string &text)
         _inputText = text;
         displayText = _inputText;
         charCount = _calcCharCount(_inputText.c_str());
+
         if (_secureTextEntry)
         {
             displayText = "";
             size_t length = charCount;
+
             while (length)
             {
                 displayText.append(_passwordStyleText);
-                --length;
+                length--;
             }
         }
     }
@@ -571,6 +622,7 @@ void TextFieldTTF::makeStringSupportCursor(std::string& displayText)
         else
         {
             StringUtils::StringUTF8 stringUTF8;
+            std::string cursorChar;
 
             stringUTF8.replace(displayText);
 
@@ -578,7 +630,7 @@ void TextFieldTTF::makeStringSupportCursor(std::string& displayText)
             {
                 _cursorPosition = stringUTF8.length();
             }
-            std::string cursorChar;
+
             // \b - Next char not change x position
             cursorChar.push_back((char)StringUtils::AsciiCharacters::NextCharNoChangeX);
             cursorChar.push_back(_cursorChar);
@@ -641,10 +693,11 @@ void TextFieldTTF::controlKey(InputEvents::KeyCode keyCode)
 		case InputEvents::KeyCode::KEY_KP_HOME:
 		{
 			// Get current row offset
-			std::size_t currentRowSearch = this->getString().rfind('\n', _cursorPosition <= 0 ? 0 : _cursorPosition - 1);
+            size_t cursorPosReal = _cursorPositionToCharPosition(this->getString().c_str(), _cursorPosition);
+			std::size_t currentRowSearch = this->getString().rfind('\n', cursorPosReal <= 0 ? 0 : cursorPosReal - 1);
 			int currentRowStart = currentRowSearch != std::string::npos ? currentRowSearch + 1 : 0;
 
-			setCursorPosition(currentRowStart);
+			setCursorPosition(_charPositionToCursorPosition(this->getString().c_str(), currentRowStart));
 			updateCursorDisplayText();
 		}
 			break;
@@ -652,10 +705,11 @@ void TextFieldTTF::controlKey(InputEvents::KeyCode keyCode)
 			if (_cursorPosition < (std::size_t)_charCount)
 			{
 				// Get current row offset
-				std::size_t nextRowSearch = this->getString().find('\n', _cursorPosition <= 0 ? 0 : _cursorPosition);
+                size_t cursorPosReal = _cursorPositionToCharPosition(this->getString().c_str(), _cursorPosition);
+				std::size_t nextRowSearch = this->getString().find('\n', cursorPosReal <= 0 ? 0 : cursorPosReal);
 				int rowEnd = nextRowSearch != std::string::npos ? nextRowSearch : _charCount;
 
-				setCursorPosition(rowEnd);
+			    setCursorPosition(_charPositionToCursorPosition(this->getString().c_str(), rowEnd));
 				updateCursorDisplayText();
 			}
 			break;
@@ -663,9 +717,10 @@ void TextFieldTTF::controlKey(InputEvents::KeyCode keyCode)
             if (_cursorPosition)
             {
                 // Get current row offset
-                std::size_t currentRowSearch = this->getString().rfind('\n', _cursorPosition <= 0 ? 0 : _cursorPosition - 1);
+                size_t cursorPosReal = _cursorPositionToCharPosition(this->getString().c_str(), _cursorPosition);
+                std::size_t currentRowSearch = this->getString().rfind('\n', cursorPosReal <= 0 ? 0 : cursorPosReal - 1);
                 int currentRowStart = currentRowSearch != std::string::npos ? currentRowSearch + 1 : 0;
-                int currentRowOffset = _cursorPosition - currentRowStart;
+                int currentRowOffset = cursorPosReal - currentRowStart;
 
                 // Disallow moving cursor up if on the first row
                 if (currentRowStart > 0)
@@ -680,12 +735,12 @@ void TextFieldTTF::controlKey(InputEvents::KeyCode keyCode)
                     int newCursorPos = previousRowStart + newOffset;
 
 					// Rare edge case correction
-					if (int(_cursorPosition) == newCursorPos && newCursorPos > 0)
+					if (int(cursorPosReal) == newCursorPos && newCursorPos > 0)
 					{
 						newCursorPos--;
 					}
 
-                    setCursorPosition(newCursorPos);
+			        setCursorPosition(_charPositionToCursorPosition(this->getString().c_str(), newCursorPos));
                     updateCursorDisplayText();
                 }
             }
@@ -694,12 +749,13 @@ void TextFieldTTF::controlKey(InputEvents::KeyCode keyCode)
             if (_cursorPosition < (std::size_t)_charCount)
             {
                 // Get current row offset
-                std::size_t currentRowSearch = this->getString().rfind('\n', _cursorPosition <= 0 ? 0 : _cursorPosition - 1);
+                size_t cursorPosReal = _cursorPositionToCharPosition(this->getString().c_str(), _cursorPosition);
+                std::size_t currentRowSearch = this->getString().rfind('\n', cursorPosReal <= 0 ? 0 : cursorPosReal - 1);
                 int currentRowStart = currentRowSearch != std::string::npos ? currentRowSearch + 1 : 0;
-                int currentRowOffset = _cursorPosition - currentRowStart;
+                int currentRowOffset = cursorPosReal - currentRowStart;
 
                 // Calculate length of next row
-                std::size_t nextRowSearch = this->getString().find('\n', _cursorPosition <= 0 ? 0 : _cursorPosition);
+                std::size_t nextRowSearch = this->getString().find('\n', cursorPosReal <= 0 ? 0 : cursorPosReal);
                 std::size_t nextRowEndSearch = this->getString().find('\n', nextRowSearch + 1);
                 int nextRowStart = nextRowSearch != std::string::npos ? nextRowSearch + 1 : 0;
                 int nextRowLength = nextRowEndSearch != std::string::npos ? nextRowEndSearch - nextRowStart : _charCount - nextRowStart;
@@ -709,12 +765,12 @@ void TextFieldTTF::controlKey(InputEvents::KeyCode keyCode)
                 int newCursorPos = nextRowStart + newOffset;
 
 				// Rare edge case correction
-				if (int(_cursorPosition) == newCursorPos && newCursorPos + 1 < int(_charCount))
+				if (int(cursorPosReal) == newCursorPos && newCursorPos + 1 < int(_charCount))
 				{
 					newCursorPos++;
 				}
 
-                setCursorPosition(newCursorPos);
+                setCursorPosition(_charPositionToCursorPosition(this->getString().c_str(), newCursorPos));
                 updateCursorDisplayText();
             }
             break;
