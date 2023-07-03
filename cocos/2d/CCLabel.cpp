@@ -739,10 +739,16 @@ bool Label::updateQuads()
                     _reusedRect.size.height -= clipTop;
                     py -= clipTop;
                 }
+
+                // Zac: This causes text outside of scroll view to have the height zero'd out, which prevents a texture atlas from being assigned
+                // This results in cursor breaking for text out of range, which sucks.
+                // I suspect this was some optimization for off-screen text, but we don't use large amounts of text
+                // so this optimization is not very helpful, and isn't implemented correctly anyways.
+                /*
                 if (py - letterDef.height < _tailoredBottomY)
                 {
                     _reusedRect.size.height = (py < _tailoredBottomY) ? 0.f : (py - _tailoredBottomY);
-                }
+                }*/
             }
 
             auto lineIndex = _lettersInfo[ctr].lineIndex;
