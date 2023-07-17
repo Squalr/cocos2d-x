@@ -70,25 +70,16 @@ FetchContent_Declare(
 )
 FetchContent_GetProperties(cereal)
 if(NOT cereal_POPULATED)
-  FetchContent_Populate(cereal)
+    FetchContent_Populate(cereal)
 endif()
 set(CEREAL_INCLUDE_DIRS ${cereal_SOURCE_DIR}/include)
 
 # GLEW
-FetchContent_Declare(
-    GLEW
-    URL            https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0.zip
-    SOURCE_DIR     ${CMAKE_SOURCE_DIR}/external/glew
-)
-FetchContent_GetProperties(GLEW)
-if(NOT GLEW_POPULATED)
-    FetchContent_Populate(GLEW)
-    # Top level doesn't contain the CMakeLists.txt, it is in the "build/cmake" subdirectory
-    add_subdirectory(${glew_SOURCE_DIR}/build/cmake ${glew_BINARY_DIR})
-endif()
-set(GLEW_INCLUDE_DIRS ${glew_SOURCE_DIR}/include)
-set(GLEW_LIBRARY_DIRS ${glew_BINARY_DIR}/libs)
-set(GLEW_LIBRARIES GLEW_s)
+set(GLEW_INCLUDE_DIRS "/usr/local/opt/glew/include/GL")
+set(GLEW_LIBRARIES "/usr/local/opt/glew/lib/libGLEW.dylib")
+#find_package(GLEW REQUIRED)
+
+message(STATUS "GLEW_LIBRARIES = ${GLEW_LIBRARIES}")
 
 # GLFW
 FetchContent_Declare(
@@ -142,7 +133,7 @@ target_link_libraries(cocos2d
         # dependencies
         OpenAL::AL
         OpenGL::GL
-        GLEW
+        ${GLEW_LIBRARIES}
         Freetype
         tinyxml2::tinyxml2
 
@@ -157,7 +148,6 @@ target_link_libraries(cocos2d
 # Definitions
 target_compile_definitions(cocos2d
     PRIVATE
-        $<$<BOOL:${USE_SYSTEM_MINIZIP}>:MINIZIP_FROM_SYSTEM>
         $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
         $<$<PLATFORM_ID:Windows>:_SCL_SECURE_NO_WARNINGS>
 

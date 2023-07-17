@@ -54,15 +54,11 @@ include(ExternalProject)
 set(BUILD_SHARED_LIBS OFF)
 
 # OpenGL
-find_package(OpenGL REQUIRED)
 find_package(OpenAL REQUIRED)
+find_package(OpenGL REQUIRED)
 # find_package(Freetype REQUIRED)
 find_package(ZLIB REQUIRED)
-
-# Optional Dependencies
-find_package(JPEG QUIET)
-find_package(PNG QUIET)
-find_package(MINIZIP QUIET)
+find_package(PNG REQUIRED)
 
 # Platform dependencies
 if(LINUX)
