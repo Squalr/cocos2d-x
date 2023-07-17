@@ -33,6 +33,9 @@ include(math/CMakeLists.txt)
 include(renderer/CMakeLists.txt)
 include(base/CMakeLists.txt)
 
+include(FetchContent)
+include(ExternalProject)
+
 add_library(cocos2d STATIC
     cocos2d.h
     cocos2d.cpp
@@ -55,6 +58,21 @@ add_library(cocos2d STATIC
 )
 
 add_library(cocos2d::cocos2d ALIAS cocos2d)
+
+# Cereal
+set(SKIP_PERFORMANCE_COMPARISON ON)
+set(BUILD_SANDBOX OFF)
+set(BUILD_DOC OFF)
+FetchContent_Declare(
+    cereal
+    GIT_REPOSITORY  git@github.com:USCiLab/cereal.git
+    GIT_TAG         v1.3.2
+)
+FetchContent_GetProperties(cereal)
+if(NOT cereal_POPULATED)
+  FetchContent_Populate(cereal)
+endif()
+set(CEREAL_INCLUDE_DIRS ${cereal_SOURCE_DIR}/include)
 
 # C++20
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -82,6 +100,7 @@ target_include_directories(cocos2d
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/extensions
         ${CMAKE_CURRENT_LIST_DIR}
+        ${CEREAL_INCLUDE_DIRS}
     PRIVATE
         ${COCOS_PLATFORM_INCLUDE_PATHS}
 )
@@ -94,13 +113,13 @@ target_link_libraries(cocos2d
     PRIVATE
         # optional dependencies
         $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
-        $<$<BOOL:${BUILD_TIFF_SUPPORT}>:TIFF::TIFF>
+        $<$<BOOL:${BUILD_TIFF_SUPPORT}>::TIFF>
 
         # dependencies
         OpenAL::AL
         OpenGL::GL
-        GLEW::GLEW
-        Freetype::Freetype
+        GLEW
+        Freetype
         tinyxml2::tinyxml2
 
         # required platform dependencies
