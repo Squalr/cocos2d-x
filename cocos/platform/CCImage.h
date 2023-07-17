@@ -75,8 +75,6 @@ public:
     {
         //! PNG
         PNG,
-        //! PNG
-        TIFF,
         //! Raw Data
         RAW_DATA,
         //! Unknown format
