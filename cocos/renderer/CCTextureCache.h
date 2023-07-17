@@ -76,11 +76,10 @@ public:
 
     // Dictionary* snapshotTextures();
 
-    /** Returns a Texture2D object given an filename.
+    /** Returns a Texture2D object given an filename. Exclusively supports .png.
     * If the filename was not previously loaded, it will create a new Texture2D.
     * Object and it will return it. It will use the filename as a key.
     * Otherwise it will return a reference of a previously loaded image.
-    * Supported image extensions: .png, .bmp, .tiff, .jpeg, .pvr.
      * @param filename The related/absolute path of the file image.
     */
     Texture2D* addImage(const std::string &filepath);

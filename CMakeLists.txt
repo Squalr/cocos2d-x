@@ -47,40 +47,13 @@ option(BUILD_EDITOR_COCOSTUDIO   "Build CocosStudio Editor Support"  OFF)
 option(BUILD_EDITOR_SPINE        "Build Spine Editor Support"        OFF)
 option(BUILD_EXTENSIONS          "Build ${PROJECT_NAME} Extensions"  ON)
 option(BUILD_TESTS               "Build ${PROJECT_NAME} Tests"       OFF)
-option(BUILD_JPEG_SUPPORT        "Build JPEG Support"                ON)
 option(BUILD_PNG_SUPPORT         "Build PNG Support"                 ON)
-option(BUILD_TIFF_SUPPORT        "Build TIFF Support"                ON)
 
 include(FetchContent)
 include(ExternalProject)
 set(BUILD_SHARED_LIBS OFF)
 
-# GLEW
-FetchContent_Declare(
-    GLEW
-    URL            https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0.zip
-    SOURCE_DIR     ${CMAKE_SOURCE_DIR}/external/glew
-)
-FetchContent_GetProperties(GLEW)
-if(NOT GLEW_POPULATED)
-    FetchContent_Populate(GLEW)
-    # Top level doesn't contain the CMakeLists.txt, it is in the "build/cmake" subdirectory
-    add_subdirectory(${glew_SOURCE_DIR}/build/cmake ${glew_BINARY_DIR})
-endif()
-set(GLEW_INCLUDE_DIRS ${glew_SOURCE_DIR}/include)
-set(GLEW_LIBRARY_DIRS ${glew_BINARY_DIR}/libs)
-set(GLEW_LIBRARIES GLEW_s)
-
-# GLFW
-FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY https://github.com/glfw/glfw.git
-    GIT_TAG        3.3.8
-)
-FetchContent_MakeAvailable(glfw)
-
 # OpenGL
-find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(OpenAL REQUIRED)
 # find_package(Freetype REQUIRED)
@@ -114,17 +87,8 @@ else()
     )
 endif()
 
-# Validate options
-if(BUILD_JPEG_SUPPORT AND NOT JPEG_FOUND)
-    message(ERROR "JPEG support was requested but libjpeg wasn't found.")
-endif()
-
 if(BUILD_PNG_SUPPORT AND NOT PNG_FOUND)
     message(ERROR "PNG support was requested but libpng wasn't found.")
-endif()
-
-if(BUILD_TIFF_SUPPORT AND NOT TIFF_FOUND)
-    message(ERROR "TIFF support was requested but libtiff wasn't found.")
 endif()
 
 # Bundled Dependencies

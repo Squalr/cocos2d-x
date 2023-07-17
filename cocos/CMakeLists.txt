@@ -74,6 +74,30 @@ if(NOT cereal_POPULATED)
 endif()
 set(CEREAL_INCLUDE_DIRS ${cereal_SOURCE_DIR}/include)
 
+# GLEW
+FetchContent_Declare(
+    GLEW
+    URL            https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0.zip
+    SOURCE_DIR     ${CMAKE_SOURCE_DIR}/external/glew
+)
+FetchContent_GetProperties(GLEW)
+if(NOT GLEW_POPULATED)
+    FetchContent_Populate(GLEW)
+    # Top level doesn't contain the CMakeLists.txt, it is in the "build/cmake" subdirectory
+    add_subdirectory(${glew_SOURCE_DIR}/build/cmake ${glew_BINARY_DIR})
+endif()
+set(GLEW_INCLUDE_DIRS ${glew_SOURCE_DIR}/include)
+set(GLEW_LIBRARY_DIRS ${glew_BINARY_DIR}/libs)
+set(GLEW_LIBRARIES GLEW_s)
+
+# GLFW
+FetchContent_Declare(
+    glfw
+    GIT_REPOSITORY https://github.com/glfw/glfw.git
+    GIT_TAG        3.3.8
+)
+FetchContent_MakeAvailable(glfw)
+
 # C++20
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_compile_features(cocos2d PUBLIC cxx_std_20 c_std_99)
@@ -101,6 +125,7 @@ target_include_directories(cocos2d
         ${PROJECT_SOURCE_DIR}/extensions
         ${CMAKE_CURRENT_LIST_DIR}
         ${CEREAL_INCLUDE_DIRS}
+        ${GLEW_INCLUDE_DIRS}
     PRIVATE
         ${COCOS_PLATFORM_INCLUDE_PATHS}
 )
@@ -113,7 +138,6 @@ target_link_libraries(cocos2d
     PRIVATE
         # optional dependencies
         $<$<BOOL:${BUILD_PNG_SUPPORT}>:PNG::PNG>
-        $<$<BOOL:${BUILD_TIFF_SUPPORT}>::TIFF>
 
         # dependencies
         OpenAL::AL

@@ -127,7 +127,6 @@ public:
 
 protected:
     bool initWithPngData(const unsigned char * data, ssize_t dataLen);
-    bool initWithTiffData(const unsigned char * data, ssize_t dataLen);
     
     void premultipliedAlpha();
     
@@ -171,7 +170,6 @@ protected:
     
     Format detectFormat(const unsigned char * data, ssize_t dataLen);
     bool isPng(const unsigned char * data, ssize_t dataLen);
-    bool isTiff(const unsigned char * data, ssize_t dataLen);
 };
 
 // end of platform group

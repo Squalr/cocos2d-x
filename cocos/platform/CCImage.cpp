@@ -228,20 +228,6 @@ bool Image::isPng(const unsigned char * data, ssize_t dataLen)
     return memcmp(PNG_SIGNATURE, data, sizeof(PNG_SIGNATURE)) == 0;
 }
 
-bool Image::isTiff(const unsigned char * data, ssize_t dataLen)
-{
-    if (dataLen <= 4)
-    {
-        return false;
-    }
-
-    static const char* TIFF_II = "II";
-    static const char* TIFF_MM = "MM";
-
-    return (memcmp(data, TIFF_II, 2) == 0 && *(static_cast<const unsigned char*>(data) + 2) == 42 && *(static_cast<const unsigned char*>(data) + 3) == 0) ||
-        (memcmp(data, TIFF_MM, 2) == 0 && *(static_cast<const unsigned char*>(data) + 2) == 0 && *(static_cast<const unsigned char*>(data) + 3) == 42);
-}
-
 Image::Format Image::detectFormat(const unsigned char * data, ssize_t dataLen)
 {
     if (isPng(data, dataLen))
