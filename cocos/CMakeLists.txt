@@ -74,12 +74,46 @@ if(NOT cereal_POPULATED)
 endif()
 set(CEREAL_INCLUDE_DIRS ${cereal_SOURCE_DIR}/include)
 
-# GLEW
-set(GLEW_INCLUDE_DIRS "/usr/local/opt/glew/include/GL")
-set(GLEW_LIBRARIES "/usr/local/opt/glew/lib/libGLEW.dylib")
-#find_package(GLEW REQUIRED)
+# tinyxml2
+find_package(tinyxml2 QUIET)
+if (NOT tinyxml2_FOUND)
+    FetchContent_Declare(tinyxml2
+        GIT_REPOSITORY     https://github.com/leethomason/TinyXML2
+        GIT_TAG            9.0.0
+    )
+    FetchContent_MakeAvailable(tinyxml2)
+endif ()
 
-message(STATUS "GLEW_LIBRARIES = ${GLEW_LIBRARIES}")
+# Freetype
+FetchContent_Declare(
+    Freetype
+    GIT_REPOSITORY https://github.com/freetype/freetype.git
+    GIT_TAG        VER-2-13-0
+)
+
+FetchContent_GetProperties(Freetype)
+if(NOT Freetype_POPULATED)
+    FetchContent_Populate(Freetype)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ftoption.h.in ${freetype_SOURCE_DIR}/include/freetype/config/ftoption.h @ONLY)
+    add_subdirectory(${freetype_SOURCE_DIR} ${freetype_BINARY_DIR})
+endif()
+
+# GLEW
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(GLEW_INCLUDE_DIRS "/usr/local/opt/glew/include/GL")
+    set(GLEW_LIBRARIES "/usr/local/opt/glew/lib/libGLEW.dylib")
+
+    message(STATUS "GLEW_LIBRARIES = ${GLEW_LIBRARIES}")
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    find_package(GLEW REQUIRED)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    FetchContent_Declare(
+        GLEW
+        GIT_REPOSITORY https://github.com/Perlmint/glew-cmake
+        GIT_TAG glew-cmake-2.2.0
+    )
+    FetchContent_MakeAvailable(GLEW)
+endif()
 
 # GLFW
 FetchContent_Declare(
@@ -117,6 +151,7 @@ target_include_directories(cocos2d
         ${CMAKE_CURRENT_LIST_DIR}
         ${CEREAL_INCLUDE_DIRS}
         ${GLEW_INCLUDE_DIRS}
+        ${FREETYPE_INCLUDE_DIRS}
     PRIVATE
         ${COCOS_PLATFORM_INCLUDE_PATHS}
 )
@@ -133,9 +168,11 @@ target_link_libraries(cocos2d
         # dependencies
         OpenAL::AL
         OpenGL::GL
-        ${GLEW_LIBRARIES}
-        Freetype
         tinyxml2::tinyxml2
+        Freetype
+
+        $<$<PLATFORM_ID:Darwin>:${GLEW_LIBRARIES}>
+        $<$<PLATFORM_ID:Windows>:libglew_static>
 
         # required platform dependencies
         $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
