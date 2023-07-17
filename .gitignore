@@ -42,6 +42,8 @@ BundleArtifacts
 .vs/
 *.VC.db
 
+[Oo]penssl*/
+
 # Ignore files build by ndk and eclipse
 /libs/
 bin/
