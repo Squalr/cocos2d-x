@@ -54,10 +54,7 @@ include(ExternalProject)
 set(BUILD_SHARED_LIBS OFF)
 
 # OpenGL
-find_package(OpenAL REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(ZLIB REQUIRED)
-find_package(PNG REQUIRED)
 
 # Platform dependencies
 if(LINUX)
@@ -66,24 +63,6 @@ elseif(WINDOWS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 elseif(APPLE)
     find_package(Iconv REQUIRED)
-endif()
-
-# wrap openal vars in a target
-if(APPLE AND ${OPENAL_LIBRARY} MATCHES "\\.framework$")
-    add_library(OpenAL::AL INTERFACE IMPORTED)
-    set_target_properties(OpenAL::AL PROPERTIES
-        INTERFACE_LINK_LIBRARIES ${OPENAL_LIBRARY}
-    )
-else()
-    add_library(OpenAL::AL UNKNOWN IMPORTED)
-    set_target_properties(OpenAL::AL PROPERTIES
-        IMPORTED_LOCATION ${OPENAL_LIBRARY}
-        INTERFACE_INCLUDE_DIRECTORIES ${OPENAL_INCLUDE_DIR}
-    )
-endif()
-
-if(BUILD_PNG_SUPPORT AND NOT PNG_FOUND)
-    message(ERROR "PNG support was requested but libpng wasn't found.")
 endif()
 
 # Bundled Dependencies
