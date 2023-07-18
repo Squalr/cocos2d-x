@@ -36,6 +36,10 @@ include(base/CMakeLists.txt)
 include(FetchContent)
 include(ExternalProject)
 
+# Statically link all dependencies
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared off" FORCE)
+set(BUILD_STATIC_LIBS ON CACHE BOOL "Build static on" FORCE)
+
 add_library(cocos2d STATIC
     cocos2d.h
     cocos2d.cpp
@@ -58,10 +62,6 @@ add_library(cocos2d STATIC
 )
 
 add_library(cocos2d::cocos2d ALIAS cocos2d)
-
-# Statically link all dependencies
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared off" FORCE)
-set(BUILD_STATIC_LIBS ON CACHE BOOL "Build static on" FORCE)
 
 # Cereal
 set(SKIP_PERFORMANCE_COMPARISON ON)
@@ -89,55 +89,73 @@ if (NOT tinyxml2_FOUND)
 endif ()
 
 # zlib
-FetchContent_Declare(
-    zlib
-    GIT_REPOSITORY    https://github.com/madler/zlib.git
-    GIT_TAG           v1.2.13
-)
-FetchContent_GetProperties(zlib)
-if(NOT zlib_POPULATED)
-    FetchContent_Populate(zlib)
-    add_subdirectory(${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    FetchContent_Declare(
+        zlib
+        GIT_REPOSITORY    https://github.com/madler/zlib.git
+        GIT_TAG           v1.2.13
+    )
+    FetchContent_GetProperties(zlib)
+    if(NOT zlib_POPULATED)
+        FetchContent_Populate(zlib)
+        add_subdirectory(${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
+    endif()
+    set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
+    set(ZLIB_LIBRARY zlib)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    find_package(ZLIB REQUIRED)
 endif()
-set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
-set(ZLIB_LIBRARY zlib)
 
 # libpng
-FetchContent_Declare(
-    libpng
-    GIT_REPOSITORY    https://github.com/glennrp/libpng.git
-    GIT_TAG           v1.6.40
-)
-FetchContent_GetProperties(libpng)
-if(NOT libpng_POPULATED)
-    FetchContent_Populate(libpng)
-    # set(PNG_SHARED OFF CACHE BOOL "No shared library for libpng" FORCE)
-    set(PNG_BUILD_ZLIB ON CACHE BOOL "Force internal zlib for libpng" FORCE)
-    add_subdirectory(${libpng_SOURCE_DIR} ${libpng_BINARY_DIR})
-endif()
-set(libpng_INCLUDE_DIRS ${libpng_SOURCE_DIR} ${libpng_BINARY_DIR})
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set(libpng_LIBRARIES ${libpng_BINARY_DIR}/libpng16_staticd.lib)
+    FetchContent_Declare(
+        libpng
+        GIT_REPOSITORY    https://github.com/glennrp/libpng.git
+        GIT_TAG           v1.6.40
+    )
+    FetchContent_GetProperties(libpng)
+    if(NOT libpng_POPULATED)
+        FetchContent_Populate(libpng)
+        # set(PNG_SHARED OFF CACHE BOOL "No shared library for libpng" FORCE)
+        # set(PNG_BUILD_ZLIB ON CACHE BOOL "Force internal zlib for libpng" FORCE)
+
+        set(ZLIB_LIBRARY "${zlib_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}z${CMAKE_STATIC_LIBRARY_SUFFIX}")
+        set(ZLIB_INCLUDE_DIR ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
+
+        add_subdirectory(${libpng_SOURCE_DIR} ${libpng_BINARY_DIR})
+    endif()
+    set(PNG_INCLUDE_DIRS ${libpng_SOURCE_DIR} ${libpng_BINARY_DIR})
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+        set(libpng_LIBRARIES ${libpng_BINARY_DIR}/libpng16_staticd.lib)
+    elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        set(libpng_LIBRARIES ${libpng_BINARY_DIR}/libpng.a)
+    endif()
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    find_package(PNG REQUIRED)
 endif()
 
 # Freetype
-FetchContent_Declare(
-    Freetype
-    GIT_REPOSITORY https://github.com/freetype/freetype.git
-    GIT_TAG        VER-2-13-0
-)
-FetchContent_GetProperties(Freetype)
-if(NOT Freetype_POPULATED)
-    FetchContent_Populate(Freetype)
-    set(FT_DISABLE_ZLIB ON CACHE BOOL "Disable zlib for embedded Freetype" FORCE)
-    set(FT_DISABLE_BZIP2 ON CACHE BOOL "Disable bzip2 for embedded Freetype" FORCE)
-    set(FT_DISABLE_PNG ON CACHE BOOL "Disable libpng for embedded Freetype" FORCE)
-    set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "Disable harfbuzz for embedded Freetype" FORCE)
-    set(FT_DISABLE_BROTLI ON CACHE BOOL "Disable brotli for embedded Freetype" FORCE)
-    add_subdirectory(${freetype_SOURCE_DIR} ${freetype_BINARY_DIR})
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    FetchContent_Declare(
+        Freetype
+        GIT_REPOSITORY https://github.com/freetype/freetype.git
+        GIT_TAG        VER-2-13-0
+    )
+    FetchContent_GetProperties(Freetype)
+    if(NOT Freetype_POPULATED)
+        FetchContent_Populate(Freetype)
+        set(FT_DISABLE_ZLIB ON CACHE BOOL "Disable zlib for embedded Freetype" FORCE)
+        set(FT_DISABLE_BZIP2 ON CACHE BOOL "Disable bzip2 for embedded Freetype" FORCE)
+        set(FT_DISABLE_PNG ON CACHE BOOL "Disable libpng for embedded Freetype" FORCE)
+        set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "Disable harfbuzz for embedded Freetype" FORCE)
+        set(FT_DISABLE_BROTLI ON CACHE BOOL "Disable brotli for embedded Freetype" FORCE)
+        add_subdirectory(${freetype_SOURCE_DIR} ${freetype_BINARY_DIR})
+    endif()
+    set(FREETYPE_INCLUDE_DIRS "${freetype_BINARY_DIR}/include;${freetype_SOURCE_DIR}/include" PARENT_SCOPE)
+    set(FREETYPE_LIBRARIES freetype PARENT_SCOPE)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    find_package(Freetype REQUIRED)
 endif()
-set(FREETYPE_INCLUDE_DIRS "${freetype_BINARY_DIR}/include;${freetype_SOURCE_DIR}/include" PARENT_SCOPE)
-set(FREETYPE_LIBRARIES freetype PARENT_SCOPE)
 
 # GLEW
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -194,7 +212,7 @@ target_include_directories(cocos2d
         ${GLEW_INCLUDE_DIRS}
         ${FREETYPE_INCLUDE_DIRS}
         ${ZLIB_INCLUDE_DIRS}
-        ${libpng_INCLUDE_DIRS}
+        ${PNG_INCLUDE_DIRS}
     PRIVATE
         ${COCOS_PLATFORM_INCLUDE_PATHS}
 )
@@ -203,7 +221,7 @@ target_include_directories(cocos2d
 target_link_libraries(cocos2d
     PUBLIC
         glfw
-        zlib
+        $<$<PLATFORM_ID:Windows>:zlib>
 
         $<$<PLATFORM_ID:Darwin>:${GLEW_LIBRARIES}>
         $<$<PLATFORM_ID:Windows>:libglew_static>
@@ -215,7 +233,7 @@ target_link_libraries(cocos2d
         Freetype
 
         $<$<PLATFORM_ID:Windows>:${libpng_LIBRARIES}>
-        $<$<PLATFORM_ID:Darwin>:png>
+        $<$<PLATFORM_ID:Darwin>:PNG::PNG>
 
         # required platform dependencies
         $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
