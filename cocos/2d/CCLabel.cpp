@@ -1061,7 +1061,7 @@ void Label::createSpriteForSystemFont(const FontDefinition& fontDef)
     _currentLabelType = LabelType::STRING_TEXTURE;
 
     auto texture = new (std::nothrow) Texture2D;
-    texture->initWithString(_utf8Text.c_str(), fontDef);
+    // texture->initWithString(_utf8Text.c_str(), fontDef);
 
     _textSprite = Sprite::createWithTexture(texture);
     _textSprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -1096,7 +1096,7 @@ void Label::createShadowSpriteForSystemFont(const FontDefinition& fontDef)
         shadowFontDefinition._stroke._strokeAlpha = shadowFontDefinition._fontAlpha;
 
         auto texture = new (std::nothrow) Texture2D;
-        texture->initWithString(_utf8Text.c_str(), shadowFontDefinition);
+        // texture->initWithString(_utf8Text.c_str(), shadowFontDefinition);
         _shadowNode = Sprite::createWithTexture(texture);
         texture->release();
     }

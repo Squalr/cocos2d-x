@@ -93,11 +93,6 @@ public:
      */
     static void vibrate(float duration);
 
-    /**
-     * Gets texture data for text.
-     */
-    static Data getTextureDataForText(const char * text, const FontDefinition& textDefinition, TextAlign align, int &width, int &height, bool& hasPremultipliedAlpha);
-
 private:
     CC_DISALLOW_IMPLICIT_CONSTRUCTORS(Device);
 };

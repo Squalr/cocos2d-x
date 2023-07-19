@@ -241,26 +241,6 @@ public:
     **/
     bool initWithImage(Image * image, PixelFormat format);
 
-    /** Initializes a texture from a string with dimensions, alignment, font name and font size. 
-     
-     @param text A null terminated string.
-     @param fontName The font name.
-     @param fontSize The font size.
-     @param dimensions The font dimension.
-     @param hAlignment The font horizontal text alignment type.
-     @param vAlignment The font vertical text alignment type.
-     @param enableWrap Whether enable text wrap or not.
-     @param overflow Whether shrink font size when content larger than the dimensions.
-     */
-    bool initWithString(const char *text,  const std::string &fontName, float fontSize, const CSize& dimensions = CSize(0, 0), TextHAlignment hAlignment = TextHAlignment::CENTER, TextVAlignment vAlignment = TextVAlignment::TOP, bool enableWrap = true, int overflow = 0);
-
-    /** Initializes a texture from a string using a text definition.
-     
-     @param text A null terminated string.
-     @param textDefinition A FontDefinition object contains font attributes.
-     */
-    bool initWithString(const char *text, const FontDefinition& textDefinition);
-
     /** Sets the min filter, mag filter, wrap s and wrap t texture parameters.
     If the texture size is NPOT (non power of 2), then in can only use GL_CLAMP_TO_EDGE in GL_TEXTURE_WRAP_{S,T}.
 
