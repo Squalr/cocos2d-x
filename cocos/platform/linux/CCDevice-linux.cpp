@@ -40,8 +40,6 @@ THE SOFTWARE.
 #include <string>
 #include <sstream>
 
-#include FT_FREETYPE_H
-
 using namespace std;
 
 NS_CC_BEGIN
