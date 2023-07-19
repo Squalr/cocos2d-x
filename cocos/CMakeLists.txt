@@ -102,6 +102,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     endif()
     set(ZLIB_INCLUDE_DIRS ${zlib_SOURCE_DIR} ${zlib_BINARY_DIR})
     set(ZLIB_LIBRARY zlib)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    find_package(ZLIB REQUIRED)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     find_package(ZLIB REQUIRED)
 endif()
@@ -131,10 +133,10 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         else()
             set(libpng_LIBRARIES ${libpng_BINARY_DIR}/libpng16_static.lib)
         endif()
-    elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-        set(libpng_LIBRARIES ${libpng_BINARY_DIR}/libpng.a)
     endif()
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    find_package(PNG REQUIRED)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     find_package(PNG REQUIRED)
 endif()
 
@@ -158,6 +160,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(FREETYPE_INCLUDE_DIRS "${freetype_BINARY_DIR}/include;${freetype_SOURCE_DIR}/include" PARENT_SCOPE)
     set(FREETYPE_LIBRARIES freetype PARENT_SCOPE)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    find_package(Freetype REQUIRED)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     find_package(Freetype REQUIRED)
 endif()
 
@@ -227,6 +231,7 @@ target_link_libraries(cocos2d
         glfw
         $<$<PLATFORM_ID:Windows>:zlib>
 
+        $<$<PLATFORM_ID:Linux>:GLEW::GLEW>
         $<$<PLATFORM_ID:Darwin>:${GLEW_LIBRARIES}>
         $<$<PLATFORM_ID:Windows>:libglew_static>
 
@@ -238,9 +243,9 @@ target_link_libraries(cocos2d
 
         $<$<PLATFORM_ID:Windows>:${libpng_LIBRARIES}>
         $<$<PLATFORM_ID:Darwin>:PNG::PNG>
+        $<$<PLATFORM_ID:Linux>:PNG::PNG>
 
         # required platform dependencies
-        $<$<PLATFORM_ID:Linux>:unofficial::fontconfig::fontconfig>
         $<$<PLATFORM_ID:Darwin>:Iconv::Iconv>
         $<$<PLATFORM_ID:Windows>:ws2_32>
         $<$<PLATFORM_ID:Windows>:winmm>
@@ -250,7 +255,7 @@ target_link_libraries(cocos2d
 # Definitions
 target_compile_definitions(cocos2d
     PRIVATE
-        $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+        $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>fontco
         $<$<PLATFORM_ID:Windows>:_SCL_SECURE_NO_WARNINGS>
 
     PUBLIC

@@ -54,11 +54,14 @@ include(ExternalProject)
 set(BUILD_SHARED_LIBS OFF)
 
 # OpenGL
+if(POLICY CMP0072)
+  set(OpenGL_GL_PREFERENCE GLVND)
+endif()
 find_package(OpenGL REQUIRED)
 
 # Platform dependencies
 if(LINUX)
-    find_package(unofficial-fontconfig REQUIRED)
+    # find_package(unofficial-fontconfig REQUIRED)
 elseif(WINDOWS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 elseif(APPLE)
