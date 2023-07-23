@@ -69,7 +69,7 @@ set(BUILD_SANDBOX OFF)
 set(BUILD_DOC OFF)
 FetchContent_Declare(
     cereal
-    GIT_REPOSITORY  git@github.com:USCiLab/cereal.git
+    GIT_REPOSITORY  https://github.com/USCiLab/cereal.git
     GIT_TAG         v1.3.2
 )
 FetchContent_GetProperties(cereal)
@@ -79,14 +79,15 @@ endif()
 set(CEREAL_INCLUDE_DIRS ${cereal_SOURCE_DIR}/include)
 
 # tinyxml2
-find_package(tinyxml2 QUIET)
-if (NOT tinyxml2_FOUND)
-    FetchContent_Declare(tinyxml2
-        GIT_REPOSITORY     https://github.com/leethomason/TinyXML2
-        GIT_TAG            9.0.0
-    )
-    FetchContent_MakeAvailable(tinyxml2)
-endif ()
+FetchContent_Declare(tinyxml2
+    GIT_REPOSITORY     https://github.com/leethomason/TinyXML2
+    GIT_TAG            9.0.0
+)
+FetchContent_GetProperties(tinyxml2)
+if(NOT tinyxml2_POPULATED)
+    FetchContent_Populate(tinyxml2)
+endif()
+set(TINYXML_INCLUDE_DIRS ${tinyxml2_SOURCE_DIR})
 
 # zlib
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
@@ -183,12 +184,25 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 endif()
 
 # GLFW
-FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY https://github.com/glfw/glfw.git
-    GIT_TAG        3.3.8
-)
-FetchContent_MakeAvailable(glfw)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    FetchContent_Declare(
+        glfw
+        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_TAG        3.3.8
+    )
+    FetchContent_GetProperties(glfw)
+    if(NOT glfw_POPULATED)
+        FetchContent_Populate(glfw)
+    endif()
+    set(GLFW_INCLUDE_DIRS ${glfw_SOURCE_DIR}/include)
+else()
+    FetchContent_Declare(
+        glfw
+        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_TAG        3.3.8
+    )
+    FetchContent_MakeAvailable(glfw)
+endif()
 
 # C++20
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -196,7 +210,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_compile_features(cocos2d PUBLIC cxx_std_20 c_std_99)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    target_compile_features(cocos2d PUBLIC cxx_std_17 c_std_99)
+    target_compile_features(cocos2d PUBLIC cxx_std_14 c_std_99)
 endif()
 
 # PIC, Unity Build
@@ -221,6 +235,8 @@ target_include_directories(cocos2d
         ${FREETYPE_INCLUDE_DIRS}
         ${ZLIB_INCLUDE_DIRS}
         ${PNG_INCLUDE_DIRS}
+        ${GLFW_INCLUDE_DIRS}
+        ${TINYXML_INCLUDE_DIRS}
     PRIVATE
         ${COCOS_PLATFORM_INCLUDE_PATHS}
 )
@@ -238,7 +254,7 @@ target_link_libraries(cocos2d
     PRIVATE
         # dependencies
         OpenGL::GL
-        tinyxml2::tinyxml2
+        tinyxml2
         Freetype
 
         $<$<PLATFORM_ID:Windows>:${libpng_LIBRARIES}>

@@ -98,8 +98,9 @@ void GLProgramStateCache::removeUnusedGLProgramState()
 
 void GLProgramStateCache::removeAllGLProgramState()
 {
-    for (const auto&[key, value] : _glProgramStates)
+    for (const auto& glProgramState : _glProgramStates)
     {
+        auto& key = glProgramState.first;
         key->release();
     }
 

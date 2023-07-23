@@ -441,8 +441,11 @@ void Scheduler::update(float dt)
 {
     this->updateHashLocked = true;
 
-    for (const auto&[key, task] : this->taskTable)
+    for (const auto& taskEntry : this->taskTable)
     {
+        auto& key = taskEntry.first;
+        auto& task = taskEntry.second;
+        
         if (!task.paused && this->scheduledDeleteTable.find(key) == this->scheduledDeleteTable.end())
         {
             task.callback(dt);

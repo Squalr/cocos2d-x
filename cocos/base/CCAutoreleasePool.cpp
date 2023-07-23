@@ -70,17 +70,6 @@ bool AutoreleasePool::contains(Ref* object) const
     return _managedObjects.find(object) != _managedObjects.end();
 }
 
-void AutoreleasePool::dump()
-{
-    CCLOG("autorelease pool: %s, number of managed object %d\n", _name.c_str(), static_cast<int>(_managedObjects.size()));
-    CCLOG("%20s%20s%20s", "Object pointer", "Object id", "reference count");
-    for (const auto &obj : _managedObjects)
-    {
-        CCLOG("%20p%20u\n", obj, obj->getReferenceCount());
-    }
-}
-
-
 //--------------------------------------------------------------------
 //
 // PoolManager

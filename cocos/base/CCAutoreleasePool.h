@@ -113,17 +113,6 @@ public:
      * @lua NA
      */
     bool contains(Ref* object) const;
-
-    /**
-     * Dump the objects that are put into the autorelease pool. It is used for debugging.
-     *
-     * The result will look like:
-     * Object pointer address     object id     reference count
-     *
-     * @js NA
-     * @lua NA
-     */
-    void dump();
     
 private:
     /**
