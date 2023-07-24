@@ -143,45 +143,23 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 endif()
 
 # Freetype
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    FetchContent_Declare(
-        Freetype
-        GIT_REPOSITORY https://github.com/freetype/freetype.git
-        GIT_TAG        VER-2-13-0
-    )
-    FetchContent_GetProperties(Freetype)
-    if(NOT Freetype_POPULATED)
-        FetchContent_Populate(Freetype)
-        set(FT_DISABLE_ZLIB ON CACHE BOOL "Disable zlib for embedded Freetype" FORCE)
-        set(FT_DISABLE_BZIP2 ON CACHE BOOL "Disable bzip2 for embedded Freetype" FORCE)
-        set(FT_DISABLE_PNG ON CACHE BOOL "Disable libpng for embedded Freetype" FORCE)
-        set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "Disable harfbuzz for embedded Freetype" FORCE)
-        set(FT_DISABLE_BROTLI ON CACHE BOOL "Disable brotli for embedded Freetype" FORCE)
-        add_subdirectory(${freetype_SOURCE_DIR} ${freetype_BINARY_DIR})
-    endif()
-    set(FREETYPE_INCLUDE_DIRS "${freetype_BINARY_DIR}/include;${freetype_SOURCE_DIR}/include" PARENT_SCOPE)
-    set(FREETYPE_LIBRARIES freetype PARENT_SCOPE)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    find_package(Freetype REQUIRED)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    FetchContent_Declare(
-        Freetype
-        GIT_REPOSITORY https://github.com/freetype/freetype.git
-        GIT_TAG        VER-2-13-0
-    )
-    FetchContent_GetProperties(Freetype)
-    if(NOT Freetype_POPULATED)
-        FetchContent_Populate(Freetype)
-        set(FT_DISABLE_ZLIB ON CACHE BOOL "Disable zlib for embedded Freetype" FORCE)
-        set(FT_DISABLE_BZIP2 ON CACHE BOOL "Disable bzip2 for embedded Freetype" FORCE)
-        set(FT_DISABLE_PNG ON CACHE BOOL "Disable libpng for embedded Freetype" FORCE)
-        set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "Disable harfbuzz for embedded Freetype" FORCE)
-        set(FT_DISABLE_BROTLI ON CACHE BOOL "Disable brotli for embedded Freetype" FORCE)
-        add_subdirectory(${freetype_SOURCE_DIR} ${freetype_BINARY_DIR})
-    endif()
-    set(FREETYPE_INCLUDE_DIRS "${freetype_BINARY_DIR}/include;${freetype_SOURCE_DIR}/include")
-    set(FREETYPE_LIBRARIES freetype)
+FetchContent_Declare(
+    Freetype
+    GIT_REPOSITORY https://github.com/freetype/freetype.git
+    GIT_TAG        VER-2-13-0
+)
+FetchContent_GetProperties(Freetype)
+if(NOT Freetype_POPULATED)
+    FetchContent_Populate(Freetype)
+    set(FT_DISABLE_ZLIB ON CACHE BOOL "Disable zlib for embedded Freetype" FORCE)
+    set(FT_DISABLE_BZIP2 ON CACHE BOOL "Disable bzip2 for embedded Freetype" FORCE)
+    set(FT_DISABLE_PNG ON CACHE BOOL "Disable libpng for embedded Freetype" FORCE)
+    set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "Disable harfbuzz for embedded Freetype" FORCE)
+    set(FT_DISABLE_BROTLI ON CACHE BOOL "Disable brotli for embedded Freetype" FORCE)
+    add_subdirectory(${freetype_SOURCE_DIR} ${freetype_BINARY_DIR})
 endif()
+set(FREETYPE_INCLUDE_DIRS "${freetype_BINARY_DIR}/include;${freetype_SOURCE_DIR}/include")
+set(FREETYPE_LIBRARIES freetype)
 
 # GLEW
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -265,11 +243,7 @@ target_link_libraries(cocos2d
         # dependencies
         OpenGL::GL
         tinyxml2
-
-        $<$<PLATFORM_ID:Linux>:${FREETYPE_LIBRARIES}>
-        $<$<PLATFORM_ID:Darwin>:Freetype>
-        $<$<PLATFORM_ID:Windows>:Freetype>
-        
+        ${FREETYPE_LIBRARIES}        
 
         $<$<PLATFORM_ID:Windows>:${libpng_LIBRARIES}>
         $<$<PLATFORM_ID:Darwin>:PNG::PNG>
