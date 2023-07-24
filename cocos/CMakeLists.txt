@@ -80,14 +80,15 @@ set(CEREAL_INCLUDE_DIRS ${cereal_SOURCE_DIR}/include)
 
 # tinyxml2
 FetchContent_Declare(tinyxml2
-    GIT_REPOSITORY     https://github.com/leethomason/TinyXML2
-    GIT_TAG            9.0.0
+    GIT_REPOSITORY https://github.com/leethomason/TinyXML2
+    GIT_TAG        9.0.0
 )
 FetchContent_GetProperties(tinyxml2)
 if(NOT tinyxml2_POPULATED)
     FetchContent_Populate(tinyxml2)
+    add_subdirectory(${tinyxml2_SOURCE_DIR} ${tinyxml2_BINARY_DIR})
 endif()
-set(TINYXML_INCLUDE_DIRS ${tinyxml2_SOURCE_DIR})
+set(TINYXML2_INCLUDE_DIRS ${tinyxml2_SOURCE_DIR})
 
 # zlib
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
@@ -163,7 +164,23 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     find_package(Freetype REQUIRED)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    find_package(Freetype REQUIRED)
+    FetchContent_Declare(
+        Freetype
+        GIT_REPOSITORY https://github.com/freetype/freetype.git
+        GIT_TAG        VER-2-13-0
+    )
+    FetchContent_GetProperties(Freetype)
+    if(NOT Freetype_POPULATED)
+        FetchContent_Populate(Freetype)
+        set(FT_DISABLE_ZLIB ON CACHE BOOL "Disable zlib for embedded Freetype" FORCE)
+        set(FT_DISABLE_BZIP2 ON CACHE BOOL "Disable bzip2 for embedded Freetype" FORCE)
+        set(FT_DISABLE_PNG ON CACHE BOOL "Disable libpng for embedded Freetype" FORCE)
+        set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "Disable harfbuzz for embedded Freetype" FORCE)
+        set(FT_DISABLE_BROTLI ON CACHE BOOL "Disable brotli for embedded Freetype" FORCE)
+        add_subdirectory(${freetype_SOURCE_DIR} ${freetype_BINARY_DIR})
+    endif()
+    set(FREETYPE_INCLUDE_DIRS "${freetype_BINARY_DIR}/include;${freetype_SOURCE_DIR}/include")
+    set(FREETYPE_LIBRARIES freetype)
 endif()
 
 # GLEW
@@ -184,24 +201,18 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 endif()
 
 # GLFW
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    FetchContent_Declare(
-        glfw
-        GIT_REPOSITORY https://github.com/glfw/glfw.git
-        GIT_TAG        3.3.8
-    )
-    FetchContent_GetProperties(glfw)
-    if(NOT glfw_POPULATED)
-        FetchContent_Populate(glfw)
-    endif()
-    set(GLFW_INCLUDE_DIRS ${glfw_SOURCE_DIR}/include)
-else()
-    FetchContent_Declare(
-        glfw
-        GIT_REPOSITORY https://github.com/glfw/glfw.git
-        GIT_TAG        3.3.8
-    )
-    FetchContent_MakeAvailable(glfw)
+FetchContent_Declare(
+    glfw
+    GIT_REPOSITORY https://github.com/glfw/glfw.git
+    GIT_TAG        3.3.8
+)
+FetchContent_GetProperties(glfw)
+if(NOT glfw_POPULATED)
+    FetchContent_Populate(glfw)
+    set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE) # don't build docs
+    set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE) # don't build tests
+    set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build examples
+    add_subdirectory(${glfw_SOURCE_DIR} ${glfw_BINARY_DIR})
 endif()
 
 # C++20
@@ -210,7 +221,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_compile_features(cocos2d PUBLIC cxx_std_20 c_std_99)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    target_compile_features(cocos2d PUBLIC cxx_std_14 c_std_99)
+    target_compile_features(cocos2d PUBLIC cxx_std_17 c_std_99)
 endif()
 
 # PIC, Unity Build
@@ -232,11 +243,10 @@ target_include_directories(cocos2d
         ${CMAKE_CURRENT_LIST_DIR}
         ${CEREAL_INCLUDE_DIRS}
         ${GLEW_INCLUDE_DIRS}
-        ${FREETYPE_INCLUDE_DIRS}
         ${ZLIB_INCLUDE_DIRS}
         ${PNG_INCLUDE_DIRS}
-        ${GLFW_INCLUDE_DIRS}
-        ${TINYXML_INCLUDE_DIRS}
+        ${TINYXML2_INCLUDE_DIRS}
+        ${FREETYPE_INCLUDE_DIRS}
     PRIVATE
         ${COCOS_PLATFORM_INCLUDE_PATHS}
 )
@@ -247,7 +257,7 @@ target_link_libraries(cocos2d
         glfw
         $<$<PLATFORM_ID:Windows>:zlib>
 
-        $<$<PLATFORM_ID:Linux>:GLEW::GLEW>
+        $<$<PLATFORM_ID:Linux>:${GLEW_LIBRARIES}>
         $<$<PLATFORM_ID:Darwin>:${GLEW_LIBRARIES}>
         $<$<PLATFORM_ID:Windows>:libglew_static>
 
@@ -255,7 +265,11 @@ target_link_libraries(cocos2d
         # dependencies
         OpenGL::GL
         tinyxml2
-        Freetype
+
+        $<$<PLATFORM_ID:Linux>:${FREETYPE_LIBRARIES}>
+        $<$<PLATFORM_ID:Darwin>:Freetype>
+        $<$<PLATFORM_ID:Windows>:Freetype>
+        
 
         $<$<PLATFORM_ID:Windows>:${libpng_LIBRARIES}>
         $<$<PLATFORM_ID:Darwin>:PNG::PNG>
