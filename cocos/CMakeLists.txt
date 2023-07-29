@@ -205,7 +205,7 @@ endif()
 # PIC, Unity Build
 set_target_properties(cocos2d PROPERTIES
     POSITION_INDEPENDENT_CODE ON
-    # UNITY_BUILD ON
+    # UNITY_BUILD ON # Causes build issues on OSX
     UNITY_BUILD_BATCH_SIZE 64
 )
 
